@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { dataSourceOptions } from './database/data-source';
 import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 
@@ -26,9 +27,9 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
     
     // Feature modules
     AuthModule,
+    UsersModule,
     
     // Future modules
-    // UsersModule,
     // LeadsModule,
     // AiModule,
     // etc.
