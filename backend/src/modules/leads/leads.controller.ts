@@ -1,0 +1,148 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { LeadsService } from './leads.service';
+import { CreateLeadDto } from './dto/create-lead.dto';
+import { UpdateLeadDto } from './dto/update-lead.dto';
+import { QueryLeadsDto } from './dto/query-leads.dto';
+import { AssignLeadDto } from './dto/assign-lead.dto';
+import { UpdateLeadStatusDto } from './dto/update-status.dto';
+import { QualifyLeadDto } from './dto/qualify-lead.dto';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
+import { RolesGuard } from '@modules/auth/guards/roles.guard';
+import { Roles } from '@common/decorators/roles.decorator';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { User } from '@database/entities/user.entity';
+import { Public } from '@common/decorators/public.decorator';
+
+@Controller('leads')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class LeadsController {
+  constructor(private readonly leadsService: LeadsService) {}
+
+  /**
+   * Get all leads with pagination, filtering, and search
+   * Accessible by: admin, agent, super_admin
+   */
+  @Get()
+  @Roles('admin', 'agent', 'super_admin')
+  async findAll(@Query() query: QueryLeadsDto) {
+    return this.leadsService.findAll(query);
+  }
+
+  /**
+   * Get lead statistics
+   * Accessible by: admin, super_admin
+   */
+  @Get('statistics')
+  @Roles('admin', 'super_admin')
+  async getStatistics() {
+    return this.leadsService.getStatistics();
+  }
+
+  /**
+   * Get leads assigned to current agent
+   * Accessible by: agent, admin, super_admin
+   */
+  @Get('my-leads')
+  @Roles('agent', 'admin', 'super_admin')
+  async getMyLeads(@CurrentUser() user: User, @Query() query: QueryLeadsDto) {
+    return this.leadsService.getAgentLeads(user.id, query);
+  }
+
+  /**
+   * Get lead by reference number
+   * Accessible by: admin, agent, super_admin, customer (if owns the lead)
+   */
+  @Get('reference/:referenceNumber')
+  @Roles('admin', 'agent', 'super_admin', 'customer')
+  async findByReferenceNumber(@Param('referenceNumber') referenceNumber: string) {
+    return this.leadsService.findByReferenceNumber(referenceNumber);
+  }
+
+  /**
+   * Get a single lead by ID
+   * Accessible by: admin, agent, super_admin, customer (if owns the lead)
+   */
+  @Get(':id')
+  @Roles('admin', 'agent', 'super_admin', 'customer')
+  async findOne(@Param('id') id: string) {
+    return this.leadsService.findOne(id);
+  }
+
+  /**
+   * Create a new lead
+   * Accessible by: admin, agent, super_admin, or public (for web form submissions)
+   */
+  @Post()
+  @Public()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createLeadDto: CreateLeadDto) {
+    return this.leadsService.create(createLeadDto);
+  }
+
+  /**
+   * Update a lead
+   * Accessible by: admin, agent (if assigned), super_admin
+   */
+  @Put(':id')
+  @Roles('admin', 'agent', 'super_admin')
+  async update(@Param('id') id: string, @Body() updateLeadDto: UpdateLeadDto) {
+    return this.leadsService.update(id, updateLeadDto);
+  }
+
+  /**
+   * Update lead status
+   * Accessible by: admin, agent (if assigned), super_admin
+   */
+  @Patch(':id/status')
+  @Roles('admin', 'agent', 'super_admin')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() updateStatusDto: UpdateLeadStatusDto,
+  ) {
+    return this.leadsService.updateStatus(id, updateStatusDto);
+  }
+
+  /**
+   * Assign lead to an agent
+   * Accessible by: admin, super_admin
+   */
+  @Patch(':id/assign')
+  @Roles('admin', 'super_admin')
+  async assignLead(@Param('id') id: string, @Body() assignLeadDto: AssignLeadDto) {
+    return this.leadsService.assignLead(id, assignLeadDto);
+  }
+
+  /**
+   * Qualify lead with AI score
+   * Accessible by: admin, super_admin, or internal AI system
+   */
+  @Patch(':id/qualify')
+  @Roles('admin', 'super_admin')
+  async qualifyLead(@Param('id') id: string, @Body() qualifyLeadDto: QualifyLeadDto) {
+    return this.leadsService.qualifyLead(id, qualifyLeadDto);
+  }
+
+  /**
+   * Delete a lead (mark as lost)
+   * Accessible by: admin, super_admin
+   */
+  @Delete(':id')
+  @Roles('admin', 'super_admin')
+  @HttpCode(HttpStatus.OK)
+  async remove(@Param('id') id: string) {
+    return this.leadsService.remove(id);
+  }
+}
