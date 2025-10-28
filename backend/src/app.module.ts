@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { dataSourceOptions } from './database/data-source';
 
 @Module({
   imports: [
@@ -9,6 +11,13 @@ import { AppService } from './app.service';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+    }),
+    
+    // TypeORM Database Connection
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: () => dataSourceOptions,
+      inject: [ConfigService],
     }),
     
     // Feature modules will be added here
