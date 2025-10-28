@@ -8,6 +8,8 @@ import { dataSourceOptions } from './database/data-source';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { LeadsModule } from './modules/leads/leads.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { ClaimsModule } from './modules/claims/claims.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 
@@ -30,11 +32,12 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
     AuthModule,
     UsersModule,
     LeadsModule,
+    CustomersModule,
+    ClaimsModule,
     
     // Future modules
-    // CustomersModule,
-    // ClaimsModule,
     // AiModule,
+    // StorageModule,
     // etc.
   ],
   controllers: [AppController],
