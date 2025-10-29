@@ -10,6 +10,8 @@ import { UsersModule } from './modules/users/users.module';
 import { LeadsModule } from './modules/leads/leads.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { ClaimsModule } from './modules/claims/claims.module';
+import { AiModule } from './modules/ai/ai.module';
+import { StorageModule } from './modules/storage/storage.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 
@@ -34,10 +36,13 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
     LeadsModule,
     CustomersModule,
     ClaimsModule,
+    AiModule,
+    StorageModule,
     
-    // Future modules
-    // AiModule,
-    // StorageModule,
+    // Phase 1 Complete! 🎉
+    // Phase 2 modules (future):
+    // NotificationsModule,
+    // ReportsModule,
     // etc.
   ],
   controllers: [AppController],
