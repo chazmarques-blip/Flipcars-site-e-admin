@@ -81,7 +81,7 @@ export default function StarRating({
   
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="flex gap-0.5">
+      <div className="flex gap-0" style={{ gap: '1px' }}>
         {stars}
       </div>
       
