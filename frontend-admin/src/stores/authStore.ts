@@ -31,19 +31,54 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         
         try {
-          const response = await authService.login(credentials);
+          // Mock authentication for development
+          const mockUsers = {
+            'admin@flipcars.com': {
+              id: '1',
+              name: 'Admin User',
+              email: 'admin@flipcars.com',
+              role: 'super_admin',
+              password: 'admin123',
+            },
+            'manager@flipcars.com': {
+              id: '2',
+              name: 'Manager User',
+              email: 'manager@flipcars.com',
+              role: 'admin',
+              password: 'manager123',
+            },
+            'agent@flipcars.com': {
+              id: '3',
+              name: 'Agent User',
+              email: 'agent@flipcars.com',
+              role: 'agent',
+              password: 'agent123',
+            },
+          };
+
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 500));
+
+          const mockUser = mockUsers[credentials.email as keyof typeof mockUsers];
           
-          // Store tokens in API client
-          apiClientInstance.setTokens(response.accessToken, response.refreshToken);
+          if (!mockUser || mockUser.password !== credentials.password) {
+            throw new Error('Invalid credentials');
+          }
+
+          // Create mock user without password
+          const { password: _password, ...user } = mockUser;
+          
+          // Mock tokens
+          apiClientInstance.setTokens('mock-access-token', 'mock-refresh-token');
           
           set({
-            user: response.user,
+            user: user as User,
             isAuthenticated: true,
             isLoading: false,
             error: null,
           });
         } catch (error) {
-          const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Login failed. Please try again.';
+          const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
           set({
             user: null,
             isAuthenticated: false,
@@ -110,26 +145,9 @@ export const useAuthStore = create<AuthState>()(
           return;
         }
 
-        set({ isLoading: true });
-        
-        try {
-          const user = await authService.getProfile();
-          set({
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          });
-        } catch (error) {
-          console.error('Load user error:', error);
-          apiClientInstance.clearTokens();
-          set({
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: null,
-          });
-        }
+        // Mock mode: user is already in state (persisted)
+        // No need to fetch from API in mock mode
+        set({ isLoading: false });
       },
 
       clearError: () => set({ error: null }),

@@ -12,6 +12,11 @@ import {
   Settings,
   ChevronLeft,
   LucideIcon,
+  BarChart3,
+  FolderOpen,
+  Mail,
+  Search,
+  Activity,
 } from 'lucide-react';
 import { useSidebar } from '@/lib/hooks/useSidebar';
 import { useAuthStore } from '@/stores/authStore';
@@ -30,6 +35,12 @@ const navItems: NavItem[] = [
     label: 'Dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    label: 'Analytics',
+    href: '/dashboard/analytics',
+    icon: BarChart3,
+    roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
   },
   {
     label: 'Leads',
@@ -56,8 +67,31 @@ const navItems: NavItem[] = [
     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
   },
   {
+    label: 'Files',
+    href: '/dashboard/files',
+    icon: FolderOpen,
+    roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.AGENT],
+  },
+  {
+    label: 'Emails',
+    href: '/dashboard/emails',
+    icon: Mail,
+    roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+  },
+  {
+    label: 'Search',
+    href: '/dashboard/search',
+    icon: Search,
+  },
+  {
+    label: 'Activity Log',
+    href: '/dashboard/activity',
+    icon: Activity,
+    roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+  },
+  {
     label: 'AI Chat',
-    href: '/dashboard/chat',
+    href: '/dashboard/ai-chat',
     icon: MessageSquare,
   },
   {

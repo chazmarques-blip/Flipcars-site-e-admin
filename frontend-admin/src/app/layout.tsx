@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import { ToastProvider } from '@/components/providers/ToastProvider'
+// import { NotificationProvider } from '@/components/providers/NotificationProvider'
 import '../styles/globals.css'
 
 const inter = Inter({
@@ -55,7 +56,10 @@ export default function RootLayout({
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL} />
       </head>
       <body className="antialiased">
-        {children}
+        {/* NotificationProvider temporariamente desabilitado para testes sem backend */}
+        {/* <NotificationProvider> */}
+          {children}
+        {/* </NotificationProvider> */}
         <ToastProvider />
       </body>
     </html>

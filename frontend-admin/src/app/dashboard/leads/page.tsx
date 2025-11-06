@@ -17,6 +17,8 @@ import { Lead, LeadStatus, LeadPriority, LeadFilters } from '@/types/lead';
 import { leadService } from '@/lib/api/lead.service';
 import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { ExportButton } from '@/components/export';
+import { ExportColumn } from '@/types/export';
 
 export default function LeadsPage() {
   const router = useRouter();
@@ -196,6 +198,29 @@ export default function LeadsPage() {
     setFilters({});
   };
 
+  // Export columns configuration
+  const exportColumns: ExportColumn[] = [
+    { key: 'referenceNumber', label: 'Reference' },
+    { key: 'name', label: 'Customer Name' },
+    { key: 'email', label: 'Email' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'vehicleMake', label: 'Vehicle Make' },
+    { key: 'vehicleModel', label: 'Vehicle Model' },
+    { key: 'vehicleYear', label: 'Vehicle Year' },
+    { key: 'status', label: 'Status' },
+    { key: 'priority', label: 'Priority' },
+    { 
+      key: 'aiQualificationScore', 
+      label: 'AI Score',
+      format: (value) => value ? `${value}%` : 'N/A'
+    },
+    { 
+      key: 'createdAt', 
+      label: 'Created At',
+      format: (value) => new Date(value as string).toLocaleDateString()
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -204,12 +229,22 @@ export default function LeadsPage() {
           <h1 className="text-3xl font-heading font-bold text-gray-900">Leads</h1>
           <p className="text-gray-600 mt-1">Manage and track your leads</p>
         </div>
-        <Button
-          onClick={() => router.push('/dashboard/leads/new')}
-          leftIcon={<Plus className="w-5 h-5" />}
-        >
-          New Lead
-        </Button>
+        <div className="flex items-center space-x-3">
+          <ExportButton
+            data={leads}
+            columns={exportColumns}
+            filename="leads"
+            title="Leads Export"
+            description="Export of all leads matching current filters"
+            variant="secondary"
+          />
+          <Button
+            onClick={() => router.push('/dashboard/leads/new')}
+            leftIcon={<Plus className="w-5 h-5" />}
+          >
+            New Lead
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filters */}
