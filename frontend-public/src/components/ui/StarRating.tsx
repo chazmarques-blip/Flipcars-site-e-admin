@@ -18,14 +18,14 @@ export default function StarRating({
   // Ensure rating is between 0 and maxStars
   const clampedRating = Math.max(0, Math.min(maxStars, rating))
   
-  // Size classes
-  const sizeClasses = {
-    sm: 'w-3 h-3',
-    md: 'w-4 h-4',
-    lg: 'w-5 h-5'
+  // Size mapping for consistent sizing
+  const sizeMap = {
+    sm: 12,
+    md: 16,
+    lg: 20
   }
   
-  const starSize = sizeClasses[size]
+  const starSizePx = sizeMap[size]
   
   // Generate individual stars with their fill state
   const stars = []
@@ -35,31 +35,42 @@ export default function StarRating({
     if (clampedRating >= starValue) {
       // Full star
       stars.push(
-        <div key={i} className="relative inline-block">
+        <div key={i} className="relative" style={{ width: starSizePx, height: starSizePx, display: 'inline-block' }}>
           <Star 
-            className={`${starSize} fill-primary text-primary`}
+            width={starSizePx}
+            height={starSizePx}
+            className="fill-primary text-primary"
             strokeWidth={2}
           />
         </div>
       )
     } else if (clampedRating > i) {
-      // Partial star
-      const fillPercent = ((clampedRating - i) * 100)
+      // Partial star - calculate fill percentage
+      const fillPercent = (clampedRating - i) * 100
+      
       stars.push(
-        <div key={i} className="relative inline-block">
+        <div key={i} className="relative" style={{ width: starSizePx, height: starSizePx, display: 'inline-block' }}>
           {/* Empty star background */}
           <Star 
-            className={`${starSize} text-primary`}
+            width={starSizePx}
+            height={starSizePx}
+            className="absolute top-0 left-0 text-primary"
             strokeWidth={2}
             fill="none"
           />
-          {/* Filled portion overlay */}
+          {/* Filled portion with clip-path */}
           <div 
-            className="absolute top-0 left-0 overflow-hidden"
-            style={{ width: `${fillPercent}%` }}
+            className="absolute top-0 left-0"
+            style={{ 
+              width: `${fillPercent}%`,
+              height: '100%',
+              overflow: 'hidden'
+            }}
           >
             <Star 
-              className={`${starSize} fill-primary text-primary`}
+              width={starSizePx}
+              height={starSizePx}
+              className="fill-primary text-primary"
               strokeWidth={2}
             />
           </div>
@@ -68,9 +79,11 @@ export default function StarRating({
     } else {
       // Empty star
       stars.push(
-        <div key={i} className="relative inline-block">
+        <div key={i} className="relative" style={{ width: starSizePx, height: starSizePx, display: 'inline-block' }}>
           <Star 
-            className={`${starSize} text-primary`}
+            width={starSizePx}
+            height={starSizePx}
+            className="text-primary"
             strokeWidth={2}
             fill="none"
           />
@@ -81,7 +94,7 @@ export default function StarRating({
   
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="flex gap-0" style={{ gap: '1px' }}>
+      <div className="flex" style={{ gap: '2px' }}>
         {stars}
       </div>
       
