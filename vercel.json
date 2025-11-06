@@ -1,15 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "frontend-public/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/frontend-public/$1"
-    }
-  ]
+  "buildCommand": "cd frontend-public && npm run build",
+  "outputDirectory": "frontend-public/out",
+  "installCommand": "cd frontend-public && npm install"
 }
