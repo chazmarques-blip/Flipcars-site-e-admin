@@ -18,9 +18,6 @@ export default function StarRating({
   // Ensure rating is between 0 and maxStars
   const clampedRating = Math.max(0, Math.min(maxStars, rating))
   
-  // Calculate the percentage of stars to fill
-  const fillPercentage = (clampedRating / maxStars) * 100
-  
   // Size classes
   const sizeClasses = {
     sm: 'w-3 h-3',
@@ -30,33 +27,62 @@ export default function StarRating({
   
   const starSize = sizeClasses[size]
   
-  return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div className="flex relative">
-        {/* Background stars (empty/outline) */}
-        <div className="flex">
-          {[...Array(maxStars)].map((_, i) => (
-            <Star 
-              key={`bg-${i}`} 
-              className={`${starSize} text-primary`}
-              strokeWidth={2}
-            />
-          ))}
+  // Generate individual stars with their fill state
+  const stars = []
+  for (let i = 0; i < maxStars; i++) {
+    const starValue = i + 1
+    
+    if (clampedRating >= starValue) {
+      // Full star
+      stars.push(
+        <div key={i} className="relative inline-block">
+          <Star 
+            className={`${starSize} fill-primary text-primary`}
+            strokeWidth={2}
+          />
         </div>
-        
-        {/* Foreground stars (filled) with exact percentage */}
-        <div 
-          className="flex absolute top-0 left-0 overflow-hidden" 
-          style={{ width: `${fillPercentage}%` }}
-        >
-          {[...Array(maxStars)].map((_, i) => (
+      )
+    } else if (clampedRating > i) {
+      // Partial star
+      const fillPercent = ((clampedRating - i) * 100)
+      stars.push(
+        <div key={i} className="relative inline-block">
+          {/* Empty star background */}
+          <Star 
+            className={`${starSize} text-primary`}
+            strokeWidth={2}
+            fill="none"
+          />
+          {/* Filled portion overlay */}
+          <div 
+            className="absolute top-0 left-0 overflow-hidden"
+            style={{ width: `${fillPercent}%` }}
+          >
             <Star 
-              key={`fg-${i}`} 
               className={`${starSize} fill-primary text-primary`}
               strokeWidth={2}
             />
-          ))}
+          </div>
         </div>
+      )
+    } else {
+      // Empty star
+      stars.push(
+        <div key={i} className="relative inline-block">
+          <Star 
+            className={`${starSize} text-primary`}
+            strokeWidth={2}
+            fill="none"
+          />
+        </div>
+      )
+    }
+  }
+  
+  return (
+    <div className={`flex items-center gap-2 ${className}`}>
+      <div className="flex gap-0.5">
+        {stars}
       </div>
       
       {showValue && (

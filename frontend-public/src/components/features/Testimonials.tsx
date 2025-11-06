@@ -24,7 +24,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Orlando, FL',
     rating: 5,
     date: '2 weeks ago',
-    image: 'https://ui-avatars.com/api/?name=Sarah+Martinez&background=FF6B00&color=fff&size=200',
+    image: '/images/customer-sarah.jpg',
     text: 'Amazing job on my Honda Accord! Handled insurance, provided rental, and repair was flawless. Highly recommend!',
     service: 'Collision Repair'
   },
@@ -34,7 +34,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Winter Park, FL',
     rating: 5,
     date: '1 month ago',
-    image: 'https://ui-avatars.com/api/?name=Michael+Thompson&background=2C3E50&color=fff&size=200',
+    image: '/images/customer-michael.jpg',
     text: 'Best body shop experience ever! Professional team, kept me updated, and my truck looks brand new. Worth every penny!',
     service: 'Body Shop Services'
   },
@@ -44,7 +44,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Lake Mary, FL',
     rating: 5,
     date: '3 weeks ago',
-    image: 'https://ui-avatars.com/api/?name=Jennifer+Lee&background=16A34A&color=fff&size=200',
+    image: '/images/customer-jennifer.jpg',
     text: 'FlipCars made insurance so easy! Communicated directly with State Farm and my car was perfect in 4 days. Exceptional service!',
     service: 'Insurance Claims'
   },
@@ -54,7 +54,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Kissimmee, FL',
     rating: 5,
     date: '2 months ago',
-    image: 'https://ui-avatars.com/api/?name=Robert+Garcia&background=9333EA&color=fff&size=200',
+    image: '/images/customer-robert.jpg',
     text: 'Paint work on my BMW was perfection! Color match exact and showroom quality finish. Unmatched attention to detail!',
     service: 'Paint Services'
   },
@@ -64,7 +64,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Altamonte Springs, FL',
     rating: 5,
     date: '1 week ago',
-    image: 'https://ui-avatars.com/api/?name=David+Williams&background=DC2626&color=fff&size=200',
+    image: '/images/customer-david.jpg',
     text: 'Quick turnaround on my dent repair! Professional service and fair pricing. My car looks as good as new!',
     service: 'Dent Removal'
   },
@@ -74,7 +74,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Maitland, FL',
     rating: 5,
     date: '3 days ago',
-    image: 'https://ui-avatars.com/api/?name=Lisa+Anderson&background=7C3AED&color=fff&size=200',
+    image: '/images/customer-lisa.jpg',
     text: 'Outstanding work on my front bumper! Fast, professional, and the quality exceeded my expectations. Highly recommended!',
     service: 'Bumper Repair'
   },
@@ -84,7 +84,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Sanford, FL',
     rating: 5,
     date: '5 days ago',
-    image: 'https://ui-avatars.com/api/?name=Carlos+Rodriguez&background=F59E0B&color=fff&size=200',
+    image: '/images/customer-carlos.jpg',
     text: 'Incredible service from start to finish! They fixed my scratched door perfectly and the paint matches flawlessly. Best shop in Orlando!',
     service: 'Scratch Repair'
   },
@@ -94,7 +94,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Apopka, FL',
     rating: 5,
     date: '1 month ago',
-    image: 'https://ui-avatars.com/api/?name=Amanda+Foster&background=EC4899&color=fff&size=200',
+    image: '/images/customer-amanda.jpg',
     text: 'My Lexus looks brand new after their detailing and minor collision work. Honest pricing and excellent communication throughout!',
     service: 'Full Service'
   },
@@ -104,7 +104,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Oviedo, FL',
     rating: 5,
     date: '2 weeks ago',
-    image: 'https://ui-avatars.com/api/?name=James+Mitchell&background=10B981&color=fff&size=200',
+    image: '/images/customer-james-mitchell.jpg',
     text: 'They repaired my truck after a parking lot incident. Fast work, great quality, and very reasonable rates. Will definitely return!',
     service: 'Truck Repair'
   },
@@ -114,7 +114,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Windermere, FL',
     rating: 5,
     date: '4 days ago',
-    image: 'https://ui-avatars.com/api/?name=Patricia+Chen&background=8B5CF6&color=fff&size=200',
+    image: '/images/customer-patricia.jpg',
     text: 'My Mercedes had hail damage and FlipCars restored it perfectly! They worked directly with my insurance. Highly professional service!',
     service: 'Hail Damage'
   },
@@ -124,7 +124,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Clermont, FL',
     rating: 5,
     date: '1 week ago',
-    image: 'https://ui-avatars.com/api/?name=Kevin+Martinez&background=EF4444&color=fff&size=200',
+    image: '/images/customer-kevin.jpg',
     text: 'Front end collision repair was handled expertly. They kept me informed daily and finished ahead of schedule. Outstanding work!',
     service: 'Front End Repair'
   },
@@ -134,7 +134,7 @@ const fallbackTestimonials: Testimonial[] = [
     location: 'Winter Garden, FL',
     rating: 5,
     date: '3 weeks ago',
-    image: 'https://ui-avatars.com/api/?name=Emily+Johnson&background=06B6D4&color=fff&size=200',
+    image: '/images/customer-jennifer.jpg',
     text: 'Best auto body shop experience! They fixed my side mirror and door perfectly. Fair pricing and warranty included. Absolutely recommend!',
     service: 'Side Repair'
   }
