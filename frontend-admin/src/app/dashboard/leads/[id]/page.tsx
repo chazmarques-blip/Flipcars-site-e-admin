@@ -149,7 +149,7 @@ export default function LeadDetailPage() {
 
     try {
       await leadService.assignLead(leadId, staffId);
-      setLead({ ...lead, assignedTo: staffId });
+      setLead({ ...lead, assignedToId: staffId, assignedTo: null });
 
       // Add activity
       const newActivity: LeadActivity = {
@@ -398,7 +398,7 @@ export default function LeadDetailPage() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <LeadAssignment
                 leadId={leadId}
-                currentAssigneeId={lead.assignedTo}
+                currentAssigneeId={lead.assignedToId || undefined}
                 onAssign={handleAssign}
               />
             </div>
