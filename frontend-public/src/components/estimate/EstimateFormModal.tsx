@@ -32,8 +32,8 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
     setCurrentStep((prev) => Math.max(1, prev - 1));
   };
 
-  const handleSubmit = async (finalData: Partial<EstimateRequest>) => {
-    const completeData = { ...formData, ...finalData };
+  const handleContactSubmit = async (finalData: Partial<EstimateRequest>) => {
+    const completeData = { ...formData, ...finalData } as EstimateRequest;
     
     console.log('[EstimateForm] Submitting:', completeData);
     
@@ -41,8 +41,23 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
     const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
     setReferenceNumber(refNumber);
     
+    // Update form data with final data
+    setFormData(completeData);
+    
     // TODO: Implement API call to submit estimate
-    // For now, just move to confirmation
+    // Example:
+    // try {
+    //   const response = await fetch('/api/estimates', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(completeData)
+    //   });
+    //   if (!response.ok) throw new Error('Failed to submit');
+    // } catch (error) {
+    //   console.error('Submission error:', error);
+    //   // Show error message to user
+    //   return;
+    // }
     
     // Move to confirmation step
     const confirmationStep = formData.serviceType === 'bodyshop' ? 6 : 5;
@@ -146,7 +161,7 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
             (currentStep === 5 && formData.serviceType === 'bodyshop')) && (
             <Step4Contact
               initialData={formData}
-              onNext={handleNext}
+              onSubmit={handleContactSubmit}
               onBack={handleBack}
             />
           )}
@@ -155,11 +170,8 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
           {((currentStep === 5 && formData.serviceType === 'mechanic') ||
             (currentStep === 6 && formData.serviceType === 'bodyshop')) && (
             <Step5Confirmation
-              formData={formData}
+              data={formData as EstimateRequest}
               referenceNumber={referenceNumber}
-              onSubmit={handleSubmit}
-              onBack={handleBack}
-              onEdit={(step) => setCurrentStep(step)}
               onClose={handleReset}
             />
           )}
