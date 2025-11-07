@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { FileText, Camera, AlertCircle, Check } from 'lucide-react';
+import { AlertCircle, Check } from 'lucide-react';
 import { EstimateRequest } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
 
@@ -125,16 +125,75 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     } as any);
   };
 
+  // Photo diagrams matching bodyshop style
+  const PhotoDiagrams = {
+    policy: (
+      <svg viewBox="0 0 120 120" className="w-16 h-16 text-gold/30" fill="none">
+        {/* Document icon */}
+        <rect x="35" y="20" width="50" height="70" fill="currentColor" opacity="0.1" rx="4"/>
+        <path d="M35,20 L70,20 L85,35 L85,90 L35,90 Z" fill="currentColor" opacity="0.15" />
+        <path d="M70,20 L70,35 L85,35" stroke="currentColor" strokeWidth="2" fill="none"/>
+        {/* Lines representing text */}
+        <line x1="45" y1="45" x2="75" y2="45" stroke="currentColor" strokeWidth="2" opacity="0.4"/>
+        <line x1="45" y1="55" x2="75" y2="55" stroke="currentColor" strokeWidth="2" opacity="0.4"/>
+        <line x1="45" y1="65" x2="70" y2="65" stroke="currentColor" strokeWidth="2" opacity="0.4"/>
+        <text x="60" y="105" fontSize="7" fill="currentColor" textAnchor="middle" opacity="0.6">POLICY</text>
+      </svg>
+    ),
+    vinNumber: (
+      <svg viewBox="0 0 120 100" className="w-16 h-14 text-gold/30" fill="none">
+        {/* VIN Barcode style */}
+        <rect x="20" y="35" width="80" height="30" fill="currentColor" opacity="0.1" rx="4"/>
+        {/* Barcode lines */}
+        <line x1="25" y1="40" x2="25" y2="60" stroke="currentColor" strokeWidth="2"/>
+        <line x1="30" y1="40" x2="30" y2="60" stroke="currentColor" strokeWidth="1"/>
+        <line x1="35" y1="40" x2="35" y2="60" stroke="currentColor" strokeWidth="2"/>
+        <line x1="40" y1="40" x2="40" y2="60" stroke="currentColor" strokeWidth="1"/>
+        <line x1="45" y1="40" x2="45" y2="60" stroke="currentColor" strokeWidth="2"/>
+        <line x1="52" y1="40" x2="52" y2="60" stroke="currentColor" strokeWidth="3"/>
+        <line x1="58" y1="40" x2="58" y2="60" stroke="currentColor" strokeWidth="1"/>
+        <line x1="63" y1="40" x2="63" y2="60" stroke="currentColor" strokeWidth="2"/>
+        <line x1="68" y1="40" x2="68" y2="60" stroke="currentColor" strokeWidth="1"/>
+        <line x1="73" y1="40" x2="73" y2="60" stroke="currentColor" strokeWidth="2"/>
+        <line x1="80" y1="40" x2="80" y2="60" stroke="currentColor" strokeWidth="2"/>
+        <line x1="85" y1="40" x2="85" y2="60" stroke="currentColor" strokeWidth="1"/>
+        <line x1="90" y1="40" x2="90" y2="60" stroke="currentColor" strokeWidth="2"/>
+        <line x1="95" y1="40" x2="95" y2="60" stroke="currentColor" strokeWidth="1"/>
+        {/* Text */}
+        <text x="60" y="75" fontSize="7" fill="currentColor" textAnchor="middle" opacity="0.6">VIN NUMBER</text>
+      </svg>
+    ),
+    odometer: (
+      <svg viewBox="0 0 120 120" className="w-16 h-16 text-gold/30" fill="none">
+        {/* Odometer circle */}
+        <circle cx="60" cy="60" r="35" fill="currentColor" opacity="0.1" stroke="currentColor" strokeWidth="2"/>
+        {/* Gauge marks */}
+        <path d="M60,30 L60,35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M85,45 L81,47" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M90,60 L85,60" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M85,75 L81,73" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M35,45 L39,47" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M30,60 L35,60" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M35,75 L39,73" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        {/* Digital display */}
+        <rect x="42" y="55" width="36" height="14" fill="#D4AF37" opacity="0.2" rx="2"/>
+        <text x="60" y="65" fontSize="9" fontWeight="bold" fill="currentColor" textAnchor="middle">174368</text>
+        {/* Label */}
+        <text x="60" y="95" fontSize="6" fill="currentColor" textAnchor="middle" opacity="0.6">MILEAGE</text>
+      </svg>
+    ),
+  };
+
   // Upload card component for consistency
   const UploadCard = ({ 
     title, 
-    icon: Icon, 
+    diagram, 
     file, 
     fileType,
     accept 
   }: { 
     title: string; 
-    icon: typeof FileText | typeof Camera; 
+    diagram: React.ReactNode; 
     file: File | null;
     fileType: 'policy' | 'vin' | 'odometer';
     accept: string;
@@ -148,8 +207,8 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-3 text-center">
-            <Icon className="w-8 h-8 text-neutral-300 mb-1" strokeWidth={1.5} />
-            <p className="text-[10px] text-neutral-600 font-medium">{title}</p>
+            {diagram}
+            <p className="text-[10px] text-neutral-600 font-medium mt-1">{title}</p>
             <p className="text-gold text-[9px] mt-0.5">Required</p>
           </div>
         )}
@@ -177,21 +236,21 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
       <div className="grid grid-cols-3 gap-2">
         <UploadCard
           title="Policy Document"
-          icon={FileText}
+          diagram={PhotoDiagrams.policy}
           file={policyFile}
           fileType="policy"
           accept=".pdf,image/jpeg,image/jpg,image/png,image/webp"
         />
         <UploadCard
           title="VIN Number"
-          icon={Camera}
+          diagram={PhotoDiagrams.vinNumber}
           file={vinFile}
           fileType="vin"
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
         <UploadCard
           title="Odometer"
-          icon={Camera}
+          diagram={PhotoDiagrams.odometer}
           file={odometerFile}
           fileType="odometer"
           accept="image/jpeg,image/jpg,image/png,image/webp"
@@ -217,7 +276,16 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
                   : 'border-neutral-300 bg-white text-neutral-700 hover:border-gold hover:bg-gold/5'
               }`}
             >
-              <span className="text-sm">{category.icon}</span>
+              <span 
+                className="text-sm flex-shrink-0"
+                style={{ 
+                  filter: selectedIssues.includes(category.id) 
+                    ? 'drop-shadow(0 0 2px #D4AF37)' 
+                    : 'none' 
+                }}
+              >
+                {category.icon}
+              </span>
               <span className="flex-1 text-left leading-tight">{category.label}</span>
               {selectedIssues.includes(category.id) && (
                 <Check className="w-3 h-3 text-gold flex-shrink-0" />
