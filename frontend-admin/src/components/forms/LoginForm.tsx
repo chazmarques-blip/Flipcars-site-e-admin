@@ -25,10 +25,19 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      console.log('[LoginForm] Attempting login with:', data.email);
       await login(data);
+      console.log('[LoginForm] Login successful!');
       toast.success('Login successful!');
-      router.push('/dashboard');
+      
+      // Give time for Zustand to persist to localStorage
+      setTimeout(() => {
+        console.log('[LoginForm] Redirecting to dashboard...');
+        // Use window.location for hard navigation to ensure state is persisted
+        window.location.href = '/dashboard';
+      }, 300);
     } catch (error) {
+      console.error('[LoginForm] Login failed:', error);
       const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Login failed. Please try again.';
       toast.error(errorMessage);
     }

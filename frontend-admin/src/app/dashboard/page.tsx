@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { Card, CardHeader, CardContent, Badge } from '@/components/ui';
+import { EstimateFormModal } from '@/components/estimate';
 import {
   TrendingUp,
   Users,
@@ -11,10 +13,12 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  ClipboardList,
 } from 'lucide-react';
 
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
+  const [isEstimateModalOpen, setIsEstimateModalOpen] = useState(false);
 
   const stats = [
     {
@@ -95,13 +99,23 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div>
-        <h1 className="text-3xl font-heading font-bold text-gray-900">
-          Welcome back, {user?.name}! 👋
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Here&apos;s what&apos;s happening with your auto body shop today.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-heading font-bold text-gray-900">
+            Welcome back, {user?.name}! 👋
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Here&apos;s what&apos;s happening with your auto body shop today.
+          </p>
+        </div>
+        {/* Test Estimate Form Button */}
+        <button
+          onClick={() => setIsEstimateModalOpen(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-[#FF7A1A] hover:bg-[#FF7A1A]/90 text-white font-semibold rounded-lg shadow-lg transition-all hover:scale-105"
+        >
+          <ClipboardList className="w-5 h-5" />
+          <span>Test Estimate Form</span>
+        </button>
       </div>
 
       {/* Stats Grid */}
@@ -229,6 +243,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Estimate Form Modal */}
+      <EstimateFormModal
+        isOpen={isEstimateModalOpen}
+        onClose={() => setIsEstimateModalOpen(false)}
+      />
     </div>
   );
 }

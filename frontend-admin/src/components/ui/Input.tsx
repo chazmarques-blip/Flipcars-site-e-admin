@@ -28,11 +28,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || `input-${Math.random().toString(36).substring(7)}`;
 
     return (
-      <div className={clsx('flex flex-col gap-1.5', fullWidth && 'w-full')}>
+      <div className={clsx('flex flex-col gap-1', fullWidth && 'w-full')}>
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-gray-700"
+            className="text-xs font-medium text-gray-700"
           >
             {label}
             {props.required && <span className="text-danger ml-1">*</span>}
@@ -50,7 +50,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={clsx(
-              'w-full px-4 py-2 border rounded-lg transition-all duration-200',
+              'w-full px-3 py-1.5 text-sm border rounded-lg transition-all duration-200',
               'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
               'disabled:bg-gray-100 disabled:cursor-not-allowed',
               error
@@ -75,13 +75,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error && (
-          <p id={`${inputId}-error`} className="text-sm text-danger">
+          <p id={`${inputId}-error`} className="text-xs text-danger">
             {error}
           </p>
         )}
 
         {helperText && !error && (
-          <p id={`${inputId}-helper`} className="text-sm text-gray-500">
+          <p id={`${inputId}-helper`} className="text-xs text-gray-500">
             {helperText}
           </p>
         )}

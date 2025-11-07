@@ -1,10 +1,12 @@
-import { DashboardLayout } from '@/components/layouts';
+'use client';
 
-export const metadata = {
-  title: 'Dashboard - FlipCars 2.0',
-  description: 'FlipCars admin dashboard',
-};
+import { DashboardLayout } from '@/components/layouts';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+  return (
+    <ProtectedRoute>
+      <DashboardLayout>{children}</DashboardLayout>
+    </ProtectedRoute>
+  );
 }
