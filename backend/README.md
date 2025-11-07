@@ -6,6 +6,21 @@ Complete NestJS backend with AI-powered lead qualification system for auto body 
 
 ---
 
+## 🌐 Production Deployment
+
+**Live API:** https://api.flipcars.us
+
+**📚 Complete Deployment Guide:** See `/RAILWAY_DEPLOYMENT_GUIDE.md` in project root
+
+**Quick Deploy to Railway:**
+1. Push code to GitHub
+2. Create Railway project from repo
+3. Add PostgreSQL database
+4. Configure environment variables
+5. Deploy and configure custom domain
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites
