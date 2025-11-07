@@ -417,7 +417,7 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           .print-header {
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 3px solid #FF7A1A;
+            border-bottom: 3px solid #D4AF37;
             padding-bottom: 15px;
           }
 
@@ -450,12 +450,12 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           /* Reference Number */
           .print-reference {
             background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
-            color: #FF7A1A;
+            color: #D4AF37;
             padding: 15px;
             text-align: center;
             border-radius: 8px;
             margin-bottom: 20px;
-            border: 2px solid #FF7A1A;
+            border: 2px solid #D4AF37;
           }
 
           .reference-label {
@@ -506,7 +506,7 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
             font-size: 12px;
             font-weight: bold;
             color: #000;
-            border-bottom: 2px solid #FF7A1A;
+            border-bottom: 2px solid #D4AF37;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -515,7 +515,7 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           .section-icon {
             width: 14px;
             height: 14px;
-            color: #FF7A1A;
+            color: #D4AF37;
           }
 
           .section-content {
@@ -584,7 +584,7 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           .contact-icon {
             width: 14px;
             height: 14px;
-            color: #FF7A1A;
+            color: #D4AF37;
             flex-shrink: 0;
             margin-top: 2px;
           }
@@ -663,7 +663,7 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           .step-number {
             width: 20px;
             height: 20px;
-            background: #FF7A1A;
+            background: #D4AF37;
             color: #000;
             border-radius: 50%;
             display: flex;
@@ -689,7 +689,7 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
 
           /* Footer */
           .print-footer {
-            border-top: 2px solid #FF7A1A;
+            border-top: 2px solid #D4AF37;
             padding-top: 12px;
             text-align: center;
             margin-top: 15px;

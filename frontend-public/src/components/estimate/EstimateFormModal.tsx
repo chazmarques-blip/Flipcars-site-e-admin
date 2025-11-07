@@ -90,7 +90,7 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
           </div>
           <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#FF7A1A] transition-all duration-300 ease-in-out"
+              className="h-full bg-[#D4AF37] transition-all duration-300 ease-in-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>

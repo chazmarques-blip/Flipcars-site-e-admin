@@ -176,7 +176,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
         <path d="M30,60 L35,60" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         <path d="M35,75 L39,73" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         {/* Digital display */}
-        <rect x="42" y="55" width="36" height="14" fill="#FF7A1A" opacity="0.2" rx="2"/>
+        <rect x="42" y="55" width="36" height="14" fill="#D4AF37" opacity="0.2" rx="2"/>
         <text x="60" y="65" fontSize="9" fontWeight="bold" fill="currentColor" textAnchor="middle">174368</text>
         {/* Label */}
         <text x="60" y="95" fontSize="6" fill="currentColor" textAnchor="middle" opacity="0.6">MILEAGE</text>
@@ -280,7 +280,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
                 className="text-sm flex-shrink-0"
                 style={{ 
                   filter: selectedIssues.includes(category.id) 
-                    ? 'drop-shadow(0 0 2px #FF7A1A)' 
+                    ? 'drop-shadow(0 0 2px #D4AF37)' 
                     : 'none' 
                 }}
               >
