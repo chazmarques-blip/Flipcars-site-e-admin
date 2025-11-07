@@ -232,67 +232,35 @@ export function Step3Photos({ initialData, onNext, onBack }: Step3PhotosProps) {
   );
 }
 
-// Car diagram SVGs for photo masks (defined before PhotoUploadBox to avoid reference errors)
+// Professional car angle images (AI-generated in gold tone)
 const PhotoDiagrams = {
   driverFront: (
-    <svg viewBox="0 0 120 120" className="w-20 h-20 text-gold/30" fill="none">
-      {/* Car body - front 3/4 view from driver side */}
-      <path d="M30,70 L35,45 L50,35 L70,35 L85,45 L90,70 L85,90 L75,95 L45,95 L35,90 Z" fill="currentColor" opacity="0.3" stroke="currentColor" strokeWidth="2"/>
-      {/* Windshield */}
-      <path d="M40,45 L50,38 L70,38 L80,45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      {/* Side window */}
-      <path d="M38,55 L38,70 L45,75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      {/* Wheels */}
-      <circle cx="45" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      <circle cx="75" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      {/* Highlight marker */}
-      <path d="M25,45 L35,35 L35,55 Z" fill="#D4AF37" opacity="0.6"/>
-    </svg>
+    <img 
+      src="/images/car-angles/driver-front-gold.jpg" 
+      alt="Driver Front" 
+      className="w-full h-full object-contain opacity-80"
+    />
   ),
   passengerFront: (
-    <svg viewBox="0 0 120 120" className="w-20 h-20 text-gold/30" fill="none">
-      {/* Car body - front 3/4 view from passenger side */}
-      <path d="M30,70 L35,45 L50,35 L70,35 L85,45 L90,70 L85,90 L75,95 L45,95 L35,90 Z" fill="currentColor" opacity="0.3" stroke="currentColor" strokeWidth="2" transform="scale(-1,1) translate(-120,0)"/>
-      {/* Windshield */}
-      <path d="M40,45 L50,38 L70,38 L80,45" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" transform="scale(-1,1) translate(-120,0)"/>
-      {/* Side window */}
-      <path d="M82,55 L82,70 L75,75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" transform="scale(-1,1) translate(-120,0)"/>
-      {/* Wheels */}
-      <circle cx="45" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      <circle cx="75" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      {/* Highlight marker */}
-      <path d="M95,45 L85,35 L85,55 Z" fill="#D4AF37" opacity="0.6"/>
-    </svg>
+    <img 
+      src="/images/car-angles/passenger-front-gold.jpg" 
+      alt="Passenger Front" 
+      className="w-full h-full object-contain opacity-80"
+    />
   ),
   driverRear: (
-    <svg viewBox="0 0 120 120" className="w-20 h-20 text-gold/30" fill="none">
-      {/* Car body - rear 3/4 view from driver side */}
-      <path d="M30,70 L35,50 L45,35 L75,35 L85,50 L90,70 L85,90 L75,95 L45,95 L35,90 Z" fill="currentColor" opacity="0.3" stroke="currentColor" strokeWidth="2"/>
-      {/* Rear window */}
-      <path d="M40,50 L50,40 L70,40 L80,50" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      {/* Tail lights */}
-      <rect x="35" y="75" width="6" height="10" fill="#D4AF37" opacity="0.5" rx="1"/>
-      {/* Wheels */}
-      <circle cx="45" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      <circle cx="75" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      {/* Highlight marker */}
-      <path d="M25,65 L35,55 L35,75 Z" fill="#D4AF37" opacity="0.6"/>
-    </svg>
+    <img 
+      src="/images/car-angles/driver-rear-gold.jpg" 
+      alt="Driver Rear" 
+      className="w-full h-full object-contain opacity-80"
+    />
   ),
   passengerRear: (
-    <svg viewBox="0 0 120 120" className="w-20 h-20 text-gold/30" fill="none">
-      {/* Car body - rear 3/4 view from passenger side */}
-      <path d="M30,70 L35,50 L45,35 L75,35 L85,50 L90,70 L85,90 L75,95 L45,95 L35,90 Z" fill="currentColor" opacity="0.3" stroke="currentColor" strokeWidth="2" transform="scale(-1,1) translate(-120,0)"/>
-      {/* Rear window */}
-      <path d="M40,50 L50,40 L70,40 L80,50" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" transform="scale(-1,1) translate(-120,0)"/>
-      {/* Tail lights */}
-      <rect x="79" y="75" width="6" height="10" fill="#D4AF37" opacity="0.5" rx="1"/>
-      {/* Wheels */}
-      <circle cx="45" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      <circle cx="75" cy="90" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
-      {/* Highlight marker */}
-      <path d="M95,65 L85,55 L85,75 Z" fill="#D4AF37" opacity="0.6"/>
-    </svg>
+    <img 
+      src="/images/car-angles/passenger-rear-gold.jpg" 
+      alt="Passenger Rear" 
+      className="w-full h-full object-contain opacity-80"
+    />
   ),
   vinNumber: (
     <svg viewBox="0 0 120 100" className="w-20 h-16 text-gold/30" fill="none">
