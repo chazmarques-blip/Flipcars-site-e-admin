@@ -1,7 +1,7 @@
 # 🚀 Deploy do Admin Dashboard - FlipInvest
 
 **Data:** 2025-11-07  
-**Domínio Alvo:** `admin.flipinvest.us`  
+**Domínio Alvo:** `admin.flipcars.us`  
 **Projeto:** frontend-admin (Free Estimate Form completo)
 
 ---
@@ -12,11 +12,11 @@
 - [x] PR #2 mergeado com todos os recursos do Estimate Form
 - [x] Código está na branch `main`
 - [x] `vercel.json` criado em `/frontend-admin/`
-- [x] Site público rodando em `www.flipinvest.us`
+- [x] Site público rodando em `www.flipcars.us`
 
 ❌ **Falta fazer:**
 - [ ] Deploy do Admin Dashboard
-- [ ] Configurar domínio `admin.flipinvest.us`
+- [ ] Configurar domínio `admin.flipcars.us`
 
 ---
 
@@ -76,7 +76,7 @@ Clique em **"Add Environment Variable"** e adicione:
 
 ```
 Nome:                   NEXT_PUBLIC_API_URL
-Valor:                  https://api.flipinvest.us
+Valor:                  https://api.flipcars.us
 Environment:            Production, Preview, Development (todos)
 ```
 
@@ -97,7 +97,7 @@ Environment:            Production, Preview, Development (todos)
 1. No projeto deployado, vá para **"Settings"**
 2. No menu lateral, clique em **"Domains"**
 3. Clique em **"Add Domain"**
-4. Digite: **`admin.flipinvest.us`**
+4. Digite: **`admin.flipcars.us`**
 5. Clique em **"Add"**
 
 #### 5.2 Configurar DNS (Cloudflare, GoDaddy, etc.)
@@ -136,7 +136,7 @@ TTL:        Auto
 Abra no navegador:
 
 ```
-https://admin.flipinvest.us
+https://admin.flipcars.us
 ```
 
 **Teste o Free Estimate Form:**
@@ -194,7 +194,7 @@ npx vercel --prod
 
 ```bash
 npx vercel env add NEXT_PUBLIC_API_URL production
-# Cole quando solicitado: https://api.flipinvest.us
+# Cole quando solicitado: https://api.flipcars.us
 ```
 
 ---
@@ -202,7 +202,7 @@ npx vercel env add NEXT_PUBLIC_API_URL production
 ### Passo 4: Configurar Domínio
 
 ```bash
-npx vercel domains add admin.flipinvest.us --scope [seu-scope]
+npx vercel domains add admin.flipcars.us --scope [seu-scope]
 ```
 
 Em seguida, configure o CNAME no DNS (mesmo processo da Opção A, Passo 5.2).
@@ -223,7 +223,7 @@ Após o primeiro deploy com Opção A:
 
 ### Checklist de Funcionalidades:
 
-- [ ] **Admin Dashboard carrega:** `https://admin.flipinvest.us`
+- [ ] **Admin Dashboard carrega:** `https://admin.flipcars.us`
 - [ ] **Login funciona** (se aplicável)
 - [ ] **Botão "Get Free Estimate" visível**
 - [ ] **Estimate Form abre corretamente**
@@ -276,8 +276,8 @@ Se passar localmente, o problema pode ser environment variables faltando na Verc
 2. Aguarde propagação DNS (até 48h, geralmente 5-30 minutos)
 3. Use ferramentas:
    ```bash
-   nslookup admin.flipinvest.us
-   dig admin.flipinvest.us
+   nslookup admin.flipcars.us
+   dig admin.flipcars.us
    ```
 
 ---
@@ -341,7 +341,7 @@ git push origin main
 Após deploy bem-sucedido:
 
 1. ✅ **Testar todos os fluxos do Estimate Form**
-2. ✅ **Configurar email auto@flipinvest.us** (sessão separada)
+2. ✅ **Configurar email auto@flipcars.us** (sessão separada)
 3. ✅ **Conectar com backend API**
 4. ✅ **Configurar analytics (Google Analytics, Vercel Analytics)**
 5. ✅ **Adicionar monitoring (Sentry, LogRocket)**
