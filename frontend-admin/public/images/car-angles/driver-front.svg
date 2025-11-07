@@ -1,0 +1,56 @@
+<svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Driver Front View (3/4 front-left) -->
+  <g transform="translate(20, 20)">
+    <!-- Car body -->
+    <path d="M 30 50 L 40 30 L 80 20 L 130 30 L 140 50 L 140 70 L 130 75 L 40 75 L 30 70 Z" 
+          fill="#1a1a1a" 
+          stroke="#000000" 
+          stroke-width="2"/>
+    
+    <!-- Windshield -->
+    <path d="M 45 30 L 55 22 L 100 22 L 120 30 L 100 35 L 55 35 Z" 
+          fill="#3a3a3a" 
+          stroke="#000000" 
+          stroke-width="1.5"/>
+    
+    <!-- Hood -->
+    <path d="M 40 50 L 50 40 L 115 40 L 130 50 L 115 52 L 50 52 Z" 
+          fill="#2a2a2a" 
+          stroke="#000000" 
+          stroke-width="1.5"/>
+    
+    <!-- Headlight left -->
+    <ellipse cx="45" cy="55" rx="8" ry="5" 
+             fill="#4a4a4a" 
+             stroke="#000000" 
+             stroke-width="1"/>
+    
+    <!-- Headlight right -->
+    <ellipse cx="125" cy="55" rx="8" ry="5" 
+             fill="#4a4a4a" 
+             stroke="#000000" 
+             stroke-width="1"/>
+    
+    <!-- Wheel left -->
+    <circle cx="50" cy="75" r="10" 
+            fill="#000000" 
+            stroke="#1a1a1a" 
+            stroke-width="2"/>
+    <circle cx="50" cy="75" r="5" 
+            fill="#2a2a2a"/>
+    
+    <!-- Wheel right -->
+    <circle cx="120" cy="75" r="10" 
+            fill="#000000" 
+            stroke="#1a1a1a" 
+            stroke-width="2"/>
+    <circle cx="120" cy="75" r="5" 
+            fill="#2a2a2a"/>
+    
+    <!-- Side mirror -->
+    <ellipse cx="35" cy="45" rx="5" ry="3" 
+             fill="#1a1a1a" 
+             stroke="#000000" 
+             stroke-width="1"/>
+  </g>
+</svg>

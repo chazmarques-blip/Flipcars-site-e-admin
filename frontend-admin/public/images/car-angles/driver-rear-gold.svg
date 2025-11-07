@@ -1,0 +1,73 @@
+<svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Driver Rear View (3/4 rear-left) - Gold/Beige Soft Version -->
+  <g transform="translate(20, 20)">
+    <!-- Car body -->
+    <path d="M 30 30 L 40 20 L 130 20 L 140 30 L 140 60 L 130 70 L 40 70 L 30 60 Z" 
+          fill="#F5E6D3" 
+          stroke="#D4AF37" 
+          stroke-width="2"
+          opacity="0.8"/>
+    
+    <!-- Rear window -->
+    <path d="M 45 25 L 55 22 L 115 22 L 125 25 L 115 30 L 55 30 Z" 
+          fill="#E8D4B8" 
+          stroke="#D4AF37" 
+          stroke-width="1.5"
+          opacity="0.7"/>
+    
+    <!-- Trunk -->
+    <path d="M 40 40 L 50 35 L 120 35 L 130 40 L 120 45 L 50 45 Z" 
+          fill="#EDD9C0" 
+          stroke="#D4AF37" 
+          stroke-width="1.5"
+          opacity="0.75"/>
+    
+    <!-- Taillight left -->
+    <rect x="38" y="48" width="12" height="8" rx="2" 
+          fill="#D4AF37" 
+          stroke="#C19A2E" 
+          stroke-width="1"
+          opacity="0.6"/>
+    
+    <!-- Taillight right -->
+    <rect x="120" y="48" width="12" height="8" rx="2" 
+          fill="#D4AF37" 
+          stroke="#C19A2E" 
+          stroke-width="1"
+          opacity="0.6"/>
+    
+    <!-- Wheel left -->
+    <circle cx="50" cy="70" r="10" 
+            fill="#D4AF37" 
+            stroke="#C19A2E" 
+            stroke-width="2"
+            opacity="0.6"/>
+    <circle cx="50" cy="70" r="5" 
+            fill="#E8D4B8"
+            opacity="0.5"/>
+    
+    <!-- Wheel right -->
+    <circle cx="120" cy="70" r="10" 
+            fill="#D4AF37" 
+            stroke="#C19A2E" 
+            stroke-width="2"
+            opacity="0.6"/>
+    <circle cx="120" cy="70" r="5" 
+            fill="#E8D4B8"
+            opacity="0.5"/>
+    
+    <!-- Side mirror -->
+    <ellipse cx="35" cy="35" rx="5" ry="3" 
+             fill="#EDD9C0" 
+             stroke="#D4AF37" 
+             stroke-width="1"
+             opacity="0.7"/>
+    
+    <!-- Bumper -->
+    <rect x="40" y="58" width="90" height="4" rx="2" 
+          fill="#EDD9C0" 
+          stroke="#D4AF37" 
+          stroke-width="1"
+          opacity="0.75"/>
+  </g>
+</svg>
