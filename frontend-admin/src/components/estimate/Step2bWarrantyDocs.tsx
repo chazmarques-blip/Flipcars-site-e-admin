@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Upload, FileText, Camera, AlertCircle, Check } from 'lucide-react';
+import { FileText, Camera, AlertCircle, Check } from 'lucide-react';
 import { EstimateRequest } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
 
@@ -125,100 +125,77 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     } as any);
   };
 
+  // Upload card component for consistency
+  const UploadCard = ({ 
+    title, 
+    icon: Icon, 
+    file, 
+    fileType,
+    accept 
+  }: { 
+    title: string; 
+    icon: typeof FileText | typeof Camera; 
+    file: File | null;
+    fileType: 'policy' | 'vin' | 'odometer';
+    accept: string;
+  }) => (
+    <div className="space-y-1">
+      <label className="relative flex flex-col items-center justify-center h-32 border-2 border-dashed border-neutral-200 rounded-lg cursor-pointer hover:border-gold hover:bg-gold/5 transition-colors bg-white overflow-hidden">
+        {file ? (
+          <div className="flex flex-col items-center justify-center p-3 text-center">
+            <Check className="w-6 h-6 text-green-600 mb-1" />
+            <p className="text-[10px] text-green-600 font-medium truncate max-w-full px-2">{file.name}</p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center p-3 text-center">
+            <Icon className="w-8 h-8 text-neutral-300 mb-1" strokeWidth={1.5} />
+            <p className="text-[10px] text-neutral-600 font-medium">{title}</p>
+            <p className="text-gold text-[9px] mt-0.5">Required</p>
+          </div>
+        )}
+        <input
+          type="file"
+          className="hidden"
+          accept={accept}
+          onChange={(e) => handleFileChange(e, fileType)}
+        />
+      </label>
+    </div>
+  );
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Policy Document Upload */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-black">
-          Extended Warranty Policy
-        </label>
-        <p className="text-xs text-neutral-600">Upload your warranty policy document (PDF or photo)</p>
-        
-        <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer hover:border-gold hover:bg-gold/5 transition-colors">
-          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            {policyFile ? (
-              <>
-                <Check className="w-8 h-8 text-green-600 mb-2" />
-                <p className="text-xs text-green-600 font-medium">{policyFile.name}</p>
-                <p className="text-[10px] text-neutral-500 mt-1">Click to change</p>
-              </>
-            ) : (
-              <>
-                <Upload className="w-8 h-8 text-neutral-400 mb-2" />
-                <p className="text-xs text-neutral-600">
-                  <span className="font-semibold">Click to upload</span> policy document
-                </p>
-                <p className="text-[10px] text-neutral-500 mt-1">PDF, JPG, PNG (max 10MB)</p>
-              </>
-            )}
-          </div>
-          <input
-            type="file"
-            className="hidden"
-            accept=".pdf,image/jpeg,image/jpg,image/png,image/webp"
-            onChange={(e) => handleFileChange(e, 'policy')}
-          />
-        </label>
+      {/* Title */}
+      <div className="space-y-1">
+        <h3 className="text-sm font-semibold text-black">Warranty Documents</h3>
+        <p className="text-[10px] text-neutral-600">
+          Upload documents to help us verify your warranty coverage
+        </p>
       </div>
 
-      {/* VIN Photo */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-black">
-          VIN Number Photo
-        </label>
-        <p className="text-xs text-neutral-600">Photo of your vehicle's VIN plate</p>
-        
-        <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer hover:border-gold hover:bg-gold/5 transition-colors">
-          <div className="flex flex-col items-center justify-center">
-            {vinFile ? (
-              <>
-                <Check className="w-6 h-6 text-green-600 mb-1" />
-                <p className="text-xs text-green-600 font-medium">{vinFile.name}</p>
-              </>
-            ) : (
-              <>
-                <Camera className="w-6 h-6 text-neutral-400 mb-1" />
-                <p className="text-xs text-neutral-600">Upload VIN photo</p>
-              </>
-            )}
-          </div>
-          <input
-            type="file"
-            className="hidden"
-            accept="image/jpeg,image/jpg,image/png,image/webp"
-            onChange={(e) => handleFileChange(e, 'vin')}
-          />
-        </label>
-      </div>
-
-      {/* Odometer Photo */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-black">
-          Odometer Photo
-        </label>
-        <p className="text-xs text-neutral-600">Photo showing current mileage</p>
-        
-        <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer hover:border-gold hover:bg-gold/5 transition-colors">
-          <div className="flex flex-col items-center justify-center">
-            {odometerFile ? (
-              <>
-                <Check className="w-6 h-6 text-green-600 mb-1" />
-                <p className="text-xs text-green-600 font-medium">{odometerFile.name}</p>
-              </>
-            ) : (
-              <>
-                <Camera className="w-6 h-6 text-neutral-400 mb-1" />
-                <p className="text-xs text-neutral-600">Upload odometer photo</p>
-              </>
-            )}
-          </div>
-          <input
-            type="file"
-            className="hidden"
-            accept="image/jpeg,image/jpg,image/png,image/webp"
-            onChange={(e) => handleFileChange(e, 'odometer')}
-          />
-        </label>
+      {/* 3 Upload Cards in Grid - Similar to Bodyshop Photos */}
+      <div className="grid grid-cols-3 gap-2">
+        <UploadCard
+          title="Policy Document"
+          icon={FileText}
+          file={policyFile}
+          fileType="policy"
+          accept=".pdf,image/jpeg,image/jpg,image/png,image/webp"
+        />
+        <UploadCard
+          title="VIN Number"
+          icon={Camera}
+          file={vinFile}
+          fileType="vin"
+          accept="image/jpeg,image/jpg,image/png,image/webp"
+        />
+        <UploadCard
+          title="Odometer"
+          icon={Camera}
+          file={odometerFile}
+          fileType="odometer"
+          accept="image/jpeg,image/jpg,image/png,image/webp"
+        />
       </div>
 
       {/* Issue Selection */}
@@ -226,7 +203,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
         <label className="block text-sm font-medium text-black">
           Select Issue Type <span className="text-gold">*</span>
         </label>
-        <p className="text-xs text-neutral-600">Check all that apply</p>
+        <p className="text-[10px] text-neutral-600">Check all that apply</p>
         
         <div className="grid grid-cols-2 gap-2">
           {WARRANTY_CATEGORIES.map((category) => (
@@ -234,23 +211,23 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
               key={category.id}
               type="button"
               onClick={() => toggleIssue(category.id)}
-              className={`flex items-center gap-2 px-3 py-2 text-xs border rounded-lg transition-all ${
+              className={`flex items-center gap-2 px-2.5 py-1.5 text-[11px] border rounded-lg transition-all ${
                 selectedIssues.includes(category.id)
                   ? 'border-gold bg-gold/10 text-black font-medium'
                   : 'border-neutral-300 bg-white text-neutral-700 hover:border-gold hover:bg-gold/5'
               }`}
             >
-              <span className="text-base">{category.icon}</span>
-              <span className="flex-1 text-left">{category.label}</span>
+              <span className="text-sm">{category.icon}</span>
+              <span className="flex-1 text-left leading-tight">{category.label}</span>
               {selectedIssues.includes(category.id) && (
-                <Check className="w-4 h-4 text-gold" />
+                <Check className="w-3 h-3 text-gold flex-shrink-0" />
               )}
             </button>
           ))}
         </div>
         
         {errors.selectedIssues && (
-          <p className="text-xs text-red-600 flex items-center gap-1">
+          <p className="text-[10px] text-red-600 flex items-center gap-1">
             <AlertCircle className="w-3 h-3" />
             {errors.selectedIssues.message}
           </p>
@@ -258,18 +235,18 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
       </div>
 
       {/* Symptoms Description */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label htmlFor="symptomsDescription" className="block text-sm font-medium text-black">
           Describe the Symptoms <span className="text-gold">*</span>
         </label>
-        <p className="text-xs text-neutral-600">
-          Provide details about what you're experiencing with your vehicle
+        <p className="text-[10px] text-neutral-600">
+          What are you experiencing with your vehicle?
         </p>
         <textarea
           id="symptomsDescription"
           {...register('symptomsDescription')}
-          rows={4}
-          placeholder="Example: The engine makes a knocking sound when accelerating, especially noticeable when cold. The check engine light came on yesterday..."
+          rows={3}
+          placeholder="Example: Engine makes knocking sound when accelerating, especially when cold..."
           className={`w-full px-3 py-2 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none ${
             errors.symptomsDescription ? 'border-red-500' : 'border-neutral-300'
           }`}
@@ -277,26 +254,25 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
         <div className="flex justify-between items-center">
           <div>
             {errors.symptomsDescription && (
-              <p className="text-xs text-red-600 flex items-center gap-1">
+              <p className="text-[10px] text-red-600 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
                 {errors.symptomsDescription.message}
               </p>
             )}
           </div>
-          <p className="text-[10px] text-neutral-500">
+          <p className="text-[9px] text-neutral-500">
             {symptomsDescription?.length || 0} characters
           </p>
         </div>
       </div>
 
       {/* Info Box */}
-      <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-        <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+      <div className="flex items-start gap-2 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+        <AlertCircle className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
-          <p className="text-xs text-amber-900 font-medium">Important</p>
-          <p className="text-[10px] text-amber-800 mt-1">
-            These documents help us verify your warranty coverage and expedite your service. 
-            All uploads are optional but recommended for faster processing.
+          <p className="text-[10px] text-amber-900 font-medium">Important</p>
+          <p className="text-[9px] text-amber-800 mt-0.5 leading-tight">
+            These documents help us verify warranty coverage and expedite service. All uploads are optional but recommended.
           </p>
         </div>
       </div>
