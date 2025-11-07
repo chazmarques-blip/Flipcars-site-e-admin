@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { EstimateForm } from '@/components/estimate/EstimateForm';
 
 export default function EstimatePage() {
-  const [formStep, setFormStep] = useState(1);
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -25,7 +23,7 @@ export default function EstimatePage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Info Card */}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <div className="text-center mb-6">
@@ -37,49 +35,13 @@ export default function EstimatePage() {
                 Fill out the form below and we'll get back to you within 1 hour during business hours
               </p>
             </div>
-
-            {/* Coming Soon Message */}
-            <div className="border-2 border-dashed border-[#FF7A1A] rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Form Coming Soon!</h3>
-              <p className="text-gray-600 mb-6">
-                We're currently setting up our online estimate form. In the meantime, please contact us directly:
-              </p>
-              
-              <div className="space-y-4">
-                {/* Phone */}
-                <a 
-                  href="tel:+13219608661"
-                  className="flex items-center justify-center gap-3 p-4 bg-[#FF7A1A] hover:bg-[#FF7A1A]/90 text-white rounded-lg font-semibold transition-colors"
-                >
-                  <span className="text-xl">📞</span>
-                  <span>(321) 960-8661</span>
-                </a>
-
-                {/* WhatsApp */}
-                <a 
-                  href="https://wa.me/13219608661"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-3 p-4 bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-lg font-semibold transition-colors"
-                >
-                  <span className="text-xl">💬</span>
-                  <span>WhatsApp Us</span>
-                </a>
-
-                {/* Email */}
-                <a 
-                  href="mailto:info@flipcars.us"
-                  className="flex items-center justify-center gap-3 p-4 bg-[#0B3B5E] hover:bg-[#0B3B5E]/90 text-white rounded-lg font-semibold transition-colors"
-                >
-                  <span className="text-xl">📧</span>
-                  <span>info@flipcars.us</span>
-                </a>
-              </div>
-            </div>
           </div>
 
+          {/* Estimate Form */}
+          <EstimateForm />
+
           {/* Business Hours */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Business Hours</h3>
             <div className="space-y-2 text-gray-700">
               <div className="flex justify-between">
@@ -118,6 +80,42 @@ export default function EstimatePage() {
                 <span>Quality guarantee - Lifetime warranty on all repairs</span>
               </li>
             </ul>
+          </div>
+
+          {/* Contact Options */}
+          <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Prefer to Contact Us Directly?</h3>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {/* Phone */}
+              <a 
+                href="tel:+13219608661"
+                className="flex items-center justify-center gap-3 p-4 bg-[#FF7A1A] hover:bg-[#FF7A1A]/90 text-white rounded-lg font-semibold transition-colors"
+              >
+                <span className="text-xl">📞</span>
+                <span className="hidden sm:inline">(321) 960-8661</span>
+                <span className="sm:hidden">Call Us</span>
+              </a>
+
+              {/* WhatsApp */}
+              <a 
+                href="https://wa.me/13219608661"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 p-4 bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-lg font-semibold transition-colors"
+              >
+                <span className="text-xl">💬</span>
+                <span>WhatsApp</span>
+              </a>
+
+              {/* Email */}
+              <a 
+                href="mailto:info@flipcars.us"
+                className="flex items-center justify-center gap-3 p-4 bg-[#0B3B5E] hover:bg-[#0B3B5E]/90 text-white rounded-lg font-semibold transition-colors"
+              >
+                <span className="text-xl">📧</span>
+                <span>Email Us</span>
+              </a>
+            </div>
           </div>
         </div>
       </main>
