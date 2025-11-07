@@ -12,6 +12,14 @@ export interface EstimatePhotos {
   details?: string[]; // Up to 6 optional detail photos
 }
 
+export interface WarrantyDocuments {
+  policyDocument?: File | string;
+  vinPhoto?: File | string;
+  odometerPhoto?: File | string;
+  selectedIssues: string[];
+  symptomsDescription: string;
+}
+
 export interface VehicleInfo {
   vin: string;
   year?: string;
@@ -46,6 +54,9 @@ export interface EstimateRequest {
   // Scheduling
   preferredDate?: string; // ISO date
   dateSkipped?: boolean;
+  
+  // Step 2.5: Warranty Documents (Mechanic only)
+  warrantyDocs?: WarrantyDocuments;
   
   // Step 3: Photos (Body Shop only)
   photos?: EstimatePhotos;

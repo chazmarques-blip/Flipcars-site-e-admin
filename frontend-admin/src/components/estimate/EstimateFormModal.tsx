@@ -5,6 +5,7 @@ import { X } from 'lucide-react';
 import { EstimateRequest } from '@/types/estimate';
 import { Step1BasicInfo } from './Step1BasicInfo';
 import { Step2ServiceDetails } from './Step2ServiceDetails';
+import { Step2bWarrantyDocs } from './Step2bWarrantyDocs';
 import { Step3Photos } from './Step3Photos';
 import { Step3aVIN } from './Step3aVIN';
 import { Step4Contact } from './Step4Contact';
@@ -90,7 +91,7 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
 
   // Determine max step based on service type
   const isBodyshop = formData.serviceType === 'bodyshop';
-  const maxSteps = isBodyshop ? 6 : 4; // Bodyshop has photos + VIN steps, mechanic doesn't
+  const maxSteps = isBodyshop ? 6 : 5; // Bodyshop: 6 steps, Mechanic: 5 steps (includes warranty docs)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
@@ -145,6 +146,14 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
             />
           )}
           
+          {currentStep === 3 && !isBodyshop && (
+            <Step2bWarrantyDocs
+              initialData={formData}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
+          )}
+          
           {currentStep === 3 && isBodyshop && (
             <Step3Photos
               initialData={formData}
@@ -161,7 +170,7 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
             />
           )}
           
-          {((currentStep === 3 && !isBodyshop) || (currentStep === 5 && isBodyshop)) && (
+          {((currentStep === 4 && !isBodyshop) || (currentStep === 5 && isBodyshop)) && (
             <Step4Contact
               initialData={formData}
               onSubmit={handleSubmit}
