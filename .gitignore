@@ -1,1 +1,6 @@
 vercel.json.public-backup
+
+# JWT Secrets (não commitar)
+jwt_secret.txt
+jwt_refresh_secret.txt
+JWT_SECRETS_PRODUCTION.txt
