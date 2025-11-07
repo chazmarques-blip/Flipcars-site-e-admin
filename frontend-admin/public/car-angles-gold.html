@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - 4 Ângulos em TOM GOLD 🎨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 24px;
+            color: #D4AF37;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #D4AF37;
+            color: #000;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 16px;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .highlight-box {
+            background: rgba(212, 175, 55, 0.2);
+            border: 3px solid #D4AF37;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .highlight-box h2 {
+            color: #FFD700;
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .highlight-box p {
+            color: #D4AF37;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid #D4AF37;
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(212, 175, 55, 0.5);
+            border-color: #FFD700;
+        }
+        
+        .card-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .card-label {
+            font-size: 16px;
+            color: #D4AF37;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 28px;
+        }
+        
+        .image-container {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 340px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .car-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .side-badge {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .approve-section {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(255, 215, 0, 0.2) 100%);
+            border: 4px solid #D4AF37;
+            border-radius: 25px;
+            padding: 60px;
+            text-align: center;
+            margin-top: 60px;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+        }
+        
+        .approve-section h2 {
+            color: #FFD700;
+            font-size: 46px;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .approve-section p {
+            color: #fff;
+            font-size: 20px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .approve-section strong {
+            color: #FFD700;
+        }
+        
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 35px;
+            margin: 40px 0;
+        }
+        
+        .info-box h3 {
+            color: #FFD700;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box p {
+            color: #ccc;
+            line-height: 1.9;
+            font-size: 17px;
+            margin: 14px 0;
+        }
+        
+        .download-link {
+            color: #D4AF37;
+            text-decoration: underline;
+            word-break: break-all;
+            display: block;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .download-link:hover {
+            color: #FFD700;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature-item {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #D4AF37;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .feature-item h4 {
+            color: #FFD700;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .feature-item p {
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 1200px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 38px;
+            }
+            
+            .approve-section h2 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ FlipCars - Ícones em TOM GOLD</h1>
+            <p class="subtitle">4 Ângulos Profissionais na Cor FlipCars (#D4AF37)</p>
+            <span class="badge">🎨 TOM GOLD - MATCHING BRAND COLORS</span>
+        </header>
+        
+        <!-- HIGHLIGHT -->
+        <div class="highlight-box">
+            <h2>🎯 PERFEITO PARA FLIPCARS!</h2>
+            <p>
+                Mesma referência profissional que você aprovou, mas agora em <strong>TOM GOLD (#D4AF37)</strong><br>
+                para combinar perfeitamente com os outros ícones do sistema!
+            </p>
+        </div>
+        
+        <!-- IMAGES GRID -->
+        <div class="grid">
+            <!-- DRIVER FRONT -->
+            <div class="card">
+                <div class="card-title">1. Driver Front</div>
+                <div class="card-label">Vista Frontal Esquerda (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/0fb952fb-35e9-4deb-b9f1-c552838bdbec.jpeg" 
+                         alt="Driver Front Gold" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚗 LADO DO MOTORISTA</span>
+            </div>
+            
+            <!-- PASSENGER FRONT -->
+            <div class="card">
+                <div class="card-title">2. Passenger Front</div>
+                <div class="card-label">Vista Frontal Direita (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/7cd66306-7670-428d-a632-46758f9a4904.jpeg" 
+                         alt="Passenger Front Gold" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚙 LADO DO PASSAGEIRO</span>
+            </div>
+            
+            <!-- DRIVER REAR -->
+            <div class="card">
+                <div class="card-title">3. Driver Rear</div>
+                <div class="card-label">Vista Traseira Esquerda (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/795e10aa-c7e9-4d23-ab00-c74d508c16d2.jpeg" 
+                         alt="Driver Rear Gold" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚗 LADO DO MOTORISTA</span>
+            </div>
+            
+            <!-- PASSENGER REAR -->
+            <div class="card">
+                <div class="card-title">4. Passenger Rear</div>
+                <div class="card-label">Vista Traseira Direita (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/c85a8f96-1d8b-4a5c-bf9d-84b8fa82b042.jpeg" 
+                         alt="Passenger Rear Gold" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚙 LADO DO PASSAGEIRO</span>
+            </div>
+        </div>
+        
+        <!-- FEATURES -->
+        <div class="info-box">
+            <h3>✨ Características dos Ícones GOLD</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🎨 Cor Gold</h4>
+                    <p>Tom #D4AF37 (FlipCars brand)</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🎯 Consistência</h4>
+                    <p>Match com outros ícones</p>
+                </div>
+                <div class="feature-item">
+                    <h4>✏️ Line Art</h4>
+                    <p>Linhas finas e elegantes</p>
+                </div>
+                <div class="feature-item">
+                    <h4>💡 Sombreamento</h4>
+                    <p>Gold claro para profundidade</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🚗 Detalhes</h4>
+                    <p>Rodas, portas, janelas</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📐 Alta Resolução</h4>
+                    <p>1392×752 pixels</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DOWNLOAD LINKS -->
+        <div class="info-box">
+            <h3>📥 Links Diretos para Download (TOM GOLD)</h3>
+            
+            <p><strong>1. Driver Front (Gold):</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/0fb952fb-35e9-4deb-b9f1-c552838bdbec.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/0fb952fb-35e9-4deb-b9f1-c552838bdbec.jpeg
+            </a>
+            
+            <p style="margin-top: 20px;"><strong>2. Passenger Front (Gold):</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/7cd66306-7670-428d-a632-46758f9a4904.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/7cd66306-7670-428d-a632-46758f9a4904.jpeg
+            </a>
+            
+            <p style="margin-top: 20px;"><strong>3. Driver Rear (Gold):</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/795e10aa-c7e9-4d23-ab00-c74d508c16d2.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/795e10aa-c7e9-4d23-ab00-c74d508c16d2.jpeg
+            </a>
+            
+            <p style="margin-top: 20px;"><strong>4. Passenger Rear (Gold):</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/c85a8f96-1d8b-4a5c-bf9d-84b8fa82b042.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/c85a8f96-1d8b-4a5c-bf9d-84b8fa82b042.jpeg
+            </a>
+        </div>
+        
+        <!-- APPROVAL SECTION -->
+        <div class="approve-section">
+            <h2>✅ ESTES ÍCONES ESTÃO PERFEITOS?</h2>
+            <p>
+                🎨 <strong>Mesma referência profissional</strong> que você aprovou<br>
+                ✨ <strong>Agora em TOM GOLD</strong> (#D4AF37) para combinar com FlipCars<br>
+                🎯 <strong>4 ângulos completos</strong> prontos para usar<br><br>
+                
+                <strong>Se você aprovar:</strong><br>
+                📥 Vou baixar e otimizar as imagens<br>
+                🔧 Integrar no componente de upload<br>
+                💾 Fazer commit e atualizar o PR<br>
+                🚀 Mostrar funcionando no formulário<br><br>
+                
+                <strong style="font-size: 24px;">📝 Me responda no chat: "APROVAR" 🎉</strong>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

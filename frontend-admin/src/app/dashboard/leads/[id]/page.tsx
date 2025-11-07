@@ -1,393 +1,410 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, UserPlus, Award, Clock } from 'lucide-react';
-import {
-  Button,
-  Badge,
-  Card,
-  CardHeader,
-  CardContent,
-  Modal,
-  ModalFooter,
-  Spinner,
-} from '@/components/ui';
-import { LeadForm } from '@/components/forms/LeadForm';
-import { Lead, LeadStatus, LeadPriority } from '@/types/lead';
+import React, { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { Lead, LeadStatus, LeadPriority, LeadNote, LeadActivity } from '@/types/lead';
 import { leadService } from '@/lib/api/lead.service';
-import toast from 'react-hot-toast';
-import { formatDistanceToNow, format } from 'date-fns';
+import {
+  LeadStatusBadge,
+  LeadNotes,
+  LeadTimeline,
+  LeadQuickActions,
+  LeadAssignment,
+} from '@/components/leads';
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Car,
+  DollarSign,
+  AlertCircle,
+  Loader2,
+} from 'lucide-react';
+import { format } from 'date-fns';
 
-export default function LeadDetailsPage({ params }: { params: { id: string } }) {
+export default function LeadDetailPage() {
+  const params = useParams();
   const router = useRouter();
+  const leadId = params.id as string;
+
   const [lead, setLead] = useState<Lead | null>(null);
+  const [notes, setNotes] = useState<LeadNote[]>([]);
+  const [activities, setActivities] = useState<LeadActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchLead();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+    loadLeadData();
+  }, [leadId]);
 
-  const fetchLead = async () => {
-    setIsLoading(true);
+  const loadLeadData = async () => {
     try {
-      const data = await leadService.getLeadById(params.id);
-      setLead(data);
-    } catch {
-      toast.error('Failed to load lead');
-      router.push('/dashboard/leads');
+      setIsLoading(true);
+      setError(null);
+
+      const [leadData, notesData, activitiesData] = await Promise.all([
+        leadService.getLeadById(leadId),
+        leadService.getLeadNotes(leadId),
+        leadService.getLeadActivities(leadId),
+      ]);
+
+      setLead(leadData);
+      setNotes(notesData);
+      setActivities(activitiesData);
+    } catch (err) {
+      console.error('Error loading lead data:', err);
+      setError('Failed to load lead details. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
+  const handleStatusChange = async (newStatus: LeadStatus) => {
+    if (!lead) return;
+
     try {
-      await leadService.deleteLead(params.id);
-      toast.success('Lead deleted successfully');
-      router.push('/dashboard/leads');
-    } catch {
-      toast.error('Failed to delete lead');
-      setIsDeleting(false);
-      setShowDeleteModal(false);
+      await leadService.updateLeadStatus(leadId, newStatus);
+      setLead({ ...lead, status: newStatus });
+      
+      // Add activity
+      const newActivity: LeadActivity = {
+        id: Date.now().toString(),
+        leadId,
+        type: 'status_change',
+        description: `Status changed from ${lead.status} to ${newStatus}`,
+        performedBy: 'Current User',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          old_status: lead.status,
+          new_status: newStatus,
+        },
+      };
+      setActivities([newActivity, ...activities]);
+    } catch (err) {
+      console.error('Error updating status:', err);
+      alert('Failed to update status. Please try again.');
     }
   };
 
-  const getStatusBadge = (status: LeadStatus) => {
-    const variants: Record<LeadStatus, 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default'> = {
-      [LeadStatus.NEW]: 'primary',
-      [LeadStatus.CONTACTED]: 'secondary',
-      [LeadStatus.QUALIFIED]: 'success',
-      [LeadStatus.PROPOSAL_SENT]: 'warning',
-      [LeadStatus.NEGOTIATING]: 'warning',
-      [LeadStatus.WON]: 'success',
-      [LeadStatus.LOST]: 'danger',
-    };
+  const handlePriorityChange = async (newPriority: LeadPriority) => {
+    if (!lead) return;
 
-    return <Badge variant={variants[status]}>{status.replace('_', ' ').toUpperCase()}</Badge>;
+    try {
+      await leadService.updateLeadPriority(leadId, newPriority);
+      setLead({ ...lead, priority: newPriority });
+
+      // Add activity
+      const newActivity: LeadActivity = {
+        id: Date.now().toString(),
+        leadId,
+        type: 'status_change',
+        description: `Priority changed from ${lead.priority} to ${newPriority}`,
+        performedBy: 'Current User',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          old_priority: lead.priority,
+          new_priority: newPriority,
+        },
+      };
+      setActivities([newActivity, ...activities]);
+    } catch (err) {
+      console.error('Error updating priority:', err);
+      alert('Failed to update priority. Please try again.');
+    }
   };
 
-  const getPriorityBadge = (priority: LeadPriority) => {
-    const variants: Record<LeadPriority, 'success' | 'warning' | 'danger'> = {
-      [LeadPriority.LOW]: 'success',
-      [LeadPriority.MEDIUM]: 'warning',
-      [LeadPriority.HIGH]: 'danger',
-    };
+  const handleAddNote = async (content: string) => {
+    try {
+      const newNote: LeadNote = {
+        id: Date.now().toString(),
+        leadId,
+        content,
+        createdBy: 'Current User',
+        createdAt: new Date().toISOString(),
+      };
 
-    return <Badge variant={variants[priority]} dot>{priority.toUpperCase()}</Badge>;
+      await leadService.addLeadNote(leadId, content);
+      setNotes([newNote, ...notes]);
+
+      // Add activity
+      const newActivity: LeadActivity = {
+        id: (Date.now() + 1).toString(),
+        leadId,
+        type: 'note_added',
+        description: 'Added a new note',
+        performedBy: 'Current User',
+        timestamp: new Date().toISOString(),
+      };
+      setActivities([newActivity, ...activities]);
+    } catch (err) {
+      console.error('Error adding note:', err);
+      throw err;
+    }
+  };
+
+  const handleAssign = async (staffId: string) => {
+    if (!lead) return;
+
+    try {
+      await leadService.assignLead(leadId, staffId);
+      setLead({ ...lead, assignedTo: staffId });
+
+      // Add activity
+      const newActivity: LeadActivity = {
+        id: Date.now().toString(),
+        leadId,
+        type: 'assigned',
+        description: `Lead assigned to staff member`,
+        performedBy: 'Current User',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          staff_id: staffId,
+        },
+      };
+      setActivities([newActivity, ...activities]);
+    } catch (err) {
+      console.error('Error assigning lead:', err);
+      throw err;
+    }
+  };
+
+  const handleAction = (actionType: string) => {
+    // Handle communication actions (call, email, sms)
+    console.log('Action triggered:', actionType);
+    alert(`${actionType.toUpperCase()} action triggered! (Mock implementation)`);
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  if (!lead) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Lead not found</p>
-      </div>
-    );
-  }
-
-  if (isEditMode) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => setIsEditMode(false)}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-heading font-bold text-gray-900">Edit Lead</h1>
-            <p className="text-gray-600 mt-1">{lead.referenceNumber}</p>
-          </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading lead details...</p>
         </div>
+      </div>
+    );
+  }
 
-        <LeadForm
-          lead={lead}
-          onSuccess={(updatedLead) => {
-            setLead(updatedLead);
-            setIsEditMode(false);
-          }}
-          onCancel={() => setIsEditMode(false)}
-        />
+  if (error || !lead) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Error Loading Lead
+          </h2>
+          <p className="text-gray-600 mb-4">
+            {error || 'Lead not found'}
+          </p>
+          <button
+            onClick={() => router.push('/dashboard/leads')}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Back to Leads
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-heading font-bold text-gray-900">
-                {lead.name}
-              </h1>
-              {getStatusBadge(lead.status)}
-              {getPriorityBadge(lead.priority)}
-            </div>
-            <p className="text-gray-600 mt-1 font-mono">{lead.referenceNumber}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => setIsEditMode(true)} leftIcon={<Edit className="w-4 h-4" />}>
-            Edit
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => setShowDeleteModal(true)}
-            leftIcon={<Trash2 className="w-4 h-4" />}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {/* Back Button */}
+          <button
+            onClick={() => router.push('/dashboard/leads')}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
           >
-            Delete
-          </Button>
+            <ArrowLeft className="w-4 h-4" />
+            Back to Leads
+          </button>
+
+          {/* Lead Header */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {lead.name}
+                </h1>
+                <LeadStatusBadge status={lead.status} />
+                <span
+                  className={`
+                    px-3 py-1 text-sm font-medium rounded-full
+                    ${
+                      lead.priority === LeadPriority.HIGH
+                        ? 'bg-red-100 text-red-800'
+                        : lead.priority === LeadPriority.MEDIUM
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-green-100 text-green-800'
+                    }
+                  `}
+                >
+                  {lead.priority} Priority
+                </span>
+              </div>
+              <p className="text-gray-600">
+                Reference: <span className="font-mono">{lead.referenceNumber}</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Customer Information */}
-          <Card>
-            <CardHeader title="Customer Information" />
-            <CardContent>
-              <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Name</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{lead.name}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Email</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    <a href={`mailto:${lead.email}`} className="text-primary hover:text-primary-600">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Lead Info & Timeline */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Contact Information */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Contact Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Email</p>
+                    <a
+                      href={`mailto:${lead.email}`}
+                      className="text-blue-600 hover:underline"
+                    >
                       {lead.email}
                     </a>
-                  </dd>
+                  </div>
                 </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Phone</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    <a href={`tel:${lead.phone}`} className="text-primary hover:text-primary-600">
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Phone</p>
+                    <a
+                      href={`tel:${lead.phone}`}
+                      className="text-blue-600 hover:underline"
+                    >
                       {lead.phone}
                     </a>
-                  </dd>
+                  </div>
                 </div>
-                {lead.source && (
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Source</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.source}</dd>
+                {lead.city && lead.state && (
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-500">Location</p>
+                      <p className="text-gray-900">
+                        {lead.city}, {lead.state} {lead.zipCode}
+                      </p>
+                    </div>
                   </div>
                 )}
-              </dl>
-            </CardContent>
-          </Card>
-
-          {/* Vehicle Information */}
-          <Card>
-            <CardHeader title="Vehicle Information" />
-            <CardContent>
-              {lead.vehicleMake || lead.vehicleModel || lead.vehicleYear ? (
-                <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {lead.vehicleMake && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Make</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{lead.vehicleMake}</dd>
-                    </div>
-                  )}
-                  {lead.vehicleModel && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Model</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{lead.vehicleModel}</dd>
-                    </div>
-                  )}
-                  {lead.vehicleYear && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Year</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{lead.vehicleYear}</dd>
-                    </div>
-                  )}
-                  {lead.vehiclePlate && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">License Plate</dt>
-                      <dd className="mt-1 text-sm text-gray-900 font-mono">{lead.vehiclePlate}</dd>
-                    </div>
-                  )}
-                </dl>
-              ) : (
-                <p className="text-sm text-gray-500">No vehicle information provided</p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Accident Information */}
-          <Card>
-            <CardHeader title="Accident Information" />
-            <CardContent>
-              <dl className="space-y-4">
-                {lead.accidentDate && (
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-gray-400" />
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Date</dt>
-                    <dd className="mt-1 text-sm text-gray-900">
-                      {format(new Date(lead.accidentDate), 'PPP')}
-                    </dd>
+                    <p className="text-sm text-gray-500">Created</p>
+                    <p className="text-gray-900">
+                      {format(new Date(lead.createdAt), 'MMM d, yyyy')}
+                    </p>
                   </div>
-                )}
-                {lead.accidentDescription && (
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Description</dt>
-                    <dd className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">
-                      {lead.accidentDescription}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-            </CardContent>
-          </Card>
-
-          {/* Insurance Information */}
-          <Card>
-            <CardHeader title="Insurance Information" />
-            <CardContent>
-              {lead.hasInsurance ? (
-                <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Coverage</dt>
-                    <dd className="mt-1">
-                      <Badge variant="success">Insured</Badge>
-                    </dd>
-                  </div>
-                  {lead.insuranceCompany && (
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Company</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{lead.insuranceCompany}</dd>
-                    </div>
-                  )}
-                  {lead.insurancePolicyNumber && (
-                    <div className="md:col-span-2">
-                      <dt className="text-sm font-medium text-gray-500">Policy Number</dt>
-                      <dd className="mt-1 text-sm text-gray-900 font-mono">
-                        {lead.insurancePolicyNumber}
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  <Badge variant="warning">No Insurance</Badge>
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader title="Quick Actions" />
-            <CardContent>
-              <div className="space-y-2">
-                <Button fullWidth variant="outline" leftIcon={<UserPlus className="w-4 h-4" />}>
-                  Assign Agent
-                </Button>
-                <Button fullWidth variant="outline" leftIcon={<Award className="w-4 h-4" />}>
-                  Qualify Lead
-                </Button>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Lead Stats */}
-          <Card>
-            <CardHeader title="Lead Information" />
-            <CardContent>
-              <dl className="space-y-3">
-                {lead.aiQualificationScore && (
+            {/* Vehicle Information */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Car className="w-5 h-5" />
+                Vehicle Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Make & Model</p>
+                  <p className="text-gray-900 font-semibold">
+                    {lead.vehicleMake} {lead.vehicleModel}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Year</p>
+                  <p className="text-gray-900 font-semibold">{lead.vehicleYear}</p>
+                </div>
+                {lead.vehicleMileage && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500 mb-2">AI Qualification Score</dt>
-                    <dd>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-primary"
-                            style={{ width: `${lead.aiQualificationScore}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">
-                          {lead.aiQualificationScore}
-                        </span>
-                      </div>
-                    </dd>
+                    <p className="text-sm text-gray-500">Mileage</p>
+                    <p className="text-gray-900 font-semibold">
+                      {lead.vehicleMileage.toLocaleString()} miles
+                    </p>
                   </div>
                 )}
-
-                {lead.assignedTo && (
+                {lead.vehicleCondition && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Assigned To</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.assignedTo.name}</dd>
+                    <p className="text-sm text-gray-500">Condition</p>
+                    <p className="text-gray-900 font-semibold capitalize">
+                      {lead.vehicleCondition}
+                    </p>
                   </div>
                 )}
-
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Created</dt>
-                  <dd className="mt-1 text-sm text-gray-900 flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
-                  </dd>
+                {lead.estimatedValue && (
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-gray-500 flex items-center gap-1">
+                      <DollarSign className="w-4 h-4" />
+                      Estimated Value
+                    </p>
+                    <p className="text-gray-900 font-bold text-xl">
+                      ${lead.estimatedValue.toLocaleString()}
+                    </p>
+                  </div>
+                )}
+              </div>
+              {lead.additionalNotes && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <p className="text-sm text-gray-500 mb-2">Additional Notes</p>
+                  <p className="text-gray-700">{lead.additionalNotes}</p>
                 </div>
+              )}
+            </div>
 
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Last Updated</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    {formatDistanceToNow(new Date(lead.updatedAt), { addSuffix: true })}
-                  </dd>
-                </div>
-              </dl>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            {/* Notes Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <LeadNotes
+                leadId={leadId}
+                notes={notes}
+                onAddNote={handleAddNote}
+              />
+            </div>
 
-      {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        title="Delete Lead"
-      >
-        <div className="space-y-4">
-          <p className="text-gray-700">
-            Are you sure you want to delete this lead? This action cannot be undone.
-          </p>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-sm text-red-800">
-              <strong>Reference:</strong> {lead.referenceNumber}
-              <br />
-              <strong>Customer:</strong> {lead.name}
-            </p>
+            {/* Timeline Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <LeadTimeline activities={activities} />
+            </div>
+          </div>
+
+          {/* Right Column - Actions & Assignment */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
+              <LeadQuickActions
+                leadId={leadId}
+                currentStatus={lead.status}
+                currentPriority={lead.priority}
+                onStatusChange={handleStatusChange}
+                onPriorityChange={handlePriorityChange}
+                onAction={handleAction}
+              />
+            </div>
+
+            {/* Assignment */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <LeadAssignment
+                leadId={leadId}
+                currentAssigneeId={lead.assignedTo}
+                onAssign={handleAssign}
+              />
+            </div>
           </div>
         </div>
-
-        <ModalFooter
-          onCancel={() => setShowDeleteModal(false)}
-          onConfirm={handleDelete}
-          cancelText="Cancel"
-          confirmText="Delete Lead"
-          isLoading={isDeleting}
-        />
-      </Modal>
+      </div>
     </div>
   );
 }

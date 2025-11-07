@@ -15,23 +15,23 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-primary hover:bg-primary-600 text-white shadow-sm hover:shadow-md',
-  secondary: 'bg-secondary hover:bg-secondary-600 text-white shadow-sm hover:shadow-md',
-  outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white',
-  ghost: 'text-primary hover:bg-primary-50',
-  danger: 'bg-danger hover:bg-red-600 text-white shadow-sm hover:shadow-md',
-  success: 'bg-success hover:bg-green-600 text-white shadow-sm hover:shadow-md',
+  primary: 'bg-gold hover:bg-gold-dark text-black font-semibold shadow-sm hover:shadow-md',
+  secondary: 'bg-gray-800 hover:bg-gray-700 text-gray-100 border border-gray-700 shadow-sm hover:shadow-md',
+  outline: 'border border-gold text-gold hover:bg-gold hover:text-black font-medium',
+  ghost: 'text-gold hover:bg-gray-900/50',
+  danger: 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md',
+  success: 'bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  sm: 'px-2.5 py-1.5 text-xs h-8',
+  md: 'px-3 py-2 text-sm h-9',
+  lg: 'px-4 py-2.5 text-base h-10',
 };
 
 export function Button({
   variant = 'primary',
-  size = 'md',
+  size = 'sm',
   isLoading = false,
   fullWidth = false,
   leftIcon,
@@ -44,8 +44,8 @@ export function Button({
   return (
     <button
       className={clsx(
-        'inline-flex items-center justify-center gap-2 font-medium rounded-lg',
-        'transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+        'inline-flex items-center justify-center gap-2 rounded-md',
+        'transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-black',
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none',
         variantStyles[variant],
         sizeStyles[size],

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - 4 Ângulos Profissionais (Referência Aprovada)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 22px;
+            color: #D4AF37;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #D4AF37;
+            color: #000;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            margin-top: 16px;
+            letter-spacing: 1px;
+        }
+        
+        .reference-box {
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .reference-box h2 {
+            color: #D4AF37;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .reference-box img {
+            max-width: 600px;
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid #D4AF37;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid #D4AF37;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.4);
+            border-color: #FFD700;
+        }
+        
+        .card-title {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .card-label {
+            font-size: 15px;
+            color: #D4AF37;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        
+        .image-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+        }
+        
+        .car-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .side-badge {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #D4AF37;
+            color: #000;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .approve-section {
+            background: rgba(212, 175, 55, 0.15);
+            border: 3px solid #D4AF37;
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        .approve-section h2 {
+            color: #D4AF37;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .approve-section p {
+            color: #ccc;
+            font-size: 19px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .info-box h3 {
+            color: #D4AF37;
+            font-size: 26px;
+            margin-bottom: 16px;
+        }
+        
+        .info-box p {
+            color: #ccc;
+            line-height: 1.8;
+            font-size: 16px;
+            margin: 12px 0;
+        }
+        
+        .download-link {
+            color: #D4AF37;
+            text-decoration: underline;
+            word-break: break-all;
+            display: block;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 1200px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 FlipCars - 4 Ângulos Profissionais</h1>
+            <p class="subtitle">Baseado na Sua Referência Aprovada</p>
+            <span class="badge">✨ ESTILO PROFISSIONAL LINE ART</span>
+        </header>
+        
+        <!-- REFERENCE IMAGE -->
+        <div class="reference-box">
+            <h2>📸 Referência Usada</h2>
+            <img src="https://page.gensparksite.com/v1/base64_upload/e9d26ccf8bc684eb748c88e01a8d8e3d" alt="Referência">
+            <p style="color: #D4AF37; margin-top: 16px; font-size: 16px;">
+                ✅ Todos os 4 ângulos foram gerados no mesmo estilo desta imagem
+            </p>
+        </div>
+        
+        <!-- IMAGES GRID -->
+        <div class="grid">
+            <!-- DRIVER FRONT -->
+            <div class="card">
+                <div class="card-title">1. Driver Front</div>
+                <div class="card-label">Vista Frontal Esquerda (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/224a8b16-33f5-4f6d-a6fe-fd28b349313b.jpeg" 
+                         alt="Driver Front" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚗 LADO DO MOTORISTA</span>
+            </div>
+            
+            <!-- PASSENGER FRONT -->
+            <div class="card">
+                <div class="card-title">2. Passenger Front</div>
+                <div class="card-label">Vista Frontal Direita (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/4ee2eabd-2bb1-46c2-bee9-546dd998a371.jpeg" 
+                         alt="Passenger Front" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚙 LADO DO PASSAGEIRO</span>
+            </div>
+            
+            <!-- DRIVER REAR -->
+            <div class="card">
+                <div class="card-title">3. Driver Rear</div>
+                <div class="card-label">Vista Traseira Esquerda (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/81849e19-a20f-417f-b06d-38862a1e6313.jpeg" 
+                         alt="Driver Rear" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚗 LADO DO MOTORISTA</span>
+            </div>
+            
+            <!-- PASSENGER REAR -->
+            <div class="card">
+                <div class="card-title">4. Passenger Rear</div>
+                <div class="card-label">Vista Traseira Direita (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/8b1cd0c6-902c-48cf-ad11-807e3bc92804.jpeg" 
+                         alt="Passenger Rear" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">🚙 LADO DO PASSAGEIRO</span>
+            </div>
+        </div>
+        
+        <!-- INFO -->
+        <div class="info-box">
+            <h3>✨ Características dos Ícones</h3>
+            <p>
+                <strong>🎨 Estilo:</strong> Line art profissional com linhas finas e elegantes<br>
+                <strong>📐 Base:</strong> Gerado a partir da sua referência aprovada<br>
+                <strong>🔍 Detalhes:</strong> Linhas pretas, sombreamento cinza sutil, rodas detalhadas, linhas de porta/janela<br>
+                <strong>📏 Resolução:</strong> Alta qualidade (1392×752 pixels cada)<br>
+                <strong>💾 Formato:</strong> JPEG (pode ser convertido para SVG ou PNG)<br>
+                <strong>✅ Pronto para:</strong> Integração no formulário de upload de fotos
+            </p>
+        </div>
+        
+        <!-- DOWNLOAD LINKS -->
+        <div class="info-box">
+            <h3>📥 Links Diretos para Download</h3>
+            
+            <p><strong>1. Driver Front:</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/224a8b16-33f5-4f6d-a6fe-fd28b349313b.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/224a8b16-33f5-4f6d-a6fe-fd28b349313b.jpeg
+            </a>
+            
+            <p style="margin-top: 20px;"><strong>2. Passenger Front:</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/4ee2eabd-2bb1-46c2-bee9-546dd998a371.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/4ee2eabd-2bb1-46c2-bee9-546dd998a371.jpeg
+            </a>
+            
+            <p style="margin-top: 20px;"><strong>3. Driver Rear:</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/81849e19-a20f-417f-b06d-38862a1e6313.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/81849e19-a20f-417f-b06d-38862a1e6313.jpeg
+            </a>
+            
+            <p style="margin-top: 20px;"><strong>4. Passenger Rear:</strong></p>
+            <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/8b1cd0c6-902c-48cf-ad11-807e3bc92804.jpeg" 
+               target="_blank" class="download-link">
+                https://cdn1.genspark.ai/user-upload-image/22_generated/8b1cd0c6-902c-48cf-ad11-807e3bc92804.jpeg
+            </a>
+        </div>
+        
+        <!-- APPROVAL SECTION -->
+        <div class="approve-section">
+            <h2>✅ Aprovar Estes Ícones?</h2>
+            <p>
+                Estes 4 ícones foram gerados baseados na referência que você aprovou.<br>
+                <strong>Se você gostar:</strong> Vou baixar, otimizar e integrar diretamente na aplicação!<br><br>
+                <strong>📝 Me responda no chat:</strong><br>
+                ✅ "APROVAR" - Vou implementar agora<br>
+                ❌ "Ajustar [algo]" - Me diga o que mudar<br>
+                🔄 "Gerar novamente" - Vou criar outros
+            </p>
+        </div>
+    </div>
+</body>
+</html>

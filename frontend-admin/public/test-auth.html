@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Auth</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background: #0070f3; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0051cc; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        input { padding: 8px; margin: 5px; width: 300px; border: 1px solid #ddd; border-radius: 4px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🧪 FlipCars Auth Test Page</h1>
+    
+    <div class="section">
+        <h2>1. Check localStorage</h2>
+        <button onclick="checkStorage()">Check Auth Storage</button>
+        <pre id="storage-output">Click button to check...</pre>
+    </div>
+    
+    <div class="section">
+        <h2>2. Manual Login (Set Auth)</h2>
+        <input type="email" id="email" value="sarah@flipcars.us" placeholder="Email" /><br />
+        <input type="password" id="password" value="Admin123!" placeholder="Password" /><br />
+        <button onclick="manualLogin()">Set Auth in localStorage</button>
+        <pre id="login-output"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>3. Clear Auth</h2>
+        <button onclick="clearAuth()">Clear localStorage</button>
+        <pre id="clear-output"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>4. Navigation Tests</h2>
+        <button onclick="goTo('/')">Go to Home</button>
+        <button onclick="goTo('/auth/login')">Go to Login</button>
+        <button onclick="goTo('/dashboard')">Go to Dashboard</button>
+        <button onclick="goTo('/dashboard/leads')">Go to Leads</button>
+    </div>
+
+    <script>
+        function checkStorage() {
+            const authStorage = localStorage.getItem('auth-storage');
+            const output = document.getElementById('storage-output');
+            
+            if (authStorage) {
+                try {
+                    const parsed = JSON.parse(authStorage);
+                    output.innerHTML = '<span class="success">✅ Auth storage found:</span>\n' + JSON.stringify(parsed, null, 2);
+                } catch (e) {
+                    output.innerHTML = '<span class="error">❌ Invalid JSON:</span>\n' + authStorage;
+                }
+            } else {
+                output.innerHTML = '<span class="error">❌ No auth storage found</span>';
+            }
+        }
+        
+        function manualLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const authData = {
+                state: {
+                    user: {
+                        id: '1',
+                        name: 'Sarah Johnson',
+                        email: email,
+                        role: 'super_admin'
+                    },
+                    isAuthenticated: true
+                },
+                version: 0
+            };
+            
+            localStorage.setItem('auth-storage', JSON.stringify(authData));
+            
+            const output = document.getElementById('login-output');
+            output.innerHTML = '<span class="success">✅ Auth set successfully!</span>\n' + JSON.stringify(authData, null, 2);
+            
+            setTimeout(() => {
+                output.innerHTML += '\n\n<span class="success">Redirecting to dashboard in 2 seconds...</span>';
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 2000);
+            }, 500);
+        }
+        
+        function clearAuth() {
+            localStorage.removeItem('auth-storage');
+            const output = document.getElementById('clear-output');
+            output.innerHTML = '<span class="success">✅ Auth cleared!</span>';
+        }
+        
+        function goTo(path) {
+            window.location.href = path;
+        }
+        
+        // Auto-check on load
+        window.onload = function() {
+            checkStorage();
+        };
+    </script>
+</body>
+</html>

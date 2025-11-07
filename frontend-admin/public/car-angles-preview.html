@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Car Angles Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            color: #D4AF37;
+            font-weight: 500;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #D4AF37;
+            border-bottom: 2px solid #D4AF37;
+            padding-bottom: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 40px rgba(212, 175, 55, 0.3);
+            border-color: #FFD700;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .card-label {
+            font-size: 14px;
+            color: #D4AF37;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        
+        .image-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+        }
+        
+        .car-image {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #D4AF37;
+            color: #000;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #D4AF37;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .info-box h3 {
+            color: #D4AF37;
+            margin-bottom: 12px;
+        }
+        
+        .info-box p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .color-item {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .color-swatch {
+            width: 100%;
+            height: 80px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .color-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .color-code {
+            font-size: 12px;
+            color: #888;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 FlipCars Car Angles</h1>
+            <p class="subtitle">Minimalist SVG Icons - Black & Gold Versions</p>
+        </header>
+        
+        <!-- BLACK VERSION -->
+        <div class="section">
+            <h2 class="section-title">⚫ Black Version (Solid)</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-title">Driver Front</div>
+                    <div class="card-label">Front Left 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/driver-front.svg" alt="Driver Front" class="car-image">
+                    </div>
+                    <span class="badge">Driver Side</span>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Passenger Front</div>
+                    <div class="card-label">Front Right 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/passenger-front.svg" alt="Passenger Front" class="car-image">
+                    </div>
+                    <span class="badge">Passenger Side</span>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Driver Rear</div>
+                    <div class="card-label">Rear Left 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/driver-rear.svg" alt="Driver Rear" class="car-image">
+                    </div>
+                    <span class="badge">Driver Side</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- GOLD VERSION -->
+        <div class="section">
+            <h2 class="section-title">✨ Gold Version (Soft & Elegant)</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-title">Driver Front</div>
+                    <div class="card-label">Front Left 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/driver-front-gold.svg" alt="Driver Front Gold" class="car-image">
+                    </div>
+                    <span class="badge">Driver Side</span>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Passenger Front</div>
+                    <div class="card-label">Front Right 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/passenger-front-gold.svg" alt="Passenger Front Gold" class="car-image">
+                    </div>
+                    <span class="badge">Passenger Side</span>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Driver Rear</div>
+                    <div class="card-label">Rear Left 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/driver-rear-gold.svg" alt="Driver Rear Gold" class="car-image">
+                    </div>
+                    <span class="badge">Driver Side</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COLOR PALETTE -->
+        <div class="info-box">
+            <h3>🎨 Color Palette Used</h3>
+            <div class="color-palette">
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #D4AF37;"></div>
+                    <div class="color-label">Primary Gold</div>
+                    <div class="color-code">#D4AF37</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #F5E6D3;"></div>
+                    <div class="color-label">Soft Beige</div>
+                    <div class="color-code">#F5E6D3</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #E8D4B8;"></div>
+                    <div class="color-label">Warm Beige</div>
+                    <div class="color-code">#E8D4B8</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #EDD9C0;"></div>
+                    <div class="color-label">Light Beige</div>
+                    <div class="color-code">#EDD9C0</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #000000; border-color: #D4AF37;"></div>
+                    <div class="color-label">Pure Black</div>
+                    <div class="color-code">#000000</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- INFO -->
+        <div class="info-box">
+            <h3>📝 Usage Information</h3>
+            <p><strong>File Locations:</strong></p>
+            <ul style="margin-top: 12px; color: #ccc; line-height: 1.8;">
+                <li>Black Version: <code style="color: #D4AF37;">/public/images/car-angles/[angle].svg</code></li>
+                <li>Gold Version: <code style="color: #D4AF37;">/public/images/car-angles/[angle]-gold.svg</code></li>
+            </ul>
+            <p style="margin-top: 16px;"><strong>Angles Available:</strong></p>
+            <ul style="margin-top: 8px; color: #ccc; line-height: 1.8;">
+                <li><strong>driver-front</strong> - Front left 3/4 view (driver side perspective)</li>
+                <li><strong>passenger-front</strong> - Front right 3/4 view (passenger side perspective)</li>
+                <li><strong>driver-rear</strong> - Rear left 3/4 view (driver side rear perspective)</li>
+            </ul>
+            <p style="margin-top: 16px;"><strong>Features:</strong></p>
+            <ul style="margin-top: 8px; color: #ccc; line-height: 1.8;">
+                <li>✅ Scalable SVG format</li>
+                <li>✅ Minimalista e clean design</li>
+                <li>✅ Matches FlipCars brand colors (#000 & #D4AF37)</li>
+                <li>✅ Soft opacity for elegant appearance</li>
+                <li>✅ Ready for web and print use</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

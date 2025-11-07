@@ -1,0 +1,66 @@
+<svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Passenger Front View (3/4 front-right) - Gold/Beige Soft Version -->
+  <g transform="translate(20, 20)">
+    <!-- Car body -->
+    <path d="M 140 50 L 130 30 L 90 20 L 40 30 L 30 50 L 30 70 L 40 75 L 130 75 L 140 70 Z" 
+          fill="#F5E6D3" 
+          stroke="#D4AF37" 
+          stroke-width="2"
+          opacity="0.8"/>
+    
+    <!-- Windshield -->
+    <path d="M 125 30 L 115 22 L 70 22 L 50 30 L 70 35 L 115 35 Z" 
+          fill="#E8D4B8" 
+          stroke="#D4AF37" 
+          stroke-width="1.5"
+          opacity="0.7"/>
+    
+    <!-- Hood -->
+    <path d="M 130 50 L 120 40 L 55 40 L 40 50 L 55 52 L 120 52 Z" 
+          fill="#EDD9C0" 
+          stroke="#D4AF37" 
+          stroke-width="1.5"
+          opacity="0.75"/>
+    
+    <!-- Headlight right -->
+    <ellipse cx="125" cy="55" rx="8" ry="5" 
+             fill="#D4AF37" 
+             stroke="#C19A2E" 
+             stroke-width="1"
+             opacity="0.5"/>
+    
+    <!-- Headlight left -->
+    <ellipse cx="45" cy="55" rx="8" ry="5" 
+             fill="#D4AF37" 
+             stroke="#C19A2E" 
+             stroke-width="1"
+             opacity="0.5"/>
+    
+    <!-- Wheel right -->
+    <circle cx="120" cy="75" r="10" 
+            fill="#D4AF37" 
+            stroke="#C19A2E" 
+            stroke-width="2"
+            opacity="0.6"/>
+    <circle cx="120" cy="75" r="5" 
+            fill="#E8D4B8"
+            opacity="0.5"/>
+    
+    <!-- Wheel left -->
+    <circle cx="50" cy="75" r="10" 
+            fill="#D4AF37" 
+            stroke="#C19A2E" 
+            stroke-width="2"
+            opacity="0.6"/>
+    <circle cx="50" cy="75" r="5" 
+            fill="#E8D4B8"
+            opacity="0.5"/>
+    
+    <!-- Side mirror -->
+    <ellipse cx="135" cy="45" rx="5" ry="3" 
+             fill="#EDD9C0" 
+             stroke="#D4AF37" 
+             stroke-width="1"
+             opacity="0.7"/>
+  </g>
+</svg>

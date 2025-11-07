@@ -12,24 +12,24 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-gray-100 text-gray-700',
-  primary: 'bg-primary-100 text-primary-700',
-  secondary: 'bg-secondary-100 text-secondary-700',
-  success: 'bg-green-100 text-green-700',
-  warning: 'bg-yellow-100 text-yellow-700',
-  danger: 'bg-red-100 text-red-700',
+  default: 'bg-gray-800 text-gray-300 border border-gray-700',
+  primary: 'bg-gold/20 text-gold border border-gold/30',
+  secondary: 'bg-gray-900 text-gray-400 border border-gray-800',
+  success: 'bg-green-900/30 text-green-400 border border-green-700/50',
+  warning: 'bg-yellow-900/30 text-yellow-400 border border-yellow-700/50',
+  danger: 'bg-red-900/30 text-red-400 border border-red-700/50',
 };
 
 const sizeStyles: Record<BadgeSize, string> = {
-  sm: 'px-2 py-0.5 text-xs',
-  md: 'px-3 py-1 text-sm',
-  lg: 'px-4 py-1.5 text-base',
+  sm: 'px-1.5 py-0.5 text-xs font-medium',
+  md: 'px-2 py-0.5 text-xs font-medium',
+  lg: 'px-2.5 py-1 text-sm font-medium',
 };
 
 const dotStyles: Record<BadgeVariant, string> = {
   default: 'bg-gray-500',
-  primary: 'bg-primary-500',
-  secondary: 'bg-secondary-500',
+  primary: 'bg-gold',
+  secondary: 'bg-gray-600',
   success: 'bg-green-500',
   warning: 'bg-yellow-500',
   danger: 'bg-red-500',

@@ -28,6 +28,7 @@ export const useAuthStore = create<AuthState>()(
       error: null,
 
       login: async (credentials: LoginRequest) => {
+        console.log('[AuthStore] Login attempt:', credentials.email);
         set({ isLoading: true, error: null });
         
         try {
@@ -39,6 +40,13 @@ export const useAuthStore = create<AuthState>()(
               email: 'admin@flipcars.com',
               role: 'super_admin',
               password: 'admin123',
+            },
+            'sarah@flipcars.us': {
+              id: '1',
+              name: 'Sarah Johnson',
+              email: 'sarah@flipcars.us',
+              role: 'super_admin',
+              password: 'Admin123!',
             },
             'manager@flipcars.com': {
               id: '2',
@@ -71,12 +79,14 @@ export const useAuthStore = create<AuthState>()(
           // Mock tokens
           apiClientInstance.setTokens('mock-access-token', 'mock-refresh-token');
           
+          console.log('[AuthStore] Setting authenticated user:', user);
           set({
             user: user as User,
             isAuthenticated: true,
             isLoading: false,
             error: null,
           });
+          console.log('[AuthStore] Login complete, state updated');
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
           set({

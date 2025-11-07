@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { ExportButton } from '@/components/export';
 import { ExportColumn } from '@/types/export';
+import { LeadStatusBadge } from '@/components/leads';
 
 export default function LeadsPage() {
   const router = useRouter();
@@ -57,21 +58,7 @@ export default function LeadsPage() {
   };
 
   const getStatusBadge = (status: LeadStatus) => {
-    const variants: Record<LeadStatus, 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default'> = {
-      [LeadStatus.NEW]: 'primary',
-      [LeadStatus.CONTACTED]: 'secondary',
-      [LeadStatus.QUALIFIED]: 'success',
-      [LeadStatus.PROPOSAL_SENT]: 'warning',
-      [LeadStatus.NEGOTIATING]: 'warning',
-      [LeadStatus.WON]: 'success',
-      [LeadStatus.LOST]: 'danger',
-    };
-
-    return (
-      <Badge variant={variants[status]}>
-        {status.replace('_', ' ').toUpperCase()}
-      </Badge>
-    );
+    return <LeadStatusBadge status={status} size="sm" />;
   };
 
   const getPriorityBadge = (priority: LeadPriority) => {

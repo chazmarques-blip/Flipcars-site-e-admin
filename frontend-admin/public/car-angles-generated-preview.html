@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Ícones Gerados por IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            color: #D4AF37;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #D4AF37;
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 16px;
+            letter-spacing: 1px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid #D4AF37;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.4);
+            border-color: #FFD700;
+        }
+        
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .card-label {
+            font-size: 14px;
+            color: #D4AF37;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        
+        .image-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        
+        .car-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .side-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #D4AF37;
+            color: #000;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .info-box h3 {
+            color: #D4AF37;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .info-box p {
+            color: #ccc;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        .approve-section {
+            background: rgba(212, 175, 55, 0.15);
+            border: 3px solid #D4AF37;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        .approve-section h2 {
+            color: #D4AF37;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        
+        .approve-section p {
+            color: #ccc;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-approve {
+            background: #D4AF37;
+            color: #000;
+        }
+        
+        .btn-approve:hover {
+            background: #FFD700;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+        }
+        
+        .btn-reject {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-reject:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 FlipCars - Ícones Gerados por IA</h1>
+            <p class="subtitle">3 Ângulos Profissionais em Line Art</p>
+            <span class="badge">GERADO POR IA - VERSÃO PROFISSIONAL</span>
+        </header>
+        
+        <!-- IMAGES GRID -->
+        <div class="grid">
+            <!-- DRIVER FRONT -->
+            <div class="card">
+                <div class="card-title">Driver Front</div>
+                <div class="card-label">Vista Frontal Esquerda (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/eea7a4b9-088d-4b12-baf5-71dd7d4e0953.jpeg" 
+                         alt="Driver Front" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">LADO DO MOTORISTA</span>
+            </div>
+            
+            <!-- PASSENGER FRONT -->
+            <div class="card">
+                <div class="card-title">Passenger Front</div>
+                <div class="card-label">Vista Frontal Direita (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/27b3578c-7727-46e5-b7c0-3dd0cb88c56e.jpeg" 
+                         alt="Passenger Front" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">LADO DO PASSAGEIRO</span>
+            </div>
+            
+            <!-- DRIVER REAR -->
+            <div class="card">
+                <div class="card-title">Driver Rear</div>
+                <div class="card-label">Vista Traseira Esquerda (3/4)</div>
+                <div class="image-container">
+                    <img src="https://cdn1.genspark.ai/user-upload-image/22_generated/dfb7f81f-d3e3-464a-9cde-81a4d3d49176.jpeg" 
+                         alt="Driver Rear" 
+                         class="car-image">
+                </div>
+                <span class="side-badge">LADO DO MOTORISTA</span>
+            </div>
+        </div>
+        
+        <!-- INFO BOX -->
+        <div class="info-box">
+            <h3>ℹ️ Sobre Estes Ícones</h3>
+            <p>
+                <strong>✨ Gerados por IA:</strong> Estes ícones foram criados usando inteligência artificial 
+                com base na sua imagem de referência (carro de perfil em line art).<br><br>
+                
+                <strong>🎨 Estilo:</strong> Line art profissional com linhas finas e elegantes, similar 
+                ao exemplo que você forneceu. Detalhes automotivos realistas incluindo faróis, lanternas, 
+                rodas, portas e janelas.<br><br>
+                
+                <strong>📐 Formato:</strong> Imagens em alta resolução (1392×752 pixels) que podem ser 
+                convertidas para SVG ou usadas como PNG/JPG.<br><br>
+                
+                <strong>🎯 Uso:</strong> Estes ícones são ideais para guiar usuários sobre quais ângulos 
+                fotografar no formulário de estimativa do FlipCars.
+            </p>
+        </div>
+        
+        <!-- APPROVAL SECTION -->
+        <div class="approve-section">
+            <h2>✅ Estes Ícones Estão Bons?</h2>
+            <p>
+                Se você aprovar estes ícones, eu posso:<br>
+                <strong>1.</strong> Baixar e otimizar as imagens<br>
+                <strong>2.</strong> Converter para SVG (se necessário)<br>
+                <strong>3.</strong> Integrar diretamente no componente de upload de fotos<br>
+                <strong>4.</strong> Fazer commit e atualizar o PR
+            </p>
+            
+            <div class="button-group">
+                <button class="btn btn-approve" onclick="handleApprove()">
+                    ✅ APROVAR - USAR ESTES ÍCONES
+                </button>
+                <button class="btn btn-reject" onclick="handleReject()">
+                    ❌ GERAR NOVAMENTE
+                </button>
+            </div>
+        </div>
+        
+        <!-- DOWNLOAD LINKS -->
+        <div class="info-box" style="margin-top: 40px;">
+            <h3>📥 Links Diretos para Download</h3>
+            <p style="margin-top: 16px;">
+                <strong>Driver Front:</strong><br>
+                <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/eea7a4b9-088d-4b12-baf5-71dd7d4e0953.jpeg" 
+                   target="_blank" 
+                   style="color: #D4AF37; text-decoration: underline;">
+                    https://cdn1.genspark.ai/user-upload-image/22_generated/eea7a4b9-088d-4b12-baf5-71dd7d4e0953.jpeg
+                </a>
+            </p>
+            <p style="margin-top: 16px;">
+                <strong>Passenger Front:</strong><br>
+                <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/27b3578c-7727-46e5-b7c0-3dd0cb88c56e.jpeg" 
+                   target="_blank" 
+                   style="color: #D4AF37; text-decoration: underline;">
+                    https://cdn1.genspark.ai/user-upload-image/22_generated/27b3578c-7727-46e5-b7c0-3dd0cb88c56e.jpeg
+                </a>
+            </p>
+            <p style="margin-top: 16px;">
+                <strong>Driver Rear:</strong><br>
+                <a href="https://cdn1.genspark.ai/user-upload-image/22_generated/dfb7f81f-d3e3-464a-9cde-81a4d3d49176.jpeg" 
+                   target="_blank" 
+                   style="color: #D4AF37; text-decoration: underline;">
+                    https://cdn1.genspark.ai/user-upload-image/22_generated/dfb7f81f-d3e3-464a-9cde-81a4d3d49176.jpeg
+                </a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function handleApprove() {
+            alert('✅ Ótimo! Vou baixar, otimizar e integrar estes ícones na aplicação.\n\nPor favor, me confirme no chat que você aprovou para eu prosseguir.');
+        }
+        
+        function handleReject() {
+            alert('❌ Ok! Vou gerar novos ícones.\n\nPor favor, me diga no chat o que precisa ser ajustado:\n\n• Ângulo diferente?\n• Mais/menos detalhes?\n• Cor diferente?\n• Estilo diferente?');
+        }
+    </script>
+</body>
+</html>

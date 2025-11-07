@@ -1,0 +1,275 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Calendar, Info } from 'lucide-react';
+import {
+  Step2BodyshopFormData,
+  Step2MechanicFormData,
+  step2BodyshopSchema,
+  step2MechanicSchema,
+} from '@/lib/validations/estimate';
+import { EstimateRequest, INSURANCE_COMPANIES, WARRANTY_COMPANIES, ServiceType } from '@/types/estimate';
+import { Button } from '@/components/ui/Button';
+import { formatDateDisplay, formatDateInput, getAvailableDates, getAvailableTimeSlots } from '@/lib/utils/calendar';
+
+interface Step2ServiceDetailsProps {
+  initialData: Partial<EstimateRequest>;
+  serviceType: ServiceType;
+  onNext: (data: Partial<EstimateRequest>) => void;
+  onBack: () => void;
+}
+
+export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }: Step2ServiceDetailsProps) {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showTimeSlots, setShowTimeSlots] = useState(false);
+  const isBodyshop = serviceType === 'bodyshop';
+  
+  const schema = isBodyshop ? step2BodyshopSchema : step2MechanicSchema;
+  
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+  } = useForm<Step2BodyshopFormData | Step2MechanicFormData>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    defaultValues: {
+      ...(isBodyshop
+        ? {
+            insuranceCompany: initialData.insuranceCompany || '',
+            claimNumber: initialData.claimNumber || '',
+            hasClaimNumber: initialData.hasClaimNumber || false,
+          }
+        : {
+            warrantyCompany: initialData.warrantyCompany || '',
+            warrantyClaimNumber: initialData.warrantyClaimNumber || '',
+            hasWarrantyClaimNumber: initialData.hasWarrantyClaimNumber || false,
+          }),
+      preferredDate: initialData.preferredDate || '',
+    },
+  });
+
+  const companyField = isBodyshop ? 'insuranceCompany' : 'warrantyCompany';
+  const claimField = isBodyshop ? 'claimNumber' : 'warrantyClaimNumber';
+  const hasClaimField = isBodyshop ? 'hasClaimNumber' : 'hasWarrantyClaimNumber';
+  
+  const selectedCompany = watch(companyField);
+  const hasClaimNumber = watch(hasClaimField);
+  const preferredDate = watch('preferredDate');
+
+  const companies = isBodyshop ? INSURANCE_COMPANIES : WARRANTY_COMPANIES;
+  const availableDates = getAvailableDates(15); // Limited to 15 days
+  const availableTimeSlots = getAvailableTimeSlots();
+
+  const onSubmit = (data: Step2BodyshopFormData | Step2MechanicFormData) => {
+    onNext(data);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+    setShowDatePicker(false);
+    setShowTimeSlots(true);
+  };
+
+  const handleTimeSlotSelect = (timeSlot: string) => {
+    if (selectedDate) {
+      setValue('preferredDate', formatDateInput(selectedDate), { shouldValidate: true });
+      setValue('preferredTimeSlot' as any, timeSlot, { shouldValidate: true });
+      setShowTimeSlots(false);
+    }
+  };
+
+  const handleSkipDate = () => {
+    setValue('preferredDate', '', { shouldValidate: true });
+    onNext({ ...watch(), dateSkipped: true });
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Company Selection */}
+      <div className="space-y-0.5">
+        <label htmlFor={companyField} className="block text-sm font-medium text-black">
+          Who will pay for the repair? <span className="text-gold">*</span>
+        </label>
+        <select
+          id={companyField}
+          {...register(companyField)}
+          className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+            errors[companyField] ? 'border-red-500' : 'border-neutral-300'
+          }`}
+        >
+          <option value="">Select {isBodyshop ? 'insurance' : 'warranty'} company</option>
+          {companies.map((company) => (
+            <option key={company} value={company}>
+              {company}
+            </option>
+          ))}
+        </select>
+        {errors[companyField] && (
+          <p className="text-sm text-red-600">{errors[companyField]?.message}</p>
+        )}
+      </div>
+
+      {/* Claim Number (conditional) */}
+      {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && (
+        <div className="space-y-0.5">
+          <label htmlFor={claimField} className="block text-sm font-medium text-black">
+            Claim Number (Optional)
+          </label>
+          <input
+            id={claimField}
+            type="text"
+            {...register(claimField)}
+            placeholder="Enter claim number if available"
+            disabled={hasClaimNumber}
+            className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+              hasClaimNumber ? 'bg-neutral-100 cursor-not-allowed' : 'border-neutral-300'
+            }`}
+          />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              {...register(hasClaimField)}
+              className="w-4 h-4 text-gold border-neutral-300 rounded focus:ring-gold"
+            />
+            <span className="text-sm text-neutral-700">I don't have a claim number yet</span>
+          </label>
+        </div>
+      )}
+
+      {/* Preferred Date & Time */}
+      <div className="space-y-0.5">
+        <label className="block text-sm font-medium text-black">
+          <Calendar className="w-4 h-4 inline mr-1" />
+          When would you like to bring your car?
+        </label>
+        
+        {!showDatePicker && !showTimeSlots && !preferredDate && (
+          <div className="space-y-0.5">
+            <button
+              type="button"
+              onClick={() => setShowDatePicker(true)}
+              className="w-full px-3 py-2 text-left text-sm border border-neutral-300 rounded-lg hover:border-gold focus:ring-2 focus:ring-gold focus:border-gold transition-colors"
+            >
+              <Calendar className="w-4 h-4 inline mr-2 text-neutral-400" />
+              <span className="text-neutral-500">Select a date:</span>
+            </button>
+            <div className="flex items-start gap-2 p-2 bg-neutral-50 rounded-lg">
+              <Info className="w-4 h-4 text-neutral-500 mt-0.5 flex-shrink-0" />
+              <p className="text-[10px] text-neutral-600">
+                You can also skip this and we'll contact you to schedule
+              </p>
+            </div>
+          </div>
+        )}
+
+        {showDatePicker && (
+          <div className="border border-neutral-300 rounded-lg p-3 bg-white">
+            <h4 className="text-sm font-medium text-black mb-2">Select a date:</h4>
+            <div className="grid grid-cols-3 gap-2 max-h-52 overflow-y-auto">
+              {availableDates.map((date) => (
+                <button
+                  key={date.toISOString()}
+                  type="button"
+                  onClick={() => handleDateSelect(date)}
+                  className="px-2 py-1.5 text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
+                >
+                  {formatDateDisplay(date)}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowDatePicker(false)}
+              className="mt-2 text-[10px] text-neutral-600 hover:text-black"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
+        {showTimeSlots && selectedDate && (
+          <div className="border border-neutral-300 rounded-lg p-3 bg-white">
+            <h4 className="text-sm font-medium text-black mb-2">
+              Select time slot for {formatDateDisplay(selectedDate)}:
+            </h4>
+            <div className="grid grid-cols-1 gap-2">
+              {availableTimeSlots.map((slot) => (
+                <button
+                  key={slot.value}
+                  type="button"
+                  onClick={() => handleTimeSlotSelect(slot.value)}
+                  className="px-3 py-1.5 text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
+                >
+                  {slot.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setShowTimeSlots(false);
+                setShowDatePicker(true);
+              }}
+              className="mt-2 text-[10px] text-neutral-600 hover:text-black"
+            >
+              ← Back to dates
+            </button>
+          </div>
+        )}
+
+        {preferredDate && !showTimeSlots && (
+          <div className="flex items-center justify-between p-2 border border-gold bg-gold/5 rounded-lg">
+            <span className="text-sm text-black">
+              Selected: {formatDateDisplay(new Date(preferredDate))}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setValue('preferredDate', '', { shouldValidate: true });
+                setSelectedDate(null);
+              }}
+              className="text-[10px] text-neutral-600 hover:text-black"
+            >
+              Change
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-2 pt-2 fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-neutral-200 md:relative md:border-0 md:p-0">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          className="flex-1 border-black text-black hover:bg-black hover:text-white py-1.5 text-xs"
+        >
+          ← Back
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={handleSkipDate}
+          className="flex-1 text-neutral-600 hover:text-black py-1.5 text-xs"
+        >
+          Skip Date
+        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          className="flex-1 bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs"
+          disabled={!isValid}
+        >
+          Continue →
+        </Button>
+      </div>
+    </form>
+  );
+}

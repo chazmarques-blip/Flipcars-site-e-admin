@@ -10,17 +10,17 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles: Record<CardVariant, string> = {
-  default: 'bg-white shadow-md',
-  elevated: 'bg-white shadow-lg',
-  bordered: 'bg-white border-2 border-gray-200',
-  interactive: 'bg-white shadow-md hover:shadow-lg cursor-pointer',
+  default: 'bg-white shadow-sm border border-gray-200',
+  elevated: 'bg-white shadow-md border border-gray-200',
+  bordered: 'bg-white border border-gray-300',
+  interactive: 'bg-white shadow-sm border border-gray-200 hover:shadow-md hover:border-gold/30 cursor-pointer',
 };
 
 const paddingStyles: Record<NonNullable<CardProps['padding']>, string> = {
   none: '',
-  sm: 'p-4',
-  md: 'p-6',
-  lg: 'p-8',
+  sm: 'p-3',
+  md: 'p-4',
+  lg: 'p-6',
 };
 
 export function Card({
@@ -66,8 +66,8 @@ export function CardHeader({
       {...props}
     >
       <div className="flex-1">
-        {title && <h3 className="text-xl font-semibold text-gray-900">{title}</h3>}
-        {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+        {title && <h3 className="text-lg font-semibold text-gray-900">{title}</h3>}
+        {subtitle && <p className="text-sm text-gray-600 mt-0.5">{subtitle}</p>}
         {children}
       </div>
       {action && <div className="ml-4">{action}</div>}
@@ -81,7 +81,7 @@ export interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
 
 export function CardContent({ children, className, ...props }: CardContentProps) {
   return (
-    <div className={clsx('text-gray-700', className)} {...props}>
+    <div className={clsx('text-gray-800 text-sm', className)} {...props}>
       {children}
     </div>
   );
@@ -94,7 +94,7 @@ export interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
 export function CardFooter({ children, className, ...props }: CardFooterProps) {
   return (
     <div
-      className={clsx('flex items-center gap-3 mt-6 pt-4 border-t border-gray-200', className)}
+      className={clsx('flex items-center gap-3 mt-4 pt-4 border-t border-gray-200', className)}
       {...props}
     >
       {children}

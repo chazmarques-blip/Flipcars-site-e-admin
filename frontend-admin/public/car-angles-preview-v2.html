@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Car Angles Preview V2 (Line Art)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            color: #D4AF37;
+            font-weight: 500;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: #D4AF37;
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 16px;
+            letter-spacing: 1px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #D4AF37;
+            border-bottom: 2px solid #D4AF37;
+            padding-bottom: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 40px rgba(212, 175, 55, 0.3);
+            border-color: #FFD700;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .card-label {
+            font-size: 14px;
+            color: #D4AF37;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        
+        .image-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        
+        .car-image {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #D4AF37;
+            color: #000;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #D4AF37;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .info-box h3 {
+            color: #D4AF37;
+            margin-bottom: 12px;
+        }
+        
+        .info-box p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .comparison-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #D4AF37;
+        }
+        
+        ul {
+            margin-top: 12px;
+            padding-left: 20px;
+        }
+        
+        ul li {
+            margin: 8px 0;
+            color: #ccc;
+        }
+        
+        .highlight {
+            background: rgba(212, 175, 55, 0.2);
+            border-left: 3px solid #D4AF37;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 FlipCars Car Angles V2</h1>
+            <p class="subtitle">Professional Line Art Style - Elegant & Detailed</p>
+            <span class="version-badge">VERSION 2.0 - LINE ART</span>
+        </header>
+        
+        <!-- V2 LINE ART VERSION -->
+        <div class="section">
+            <h2 class="section-title">✨ Version 2.0 - Professional Line Art (NOVO!)</h2>
+            <p style="color: #ccc; margin-bottom: 30px; text-align: center;">
+                Estilo line art elegante com linhas finas, detalhes como faróis, lanternas, rodas com raios, e acabamento profissional
+            </p>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-title">Driver Front</div>
+                    <div class="card-label">Front Left 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/driver-front-v2.svg" alt="Driver Front V2" class="car-image">
+                    </div>
+                    <span class="badge">Driver Side</span>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Passenger Front</div>
+                    <div class="card-label">Front Right 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/passenger-front-v2.svg" alt="Passenger Front V2" class="car-image">
+                    </div>
+                    <span class="badge">Passenger Side</span>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Driver Rear</div>
+                    <div class="card-label">Rear Left 3/4 View</div>
+                    <div class="image-container">
+                        <img src="/images/car-angles/driver-rear-v2.svg" alt="Driver Rear V2" class="car-image">
+                    </div>
+                    <span class="badge">Driver Side</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPARISON -->
+        <div class="section">
+            <h2 class="section-title">📊 Comparação: V1 vs V2</h2>
+            <div class="comparison">
+                <div class="comparison-card">
+                    <div class="comparison-title">V1 - Minimalista Simples</div>
+                    <div class="image-container" style="min-height: 150px;">
+                        <img src="/images/car-angles/driver-front-gold.svg" alt="V1" style="max-width: 200px;">
+                    </div>
+                    <p style="color: #888; font-size: 14px; margin-top: 12px;">
+                        ❌ Muito simples<br>
+                        ❌ Poucos detalhes<br>
+                        ❌ Aparência infantil
+                    </p>
+                </div>
+                
+                <div class="comparison-card">
+                    <div class="comparison-title">V2 - Line Art Profissional ✨</div>
+                    <div class="image-container" style="min-height: 150px;">
+                        <img src="/images/car-angles/driver-front-v2.svg" alt="V2" style="max-width: 280px;">
+                    </div>
+                    <p style="color: #D4AF37; font-size: 14px; margin-top: 12px;">
+                        ✅ Linhas finas e elegantes<br>
+                        ✅ Detalhes realistas (faróis, rodas, portas)<br>
+                        ✅ Aparência profissional
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FEATURES -->
+        <div class="info-box">
+            <h3>🎨 Novos Recursos V2.0</h3>
+            <div class="highlight">
+                <strong style="color: #D4AF37;">✨ Melhorias Visuais:</strong>
+                <ul>
+                    <li>✅ <strong>Linhas finas e elegantes</strong> (stroke-width 0.8-2.0)</li>
+                    <li>✅ <strong>Detalhes realistas:</strong> faróis, lanternas, grade frontal, espelhos</li>
+                    <li>✅ <strong>Rodas detalhadas</strong> com aros e raios visíveis</li>
+                    <li>✅ <strong>Portas e janelas</strong> com separação clara</li>
+                    <li>✅ <strong>Maçanetas e acabamentos</strong></li>
+                    <li>✅ <strong>Lanternas traseiras</strong> com detalhes internos (V-lines)</li>
+                    <li>✅ <strong>Área de placa</strong> na versão rear</li>
+                    <li>✅ <strong>Linha do chão</strong> para dar contexto</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 16px;"><strong>Cor Mantida:</strong></p>
+            <p>🎨 <code>#D4AF37</code> - Gold FlipCars (todas as linhas usam esta cor)</p>
+            
+            <p style="margin-top: 16px;"><strong>Formato:</strong></p>
+            <p>📐 ViewBox: 300x200 (maior que V1 para acomodar mais detalhes)</p>
+        </div>
+        
+        <!-- USAGE -->
+        <div class="info-box">
+            <h3>💡 Como Usar (V2)</h3>
+            <p><strong>Arquivos Disponíveis:</strong></p>
+            <ul>
+                <li><code>/images/car-angles/driver-front-v2.svg</code></li>
+                <li><code>/images/car-angles/passenger-front-v2.svg</code></li>
+                <li><code>/images/car-angles/driver-rear-v2.svg</code></li>
+            </ul>
+            
+            <p style="margin-top: 16px;"><strong>Uso em React/Next.js:</strong></p>
+            <pre style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 8px; overflow-x: auto; color: #D4AF37; margin-top: 8px;"><code>import Image from 'next/image'
+
+&lt;Image 
+  src="/images/car-angles/driver-front-v2.svg"
+  alt="Driver Front Angle"
+  width={300}
+  height={200}
+  className="car-angle-icon"
+/&gt;</code></pre>
+            
+            <p style="margin-top: 16px;"><strong>Uso em HTML:</strong></p>
+            <pre style="background: rgba(0,0,0,0.5); padding: 16px; border-radius: 8px; overflow-x: auto; color: #D4AF37; margin-top: 8px;"><code>&lt;img 
+  src="/images/car-angles/driver-front-v2.svg" 
+  alt="Driver Front"
+  style="max-width: 300px;"
+/&gt;</code></pre>
+        </div>
+        
+        <!-- TECH DETAILS -->
+        <div class="info-box">
+            <h3>🔧 Especificações Técnicas V2</h3>
+            <ul>
+                <li>✅ <strong>Formato:</strong> SVG (Scalable Vector Graphics)</li>
+                <li>✅ <strong>Dimensões:</strong> 300x200 viewBox</li>
+                <li>✅ <strong>Estilo:</strong> Line art profissional com stroke</li>
+                <li>✅ <strong>Cor:</strong> #D4AF37 (FlipCars Gold)</li>
+                <li>✅ <strong>Stroke Width:</strong> 0.5-2.0 (variado para profundidade)</li>
+                <li>✅ <strong>Fill:</strong> none (apenas contornos)</li>
+                <li>✅ <strong>Linecap:</strong> round (bordas arredondadas)</li>
+                <li>✅ <strong>Linejoin:</strong> round (conexões suaves)</li>
+                <li>✅ <strong>Tamanho arquivo:</strong> ~4-5KB por SVG</li>
+                <li>✅ <strong>Compatibilidade:</strong> Todos browsers modernos</li>
+                <li>✅ <strong>Responsivo:</strong> Escala perfeitamente</li>
+            </ul>
+        </div>
+        
+        <!-- NEXT STEPS -->
+        <div class="info-box">
+            <h3>🚀 Próximos Passos</h3>
+            <ol style="padding-left: 24px; margin-top: 12px; color: #ccc; line-height: 1.8;">
+                <li>✅ <strong>Revisar</strong> os novos ícones V2 nesta página</li>
+                <li>📱 <strong>Integrar</strong> no componente de upload de fotos</li>
+                <li>🎨 <strong>Ajustar</strong> tamanhos se necessário (fácil com SVG)</li>
+                <li>🧪 <strong>Testar</strong> em diferentes telas e resoluções</li>
+                <li>✅ <strong>Aprovar</strong> e fazer merge do PR</li>
+            </ol>
+        </div>
+        
+        <div style="text-align: center; margin-top: 60px; padding: 40px; background: rgba(212, 175, 55, 0.05); border-radius: 16px;">
+            <h2 style="color: #D4AF37; font-size: 36px; margin-bottom: 16px;">🎉 V2 Line Art Pronto!</h2>
+            <p style="color: #ccc; font-size: 18px; line-height: 1.6;">
+                Ícones profissionais com linhas elegantes, detalhes realistas e acabamento premium.<br>
+                Muito melhor que a versão V1! 🚗✨
+            </p>
+        </div>
+    </div>
+</body>
+</html>
