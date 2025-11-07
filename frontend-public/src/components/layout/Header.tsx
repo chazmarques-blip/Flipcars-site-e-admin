@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Phone, Menu, X, MessageCircle } from 'lucide-react'
+import { EstimateFormModal } from '@/components/estimate/EstimateFormModal'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [estimateModalOpen, setEstimateModalOpen] = useState(false)
 
   // TODO: Connect to admin API to check if gallery has photos
   // For now, set to false. Will be dynamic when admin panel is implemented.
@@ -56,12 +58,12 @@ export default function Header() {
               <Phone className="w-5 h-5" />
               <span className="font-semibold">321-960-8661</span>
             </a>
-            <Link 
-              href="/estimate" 
+            <button 
+              onClick={() => setEstimateModalOpen(true)}
               className="bg-primary hover:bg-primary-light text-black font-bold px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
             >
               Free Estimate
-            </Link>
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -99,13 +101,15 @@ export default function Header() {
                 <Phone className="w-5 h-5" />
                 <span className="font-semibold">321-960-8661</span>
               </a>
-              <Link
-                href="/estimate"
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setEstimateModalOpen(true);
+                }}
                 className="bg-primary hover:bg-primary-light text-black font-bold px-6 py-3 rounded-lg text-center transition-all duration-200"
-                onClick={() => setMobileMenuOpen(false)}
               >
                 Free Estimate
-              </Link>
+              </button>
             </div>
           </div>
         )}
@@ -121,6 +125,12 @@ export default function Header() {
       >
         <MessageCircle className="w-6 h-6" />
       </a>
+
+      {/* Estimate Form Modal */}
+      <EstimateFormModal 
+        isOpen={estimateModalOpen} 
+        onClose={() => setEstimateModalOpen(false)} 
+      />
     </header>
   )
 }

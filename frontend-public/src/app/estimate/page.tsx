@@ -1,124 +1,45 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { EstimateForm } from '@/components/estimate/EstimateForm';
 
 export default function EstimatePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to home page after 2 seconds
+    const timer = setTimeout(() => {
+      router.push('/');
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-[#0B3B5E] border-b border-gray-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 text-white hover:text-[#FF7A1A] transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-              <span className="font-medium">Back to Home</span>
-            </Link>
-            <h1 className="text-xl font-bold text-white">Free Estimate Request</h1>
-            <div className="w-32"></div> {/* Spacer for centering */}
-          </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-md mx-auto text-center p-8">
+        <div className="w-16 h-16 bg-[#FF7A1A] rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-3xl">🚗</span>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Info Card */}
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-[#FF7A1A] rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🚗</span>
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Get Your Free Estimate</h2>
-              <p className="text-gray-600">
-                Fill out the form below and we'll get back to you within 1 hour during business hours
-              </p>
-            </div>
-          </div>
-
-          {/* Estimate Form */}
-          <EstimateForm />
-
-          {/* Business Hours */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Business Hours</h3>
-            <div className="space-y-2 text-gray-700">
-              <div className="flex justify-between">
-                <span className="font-medium">Monday - Friday:</span>
-                <span>9:00 AM - 6:00 PM</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Saturday:</span>
-                <span>9:00 AM - 12:00 PM</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Sunday:</span>
-                <span className="text-red-600">Closed</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Why Choose Us */}
-          <div className="bg-gradient-to-br from-[#0B3B5E] to-[#0B3B5E]/80 rounded-lg shadow-lg p-6 mt-8 text-white">
-            <h3 className="text-lg font-bold mb-4">Why Choose FlipCars?</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <span className="text-[#FF7A1A] text-xl">✓</span>
-                <span>Fast response - We reply within 1 hour</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-[#FF7A1A] text-xl">✓</span>
-                <span>Experienced team - 15+ years in auto body repair</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-[#FF7A1A] text-xl">✓</span>
-                <span>Insurance approved - We work with all major insurers</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-[#FF7A1A] text-xl">✓</span>
-                <span>Quality guarantee - Lifetime warranty on all repairs</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Options */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Prefer to Contact Us Directly?</h3>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {/* Phone */}
-              <a 
-                href="tel:+13219608661"
-                className="flex items-center justify-center gap-3 p-4 bg-[#FF7A1A] hover:bg-[#FF7A1A]/90 text-white rounded-lg font-semibold transition-colors"
-              >
-                <span className="text-xl">📞</span>
-                <span className="hidden sm:inline">(321) 960-8661</span>
-                <span className="sm:hidden">Call Us</span>
-              </a>
-
-              {/* WhatsApp */}
-              <a 
-                href="https://wa.me/13219608661"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 p-4 bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-lg font-semibold transition-colors"
-              >
-                <span className="text-xl">💬</span>
-                <span>WhatsApp</span>
-              </a>
-
-              {/* Email */}
-              <a 
-                href="mailto:info@flipcars.us"
-                className="flex items-center justify-center gap-3 p-4 bg-[#0B3B5E] hover:bg-[#0B3B5E]/90 text-white rounded-lg font-semibold transition-colors"
-              >
-                <span className="text-xl">📧</span>
-                <span>Email Us</span>
-              </a>
-            </div>
-          </div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          Get Your Free Estimate
+        </h1>
+        <p className="text-gray-600 mb-6">
+          Click the "Free Estimate" button in the header to open the form!
+        </p>
+        <div className="space-y-4">
+          <Link
+            href="/"
+            className="block w-full bg-[#FF7A1A] hover:bg-[#FF7A1A]/90 text-white font-bold px-6 py-3 rounded-lg transition-colors"
+          >
+            Go to Home Page
+          </Link>
+          <p className="text-sm text-gray-500">
+            Redirecting automatically in 2 seconds...
+          </p>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
