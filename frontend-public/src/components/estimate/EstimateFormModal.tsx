@@ -108,6 +108,7 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
           {currentStep === 2 && (
             <Step2ServiceDetails
               initialData={formData}
+              serviceType={formData.serviceType!}
               onNext={handleNext}
               onBack={handleBack}
             />
