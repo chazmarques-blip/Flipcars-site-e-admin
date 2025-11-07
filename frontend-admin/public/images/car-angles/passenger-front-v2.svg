@@ -1,0 +1,167 @@
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Passenger Front 3/4 View - Line Art Style (Mirrored) -->
+  
+  <!-- Main body outline -->
+  <path d="M 250 140 L 240 110 L 225 90 L 205 80 L 160 75 L 120 80 L 90 90 L 70 110 L 60 140 L 60 145 L 65 148 L 240 148 L 250 145 Z" 
+        stroke="#D4AF37" 
+        stroke-width="1.5" 
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <!-- Roof line -->
+  <path d="M 225 90 L 215 75 L 190 70 L 155 70 L 125 75 L 105 85 L 90 90" 
+        stroke="#D4AF37" 
+        stroke-width="1.5" 
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <!-- Front windshield -->
+  <path d="M 215 75 L 205 80 L 205 88" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"/>
+  
+  <!-- Side windshield right -->
+  <path d="M 190 70 L 185 72 L 182 85" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"/>
+  
+  <!-- Side windshield left -->
+  <path d="M 135 72 L 140 70 L 145 85" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"/>
+  
+  <!-- Rear windshield -->
+  <path d="M 105 85 L 112 80 L 112 88" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"/>
+  
+  <!-- Hood line -->
+  <path d="M 240 110 L 225 100 L 180 95 L 135 100 L 105 110" 
+        stroke="#D4AF37" 
+        stroke-width="1.2" 
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <!-- Front door line -->
+  <path d="M 205 88 L 205 140" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"/>
+  
+  <!-- Rear door line -->
+  <path d="M 145 88 L 145 140" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"/>
+  
+  <!-- Side mirror right -->
+  <path d="M 225 100 L 235 102 L 237 105 L 235 108 L 225 110" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <!-- Door handle right -->
+  <line x1="215" y1="115" x2="210" y2="115" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        stroke-linecap="round"/>
+  
+  <!-- Door handle left -->
+  <line x1="135" y1="115" x2="130" y2="115" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        stroke-linecap="round"/>
+  
+  <!-- Headlight right -->
+  <ellipse cx="232" cy="120" rx="8" ry="6" 
+           stroke="#D4AF37" 
+           stroke-width="1.2" 
+           fill="none"/>
+  
+  <!-- Headlight left -->
+  <ellipse cx="85" cy="120" rx="8" ry="6" 
+           stroke="#D4AF37" 
+           stroke-width="1.2" 
+           fill="none"/>
+  
+  <!-- Front grille -->
+  <path d="M 220 120 L 215 118 L 190 115 L 160 115 L 135 118 L 130 120" 
+        stroke="#D4AF37" 
+        stroke-width="1" 
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <!-- Wheel arch right -->
+  <path d="M 240 148 A 25 25 0 0 0 190 148" 
+        stroke="#D4AF37" 
+        stroke-width="1.5" 
+        fill="none"/>
+  
+  <!-- Wheel arch left -->
+  <path d="M 125 148 A 25 25 0 0 0 75 148" 
+        stroke="#D4AF37" 
+        stroke-width="1.5" 
+        fill="none"/>
+  
+  <!-- Wheel right outer -->
+  <circle cx="215" cy="148" r="20" 
+          stroke="#D4AF37" 
+          stroke-width="2" 
+          fill="none"/>
+  
+  <!-- Wheel right inner rim -->
+  <circle cx="215" cy="148" r="12" 
+          stroke="#D4AF37" 
+          stroke-width="1" 
+          fill="none"/>
+  
+  <!-- Wheel right spokes -->
+  <line x1="215" y1="136" x2="215" y2="160" 
+        stroke="#D4AF37" 
+        stroke-width="0.8"/>
+  <line x1="203" y1="148" x2="227" y2="148" 
+        stroke="#D4AF37" 
+        stroke-width="0.8"/>
+  
+  <!-- Wheel left outer -->
+  <circle cx="100" cy="148" r="20" 
+          stroke="#D4AF37" 
+          stroke-width="2" 
+          fill="none"/>
+  
+  <!-- Wheel left inner rim -->
+  <circle cx="100" cy="148" r="12" 
+          stroke="#D4AF37" 
+          stroke-width="1" 
+          fill="none"/>
+  
+  <!-- Wheel left spokes -->
+  <line x1="100" y1="136" x2="100" y2="160" 
+        stroke="#D4AF37" 
+        stroke-width="0.8"/>
+  <line x1="88" y1="148" x2="112" y2="148" 
+        stroke="#D4AF37" 
+        stroke-width="0.8"/>
+  
+  <!-- Ground line -->
+  <line x1="30" y1="168" x2="270" y2="168" 
+        stroke="#D4AF37" 
+        stroke-width="0.5" 
+        opacity="0.3"/>
+</svg>
