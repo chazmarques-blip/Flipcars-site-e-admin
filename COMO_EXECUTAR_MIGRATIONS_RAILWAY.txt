@@ -1,0 +1,294 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║           🎯 GUIA VISUAL: COMO EXECUTAR MIGRATIONS NO RAILWAY                ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Este é o ÚNICO passo que falta para o projeto funcionar 100%!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📍 PASSO A PASSO (COM CAPTURAS VISUAIS):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ ACESSE O RAILWAY DASHBOARD
+   👉 https://railway.app/project/inspiring-imagination
+   
+   Você verá:
+   ┌─────────────────────────────────────────────┐
+   │  Railway Dashboard                          │
+   │  ┌─────────────┐  ┌─────────────┐          │
+   │  │  Postgres   │  │  upbeat-    │          │
+   │  │             │  │  dedication │ ← CLIQUE  │
+   │  │  (Database) │  │  (Backend)  │   AQUI   │
+   │  └─────────────┘  └─────────────┘          │
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+2️⃣ CLIQUE NO SERVIÇO "upbeat-dedication"
+   
+   Você verá a página do serviço:
+   ┌─────────────────────────────────────────────┐
+   │  upbeat-dedication                          │
+   │  ┌──────────┬──────────┬──────────┐        │
+   │  │Deployments│Variables │ Settings │← CLIQUE│
+   │  └──────────┴──────────┴──────────┘        │
+   │                                             │
+   │  Status: Active ✅                          │
+   │  URL: upbeat-dedication-production...       │
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+3️⃣ CLIQUE NA ABA "Settings"
+   
+   Você verá várias seções:
+   ┌─────────────────────────────────────────────┐
+   │  Settings                                   │
+   │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+   │  ⚙️  General                                │
+   │  🚀 Deploy                    ← ROLE ATÉ    │
+   │  📡 Networking                  ESTA SEÇÃO  │
+   │  🔗 Integrations                            │
+   │  ⚠️  Danger                                 │
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+4️⃣ ROLE ATÉ A SEÇÃO "Deploy"
+   
+   Você verá:
+   ┌─────────────────────────────────────────────┐
+   │  🚀 Deploy                                  │
+   │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+   │                                             │
+   │  Build Command:                             │
+   │  ┌─────────────────────────────────────┐   │
+   │  │ npm run build                       │   │
+   │  └─────────────────────────────────────┘   │
+   │                                             │
+   │  Start Command:                             │
+   │  ┌─────────────────────────────────────┐   │
+   │  │ npm run start:prod              📝  │← CLIQUE NO
+   │  └─────────────────────────────────────┘     CAMPO
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+5️⃣ EDITE O "Start Command"
+   
+   ANTES (valor atual):
+   ┌─────────────────────────────────────────────┐
+   │ npm run start:prod                          │
+   └─────────────────────────────────────────────┘
+   
+   DEPOIS (novo valor - COPIE EXATAMENTE):
+   ┌─────────────────────────────────────────────┐
+   │ npm run migration:run && npm run seed &&    │
+   │ npm run start:prod                          │
+   └─────────────────────────────────────────────┘
+
+   ⚠️  IMPORTANTE: Copie TODO o texto acima, incluindo os "&&"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+6️⃣ CLIQUE FORA DO CAMPO PARA SALVAR
+   
+   Railway vai mostrar:
+   ┌─────────────────────────────────────────────┐
+   │  ⚠️  Changes detected                       │
+   │  ┌────────────┐                             │
+   │  │   Deploy   │ ← CLIQUE AQUI               │
+   │  └────────────┘                             │
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+7️⃣ CLIQUE EM "Deploy"
+   
+   Railway vai iniciar o redeploy automático:
+   ┌─────────────────────────────────────────────┐
+   │  🔄 Deploying...                            │
+   │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+   │  Building...                                │
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+8️⃣ AGUARDE O DEPLOY (3-5 minutos)
+   
+   Você pode acompanhar clicando em "Deployments":
+   ┌─────────────────────────────────────────────┐
+   │  Deployments                                │
+   │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+   │  ⚡ Just now - Deploying...                 │
+   │     Click to see logs →                     │
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+9️⃣ VERIFIQUE OS LOGS
+   
+   Clique no deployment mais recente e procure por:
+   
+   ✅ SUCESSO - Procure por estas mensagens:
+   ┌─────────────────────────────────────────────┐
+   │  [LOG] Running migrations...                │
+   │  [LOG] ✓ Migration CreateUsersTable ran     │
+   │  [LOG] ✓ Migration CreateLeadsTable ran     │
+   │  [LOG] ✓ Migration CreateClaimsTable ran    │
+   │  [LOG] Migration completed successfully ✅   │
+   │  [LOG] Running seeds...                     │
+   │  [LOG] ✓ Seed SuperadminSeed ran            │
+   │  [LOG] Seeding completed successfully ✅     │
+   │  [LOG] Nest application successfully        │
+   │        started on port 3001 ✅              │
+   └─────────────────────────────────────────────┘
+   
+   ❌ ERRO - Se aparecer erro:
+   ┌─────────────────────────────────────────────┐
+   │  [ERROR] Migration failed...                │
+   │  [ERROR] Cannot find module...              │
+   └─────────────────────────────────────────────┘
+   
+   Se houver erro, verifique se o comando foi copiado corretamente!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔟 TESTE SE FUNCIONOU!
+   
+   Execute o script de teste:
+   
+   cd /home/user/webapp
+   bash testar-projeto.sh
+   
+   Você deve ver:
+   ┌─────────────────────────────────────────────┐
+   │  ✅ Backend está rodando!                   │
+   │  ✅ Login funcionou! Migrations executadas. │
+   │  ✅ Listar Usuários OK                      │
+   │  ✅ Meu Perfil OK                           │
+   │  ✅ Listar Leads OK                         │
+   │  ✅ Criar Lead OK                           │
+   │  🎉 Tudo funcionando! Projeto pronto!      │
+   └─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 COMANDO COMPLETO PARA COPIAR:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+npm run migration:run && npm run seed && npm run start:prod
+
+═══════════════════════════════════════════════════════════════════════════════
+
+💡 O QUE CADA PARTE FAZ:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+npm run migration:run  → Cria todas as tabelas no banco (users, leads, etc.)
+                          Executa todos os arquivos em backend/src/database/migrations/
+                          
+&&                     → Se a migração der certo, executa o próximo comando
+                          Se der erro, para aqui e não executa o resto
+                          
+npm run seed           → Popula dados iniciais no banco
+                          Cria o usuário superadmin
+                          Executa backend/src/database/seeds/
+                          
+&&                     → Se o seed der certo, executa o próximo comando
+                          
+npm run start:prod     → Inicia o backend em modo produção
+                          Abre na porta 3001
+                          Fica rodando e aceitando requisições
+
+═══════════════════════════════════════════════════════════════════════════════
+
+❓ PERGUNTAS FREQUENTES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Q: Preciso rodar as migrations toda vez que faço deploy?
+A: Não! Depois que rodar uma vez, você pode voltar o Start Command 
+   para apenas "npm run start:prod". As migrations só precisam rodar
+   uma vez para criar as tabelas.
+
+Q: E se eu adicionar novas migrations no futuro?
+A: Aí sim, você muda o Start Command de novo temporariamente para incluir
+   "npm run migration:run" antes do start:prod.
+
+Q: O que acontece se eu rodar as migrations duas vezes?
+A: Nada! O TypeORM é inteligente e não vai rodar migrations que já foram
+   executadas. Ele mantém um histórico no banco.
+
+Q: Posso testar localmente antes de fazer no Railway?
+A: Sim! No seu ambiente local com o banco PostgreSQL rodando:
+   cd backend
+   npm run migration:run
+   npm run seed
+   npm run start:dev
+
+Q: Como desfazer uma migration?
+A: Use o comando: npm run migration:revert
+   Mas cuidado, isso apaga dados!
+
+Q: O seed pode ser executado múltiplas vezes?
+A: Depende de como foi escrito. O seed do superadmin tem proteção para
+   não criar duplicatas. Mas em geral, seeds são feitos para rodar uma vez só.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔧 TROUBLESHOOTING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROBLEMA: Deploy falha com erro "Cannot find module"
+SOLUÇÃO: Verifique se o comando foi copiado corretamente, sem caracteres extras.
+
+PROBLEMA: Migration falha com "relation already exists"
+SOLUÇÃO: As tabelas já existem! Isso é OK. Mude o comando de volta para só
+         "npm run start:prod".
+
+PROBLEMA: Seed falha com "duplicate key value"
+SOLUÇÃO: O superadmin já foi criado! Isso é OK. Mude o comando de volta para
+         só "npm run start:prod".
+
+PROBLEMA: Backend demora muito para subir
+SOLUÇÃO: Migrations podem demorar 1-2 minutos. Seja paciente! Veja os logs.
+
+PROBLEMA: Logs mostram erro de timeout
+SOLUÇÃO: O Railway tem limite de tempo para build. Se as migrations forem muito
+         grandes, considere rodá-las separadamente via Railway CLI.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📞 AJUDA EXTRA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Se algo não funcionar:
+
+1. Verifique os logs do Railway (Deployments → último deploy → Deploy Logs)
+2. Execute o script de teste: bash /home/user/webapp/testar-projeto.sh
+3. Consulte o plano completo: cat /home/user/webapp/PLANO_DE_TESTES_COMPLETO.md
+4. Leia o guia de sucesso: cat /home/user/webapp/SUCCESS_RAILWAY_DEPLOYMENT.md
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✨ DEPOIS DE TUDO FUNCIONAR:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Você pode (opcionalmente) mudar o Start Command de volta para só:
+
+npm run start:prod
+
+As migrations já estarão aplicadas e não precisam rodar novamente!
+
+A menos que você adicione novas migrations no futuro, aí você inclui o
+"npm run migration:run &&" de novo temporariamente.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🎉 BOA SORTE!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Você está a apenas UM comando de distância de ter o projeto 100% funcional! 🚀
+
+═══════════════════════════════════════════════════════════════════════════════

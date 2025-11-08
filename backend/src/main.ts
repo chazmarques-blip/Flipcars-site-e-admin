@@ -1,8 +1,90 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import dataSource from './database/data-source';
+import { runSeeds } from './database/seeds/run-seeds';
+
+async function runMigrations() {
+  console.log('\n========================================');
+  console.log('📦 Running Database Migrations...');
+  console.log('========================================\n');
+
+  try {
+    // Initialize the data source
+    if (!dataSource.isInitialized) {
+      console.log('🔌 Initializing database connection...');
+      await dataSource.initialize();
+      console.log('✅ Database connection established');
+    }
+
+    // Run pending migrations
+    console.log('🔄 Checking for pending migrations...');
+    const pendingMigrations = await dataSource.showMigrations();
+    
+    if (pendingMigrations) {
+      console.log('⏳ Running pending migrations...');
+      const migrations = await dataSource.runMigrations({ transaction: 'all' });
+      
+      if (migrations.length === 0) {
+        console.log('✅ No pending migrations - database is up to date');
+      } else {
+        console.log(`✅ Successfully ran ${migrations.length} migration(s):`);
+        migrations.forEach(migration => {
+          console.log(`   - ${migration.name}`);
+        });
+      }
+    } else {
+      console.log('✅ No pending migrations - database is up to date');
+    }
+
+    console.log('\n========================================');
+    console.log('✅ Migration Process Completed');
+    console.log('========================================\n');
+
+    return true;
+  } catch (error) {
+    console.error('\n❌ Migration Error:');
+    console.error(error);
+    console.error('\n⚠️  Continuing with application startup...\n');
+    return false;
+  } finally {
+    // Close the connection after migrations
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
+    }
+  }
+}
+
+async function runDatabaseSeeds() {
+  console.log('\n========================================');
+  console.log('🌱 Running Database Seeds...');
+  console.log('========================================\n');
+
+  try {
+    await runSeeds();
+    
+    console.log('\n========================================');
+    console.log('✅ Seed Process Completed');
+    console.log('========================================\n');
+
+  } catch (error) {
+    console.error('\n❌ Seed Error:');
+    console.error(error);
+    console.error('\n⚠️  Continuing with application startup...\n');
+  }
+}
 
 async function bootstrap() {
+  // Run migrations and seeds FIRST in production
+  if (process.env.NODE_ENV === 'production') {
+    const migrationsSucceeded = await runMigrations();
+    
+    // Only run seeds if migrations succeeded
+    if (migrationsSucceeded) {
+      await runDatabaseSeeds();
+    }
+  }
+
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS - Support multiple origins

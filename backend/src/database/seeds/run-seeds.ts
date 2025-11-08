@@ -7,15 +7,20 @@ import { seedCustomersAndLeads } from './04-customers-leads.seed';
 import { seedCMSPages } from './05-cms-pages.seed';
 import { seedGallery } from './06-gallery.seed';
 
-async function runSeeds() {
+export async function runSeeds(existingDataSource?: DataSource) {
   console.log('🌱 Starting database seeding...\n');
 
-  const dataSource = new DataSource(dataSourceOptions);
+  let dataSource = existingDataSource;
+  let shouldCloseConnection = false;
 
   try {
-    // Initialize connection
-    await dataSource.initialize();
-    console.log('✅ Database connection established\n');
+    // If no existing data source, create and initialize one
+    if (!dataSource) {
+      dataSource = new DataSource(dataSourceOptions);
+      await dataSource.initialize();
+      shouldCloseConnection = true;
+      console.log('✅ Database connection established\n');
+    }
 
     // Run seeds in order
     console.log('📋 Seeding Roles and Permissions...');
@@ -45,11 +50,18 @@ async function runSeeds() {
     console.log('🎉 All seeds completed successfully!');
   } catch (error) {
     console.error('❌ Error during seeding:', error);
-    process.exit(1);
+    throw error;
   } finally {
-    await dataSource.destroy();
-    console.log('\n✅ Database connection closed');
+    if (shouldCloseConnection && dataSource) {
+      await dataSource.destroy();
+      console.log('\n✅ Database connection closed');
+    }
   }
 }
 
-runSeeds();
+// Allow running as standalone script
+if (require.main === module) {
+  runSeeds()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+}
