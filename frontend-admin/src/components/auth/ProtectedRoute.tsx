@@ -8,15 +8,16 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, hydrateAuth } = useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
   const [hasChecked, setHasChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Give Zustand time to hydrate from localStorage
+    // Manually hydrate auth from localStorage
     const timer = setTimeout(() => {
       try {
+        hydrateAuth();
         setIsChecking(false);
         setHasChecked(true);
       } catch (err) {
@@ -24,7 +25,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         setError('Failed to load authentication state');
         // Clear potentially corrupted storage
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('auth-storage');
+          localStorage.removeItem('flipcars-user');
+          localStorage.removeItem('flipcars-auth');
         }
         setTimeout(() => {
           window.location.href = '/auth/login';
@@ -33,7 +35,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     }, 200);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [hydrateAuth]);
 
   // After hydration check, redirect if not authenticated
   useEffect(() => {
