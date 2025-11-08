@@ -136,22 +136,39 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      version: 2, // Incrementado para forçar limpeza de dados antigos do mock
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-      // Migração para limpar dados antigos incompatíveis
-      migrate: (persistedState: any, version: number) => {
-        if (version < 2) {
-          // Limpar dados antigos do mock
-          console.log('[AuthStore] Migrating from old mock data, clearing storage');
-          return {
-            user: null,
-            isAuthenticated: false,
-          };
-        }
-        return persistedState;
+      // Skip hydration if there's an error
+      skipHydration: false,
+      // Custom storage with error handling
+      storage: {
+        getItem: (name) => {
+          try {
+            const str = localStorage.getItem(name);
+            return str ? JSON.parse(str) : null;
+          } catch (error) {
+            console.error('[AuthStore] Error reading from storage:', error);
+            // Clear corrupted storage
+            localStorage.removeItem(name);
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            localStorage.setItem(name, JSON.stringify(value));
+          } catch (error) {
+            console.error('[AuthStore] Error writing to storage:', error);
+          }
+        },
+        removeItem: (name) => {
+          try {
+            localStorage.removeItem(name);
+          } catch (error) {
+            console.error('[AuthStore] Error removing from storage:', error);
+          }
+        },
       },
     }
   )

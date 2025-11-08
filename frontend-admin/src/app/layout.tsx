@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import { ToastProvider } from '@/components/providers/ToastProvider'
+import { StorageCleanupProvider } from '@/components/providers/StorageCleanupProvider'
 // import { NotificationProvider } from '@/components/providers/NotificationProvider'
 import '../styles/globals.css'
 
@@ -56,11 +57,13 @@ export default function RootLayout({
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL} />
       </head>
       <body className="antialiased">
-        {/* NotificationProvider temporariamente desabilitado para testes sem backend */}
-        {/* <NotificationProvider> */}
-          {children}
-        {/* </NotificationProvider> */}
-        <ToastProvider />
+        <StorageCleanupProvider>
+          {/* NotificationProvider temporariamente desabilitado para testes sem backend */}
+          {/* <NotificationProvider> */}
+            {children}
+          {/* </NotificationProvider> */}
+          <ToastProvider />
+        </StorageCleanupProvider>
       </body>
     </html>
   )
