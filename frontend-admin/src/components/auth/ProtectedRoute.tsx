@@ -11,12 +11,25 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, user } = useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
   const [hasChecked, setHasChecked] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Give Zustand time to hydrate from localStorage
     const timer = setTimeout(() => {
-      setIsChecking(false);
-      setHasChecked(true);
+      try {
+        setIsChecking(false);
+        setHasChecked(true);
+      } catch (err) {
+        console.error('[ProtectedRoute] Error during hydration check:', err);
+        setError('Failed to load authentication state');
+        // Clear potentially corrupted storage
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth-storage');
+        }
+        setTimeout(() => {
+          window.location.href = '/auth/login';
+        }, 1000);
+      }
     }, 200);
 
     return () => clearTimeout(timer);
@@ -29,6 +42,19 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       window.location.href = '/auth/login';
     }
   }, [hasChecked, isAuthenticated, user]);
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="text-red-600 text-xl mb-4">⚠️</div>
+          <p className="text-gray-600 mb-2">{error}</p>
+          <p className="text-gray-500 text-sm">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Show loading while checking auth
   if (isChecking) {

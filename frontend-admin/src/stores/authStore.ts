@@ -136,10 +136,23 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      version: 2, // Incrementado para forçar limpeza de dados antigos do mock
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
+      // Migração para limpar dados antigos incompatíveis
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2) {
+          // Limpar dados antigos do mock
+          console.log('[AuthStore] Migrating from old mock data, clearing storage');
+          return {
+            user: null,
+            isAuthenticated: false,
+          };
+        }
+        return persistedState;
+      },
     }
   )
 );
