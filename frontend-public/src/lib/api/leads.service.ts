@@ -54,22 +54,29 @@ export const leadsService = {
       vehicle: data.vehicle,
       
       // Step 3: Photos (OPTIONAL - bodyshop only)
-      photos: data.photos,
+      // Only include photos if they are actual string URLs (not File objects or empty)
+      ...(data.photos && Object.values(data.photos).some(
+        (photo) => typeof photo === 'string' && photo.trim() !== ''
+      ) ? { photos: data.photos } : {}),
       
       // Step 2.5: Warranty Documents (OPTIONAL - mechanic only)
-      warrantyDocs: data.warrantyDocs ? {
-        policyDocument: typeof data.warrantyDocs.policyDocument === 'string' 
-          ? data.warrantyDocs.policyDocument 
-          : undefined,
-        vinPhoto: typeof data.warrantyDocs.vinPhoto === 'string'
-          ? data.warrantyDocs.vinPhoto
-          : undefined,
-        odometerPhoto: typeof data.warrantyDocs.odometerPhoto === 'string'
-          ? data.warrantyDocs.odometerPhoto
-          : undefined,
-        selectedIssues: data.warrantyDocs.selectedIssues || [],
-        symptomsDescription: data.warrantyDocs.symptomsDescription || '',
-      } : undefined,
+      // Only include if there are actual string URLs (not File objects or Base64)
+      ...(data.warrantyDocs && data.warrantyDocs.selectedIssues && data.warrantyDocs.symptomsDescription ? {
+        warrantyDocs: {
+          // Only include document URLs if they are strings (uploaded URLs, not Base64)
+          ...(typeof data.warrantyDocs.policyDocument === 'string' && 
+              data.warrantyDocs.policyDocument.startsWith('http') ? 
+              { policyDocument: data.warrantyDocs.policyDocument } : {}),
+          ...(typeof data.warrantyDocs.vinPhoto === 'string' && 
+              data.warrantyDocs.vinPhoto.startsWith('http') ? 
+              { vinPhoto: data.warrantyDocs.vinPhoto } : {}),
+          ...(typeof data.warrantyDocs.odometerPhoto === 'string' && 
+              data.warrantyDocs.odometerPhoto.startsWith('http') ? 
+              { odometerPhoto: data.warrantyDocs.odometerPhoto } : {}),
+          selectedIssues: data.warrantyDocs.selectedIssues || [],
+          symptomsDescription: data.warrantyDocs.symptomsDescription || '',
+        }
+      } : {}),
       
       // Step 4: Contact preferences (REQUIRED)
       // Map frontend fields to backend DTO structure
