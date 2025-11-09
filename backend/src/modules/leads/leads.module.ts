@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LeadsController } from './leads.controller';
+import { PublicLeadsController } from './public-leads.controller';
 import { LeadsService } from './leads.service';
 import { Lead } from '@database/entities/lead.entity';
 import { Customer } from '@database/entities/customer.entity';
@@ -13,7 +14,7 @@ import { AuthModule } from '@modules/auth/auth.module';
     TypeOrmModule.forFeature([Lead, Customer, Vehicle, User]),
     AuthModule, // Import AuthModule for guards
   ],
-  controllers: [LeadsController],
+  controllers: [LeadsController, PublicLeadsController],
   providers: [LeadsService],
   exports: [LeadsService], // Export for use in other modules
 })

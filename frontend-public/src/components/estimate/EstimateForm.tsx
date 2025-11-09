@@ -29,32 +29,64 @@ export function EstimateForm() {
     
     console.log('[EstimateForm] Submitting:', completeData);
     
-    // Generate reference number
-    const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    setReferenceNumber(refNumber);
-    
-    // Save to localStorage temporarily (until backend endpoint is created)
     try {
-      const leadData = {
-        ...completeData,
-        referenceNumber: refNumber,
-        createdAt: new Date().toISOString(),
-        status: 'new',
-        source: 'website_estimate_form',
-      };
+      // Import leadsService dynamically to avoid SSR issues
+      const { leadsService } = await import('@/lib/api/leads.service');
       
-      // Get existing leads from localStorage
-      const existingLeads = JSON.parse(localStorage.getItem('flipcars_pending_leads') || '[]');
-      existingLeads.push(leadData);
-      localStorage.setItem('flipcars_pending_leads', JSON.stringify(existingLeads));
+      // Send to backend via public API
+      console.log('[EstimateForm] Sending to backend API...');
+      const response = await leadsService.createLead(completeData);
       
-      console.log('[EstimateForm] Lead saved to localStorage:', leadData);
+      console.log('[EstimateForm] ✅ Lead created successfully:', response);
       
-      // TODO: Send to backend when public endpoint is created
-      // For now, this will be synced manually or via webhook
+      // Use server-generated reference number
+      setReferenceNumber(response.data.referenceNumber);
       
-    } catch (error) {
-      console.error('[EstimateForm] Error saving to localStorage:', error);
+      // Also save to localStorage as backup
+      try {
+        const leadData = {
+          ...completeData,
+          referenceNumber: response.data.referenceNumber,
+          createdAt: response.data.createdAt,
+          status: response.data.status,
+          source: 'website_estimate_form',
+        };
+        
+        const existingLeads = JSON.parse(localStorage.getItem('flipcars_completed_leads') || '[]');
+        existingLeads.push(leadData);
+        localStorage.setItem('flipcars_completed_leads', JSON.stringify(existingLeads));
+        
+        console.log('[EstimateForm] Backup saved to localStorage');
+      } catch (storageError) {
+        console.warn('[EstimateForm] Could not save to localStorage:', storageError);
+      }
+      
+    } catch (error: any) {
+      console.error('[EstimateForm] ❌ Error submitting to backend:', error);
+      
+      // Fallback: Save to localStorage if backend fails
+      const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      setReferenceNumber(refNumber);
+      
+      try {
+        const leadData = {
+          ...completeData,
+          referenceNumber: refNumber,
+          createdAt: new Date().toISOString(),
+          status: 'new',
+          source: 'website_estimate_form',
+          _failedSync: true, // Mark as failed sync
+          _error: error.message || 'Unknown error',
+        };
+        
+        const existingLeads = JSON.parse(localStorage.getItem('flipcars_pending_leads') || '[]');
+        existingLeads.push(leadData);
+        localStorage.setItem('flipcars_pending_leads', JSON.stringify(existingLeads));
+        
+        console.log('[EstimateForm] ⚠️ Saved to localStorage (pending sync):', leadData);
+      } catch (storageError) {
+        console.error('[EstimateForm] Failed to save to localStorage:', storageError);
+      }
     }
     
     // Move to confirmation step

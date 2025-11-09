@@ -88,9 +88,18 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS - Support multiple origins
+  const defaultOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'http://localhost:8080',
+    'https://admin.flipcars.us',
+    'https://www.flipcars.us',
+    'https://flipcars.us',
+  ];
+  
   const allowedOrigins = process.env.FRONTEND_URL
-    ? process.env.FRONTEND_URL.split(',').map((url) => url.trim())
-    : ['http://localhost:3000', 'http://localhost:3002', 'http://localhost:8080'];
+    ? [...defaultOrigins, ...process.env.FRONTEND_URL.split(',').map((url) => url.trim())]
+    : defaultOrigins;
 
   app.enableCors({
     origin: (origin, callback) => {
