@@ -56,9 +56,10 @@ export class UploadController {
 
     this.logger.log(`📸 Photo uploaded: ${file.filename} (${file.size} bytes)`);
 
-    // Return the URL to access the file
-    // In production, this would be a CDN URL or S3 URL
-    const fileUrl = `/uploads/lead-photos/${file.filename}`;
+    // Return the BACKEND URL to access the file
+    // Frontend will proxy through API URL
+    const backendUrl = process.env.BACKEND_URL || 'https://upbeat-dedication-production.up.railway.app';
+    const fileUrl = `${backendUrl}/uploads/lead-photos/${file.filename}`;
 
     return {
       success: true,
