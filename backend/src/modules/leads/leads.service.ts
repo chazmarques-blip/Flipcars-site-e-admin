@@ -222,20 +222,27 @@ export class LeadsService {
       customerId = customer.id;
     }
 
-    // Handle vehicle - use provided vehicleId or create new
+    // Handle vehicle - only create Vehicle entity if we have VIN
+    // Otherwise, just store make/model/year in lead fields directly
     let vehicleId = createLeadDto.vehicleId;
     
-    if (!vehicleId && customerId && (createLeadDto.vehicleMake || createLeadDto.vehicleModel)) {
-      const vehicle = this.vehicleRepository.create({
-        make: createLeadDto.vehicleMake || '',
-        model: createLeadDto.vehicleModel || '',
-        year: createLeadDto.vehicleYear || '',
-        color: createLeadDto.vehicleColor,
-        customerId,
-      });
-      const savedVehicle = await this.vehicleRepository.save(vehicle);
-      vehicleId = savedVehicle.id;
-    }
+    // Note: Vehicle entity requires VIN (unique constraint), so we only create
+    // a vehicle record when VIN is provided from the VIN decoder.
+    // For leads without VIN, vehicle info is stored in lead.vehicleMake/Model/Year fields
+    
+    // Skip vehicle entity creation for now - vehicle info stored in lead fields
+    // if (!vehicleId && customerId && createLeadDto.vehicleMake && createLeadDto.vehicleVin) {
+    //   const vehicle = this.vehicleRepository.create({
+    //     vin: createLeadDto.vehicleVin,
+    //     make: createLeadDto.vehicleMake,
+    //     model: createLeadDto.vehicleModel || '',
+    //     year: createLeadDto.vehicleYear || '',
+    //     color: createLeadDto.vehicleColor,
+    //     customerId,
+    //   });
+    //   const savedVehicle = await this.vehicleRepository.save(vehicle);
+    //   vehicleId = savedVehicle.id;
+    // }
 
     // Validate assigned agent if provided
     if (createLeadDto.assignedHumanAgentId) {
