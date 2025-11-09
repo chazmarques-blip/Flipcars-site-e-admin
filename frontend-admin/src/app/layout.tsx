@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import { ToastProvider } from '@/components/providers/ToastProvider'
 import { StorageCleanupProvider } from '@/components/providers/StorageCleanupProvider'
+import { AuthProvider } from '@/contexts/AuthContext'
 // import { NotificationProvider } from '@/components/providers/NotificationProvider'
 import '../styles/globals.css'
 
@@ -58,11 +59,13 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <StorageCleanupProvider>
-          {/* NotificationProvider temporariamente desabilitado para testes sem backend */}
-          {/* <NotificationProvider> */}
-            {children}
-          {/* </NotificationProvider> */}
-          <ToastProvider />
+          <AuthProvider>
+            {/* NotificationProvider temporariamente desabilitado para testes sem backend */}
+            {/* <NotificationProvider> */}
+              {children}
+            {/* </NotificationProvider> */}
+            <ToastProvider />
+          </AuthProvider>
         </StorageCleanupProvider>
       </body>
     </html>

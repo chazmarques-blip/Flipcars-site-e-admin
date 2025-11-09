@@ -1,5 +1,5 @@
 import { AuthLayout } from '@/components/layouts/AuthLayout';
-import { LoginForm } from '@/components/forms';
+import { LoginFormSimple } from '@/components/forms/LoginFormSimple';
 
 export const metadata = {
   title: 'Login - FlipCars 2.0',
@@ -12,7 +12,7 @@ export default function LoginPage() {
       title="Welcome Back"
       subtitle="Sign in to your account to continue"
     >
-      <LoginForm />
+      <LoginFormSimple />
     </AuthLayout>
   );
 }
