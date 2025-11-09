@@ -63,6 +63,16 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
 
   const symptomsDescription = watch('symptomsDescription');
 
+  // Debug logging to help identify validation issues
+  React.useEffect(() => {
+    console.log('[Step2bWarrantyDocs] Form State:', {
+      selectedIssues,
+      symptomsDescriptionLength: symptomsDescription?.length || 0,
+      errors,
+      isValid,
+    });
+  }, [selectedIssues, symptomsDescription, errors, isValid]);
+
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     fileType: 'policy' | 'vin' | 'odometer'
@@ -308,15 +318,19 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           Describe the Symptoms <span className="text-gold">*</span>
         </label>
         <p className="text-[10px] text-neutral-600">
-          What are you experiencing with your vehicle?
+          What are you experiencing with your vehicle? (Required - minimum 10 characters)
         </p>
         <textarea
           id="symptomsDescription"
           {...register('symptomsDescription')}
-          rows={3}
-          placeholder="Example: Engine makes knocking sound when accelerating, especially when cold..."
-          className={`w-full px-3 py-2 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none ${
-            errors.symptomsDescription ? 'border-red-500' : 'border-neutral-300'
+          rows={4}
+          placeholder="Example: Engine makes knocking sound when accelerating, especially when cold. The sound gets louder as I speed up..."
+          className={`w-full px-3 py-2 text-xs border-2 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none ${
+            errors.symptomsDescription 
+              ? 'border-red-500 bg-red-50' 
+              : symptomsDescription && symptomsDescription.length >= 10
+              ? 'border-green-500 bg-green-50'
+              : 'border-neutral-300'
           }`}
         />
         <div className="flex justify-between items-center">
@@ -327,9 +341,21 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
                 {errors.symptomsDescription.message}
               </p>
             )}
+            {!errors.symptomsDescription && symptomsDescription && symptomsDescription.length >= 10 && (
+              <p className="text-[10px] text-green-600 flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                Looks good!
+              </p>
+            )}
           </div>
-          <p className="text-[9px] text-neutral-500">
-            {symptomsDescription?.length || 0} characters
+          <p className={`text-[9px] font-medium ${
+            symptomsDescription && symptomsDescription.length >= 10 
+              ? 'text-green-600' 
+              : symptomsDescription && symptomsDescription.length > 0
+              ? 'text-amber-600'
+              : 'text-neutral-500'
+          }`}>
+            {symptomsDescription?.length || 0}/10 characters
           </p>
         </div>
       </div>
@@ -345,6 +371,22 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
         </div>
       </div>
 
+      {/* Validation Summary - Show when form is not valid */}
+      {!isValid && (selectedIssues.length > 0 || symptomsDescription) && (
+        <div className="flex items-start gap-2 p-2.5 bg-red-50 border border-red-200 rounded-lg">
+          <AlertCircle className="w-3.5 h-3.5 text-red-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-[10px] text-red-900 font-medium">Please complete all required fields:</p>
+            <ul className="text-[9px] text-red-800 mt-1 space-y-0.5 list-disc list-inside">
+              {selectedIssues.length === 0 && <li>Select at least one issue type</li>}
+              {(!symptomsDescription || symptomsDescription.length < 10) && (
+                <li>Describe symptoms (minimum 10 characters{symptomsDescription ? `, ${symptomsDescription.length}/10 so far` : ''})</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex gap-2 pt-2 fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-neutral-200 md:relative md:border-0 md:p-0">
         <Button
@@ -358,8 +400,9 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
         <Button
           type="submit"
           variant="primary"
-          className="flex-1 bg-gold hover:bg-gold-dark text-black font-semibold py-2 text-xs"
+          className="flex-1 bg-gold hover:bg-gold-dark text-black font-semibold py-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={!isValid}
+          title={!isValid ? 'Please complete all required fields above' : 'Continue to next step'}
         >
           Continue →
         </Button>
