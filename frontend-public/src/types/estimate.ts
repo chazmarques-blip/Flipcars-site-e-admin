@@ -193,13 +193,13 @@ export const PHOTO_CONFIG: PhotoUploadConfig = {
 // FlipCars location information
 export const FLIPCARS_LOCATION = {
   name: 'FlipCars Auto Repair',
-  address: '123 Auto Repair Blvd, Orlando, FL 32801',
+  address: '5200 Old Winter Garden Rd, Suite 110, Orlando, FL 32811',
   phone: '(321) 960-8661',
   email: 'info@flipcars.us',
   coordinates: {
-    lat: 28.5383,
-    lng: -81.3792,
+    lat: 28.5080,
+    lng: -81.4354,
   },
-  googleMapsUrl: 'https://www.google.com/maps/place/Orlando,+FL+32801',
-  embedMapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.2!2d-81.3792!3d28.5383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDMyJzE3LjkiTiA4McKwMjInNDUuMSJX!5e0!3m2!1sen!2sus!4v1234567890',
+  googleMapsUrl: 'https://www.google.com/maps/place/5200+Old+Winter+Garden+Rd+Suite+110,+Orlando,+FL+32811',
+  embedMapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3506.7!2d-81.4354!3d28.5080!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88e77e6d4c7f7f7f%3A0x1234567890abcdef!2s5200%20Old%20Winter%20Garden%20Rd%20Suite%20110%2C%20Orlando%2C%20FL%2032811!5e0!3m2!1sen!2sus!4v1731147600000',
 };
