@@ -4,3 +4,4 @@ vercel.json.public-backup
 jwt_secret.txt
 jwt_refresh_secret.txt
 JWT_SECRETS_PRODUCTION.txt
+.vercel-credentials
