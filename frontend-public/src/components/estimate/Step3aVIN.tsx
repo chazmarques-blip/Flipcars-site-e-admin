@@ -38,15 +38,29 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
         const result = data.Results[0];
         
         if (result.ErrorCode === '0' || result.Make) {
+          // Validate and sanitize year (must be 4 digits between 1900-2099)
+          let validYear = result.ModelYear || '';
+          if (validYear) {
+            const yearNum = parseInt(validYear, 10);
+            if (isNaN(yearNum) || yearNum < 1900 || yearNum > 2099) {
+              console.warn('[VIN Decode] Invalid year from API:', validYear);
+              validYear = '';
+            } else {
+              // Ensure it's exactly 4 digits
+              validYear = yearNum.toString();
+            }
+          }
+          
           const vehicleData: VehicleInfo = {
             vin: vinNumber.toUpperCase(),
-            year: result.ModelYear || '',
+            year: validYear,
             make: result.Make || '',
             model: result.Model || '',
           };
           
           setVehicle(vehicleData);
           console.log('[VIN Decode] Success:', vehicleData);
+          console.log('[VIN Decode] Raw API response - ModelYear:', result.ModelYear);
         } else {
           throw new Error('VIN not found or invalid');
         }

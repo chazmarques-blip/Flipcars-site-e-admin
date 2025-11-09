@@ -10,6 +10,7 @@ import {
   IsDateString,
   ValidateNested,
   IsObject,
+  Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -41,6 +42,10 @@ export class VehicleInfoDto {
   @IsString()
   @IsOptional()
   @MaxLength(4)
+  @MinLength(4)
+  @Matches(/^(19[0-9]{2}|20[0-9]{2})$/, {
+    message: 'Year must be a valid 4-digit year between 1900 and 2099',
+  })
   year?: string;
 
   @IsString()
