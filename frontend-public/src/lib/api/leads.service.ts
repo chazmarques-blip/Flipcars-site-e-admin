@@ -21,6 +21,7 @@ export const leadsService = {
    */
   async createLead(data: Partial<EstimateRequest>): Promise<CreateLeadResponse> {
     console.log('[LeadsService] Creating lead via public endpoint:', data);
+    console.log('[LeadsService] 📋 Input data keys:', Object.keys(data));
     
     // Transform estimate data to public lead DTO format
     const leadData = {
@@ -78,6 +79,15 @@ export const leadsService = {
       source: 'website_estimate_form',
       status: 'new',
     };
+
+    console.log('[LeadsService] 📤 Final payload to send:', leadData);
+    console.log('[LeadsService] 📋 Payload keys:', Object.keys(leadData));
+    console.log('[LeadsService] 🔍 Checking for duplicates...');
+    const keys = Object.keys(leadData);
+    const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
+    if (duplicates.length > 0) {
+      console.warn('[LeadsService] ⚠️  Found duplicate keys:', duplicates);
+    }
 
     try {
       const response = await apiClient.post<CreateLeadResponse>(
