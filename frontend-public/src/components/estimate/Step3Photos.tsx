@@ -51,19 +51,23 @@ export function Step3Photos({ initialData, onNext, onBack }: Step3PhotosProps) {
     setUploadingKey(key);
 
     try {
-      const base64 = await handlePhotoUpload(file);
+      // Upload photo to server (automatically compresses)
+      const { uploadService } = await import('@/lib/api/upload.service');
+      const response = await uploadService.uploadPhoto(file);
+      const photoUrl = response.data.url;
       
       if (key.startsWith('detail')) {
         // Handle optional detail photos
         const details = photos.details || [];
         const detailIndex = parseInt(key.replace('detail', '')) - 1;
-        details[detailIndex] = base64;
+        details[detailIndex] = photoUrl;
         setPhotos((prev) => ({ ...prev, details }));
       } else {
         // Handle required photos
-        setPhotos((prev) => ({ ...prev, [key]: base64 }));
+        setPhotos((prev) => ({ ...prev, [key]: photoUrl }));
       }
     } catch (err) {
+      console.error('[Step3Photos] Upload error:', err);
       setError(err instanceof Error ? err.message : 'Failed to upload photo');
     } finally {
       setUploadingKey(null);

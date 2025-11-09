@@ -87,6 +87,10 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+  // Serve static files (uploaded photos)
+  const express = await import('express');
+  app.use('/uploads', express.static('uploads'));
+
   // Enable CORS - Support multiple origins
   const defaultOrigins = [
     'http://localhost:3000',
