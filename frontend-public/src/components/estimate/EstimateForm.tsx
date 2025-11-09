@@ -33,8 +33,29 @@ export function EstimateForm() {
     const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
     setReferenceNumber(refNumber);
     
-    // TODO: Implement API call to submit estimate
-    // For now, just move to confirmation
+    // Save to localStorage temporarily (until backend endpoint is created)
+    try {
+      const leadData = {
+        ...completeData,
+        referenceNumber: refNumber,
+        createdAt: new Date().toISOString(),
+        status: 'new',
+        source: 'website_estimate_form',
+      };
+      
+      // Get existing leads from localStorage
+      const existingLeads = JSON.parse(localStorage.getItem('flipcars_pending_leads') || '[]');
+      existingLeads.push(leadData);
+      localStorage.setItem('flipcars_pending_leads', JSON.stringify(existingLeads));
+      
+      console.log('[EstimateForm] Lead saved to localStorage:', leadData);
+      
+      // TODO: Send to backend when public endpoint is created
+      // For now, this will be synced manually or via webhook
+      
+    } catch (error) {
+      console.error('[EstimateForm] Error saving to localStorage:', error);
+    }
     
     // Move to confirmation step
     const confirmationStep = formData.serviceType === 'bodyshop' ? 6 : 5;
