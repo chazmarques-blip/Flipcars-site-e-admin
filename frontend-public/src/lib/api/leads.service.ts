@@ -42,7 +42,8 @@ export const leadsService = {
       hasWarrantyClaimNumber: !!data.warrantyClaimNumber,
       
       // Scheduling information (OPTIONAL)
-      preferredDate: data.preferredDate,
+      // Only include preferredDate if it's not empty (backend expects ISO 8601 or null)
+      ...(data.preferredDate && data.preferredDate.trim() !== '' ? { preferredDate: data.preferredDate } : {}),
       preferredTimeSlot: data.preferredTimeSlot,
       dateSkipped: data.dateSkipped,
       
