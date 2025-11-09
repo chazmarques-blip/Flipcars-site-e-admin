@@ -14,7 +14,7 @@ import { mockLeads, mockLeadNotes, mockLeadActivities } from '@/lib/mock/leadsMo
 import { mockLeadStorage } from '@/lib/storage/mockLeadStorage';
 
 // Mock mode flag - set to false when backend is ready
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 // Initialize storage with default leads on first load
 if (typeof window !== 'undefined') {
