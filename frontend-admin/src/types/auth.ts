@@ -2,10 +2,13 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: UserRole;
-  status: UserStatus;
-  createdAt: string;
-  updatedAt: string;
+  roles: string[];  // Backend returns array of role strings
+  language?: string;
+  status?: UserStatus;
+  createdAt?: string;
+  updatedAt?: string;
+  // Helper property for backwards compatibility
+  role?: UserRole;
 }
 
 export enum UserRole {

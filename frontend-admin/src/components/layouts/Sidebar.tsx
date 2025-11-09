@@ -108,8 +108,11 @@ export function Sidebar() {
 
   const filteredNavItems = navItems.filter((item) => {
     if (!item.roles) return true;
-    if (!user) return false;
-    return item.roles.includes(user.role as UserRole);
+    if (!user || !user.roles) return false;
+    // Check if user has any of the required roles
+    return user.roles.some(userRole => 
+      item.roles?.includes(userRole as UserRole)
+    );
   });
 
   const handleLinkClick = () => {
@@ -235,7 +238,7 @@ export function Sidebar() {
                   {user.name}
                 </p>
                 <p className="text-xs text-gray-400 truncate">
-                  {user.role.replace('_', ' ')}
+                  {user.roles?.[0]?.replace('_', ' ') || 'User'}
                 </p>
               </div>
             </div>

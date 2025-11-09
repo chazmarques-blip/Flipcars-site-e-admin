@@ -79,7 +79,7 @@ export function Header() {
                 <div className="hidden lg:block text-left">
                   <p className="text-sm font-medium text-gray-100">{user.name}</p>
                   <p className="text-xs text-gray-400">
-                    {user.role.replace('_', ' ')}
+                    {user.roles?.[0]?.replace('_', ' ') || 'User'}
                   </p>
                 </div>
                 <ChevronDown
@@ -104,7 +104,7 @@ export function Header() {
                       <p className="text-xs text-gray-400 mt-0.5">{user.email}</p>
                       <div className="mt-2">
                         <Badge variant="secondary" size="sm">
-                          {user.role.replace('_', ' ')}
+                          {user.roles?.[0]?.replace('_', ' ') || 'User'}
                         </Badge>
                       </div>
                     </div>
