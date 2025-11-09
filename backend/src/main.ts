@@ -104,18 +104,25 @@ async function bootstrap() {
   app.enableCors({
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        console.log('✅ CORS: Allowing request with no origin');
+        return callback(null, true);
+      }
       
       if (allowedOrigins.includes(origin)) {
+        console.log(`✅ CORS: Allowing request from origin: ${origin}`);
         callback(null, true);
       } else {
-        console.warn(`⚠️  CORS blocked request from origin: ${origin}`);
+        console.warn(`❌ CORS: Blocked request from origin: ${origin}`);
+        console.warn(`📝 Allowed origins:`, allowedOrigins);
         callback(new Error('Not allowed by CORS'));
       }
     },
-    credentials: true,
+    credentials: false, // Changed to false for public endpoints
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+    exposedHeaders: ['Content-Type', 'X-Total-Count'],
+    maxAge: 3600, // Cache preflight request for 1 hour
   });
 
   // Global validation pipe

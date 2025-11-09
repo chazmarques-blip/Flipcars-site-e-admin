@@ -34,23 +34,29 @@ export class PublicLeadsController {
   @HttpCode(HttpStatus.CREATED)
   async createPublicLead(@Body() createPublicLeadDto: CreatePublicLeadDto) {
     try {
+      this.logger.log('🚀 =========================');
       this.logger.log('📝 Received public lead submission');
-      this.logger.debug('Lead data:', {
+      this.logger.log('Lead data:', {
+        firstName: createPublicLeadDto.firstName,
+        lastName: createPublicLeadDto.lastName,
         email: createPublicLeadDto.email,
         serviceType: createPublicLeadDto.serviceType,
         source: createPublicLeadDto.source,
       });
 
       // Transform public DTO to internal CreateLeadDto
+      this.logger.log('🔄 Transforming lead data...');
       const leadData = await this.transformPublicLead(createPublicLeadDto);
 
       // Create lead using existing service
+      this.logger.log('💾 Creating lead in database...');
       const lead = await this.leadsService.create(leadData as any);
 
-      this.logger.log(`✅ Lead created successfully: ${lead.referenceNumber}`);
+      this.logger.log(`✅ Lead created successfully with reference: ${lead.referenceNumber}`);
+      this.logger.log(`🆔 Lead ID: ${lead.id}`);
 
-      // Return minimal response (don't expose internal IDs)
-      return {
+      // Build response object
+      const response = {
         success: true,
         message: 'Lead created successfully',
         data: {
@@ -63,8 +69,17 @@ export class PublicLeadsController {
           createdAt: lead.createdAt,
         },
       };
+
+      this.logger.log('📤 Sending response:', JSON.stringify(response));
+      this.logger.log('✅ =========================');
+
+      // Return minimal response (don't expose internal IDs)
+      return response;
     } catch (error) {
+      this.logger.error('❌ =========================');
       this.logger.error('❌ Error creating public lead:', error);
+      this.logger.error('❌ Error stack:', error.stack);
+      this.logger.error('❌ =========================');
       
       if (error instanceof BadRequestException) {
         throw error;

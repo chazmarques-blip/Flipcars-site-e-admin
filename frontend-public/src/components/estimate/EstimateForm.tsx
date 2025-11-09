@@ -27,20 +27,31 @@ export function EstimateForm() {
   const handleSubmit = async (finalData: Partial<EstimateRequest>) => {
     const completeData = { ...formData, ...finalData };
     
-    console.log('[EstimateForm] Submitting:', completeData);
+    console.log('[EstimateForm] 🚀 Starting submission process');
+    console.log('[EstimateForm] Form data:', completeData);
     
     try {
       // Import leadsService dynamically to avoid SSR issues
+      console.log('[EstimateForm] 📦 Loading API service...');
       const { leadsService } = await import('@/lib/api/leads.service');
       
       // Send to backend via public API
-      console.log('[EstimateForm] Sending to backend API...');
+      console.log('[EstimateForm] 📡 Sending to backend API...');
+      console.log('[EstimateForm] API URL:', process.env.NEXT_PUBLIC_API_URL || 'https://upbeat-dedication-production.up.railway.app/api');
+      
       const response = await leadsService.createLead(completeData);
       
-      console.log('[EstimateForm] ✅ Lead created successfully:', response);
+      console.log('[EstimateForm] ✅ API Response received:', response);
+      console.log('[EstimateForm] ✅ Reference Number from backend:', response.data.referenceNumber);
+      
+      // CRITICAL: Verify response structure
+      if (!response || !response.data || !response.data.referenceNumber) {
+        throw new Error('Invalid response structure from backend');
+      }
       
       // Use server-generated reference number
       setReferenceNumber(response.data.referenceNumber);
+      console.log('[EstimateForm] ✅ Reference number set to:', response.data.referenceNumber);
       
       // Also save to localStorage as backup
       try {
@@ -56,17 +67,34 @@ export function EstimateForm() {
         existingLeads.push(leadData);
         localStorage.setItem('flipcars_completed_leads', JSON.stringify(existingLeads));
         
-        console.log('[EstimateForm] Backup saved to localStorage');
+        console.log('[EstimateForm] 💾 Backup saved to localStorage');
       } catch (storageError) {
-        console.warn('[EstimateForm] Could not save to localStorage:', storageError);
+        console.warn('[EstimateForm] ⚠️ Could not save to localStorage:', storageError);
       }
       
     } catch (error: any) {
-      console.error('[EstimateForm] ❌ Error submitting to backend:', error);
+      console.error('[EstimateForm] ❌ ERROR DETAILS:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data,
+        stack: error.stack,
+      });
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error('[EstimateForm] ❌ Response Error:', error.response.status, error.response.data);
+      } else if (error.request) {
+        console.error('[EstimateForm] ❌ Network Error: No response received');
+      } else {
+        console.error('[EstimateForm] ❌ Error:', error.message);
+      }
       
       // Fallback: Save to localStorage if backend fails
+      console.log('[EstimateForm] ⚠️ Using FALLBACK reference number generation');
       const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
       setReferenceNumber(refNumber);
+      console.log('[EstimateForm] ⚠️ Fallback reference number:', refNumber);
       
       try {
         const leadData = {
@@ -77,6 +105,10 @@ export function EstimateForm() {
           source: 'website_estimate_form',
           _failedSync: true, // Mark as failed sync
           _error: error.message || 'Unknown error',
+          _errorDetails: {
+            status: error.response?.status,
+            data: error.response?.data,
+          },
         };
         
         const existingLeads = JSON.parse(localStorage.getItem('flipcars_pending_leads') || '[]');
@@ -85,12 +117,13 @@ export function EstimateForm() {
         
         console.log('[EstimateForm] ⚠️ Saved to localStorage (pending sync):', leadData);
       } catch (storageError) {
-        console.error('[EstimateForm] Failed to save to localStorage:', storageError);
+        console.error('[EstimateForm] ❌ Failed to save to localStorage:', storageError);
       }
     }
     
     // Move to confirmation step
     const confirmationStep = formData.serviceType === 'bodyshop' ? 6 : 5;
+    console.log('[EstimateForm] 📍 Moving to confirmation step:', confirmationStep);
     setCurrentStep(confirmationStep);
   };
 
