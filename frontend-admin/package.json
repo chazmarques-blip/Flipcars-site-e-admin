@@ -1,6 +1,6 @@
 {
   "name": "flipcars-admin",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -36,7 +36,7 @@
     "uuid": "^13.0.0",
     "xlsx": "^0.18.5",
     "zod": "^3.23.8",
-    "zustand": "^5.0.1"
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

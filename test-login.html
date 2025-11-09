@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FlipCars Direct Login Test</title>
+</head>
+<body>
+    <h1>Testing Direct Login...</h1>
+    <div id="result"></div>
+    <script>
+        const resultDiv = document.getElementById('result');
+        
+        resultDiv.innerHTML = 'Attempting login...';
+        
+        fetch('https://upbeat-dedication-production.up.railway.app/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                email: 'admin@flipcars.com',
+                password: 'Admin123!'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = '<h2>SUCCESS!</h2><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            
+            if (data.tokens) {
+                localStorage.setItem('accessToken', data.tokens.accessToken);
+                localStorage.setItem('refreshToken', data.tokens.refreshToken);
+                
+                resultDiv.innerHTML += '<p>Tokens saved! Redirecting to admin dashboard...</p>';
+                setTimeout(() => {
+                    window.location.href = 'https://admin.flipcars.us/dashboard';
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            resultDiv.innerHTML = '<h2>ERROR</h2><pre>' + error.message + '</pre>';
+        });
+    </script>
+</body>
+</html>

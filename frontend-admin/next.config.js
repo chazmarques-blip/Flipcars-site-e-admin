@@ -2,6 +2,15 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Force new bundle generation
+  generateBuildId: async () => {
+    return `build-${Date.now()}`
+  },
+  // Disable build cache
+  experimental: {
+    workerThreads: false,
+    cpus: 1,
+  },
   eslint: {
     // Disable ESLint during production builds
     ignoreDuringBuilds: true,
