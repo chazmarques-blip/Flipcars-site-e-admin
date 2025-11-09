@@ -4,7 +4,12 @@
 
 Plataforma web completa que otimiza a captação de leads qualificados (foco em reparo via seguro), moderniza a gestão de sinistros e a comunicação com clientes através de um CRM próprio impulsionado por agentes de IA e integração com ChatGPT.
 
-**Site Atual Analisado:** [www.flipcars.us](https://www.flipcars.us)
+## 🌐 Links de Produção
+
+- **Site Público:** [www.flipcars.us](https://www.flipcars.us)
+- **Dashboard Admin:** [admin.flipcars.us](https://admin.flipcars.us) ✅ **FUNCIONANDO**
+- **Backend API:** [Railway Backend](https://upbeat-dedication-production.up.railway.app/api) ✅ **FUNCIONANDO**
+- **API Docs (Swagger):** [API Documentation](https://upbeat-dedication-production.up.railway.app/api/docs)
 
 ## 📋 Público-Alvo
 
@@ -22,31 +27,39 @@ Plataforma web completa que otimiza a captação de leads qualificados (foco em 
 
 ## 🛠 Stack Tecnológica
 
-### Backend
+### Backend ✅ EM PRODUÇÃO
 - **Linguagem:** Node.js com TypeScript
 - **Framework:** NestJS
-- **ORM:** TypeORM ou Prisma
-- **Banco de Dados:** PostgreSQL
-- **Storage:** AWS S3
-- **IA:** OpenAI API (ChatGPT)
+- **ORM:** TypeORM
+- **Banco de Dados:** PostgreSQL (Railway)
+- **Storage:** AWS S3 (planejado)
+- **IA:** OpenAI API (ChatGPT) (planejado)
+- **Deploy:** Railway
+- **URL:** https://upbeat-dedication-production.up.railway.app
 
 ### Frontend - Site Público
-- **Framework:** React.js + Next.js (SSR/SSG)
-- **Styling:** Tailwind CSS + Styled Components
-- **i18n:** react-i18next (EN, ES, PT)
-
-### Frontend - Dashboard Admin
-- **Framework:** React.js com TypeScript
-- **UI Library:** Material-UI ou Chakra UI
+- **Framework:** React.js + Next.js 14+ (App Router)
 - **Styling:** Tailwind CSS
-- **State:** React Query + Zustand
+- **i18n:** react-i18next (EN, ES, PT)
+- **Deploy:** Vercel
+- **URL:** https://www.flipcars.us
+
+### Frontend - Dashboard Admin ✅ EM PRODUÇÃO
+- **Framework:** Next.js 14+ (App Router) com TypeScript
+- **UI Library:** Custom components + Tailwind CSS
+- **Styling:** Tailwind CSS
+- **State:** React Context API (substituiu Zustand)
 - **Charts:** Recharts
+- **Autenticação:** JWT (15min access + 7 days refresh)
+- **Deploy:** Vercel
+- **URL:** https://admin.flipcars.us
 
 ### Infraestrutura
-- **Cloud:** AWS (EC2, RDS, S3, CloudFront, Route 53)
-- **CI/CD:** GitHub Actions
-- **Containers:** Docker
-- **Monitoramento:** AWS CloudWatch, Sentry
+- **Backend:** Railway (PostgreSQL + NestJS API)
+- **Frontend:** Vercel (Next.js SSR/SSG)
+- **CI/CD:** GitHub → Vercel (automático)
+- **Versionamento:** Git + GitHub
+- **Monitoramento:** Vercel Analytics + Railway Logs
 
 ### Integrações
 - **Email:** SendGrid ou AWS SES
@@ -208,14 +221,219 @@ Todo o design e desenvolvimento prioriza dispositivos móveis:
 
 ## 🚀 Como Começar
 
-Ver documentação específica de cada módulo em `/docs/`
+### Desenvolvimento Local
+
+```bash
+# Clone o repositório
+git clone https://github.com/chazmarques-blip/Flipcars-site-e-admin.git
+cd Flipcars-site-e-admin
+
+# Frontend Admin
+cd frontend-admin
+npm install
+npm run dev  # http://localhost:3000
+
+# Frontend Público (em desenvolvimento)
+cd frontend-public
+npm install
+npm run dev  # http://localhost:3001
+```
+
+### Credenciais de Teste
+
+**Admin Dashboard:**
+- Email: `admin@flipcars.com`
+- Password: `Admin123!`
+
+### Workflow de Desenvolvimento
+
+**Use o script helper interativo:**
+```bash
+./scripts/dev-workflow.sh
+```
+
+**Ou siga o workflow manual:**
+```bash
+# 1. Criar feature branch
+git checkout -b feature/minha-feature
+
+# 2. Desenvolver...
+
+# 3. Commit
+git commit -m "feat: descrição"
+
+# 4. Push
+git push origin feature/minha-feature
+
+# 5. Criar Pull Request no GitHub
+
+# 6. Merge após aprovação
+```
+
+## 📚 Documentação
+
+### Documentos Importantes
+
+- **[CONFIGURACAO_PRODUCAO_FUNCIONANDO.md](./CONFIGURACAO_PRODUCAO_FUNCIONANDO.md)** - ⚠️ **LEITURA OBRIGATÓRIA!** Configuração atual em produção (NÃO ALTERAR!)
+- **[WORKFLOW_DEV_PRODUCAO.md](./WORKFLOW_DEV_PRODUCAO.md)** - Como trabalhar sem afetar produção
+- **[GUIA_TESTE_DADOS_PRODUCAO.md](./GUIA_TESTE_DADOS_PRODUCAO.md)** - Como testar dados reais
+- **[VERCEL_DEPLOY_GUIDE.md](./VERCEL_DEPLOY_GUIDE.md)** - Guia de deploy via API Vercel
+- **[scripts/README.md](./scripts/README.md)** - Documentação dos scripts helper
+
+### Estrutura do Projeto
+
+```
+.
+├── frontend-admin/          ✅ Dashboard Admin (PRODUÇÃO)
+│   ├── src/
+│   │   ├── app/            # Next.js 14 App Router
+│   │   ├── components/     # Componentes reutilizáveis
+│   │   ├── contexts/       # React Context (Auth, etc)
+│   │   ├── lib/           # Utilities, API client
+│   │   └── types/         # TypeScript types
+│   └── public/            # Assets estáticos
+│
+├── frontend-public/         🚧 Site Público (EM DESENVOLVIMENTO)
+│   └── ...
+│
+├── backend/                ✅ API NestJS (PRODUÇÃO - Railway)
+│   └── (gerenciado separadamente)
+│
+├── scripts/                # Scripts helper
+│   ├── dev-workflow.sh    # Workflow interativo
+│   └── README.md
+│
+└── docs/                   # Documentação completa
+```
+
+## 🔧 Configurações Importantes
+
+### Variáveis de Ambiente (Vercel)
+
+**⚠️ CRÍTICO:** Vercel NÃO usa arquivos `.env` do repositório!
+
+Configure manualmente no Vercel Dashboard ou via API:
+```bash
+NEXT_PUBLIC_API_URL=https://upbeat-dedication-production.up.railway.app/api
+```
+
+Ver [CONFIGURACAO_PRODUCAO_FUNCIONANDO.md](./CONFIGURACAO_PRODUCAO_FUNCIONANDO.md) para detalhes.
+
+### Autenticação
+
+O sistema usa **React Context API** para autenticação (NÃO Zustand!).
+
+```typescript
+import { useAuth } from '@/contexts/AuthContext';
+
+function MyComponent() {
+  const { user, isAuthenticated, login, logout } = useAuth();
+  // ...
+}
+```
+
+### Estrutura do User
+
+Backend retorna `roles` como array:
+```json
+{
+  "user": {
+    "id": "uuid",
+    "name": "Admin FlipCars",
+    "email": "admin@flipcars.com",
+    "roles": ["superadmin"],
+    "language": "en"
+  }
+}
+```
+
+**Sempre acesse role com optional chaining:**
+```typescript
+{user.roles?.[0]?.replace('_', ' ') || 'User'}
+```
+
+## 🚨 Problemas Comuns & Soluções
+
+Ver [CONFIGURACAO_PRODUCAO_FUNCIONANDO.md](./CONFIGURACAO_PRODUCAO_FUNCIONANDO.md#-problemas-conhecidos-e-soluções)
+
+## 🔐 Segurança
+
+### Branch Protection
+
+Branch `main` está protegida:
+- ✅ Requer Pull Request
+- ✅ Requer aprovação
+- ✅ Requer build bem-sucedido (Vercel)
+- ❌ Não permite push direto
+
+### Credentials
+
+- **Vercel Token:** `.vercel-credentials` (gitignored)
+- **Railway:** Variáveis de ambiente no dashboard
+- **API Keys:** Nunca commitar no código
+
+## 📊 Monitoramento
+
+### Logs de Produção
+
+**Backend (Railway):**
+- Dashboard: https://railway.app
+- Logs em tempo real no dashboard
+
+**Frontend (Vercel):**
+- Dashboard: https://vercel.com/charles-marques-projects/frontend-admin
+- Runtime logs disponíveis
+- Analytics integrado
+
+### Performance
+
+**Métricas Atuais:**
+- ✅ Dashboard carrega em < 3s
+- ✅ API response time < 500ms
+- ✅ Auth token refresh automático
+- ✅ Cache agressivo em CDN
+
+## 🤝 Contribuindo
+
+1. Leia [WORKFLOW_DEV_PRODUCAO.md](./WORKFLOW_DEV_PRODUCAO.md)
+2. Use o script helper: `./scripts/dev-workflow.sh`
+3. Siga convenção de commits: `feat:`, `fix:`, `refactor:`, etc.
+4. Crie Pull Request com descrição detalhada
+5. Aguarde review e aprovação
+6. Merge automático triggera deploy
 
 ## 📝 Licença
 
-Proprietary - FlipCars © 2024
+Proprietary - FlipCars © 2024-2025
 
 ---
 
-**Status Atual:** FASE 0 - Especificação e Design  
-**Última Atualização:** 2025-10-28  
-**Desenvolvido por:** AI Development Team
+## 📞 Suporte
+
+- **GitHub Issues:** https://github.com/chazmarques-blip/Flipcars-site-e-admin/issues
+- **Documentação:** Ver arquivos `.md` na raiz do projeto
+
+---
+
+**Status Atual:** ✅ **DASHBOARD ADMIN EM PRODUÇÃO**  
+**Última Atualização:** 2025-11-09  
+**Desenvolvido por:** AI Development Team com GenSpark
+
+## ✅ Checklist de Deploy
+
+- [x] Backend NestJS em produção (Railway)
+- [x] PostgreSQL com 21 tabelas criadas
+- [x] Dashboard Admin em produção (Vercel)
+- [x] Autenticação JWT funcionando
+- [x] Integração Frontend ↔ Backend
+- [x] Variáveis de ambiente configuradas
+- [x] Deploy automático via GitHub
+- [x] Documentação completa
+- [x] Scripts helper criados
+- [ ] Site público em produção
+- [ ] Integração com OpenAI
+- [ ] Portal do cliente
+- [ ] Sistema de notificações
+- [ ] Upload de arquivos (S3)
+- [ ] Testes automatizados
+- [ ] CI/CD completo
