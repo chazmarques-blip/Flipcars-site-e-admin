@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { useSidebar } from '@/lib/hooks/useSidebar';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/contexts/AuthContext';
 import { SpinnerOverlay, SkipToContent } from '@/components/ui';
 import clsx from 'clsx';
 
@@ -16,12 +16,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
   const { isOpen, isMobile, setIsMobile } = useSidebar();
-  const { isAuthenticated, isLoading, loadUser } = useAuthStore();
-
-  // Load user on mount
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
+  const { isAuthenticated, isLoading } = useAuth();
 
   // Handle responsive sidebar
   useEffect(() => {

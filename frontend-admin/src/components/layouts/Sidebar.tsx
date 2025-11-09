@@ -19,7 +19,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { useSidebar } from '@/lib/hooks/useSidebar';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types';
 import clsx from 'clsx';
 
@@ -104,7 +104,7 @@ const navItems: NavItem[] = [
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, isMobile, toggle, close } = useSidebar();
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
 
   const filteredNavItems = navItems.filter((item) => {
     if (!item.roles) return true;

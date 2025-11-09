@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardHeader, CardContent, Badge } from '@/components/ui';
 import { EstimateFormModal } from '@/components/estimate';
 import {
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function DashboardPage() {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
   const [isEstimateModalOpen, setIsEstimateModalOpen] = useState(false);
 
   const stats = [

@@ -31,9 +31,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const savedAuth = JSON.parse(authStr);
           
           if (savedUser && savedAuth) {
+            // Load tokens back into API client
+            apiClientInstance.loadTokensFromStorage();
+            
             setUser(savedUser);
             setIsAuthenticated(true);
             console.log('[AuthContext] User loaded from localStorage:', savedUser.email);
+            console.log('[AuthContext] Tokens loaded into API client');
           }
         }
       } catch (error) {

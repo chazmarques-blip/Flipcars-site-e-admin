@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Menu, Search, LogOut, User, Settings, ChevronDown } from 'lucide-react';
 import { useSidebar } from '@/lib/hooks/useSidebar';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui';
 import { NotificationBell } from '@/components/notifications';
 import clsx from 'clsx';
@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 export function Header() {
   const router = useRouter();
   const { toggle } = useSidebar();
-  const { user, logout } = useAuthStore();
+  const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = async () => {
