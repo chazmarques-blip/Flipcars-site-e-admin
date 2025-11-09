@@ -61,6 +61,50 @@ curl -H "Authorization: Bearer $VERCEL_TOKEN" \
 
 ---
 
+## ⚙️ **Environment Variables**
+
+### IMPORTANT: Vercel doesn't use `.env.production` from repo!
+
+You MUST set environment variables via Vercel Dashboard or API.
+
+### Current Variables
+
+**NEXT_PUBLIC_API_URL**
+- **Value:** `https://upbeat-dedication-production.up.railway.app/api`
+- **Targets:** production, preview, development
+
+### Update Environment Variable
+
+```bash
+source .vercel-credentials
+
+# Step 1: Get variable ID
+ENV_ID=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
+  "https://api.vercel.com/v9/projects/prj_sayFhHQpCbU34G9z7coTfknHoJre/env" | \
+  jq -r '.envs[] | select(.key == "NEXT_PUBLIC_API_URL") | .id')
+
+# Step 2: Delete old variable
+curl -X DELETE "https://api.vercel.com/v9/projects/prj_sayFhHQpCbU34G9z7coTfknHoJre/env/$ENV_ID" \
+  -H "Authorization: Bearer $VERCEL_TOKEN"
+
+# Step 3: Create new variable
+curl -X POST "https://api.vercel.com/v10/projects/prj_sayFhHQpCbU34G9z7coTfknHoJre/env" \
+  -H "Authorization: Bearer $VERCEL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "key": "NEXT_PUBLIC_API_URL",
+    "value": "https://upbeat-dedication-production.up.railway.app/api",
+    "type": "plain",
+    "target": ["production", "preview", "development"]
+  }'
+
+# Step 4: Trigger redeploy (see section above)
+```
+
+⚠️ **After changing env vars, you MUST trigger a new deployment!**
+
+---
+
 ## 🔧 **Scripts Úteis**
 
 ### Deploy Script
