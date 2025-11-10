@@ -67,6 +67,7 @@ async function main() {
     { name: 'GET /api/leads', url: '/api/leads', method: 'GET' },
     { name: 'GET /api/leads?page=1', url: '/api/leads?page=1&limit=10', method: 'GET' },
     { name: 'GET /api/leads/statistics', url: '/api/leads/statistics', method: 'GET' },
+    { name: 'GET /api/leads/4d4cd75-84aa-414d-b9a6-495ec54964a7 (SPECIFIC)', url: '/api/leads/4d4cd75-84aa-414d-b9a6-495ec54964a7', method: 'GET' },
   ];
   
   for (const endpoint of endpoints) {
@@ -92,10 +93,10 @@ async function main() {
     console.log('');
   }
   
-  // 3. Verificar headers
-  console.log('3️⃣ Verificando headers da última request...');
-  const testUrl = new URL('/api/leads', BACKEND_URL);
-  const testResponse = await httpsRequest(testUrl, {
+  // 3. List all lead IDs
+  console.log('3️⃣ Listando IDs válidos de leads...\n');
+  const leadsUrl = new URL('/api/leads?page=1&limit=20', BACKEND_URL);
+  const leadsResponse = await httpsRequest(leadsUrl, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -103,7 +104,18 @@ async function main() {
     },
   });
   
-  console.log('   Response headers:', testResponse.headers);
+  if (leadsResponse.status === 200 && leadsResponse.data.data) {
+    console.log(`   ✅ Total de leads no banco: ${leadsResponse.data.data.length}\n`);
+    console.log('   📋 IDs VÁLIDOS:');
+    leadsResponse.data.data.forEach((lead, index) => {
+      const name = lead.name || `${lead.firstName || ''} ${lead.lastName || ''}`.trim();
+      console.log(`   ${index + 1}. ID: ${lead.id}`);
+      console.log(`      Ref: ${lead.referenceNumber}`);
+      console.log(`      Name: ${name}`);
+      console.log(`      Status: ${lead.status}`);
+      console.log('');
+    });
+  }
 }
 
 main().catch(console.error);
