@@ -55,8 +55,9 @@ export const leadsService = {
       
       // Step 3: Photos (OPTIONAL - bodyshop only)
       // Photos should be URLs (already uploaded), not File objects
+      // Accept both relative paths (/uploads/) and full URLs (https://)
       ...(data.photos && Object.values(data.photos).some(
-        (photo) => typeof photo === 'string' && photo.startsWith('/uploads/')
+        (photo) => typeof photo === 'string' && (photo.startsWith('/uploads/') || photo.startsWith('http'))
       ) ? { photos: data.photos } : {}),
       
       // Step 2.5: Warranty Documents (OPTIONAL - mechanic only)
