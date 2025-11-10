@@ -130,7 +130,9 @@ export const leadService = {
    * Get lead by ID
    */
   async getLeadById(id: string): Promise<Lead> {
-    console.log('[LeadService] getLeadById called with ID:', id);
+    console.log('[LeadService] ========== getLeadById ==========');
+    console.log('[LeadService] ID received:', id);
+    console.log('[LeadService] ID type:', typeof id);
     console.log('[LeadService] USE_MOCK_DATA:', USE_MOCK_DATA);
     
     if (USE_MOCK_DATA) {
@@ -148,10 +150,24 @@ export const leadService = {
       return lead;
     }
     
-    console.log('[LeadService] Calling API: GET /leads/' + id);
-    const response = await apiClient.get<Lead>(`/leads/${id}`);
-    console.log('[LeadService] API response received:', response.status, response.data);
-    return response.data;
+    const url = `/leads/${id}`;
+    console.log('[LeadService] Calling API: GET', url);
+    console.log('[LeadService] Full URL will be: ' + process.env.NEXT_PUBLIC_API_URL + url);
+    
+    try {
+      const response = await apiClient.get<Lead>(url);
+      console.log('[LeadService] ✅ API response received:', response.status);
+      console.log('[LeadService] Response data:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('[LeadService] ❌ API call failed');
+      console.error('[LeadService] Error:', error);
+      console.error('[LeadService] Error response:', error?.response);
+      console.error('[LeadService] Error config:', error?.config);
+      console.error('[LeadService] Request URL:', error?.config?.url);
+      console.error('[LeadService] Request baseURL:', error?.config?.baseURL);
+      throw error;
+    }
   },
 
   /**
