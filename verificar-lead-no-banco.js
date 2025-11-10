@@ -69,8 +69,8 @@ async function main() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: 'admin@flipcars.us',
-        password: 'Password123!',
+        email: 'admin@flipcars.com',
+        password: 'Admin123!',
       }),
     });
     
