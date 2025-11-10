@@ -41,20 +41,34 @@ export default function LeadDetailPage() {
 
   const loadLeadData = async () => {
     try {
+      console.log('[LeadDetail] ========== LOADING LEAD ==========');
+      console.log('[LeadDetail] Lead ID:', leadId);
       setIsLoading(true);
       setError(null);
 
-      const [leadData, notesData, activitiesData] = await Promise.all([
-        leadService.getLeadById(leadId),
-        leadService.getLeadNotes(leadId),
-        leadService.getLeadActivities(leadId),
-      ]);
+      console.log('[LeadDetail] Fetching lead data...');
+      const leadData = await leadService.getLeadById(leadId);
+      console.log('[LeadDetail] ✅ Lead data loaded:', leadData);
+      
+      console.log('[LeadDetail] Fetching notes...');
+      const notesData = await leadService.getLeadNotes(leadId);
+      console.log('[LeadDetail] ✅ Notes loaded:', notesData?.length || 0);
+      
+      console.log('[LeadDetail] Fetching activities...');
+      const activitiesData = await leadService.getLeadActivities(leadId);
+      console.log('[LeadDetail] ✅ Activities loaded:', activitiesData?.length || 0);
 
       setLead(leadData);
       setNotes(notesData);
       setActivities(activitiesData);
-    } catch (err) {
-      console.error('Error loading lead data:', err);
+      console.log('[LeadDetail] ========== SUCCESS ==========');
+    } catch (err: any) {
+      console.error('[LeadDetail] ========== ERROR ==========');
+      console.error('[LeadDetail] Error object:', err);
+      console.error('[LeadDetail] Error message:', err?.message);
+      console.error('[LeadDetail] Error response:', err?.response);
+      console.error('[LeadDetail] Error status:', err?.response?.status);
+      console.error('[LeadDetail] Error data:', err?.response?.data);
       setError('Failed to load lead details. Please try again.');
     } finally {
       setIsLoading(false);
