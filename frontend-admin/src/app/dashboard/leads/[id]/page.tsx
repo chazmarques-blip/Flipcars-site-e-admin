@@ -46,21 +46,34 @@ export default function LeadDetailPage() {
       setIsLoading(true);
       setError(null);
 
+      // Fetch lead data (REQUIRED)
       console.log('[LeadDetail] Fetching lead data...');
       const leadData = await leadService.getLeadById(leadId);
       console.log('[LeadDetail] ✅ Lead data loaded:', leadData);
-      
-      console.log('[LeadDetail] Fetching notes...');
-      const notesData = await leadService.getLeadNotes(leadId);
-      console.log('[LeadDetail] ✅ Notes loaded:', notesData?.length || 0);
-      
-      console.log('[LeadDetail] Fetching activities...');
-      const activitiesData = await leadService.getLeadActivities(leadId);
-      console.log('[LeadDetail] ✅ Activities loaded:', activitiesData?.length || 0);
-
       setLead(leadData);
-      setNotes(notesData);
-      setActivities(activitiesData);
+      
+      // Fetch notes (OPTIONAL - may not be implemented yet)
+      try {
+        console.log('[LeadDetail] Fetching notes...');
+        const notesData = await leadService.getLeadNotes(leadId);
+        console.log('[LeadDetail] ✅ Notes loaded:', notesData?.length || 0);
+        setNotes(notesData);
+      } catch (notesError: any) {
+        console.warn('[LeadDetail] ⚠️ Could not load notes (endpoint may not exist):', notesError?.response?.status);
+        setNotes([]);
+      }
+      
+      // Fetch activities (OPTIONAL - may not be implemented yet)
+      try {
+        console.log('[LeadDetail] Fetching activities...');
+        const activitiesData = await leadService.getLeadActivities(leadId);
+        console.log('[LeadDetail] ✅ Activities loaded:', activitiesData?.length || 0);
+        setActivities(activitiesData);
+      } catch (activitiesError: any) {
+        console.warn('[LeadDetail] ⚠️ Could not load activities (endpoint may not exist):', activitiesError?.response?.status);
+        setActivities([]);
+      }
+
       console.log('[LeadDetail] ========== SUCCESS ==========');
     } catch (err: any) {
       console.error('[LeadDetail] ========== ERROR ==========');
