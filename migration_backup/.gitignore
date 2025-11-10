@@ -1,0 +1,3 @@
+# Ignorar TUDO nesta pasta (contém dados sensíveis)
+*
+!.gitignore
