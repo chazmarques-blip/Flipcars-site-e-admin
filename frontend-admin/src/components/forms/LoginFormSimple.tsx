@@ -25,18 +25,30 @@ export function LoginFormSimple() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log('[LoginFormSimple] Attempting login with:', data.email);
+      console.log('[LoginFormSimple] ========== LOGIN START ==========');
+      console.log('[LoginFormSimple] Email:', data.email);
+      console.log('[LoginFormSimple] Password length:', data.password?.length);
+      console.log('[LoginFormSimple] API URL:', process.env.NEXT_PUBLIC_API_URL);
+      
       await login(data);
-      console.log('[LoginFormSimple] Login successful!');
+      
+      console.log('[LoginFormSimple] ========== LOGIN SUCCESS ==========');
       toast.success('Login successful!');
       
       // Hard redirect to ensure state is loaded
       setTimeout(() => {
+        console.log('[LoginFormSimple] Redirecting to dashboard...');
         window.location.href = '/dashboard';
       }, 300);
-    } catch (error) {
-      console.error('[LoginFormSimple] Login failed:', error);
-      const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Login failed. Please try again.';
+    } catch (error: any) {
+      console.error('[LoginFormSimple] ========== LOGIN FAILED ==========');
+      console.error('[LoginFormSimple] Error object:', error);
+      console.error('[LoginFormSimple] Error response:', error?.response);
+      console.error('[LoginFormSimple] Error message:', error?.message);
+      console.error('[LoginFormSimple] Error status:', error?.response?.status);
+      console.error('[LoginFormSimple] Error data:', error?.response?.data);
+      
+      const errorMessage = error?.response?.data?.message || error?.message || 'Login failed. Please try again.';
       toast.error(errorMessage);
     }
   };
