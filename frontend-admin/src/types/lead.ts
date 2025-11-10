@@ -43,6 +43,7 @@ export interface Lead {
   // Damage info
   damageDescription?: string;
   damageType?: string[];
+  damagePhotos?: string[];
   estimatedValue?: number;
   additionalNotes?: string;
   
