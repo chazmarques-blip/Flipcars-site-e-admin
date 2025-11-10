@@ -41,17 +41,27 @@ export default function LeadsPage() {
   const fetchLeads = async () => {
     setIsLoading(true);
     try {
+      console.log('[LeadsPage] Fetching leads - Page:', currentPage, 'PageSize:', pageSize);
       const response = await leadService.getLeads(currentPage, pageSize, {
         ...filters,
         search: searchQuery || undefined,
       });
       
+      console.log('[LeadsPage] Response received:', response);
+      console.log('[LeadsPage] Response keys:', Object.keys(response));
+      
+      // Backend returns 'pagination' not 'meta'
+      const paginationData = response.meta || response.pagination || {};
+      console.log('[LeadsPage] Pagination data:', paginationData);
+      
       setLeads(response.data);
-      setTotalPages(response.meta.totalPages);
-      setTotalItems(response.meta.total);
+      setTotalPages(paginationData.totalPages || paginationData.pages || 1);
+      setTotalItems(paginationData.total || paginationData.count || response.data.length);
+      
+      console.log('[LeadsPage] ✅ Leads loaded:', response.data.length);
     } catch (error) {
+      console.error('[LeadsPage] ❌ Error fetching leads:', error);
       toast.error('Failed to load leads');
-      console.error('Error fetching leads:', error);
     } finally {
       setIsLoading(false);
     }

@@ -130,6 +130,9 @@ export const leadService = {
    * Get lead by ID
    */
   async getLeadById(id: string): Promise<Lead> {
+    console.log('[LeadService] getLeadById called with ID:', id);
+    console.log('[LeadService] USE_MOCK_DATA:', USE_MOCK_DATA);
+    
     if (USE_MOCK_DATA) {
       await new Promise(resolve => setTimeout(resolve, 200));
       
@@ -145,7 +148,9 @@ export const leadService = {
       return lead;
     }
     
+    console.log('[LeadService] Calling API: GET /leads/' + id);
     const response = await apiClient.get<Lead>(`/leads/${id}`);
+    console.log('[LeadService] API response received:', response.status, response.data);
     return response.data;
   },
 

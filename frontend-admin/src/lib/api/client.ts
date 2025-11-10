@@ -30,8 +30,18 @@ class ApiClient {
     // Request interceptor - Add access token to headers
     this.client.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
+        const fullUrl = config.baseURL + config.url;
+        console.log('[ApiClient] ========== REQUEST ==========');
+        console.log('[ApiClient] Method:', config.method?.toUpperCase());
+        console.log('[ApiClient] URL:', config.url);
+        console.log('[ApiClient] Full URL:', fullUrl);
+        console.log('[ApiClient] BaseURL:', config.baseURL);
+        console.log('[ApiClient] Has token:', !!this.accessToken);
         if (this.accessToken && config.headers) {
           config.headers.Authorization = `Bearer ${this.accessToken}`;
+          console.log('[ApiClient] ✅ Token added to headers');
+        } else {
+          console.warn('[ApiClient] ⚠️ No token available!');
         }
         return config;
       },
@@ -146,13 +156,19 @@ class ApiClient {
   }
 
   public loadTokensFromStorage() {
+    console.log('[ApiClient] loadTokensFromStorage called');
     if (typeof window !== 'undefined') {
       const accessToken = localStorage.getItem('accessToken');
       const refreshToken = localStorage.getItem('refreshToken');
 
+      console.log('[ApiClient] Found in localStorage - Access token:', !!accessToken, 'Refresh token:', !!refreshToken);
+
       if (accessToken && refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        console.log('[ApiClient] ✅ Tokens loaded into memory');
+      } else {
+        console.warn('[ApiClient] ⚠️ No tokens in localStorage!');
       }
     }
   }
