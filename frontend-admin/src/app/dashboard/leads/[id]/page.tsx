@@ -393,16 +393,14 @@ export default function LeadDetailPage() {
               )}
             </div>
 
-            {/* Damage Photos Gallery */}
-            {lead.damagePhotos && lead.damagePhotos.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <LeadPhotoGallery
-                  photos={lead.damagePhotos}
-                  leadId={leadId}
-                  readOnly={true}
-                />
-              </div>
-            )}
+            {/* Damage Photos Gallery - Always show, even if empty */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <LeadPhotoGallery
+                photos={lead.damagePhotos || []}
+                leadId={leadId}
+                readOnly={true}
+              />
+            </div>
 
             {/* Notes Section */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
