@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Image as ImageIcon, X, Download, ZoomIn, Upload } from 'lucide-react';
-import Image from 'next/image';
 
 interface LeadPhotoGalleryProps {
   photos: string[];
@@ -106,12 +105,10 @@ export function LeadPhotoGallery({
               key={index}
               className="relative group aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200"
             >
-              <Image
+              <img
                 src={photoUrl}
                 alt={`Damage photo ${index + 1}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                className="w-full h-full object-cover"
               />
               
               {/* Overlay with actions */}
@@ -149,13 +146,11 @@ export function LeadPhotoGallery({
             <X className="w-6 h-6 text-gray-700" />
           </button>
           
-          <div className="relative max-w-7xl max-h-[90vh] w-full h-full">
-            <Image
+          <div className="relative max-w-7xl max-h-[90vh] flex items-center justify-center">
+            <img
               src={selectedPhoto}
               alt="Full size photo"
-              fill
-              className="object-contain"
-              sizes="100vw"
+              className="max-w-full max-h-[90vh] object-contain"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
