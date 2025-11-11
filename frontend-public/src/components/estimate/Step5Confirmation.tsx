@@ -409,24 +409,57 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
             margin: 0.75in 0.5in;
           }
           
-          /* Hide everything except print version */
-          body * {
-            visibility: hidden !important;
+          /* Hide modal overlay and all UI chrome */
+          .fixed.inset-0.z-50,
+          .fixed.inset-0.z-50 > div > div:first-child,
+          .fixed.inset-0.z-50 > div > div:nth-child(2),
+          .fixed.inset-0.z-50 > div > div:last-child > div:first-child {
+            display: none !important;
           }
           
-          .print-version,
+          /* Hide screen version */
+          .print\\:hidden {
+            display: none !important;
+          }
+          
+          /* Show and position print version */
+          .print-version {
+            display: block !important;
+            visibility: visible !important;
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            background: white !important;
+            color: black !important;
+            font-family: 'Arial', 'Helvetica', sans-serif !important;
+          }
+          
           .print-version * {
             visibility: visible !important;
           }
           
-          .print-version {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            background: white;
-            color: black;
-            font-family: 'Arial', 'Helvetica', sans-serif;
+          /* Reset modal container for print */
+          .fixed.inset-0.z-50 {
+            position: static !important;
+            background: white !important;
+          }
+          
+          .fixed.inset-0.z-50 > div {
+            position: static !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+          }
+          
+          .fixed.inset-0.z-50 > div > div:last-child {
+            overflow: visible !important;
+            padding: 0 !important;
           }
 
           /* Header */
