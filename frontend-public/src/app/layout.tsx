@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   title: 'FlipCars - Expert Auto Body Repair | Orlando, FL',
   description: 'Professional auto body repair and collision services in Orlando, FL. Insurance claims handled. Free estimates. Quality guaranteed.',
   keywords: 'auto body repair, collision repair, car painting, insurance claims, Orlando FL',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 }
 
 export default function RootLayout({
