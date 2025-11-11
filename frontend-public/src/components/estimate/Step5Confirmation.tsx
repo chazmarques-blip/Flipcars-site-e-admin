@@ -30,99 +30,85 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
 
   return (
     <>
-      {/* Screen Version */}
+      {/* Screen Version - Compact */}
       <div className="space-y-2 print:hidden">
-        {/* Success Icon */}
+        {/* Success Icon + Title + Reference in one section */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
-            <CheckCircle className="w-8 h-8 text-green-600" />
+          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mb-1.5">
+            <CheckCircle className="w-6 h-6 text-green-600" />
           </div>
-          <h3 className="text-lg font-bold text-black mb-1">
+          <h3 className="text-base font-bold text-black mb-0.5">
             Thank You, {data.firstName}!
           </h3>
-          <p className="text-xs text-neutral-600">
+          <p className="text-[11px] text-neutral-600 mb-2">
             We've received your estimate request
           </p>
         </div>
 
-        {/* Reference Number */}
-        <div className="p-3 bg-gradient-to-br from-black to-black/90 rounded-lg text-center">
-          <p className="text-[10px] text-gold/80 mb-1">Reference Number</p>
-          <p className="text-xl font-bold text-gold tracking-wide">
+        {/* Reference Number - Compact */}
+        <div className="p-2.5 bg-gradient-to-br from-black to-black/90 rounded-lg text-center">
+          <p className="text-[9px] text-gold/80 mb-0.5">Reference Number</p>
+          <p className="text-lg font-bold text-gold tracking-wide">
             {referenceNumber}
           </p>
-          <p className="text-[10px] text-gold/60 mt-1">
-            Save this number for tracking your request
+          <p className="text-[9px] text-gold/60 mt-0.5">
+            Save for tracking
           </p>
         </div>
 
-        {/* Email Confirmation */}
-        <div className="flex items-center gap-2 p-2 bg-neutral-50 rounded-lg">
-          <Mail className="w-4 h-4 text-black flex-shrink-0" />
+        {/* Email Confirmation - Compact */}
+        <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 rounded-lg">
+          <Mail className="w-3.5 h-3.5 text-black flex-shrink-0" />
           <div>
-            <p className="text-xs font-medium text-black">Confirmation email sent</p>
-            <p className="text-[10px] text-neutral-600">{data.email}</p>
+            <p className="text-[11px] font-medium text-black">Confirmation sent to</p>
+            <p className="text-[9px] text-neutral-600">{data.email}</p>
           </div>
         </div>
 
-        {/* What Happens Next */}
-        <div className="space-y-2">
-          <h4 className="text-sm font-semibold text-black">What happens next?</h4>
+        {/* What Happens Next - Inline Compact */}
+        <div className="space-y-1.5">
+          <h4 className="text-xs font-semibold text-black">What happens next?</h4>
           
-          <div className="space-y-1.5">
-            {/* Step 1 */}
-            <div className="flex gap-2">
-              <div className="flex-shrink-0 w-6 h-6 bg-gold text-black rounded-full flex items-center justify-center font-bold text-xs">
+          <div className="space-y-1">
+            {/* Step 1 - Inline */}
+            <div className="flex items-center gap-1.5">
+              <div className="flex-shrink-0 w-5 h-5 bg-gold text-black rounded-full flex items-center justify-center font-bold text-[10px]">
                 1
               </div>
-              <div>
-                <p className="text-xs font-medium text-black">We review your information</p>
-                <p className="text-[10px] text-neutral-600">Usually within 1 hour during business hours</p>
-              </div>
+              <p className="text-[11px] text-black">
+                <span className="font-medium">Review</span> <span className="text-neutral-600">(~1 hour)</span>
+              </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="flex gap-2">
-              <div className="flex-shrink-0 w-6 h-6 bg-gold text-black rounded-full flex items-center justify-center font-bold text-xs">
+            {/* Step 2 - Inline */}
+            <div className="flex items-center gap-1.5">
+              <div className="flex-shrink-0 w-5 h-5 bg-gold text-black rounded-full flex items-center justify-center font-bold text-[10px]">
                 2
               </div>
-              <div>
-                <p className="text-xs font-medium text-black">We contact you</p>
-                <p className="text-[10px] text-neutral-600">
-                  Via {data.contactPreferences?.phoneCall && 'Phone'}
-                  {data.contactPreferences?.phoneCall && (data.contactPreferences?.whatsapp || data.contactPreferences?.textMessage) && ', '}
-                  {data.contactPreferences?.whatsapp && 'WhatsApp'}
-                  {data.contactPreferences?.whatsapp && data.contactPreferences?.textMessage && ', '}
-                  {data.contactPreferences?.textMessage && 'Text'}
-                </p>
-              </div>
+              <p className="text-[11px] text-black">
+                <span className="font-medium">Contact</span> <span className="text-neutral-600">via your preferred method</span>
+              </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="flex gap-2">
-              <div className="flex-shrink-0 w-6 h-6 bg-gold text-black rounded-full flex items-center justify-center font-bold text-xs">
+            {/* Step 3 - Inline */}
+            <div className="flex items-center gap-1.5">
+              <div className="flex-shrink-0 w-5 h-5 bg-gold text-black rounded-full flex items-center justify-center font-bold text-[10px]">
                 3
               </div>
-              <div>
-                <p className="text-xs font-medium text-black">We schedule your appointment</p>
-                <p className="text-[10px] text-neutral-600">
-                  {data.preferredDate 
-                    ? `For your selected date: ${formatDate(data.preferredDate)}`
-                    : 'At a time that works best for you'
-                  }
-                </p>
-              </div>
+              <p className="text-[11px] text-black">
+                <span className="font-medium">Schedule</span> <span className="text-neutral-600">your appointment</span>
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Location Map */}
+        {/* Location - Compact with smaller map */}
         <div className="border border-neutral-200 rounded-lg overflow-hidden">
-          <div className="bg-black p-2 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-gold" />
-            <h4 className="text-xs font-semibold text-gold">Our Location</h4>
+          <div className="bg-black p-1.5 flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-gold" />
+            <h4 className="text-[11px] font-semibold text-gold">Our Location</h4>
           </div>
-          <div className="aspect-video bg-neutral-100">
+          <div className="h-32 bg-neutral-100">
             <iframe
               src={FLIPCARS_LOCATION.embedMapUrl}
               width="100%"
@@ -134,14 +120,14 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
               title="FlipCars Location"
             />
           </div>
-          <div className="p-2 bg-neutral-50 space-y-1">
-            <p className="text-xs font-medium text-black">{FLIPCARS_LOCATION.name}</p>
-            <p className="text-[10px] text-neutral-700">{FLIPCARS_LOCATION.address}</p>
-            <div className="flex items-center gap-2 mt-1">
+          <div className="p-1.5 bg-neutral-50 space-y-0.5">
+            <p className="text-[11px] font-medium text-black">{FLIPCARS_LOCATION.name}</p>
+            <p className="text-[9px] text-neutral-700 leading-tight">{FLIPCARS_LOCATION.address}</p>
+            <div className="flex items-center gap-1.5 mt-0.5">
               <Phone className="w-3 h-3 text-black" />
               <a 
                 href={`tel:${FLIPCARS_LOCATION.phone.replace(/[^0-9]/g, '')}`}
-                className="text-xs font-semibold text-black hover:text-gold transition-colors"
+                className="text-[11px] font-semibold text-black hover:text-gold transition-colors"
               >
                 {FLIPCARS_LOCATION.phone}
               </a>
@@ -149,20 +135,20 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-2 pt-2">
+        {/* Action Buttons - Compact */}
+        <div className="flex flex-col gap-1.5 pt-1">
           <Button
             type="button"
             variant="primary"
             onClick={onClose}
-            className="w-full bg-black hover:bg-black/90 text-gold border border-gold font-semibold"
+            className="w-full py-2 bg-black hover:bg-black/90 text-gold border border-gold font-semibold text-sm"
           >
             Back to Home
           </Button>
           <button
             type="button"
             onClick={() => window.print()}
-            className="text-xs text-neutral-600 hover:text-black transition-colors py-1"
+            className="text-[10px] text-neutral-600 hover:text-black transition-colors py-0.5"
           >
             📄 Print this confirmation
           </button>
