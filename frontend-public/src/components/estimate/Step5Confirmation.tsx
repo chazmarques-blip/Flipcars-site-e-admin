@@ -143,22 +143,22 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           </div>
         </div>
 
-        {/* Action Buttons - Compact */}
-        <div className="flex flex-col gap-1.5 pt-1">
+        {/* Action Buttons - Improved Spacing */}
+        <div className="flex flex-col gap-2 pt-3 pb-2">
           <Button
             type="button"
             variant="primary"
             onClick={onClose}
-            className="w-full py-2 bg-black hover:bg-black/90 text-gold border border-gold font-semibold text-sm"
+            className="w-full py-3 bg-black hover:bg-black/90 text-gold border border-gold font-semibold text-base"
           >
-            Back to Home
+            ← Back to Home
           </Button>
           <button
             type="button"
             onClick={() => window.print()}
-            className="text-[10px] text-neutral-600 hover:text-black transition-colors py-0.5"
+            className="w-full py-2.5 text-sm text-neutral-700 hover:text-black hover:bg-neutral-100 border border-neutral-300 rounded-lg transition-colors font-medium"
           >
-            📄 Print this confirmation
+            🖨️ Print this confirmation
           </button>
         </div>
       </div>
