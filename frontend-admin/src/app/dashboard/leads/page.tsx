@@ -68,7 +68,7 @@ export default function LeadsPage() {
   };
 
   const getStatusBadge = (status: LeadStatus) => {
-    return <LeadStatusBadge status={status} size="sm" />;
+    return <LeadStatusBadge status={status} size="xs" showIcon={false} />;
   };
 
   const getPriorityBadge = (priority: LeadPriority) => {
@@ -78,32 +78,70 @@ export default function LeadsPage() {
       [LeadPriority.HIGH]: 'danger',
     };
 
+    // Show only first letter: L, M, H
+    const letter = priority.charAt(0).toUpperCase();
     return (
-      <Badge variant={variants[priority]} dot>
-        {priority.toUpperCase()}
-      </Badge>
+      <span className={`inline-flex items-center gap-1 px-1.5 py-0 text-[10px] font-semibold rounded ${
+        priority === LeadPriority.HIGH ? 'bg-red-100 text-red-700' :
+        priority === LeadPriority.MEDIUM ? 'bg-yellow-100 text-yellow-700' :
+        'bg-green-100 text-green-700'
+      }`}>
+        <span className={`w-1.5 h-1.5 rounded-full ${
+          priority === LeadPriority.HIGH ? 'bg-red-500' :
+          priority === LeadPriority.MEDIUM ? 'bg-yellow-500' :
+          'bg-green-500'
+        }`} />
+        {letter}
+      </span>
     );
   };
 
   const columns: Column<Lead>[] = [
     {
+      key: 'index',
+      label: '#',
+      render: (_lead, index) => (
+        <span className="text-xs font-medium text-gray-500">
+          {(currentPage - 1) * pageSize + index + 1}
+        </span>
+      ),
+    },
+    {
       key: 'referenceNumber',
       label: 'Reference',
       sortable: true,
-      render: (lead) => (
-        <span className="font-mono text-sm font-medium text-primary">
-          {lead.referenceNumber}
-        </span>
-      ),
+      render: (lead) => {
+        // Format: YYYY-MMDD-XXX from FLIP-YYYYMMDD-XXXX
+        const ref = lead.referenceNumber;
+        let formatted = ref;
+        if (ref && ref.startsWith('FLIP-')) {
+          const parts = ref.replace('FLIP-', '').split('-');
+          if (parts.length >= 2) {
+            const date = parts[0]; // YYYYMMDD
+            const num = parts[1] || '001'; // XXXX
+            // Convert YYYYMMDD to YYYY-MMDD
+            const year = date.substring(0, 4);
+            const monthDay = date.substring(4);
+            formatted = `${year}-${monthDay}-${num.padStart(3, '0')}`;
+          }
+        }
+        return (
+          <span className="font-mono text-xs font-medium text-primary">
+            {formatted}
+          </span>
+        );
+      },
     },
     {
       key: 'name',
       label: 'Customer',
       sortable: true,
       render: (lead) => (
-        <div>
-          <div className="font-medium text-gray-900">{lead.name}</div>
-          <div className="text-xs text-gray-500">{lead.email}</div>
+        <div className="text-xs">
+          <span className="font-medium text-gray-900">{lead.name}</span>
+          {lead.phone && (
+            <span className="text-gray-500 ml-2">• {lead.phone}</span>
+          )}
         </div>
       ),
     },
@@ -111,14 +149,14 @@ export default function LeadsPage() {
       key: 'vehicle',
       label: 'Vehicle',
       render: (lead) => (
-        <div className="text-sm">
+        <div className="text-xs">
           {lead.vehicleMake || lead.vehicleModel || lead.vehicleYear ? (
-            <>
-              <div className="font-medium text-gray-900">
-                {lead.vehicleMake} {lead.vehicleModel}
-              </div>
-              <div className="text-xs text-gray-500">{lead.vehicleYear}</div>
-            </>
+            <span className="font-medium text-gray-900">
+              {lead.vehicleMake} {lead.vehicleModel}
+              {lead.vehicleYear && (
+                <span className="text-gray-500 ml-2">{lead.vehicleYear}</span>
+              )}
+            </span>
           ) : (
             <span className="text-gray-400">Not specified</span>
           )}
@@ -143,46 +181,50 @@ export default function LeadsPage() {
       sortable: true,
       render: (lead) =>
         lead.aiQualificationScore ? (
-          <div className="flex items-center gap-2">
-            <div className="w-12 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="flex items-center gap-1">
+            <div className="w-8 h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary"
                 style={{ width: `${lead.aiQualificationScore}%` }}
               />
             </div>
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-[10px] font-semibold text-gray-700 tabular-nums">
               {lead.aiQualificationScore}
             </span>
           </div>
         ) : (
-          <span className="text-gray-400 text-sm">Not qualified</span>
+          <span className="text-gray-400 text-[10px]">—</span>
         ),
     },
     {
       key: 'createdAt',
       label: 'Created',
       sortable: true,
-      render: (lead) => (
-        <span className="text-sm text-gray-600">
-          {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true })}
-        </span>
-      ),
+      render: (lead) => {
+        // Format: YYYY-MM-DD
+        const date = new Date(lead.createdAt);
+        const formatted = date.toISOString().split('T')[0];
+        return (
+          <span className="text-xs text-gray-600 font-mono">
+            {formatted}
+          </span>
+        );
+      },
     },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (lead) => (
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={(e) => {
             e.stopPropagation();
             router.push(`/dashboard/leads/${lead.id}`);
           }}
-          leftIcon={<Eye className="w-4 h-4" />}
+          className="p-1 hover:bg-gray-100 rounded transition-colors"
+          title="View details"
         >
-          View
-        </Button>
+          <Eye className="w-3.5 h-3.5 text-gray-500" />
+        </button>
       ),
     },
   ];
@@ -313,4 +355,6 @@ export default function LeadsPage() {
       />
     </div>
   );
+}
+
 }

@@ -9,7 +9,7 @@ export interface Column<T> {
   key: string;
   label: string;
   sortable?: boolean;
-  render?: (row: T) => ReactNode;
+  render?: (row: T, index?: number) => ReactNode;
   width?: string;
 }
 
@@ -66,16 +66,16 @@ export function DataTable<T extends { id: string }>({
                 <th
                   key={column.key}
                   className={clsx(
-                    'px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider',
+                    'px-3 py-2 text-left text-[10px] font-semibold text-gray-600 uppercase tracking-wide',
                     column.sortable && 'cursor-pointer hover:bg-gray-100 select-none',
                     column.width && `w-${column.width}`
                   )}
                   onClick={() => column.sortable && handleSort(column.key)}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     {column.label}
                     {column.sortable && sortKey === column.key && (
-                      <span className="text-primary">
+                      <span className="text-primary text-xs">
                         {sortDirection === 'asc' ? '↑' : '↓'}
                       </span>
                     )}
@@ -107,11 +107,11 @@ export function DataTable<T extends { id: string }>({
                 </td>
               </tr>
             ) : (
-              data.map((row) => (
+              data.map((row, index) => (
                 <tr
                   key={row.id}
                   className={clsx(
-                    'hover:bg-gray-50 transition-colors',
+                    'hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0',
                     onRowClick && 'cursor-pointer'
                   )}
                   onClick={() => onRowClick?.(row)}
@@ -119,10 +119,10 @@ export function DataTable<T extends { id: string }>({
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap"
+                      className="px-3 py-2 text-xs text-gray-900"
                     >
                       {column.render
-                        ? column.render(row)
+                        ? column.render(row, index)
                         : (row[column.key as keyof T] as ReactNode)}
                     </td>
                   ))}

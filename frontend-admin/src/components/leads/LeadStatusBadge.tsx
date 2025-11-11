@@ -15,7 +15,7 @@ import {
 interface LeadStatusBadgeProps {
   status: LeadStatus;
   showIcon?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 const STATUS_CONFIG = {
@@ -62,12 +62,14 @@ const STATUS_CONFIG = {
 };
 
 const SIZE_CLASSES = {
+  xs: 'px-1.5 py-0 text-[10px]',
   sm: 'px-2 py-0.5 text-xs',
   md: 'px-3 py-1 text-sm',
   lg: 'px-4 py-1.5 text-base',
 };
 
 const ICON_SIZE_CLASSES = {
+  xs: 'w-2.5 h-2.5',
   sm: 'w-3 h-3',
   md: 'w-4 h-4',
   lg: 'w-5 h-5',
