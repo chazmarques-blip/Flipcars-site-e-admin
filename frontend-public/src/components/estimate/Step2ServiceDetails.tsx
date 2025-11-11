@@ -128,7 +128,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             {...register(claimField)}
             placeholder="Enter claim number if available"
             disabled={hasClaimNumber}
-            className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-400 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+            className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
               hasClaimNumber ? 'bg-neutral-100 cursor-not-allowed' : 'border-neutral-300'
             }`}
           />

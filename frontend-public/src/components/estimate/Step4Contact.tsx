@@ -139,7 +139,7 @@ export function Step4Contact({ initialData, onSubmit, onBack }: Step4ContactProp
           {...register('additionalNotes')}
           rows={3}
           placeholder="Any additional information you'd like to share..."
-          className="w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-400 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none"
+          className="w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none"
         />
         {errors.additionalNotes && (
           <p className="text-xs text-red-600">{errors.additionalNotes.message}</p>
