@@ -5,20 +5,23 @@ services:
     env: node
     region: oregon
     plan: free
-    buildCommand: cd backend && npm install && npm run build
-    startCommand: cd backend && npm run start:prod
+    root: backend
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm run start:prod
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3001
+        value: 3000
       - key: DATABASE_URL
-        value: postgresql://postgres:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2anZpZWVra3VkZXF0bnVucWxiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTc1MTY0OSwiZXhwIjoyMDc3MzI3NjQ5fQ.HdU6WH0JS-oNam1nkHvax6JQC3221VkFXpY1Ejz2x04@db.kvjvieekkudeqtnunqlb.supabase.co:5432/postgres
+        value: postgresql://postgres.kvjvieekkudeqtnunqlb:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2anZpZWVra3VkZXF0bnVucWxiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTc1MTY0OSwiZXhwIjoyMDc3MzI3NjQ5fQ.HdU6WH0JS-oNam1nkHvax6JQC3221VkFXpY1Ejz2x04@db.kvjvieekkudeqtnunqlb.supabase.co:6543/postgres?pgbouncer=true
       - key: SUPABASE_URL
         value: https://kvjvieekkudeqtnunqlb.supabase.co
       - key: SUPABASE_SERVICE_ROLE_KEY
         value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2anZpZWVra3VkZXF0bnVucWxiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTc1MTY0OSwiZXhwIjoyMDc3MzI3NjQ5fQ.HdU6WH0JS-oNam1nkHvax6JQC3221VkFXpY1Ejz2x04
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2anZpZWVra3VkZXF0bnVucWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NTE2NDksImV4cCI6MjA3NzMyNzY0OX0.e7jgc-M101J29z83hYaFz2StStn0l7tI6TnefZon_nY
       - key: JWT_SECRET
         value: flipcars-super-secret-jwt-key-production-2024-change-this
       - key: JWT_EXPIRES_IN
@@ -30,36 +33,38 @@ services:
       - key: FRONTEND_URL
         value: https://admin.flipcars.us,https://www.flipcars.us,https://flipcars.us
 
-  # Frontend Admin
-  - type: web
-    name: flipcars-admin
-    env: node
-    region: oregon
-    plan: free
-    buildCommand: cd frontend-admin && npm install && npm run build
-    startCommand: cd frontend-admin && npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: NEXT_PUBLIC_API_URL
-        sync: false
-      - key: NEXT_PUBLIC_APP_NAME
-        value: FlipCars 2.0 Admin
-      - key: NEXT_PUBLIC_APP_ENV
-        value: production
+  # Frontend Admin - COMMENTED OUT FOR NOW
+  # - type: web
+  #   name: flipcars-admin
+  #   env: node
+  #   region: oregon
+  #   plan: free
+  #   root: frontend-admin
+  #   buildCommand: npm install && npm run build
+  #   startCommand: npm start
+  #   envVars:
+  #     - key: NODE_ENV
+  #       value: production
+  #     - key: NEXT_PUBLIC_API_URL
+  #       sync: false
+  #     - key: NEXT_PUBLIC_APP_NAME
+  #       value: FlipCars 2.0 Admin
+  #     - key: NEXT_PUBLIC_APP_ENV
+  #       value: production
 
-  # Frontend Public
-  - type: web
-    name: flipcars-public
-    env: node
-    region: oregon
-    plan: free
-    buildCommand: cd frontend-public && npm install && npm run build
-    startCommand: cd frontend-public && npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: NEXT_PUBLIC_API_URL
-        sync: false
-      - key: NEXT_PUBLIC_APP_NAME
-        value: FlipCars 2.0
+  # Frontend Public - COMMENTED OUT FOR NOW
+  # - type: web
+  #   name: flipcars-public
+  #   env: node
+  #   region: oregon
+  #   plan: free
+  #   root: frontend-public
+  #   buildCommand: npm install && npm run build
+  #   startCommand: npm start
+  #   envVars:
+  #     - key: NODE_ENV
+  #       value: production
+  #     - key: NEXT_PUBLIC_API_URL
+  #       sync: false
+  #     - key: NEXT_PUBLIC_APP_NAME
+  #       value: FlipCars 2.0
