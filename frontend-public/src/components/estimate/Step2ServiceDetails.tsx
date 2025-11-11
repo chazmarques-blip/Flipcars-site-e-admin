@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Calendar, Info } from 'lucide-react';
+import Image from 'next/image';
 import {
   Step2BodyshopFormData,
   Step2MechanicFormData,
@@ -13,6 +14,19 @@ import {
 import { EstimateRequest, INSURANCE_COMPANIES, WARRANTY_COMPANIES, ServiceType } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
 import { formatDateDisplay, formatDateInput, getAvailableDates, getAvailableTimeSlots } from '@/lib/utils/calendar';
+
+// Map insurance companies to logo filenames
+const getInsuranceLogo = (company: string): string | null => {
+  const logoMap: Record<string, string> = {
+    'Allstate': '/images/insurance-allstate.png',
+    'American Family': '/images/insurance-american-family.png',
+    'Nationwide': '/images/insurance-nationwide.png',
+    'Progressive': '/images/insurance-progressive.png',
+    'State Farm': '/images/insurance-statefarm.png',
+    'USAA': '/images/insurance-usaa.png',
+  };
+  return logoMap[company] || null;
+};
 
 interface Step2ServiceDetailsProps {
   initialData: Partial<EstimateRequest>;
@@ -93,24 +107,56 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Company Selection */}
-      <div className="space-y-0.5">
-        <label htmlFor={companyField} className="block text-sm font-medium text-black">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-black">
           Who will pay for the repair? <span className="text-gold">*</span>
         </label>
-        <select
-          id={companyField}
-          {...register(companyField)}
-          className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
-            errors[companyField] ? 'border-red-500' : 'border-neutral-300'
-          }`}
-        >
-          <option value="">Select {isBodyshop ? 'insurance' : 'warranty'} company</option>
-          {companies.map((company) => (
-            <option key={company} value={company}>
-              {company}
-            </option>
-          ))}
-        </select>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {companies.map((company) => {
+            const logo = isBodyshop ? getInsuranceLogo(company) : null;
+            const isSelected = selectedCompany === company;
+            
+            return (
+              <button
+                key={company}
+                type="button"
+                onClick={() => setValue(companyField, company as any, { shouldValidate: true })}
+                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all min-h-[80px] ${
+                  isSelected
+                    ? 'border-gold bg-gold/5 shadow-md'
+                    : 'border-neutral-300 hover:border-neutral-400 bg-white'
+                } ${errors[companyField] ? 'border-red-500' : ''}`}
+              >
+                {logo ? (
+                  <>
+                    <div className="relative w-full h-10 mb-1">
+                      <Image
+                        src={logo}
+                        alt={company}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                      />
+                    </div>
+                    <span className={`text-xs text-center font-medium ${
+                      isSelected ? 'text-black' : 'text-neutral-700'
+                    }`}>
+                      {company}
+                    </span>
+                  </>
+                ) : (
+                  <span className={`text-sm text-center font-medium ${
+                    isSelected ? 'text-black' : 'text-neutral-700'
+                  }`}>
+                    {company}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        
         {errors[companyField] && (
           <p className="text-sm text-red-600">{errors[companyField]?.message}</p>
         )}
