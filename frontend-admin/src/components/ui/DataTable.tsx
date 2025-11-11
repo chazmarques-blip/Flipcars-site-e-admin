@@ -27,6 +27,7 @@ export interface DataTableProps<T> {
   isLoading?: boolean;
   emptyMessage?: string;
   onRowClick?: (row: T) => void;
+  getRowClassName?: (row: T) => string;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -43,6 +44,7 @@ export function DataTable<T extends { id: string }>({
   isLoading = false,
   emptyMessage = 'No data available',
   onRowClick,
+  getRowClassName,
 }: DataTableProps<T>) {
   const handleSort = (key: string) => {
     if (!onSort) return;
@@ -112,7 +114,8 @@ export function DataTable<T extends { id: string }>({
                   key={row.id}
                   className={clsx(
                     'hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0',
-                    onRowClick && 'cursor-pointer'
+                    onRowClick && 'cursor-pointer',
+                    getRowClassName && getRowClassName(row)
                   )}
                   onClick={() => onRowClick?.(row)}
                 >

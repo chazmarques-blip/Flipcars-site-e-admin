@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Eye } from 'lucide-react';
+import { Plus, Eye, X } from 'lucide-react';
 import {
   Button,
   Badge,
@@ -32,6 +32,29 @@ export default function LeadsPage() {
   
   const [filters, setFilters] = useState<LeadFilters>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewedLeads, setViewedLeads] = useState<Set<string>>(new Set());
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
+
+  // Load viewed leads from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('viewedLeads');
+    if (stored) {
+      try {
+        setViewedLeads(new Set(JSON.parse(stored)));
+      } catch (e) {
+        console.error('Error loading viewed leads:', e);
+      }
+    }
+  }, []);
+
+  // Mark lead as viewed and save to localStorage
+  const markLeadAsViewed = (leadId: string) => {
+    const newViewed = new Set(viewedLeads);
+    newViewed.add(leadId);
+    setViewedLeads(newViewed);
+    localStorage.setItem('viewedLeads', JSON.stringify(Array.from(newViewed)));
+  };
 
   useEffect(() => {
     fetchLeads();
@@ -81,7 +104,7 @@ export default function LeadsPage() {
     const serviceType = getServiceType(lead);
     return (
       <span className={`inline-flex items-center px-1.5 py-0 text-[10px] font-semibold rounded ${
-        serviceType === 'Bodyshop' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+        serviceType === 'Bodyshop' ? 'bg-gray-800 text-white' : 'bg-gray-600 text-white'
       }`}>
         {serviceType}
       </span>
@@ -106,25 +129,41 @@ export default function LeadsPage() {
   const getWhoPaysBadge = (lead: Lead) => {
     const whoPays = getWhoPays(lead);
     return (
-      <span className={`inline-flex items-center px-1.5 py-0 text-[10px] font-semibold rounded ${
-        whoPays === 'Insurance' ? 'bg-emerald-100 text-emerald-700' :
-        whoPays === 'Warranty' ? 'bg-amber-100 text-amber-700' :
-        'bg-gray-100 text-gray-700'
+      <span className={`inline-flex items-center px-1.5 py-0 text-[10px] font-semibold rounded border ${
+        whoPays === 'Insurance' ? 'bg-white text-gray-900 border-gray-300' :
+        whoPays === 'Warranty' ? 'bg-amber-50 text-amber-900 border-amber-200' :
+        'bg-gray-100 text-gray-700 border-gray-200'
       }`}>
         {whoPays}
       </span>
     );
   };
 
+  // Helper function to capitalize first letter
+  const capitalizeFirst = (str: string | undefined): string => {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
+  // Open photo modal
+  const openPhotoModal = (photos: string[]) => {
+    setSelectedPhotos(photos);
+    setPhotoModalOpen(true);
+  };
+
   const columns: Column<Lead>[] = [
     {
       key: 'index',
       label: '#',
-      render: (_lead, index) => (
-        <span className="text-xs font-medium text-gray-500">
-          {(currentPage - 1) * pageSize + index + 1}
-        </span>
-      ),
+      render: (_lead, index) => {
+        // Reverse numbering: newest lead is #1
+        const reversedNumber = totalItems - ((currentPage - 1) * pageSize) - (index || 0);
+        return (
+          <span className="text-xs font-medium text-gray-500">
+            {reversedNumber}
+          </span>
+        );
+      },
     },
     {
       key: 'referenceNumber',
@@ -159,9 +198,15 @@ export default function LeadsPage() {
       render: (lead) => (
         <div className="text-xs">
           <span className="font-medium text-gray-900">{lead.name}</span>
-          {lead.phone && (
-            <span className="text-gray-500 ml-2">• {lead.phone}</span>
-          )}
+        </div>
+      ),
+    },
+    {
+      key: 'phone',
+      label: 'Contact',
+      render: (lead) => (
+        <div className="text-xs">
+          <span className="font-mono text-gray-700">{lead.phone}</span>
         </div>
       ),
     },
@@ -196,6 +241,19 @@ export default function LeadsPage() {
       render: (lead) => getWhoPaysBadge(lead),
     },
     {
+      key: 'company',
+      label: 'Company',
+      render: (lead) => (
+        <div className="text-xs">
+          {lead.insuranceCompany ? (
+            <span className="text-gray-700">{capitalizeFirst(lead.insuranceCompany)}</span>
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
+        </div>
+      ),
+    },
+    {
       key: 'aiQualificationScore',
       label: 'AI Score',
       sortable: true,
@@ -217,19 +275,26 @@ export default function LeadsPage() {
         ),
     },
     {
-      key: 'createdAt',
-      label: 'Created',
-      sortable: true,
-      render: (lead) => {
-        // Format: YYYY-MM-DD
-        const date = new Date(lead.createdAt);
-        const formatted = date.toISOString().split('T')[0];
-        return (
-          <span className="text-xs text-gray-600 font-mono">
-            {formatted}
-          </span>
-        );
-      },
+      key: 'photos',
+      label: 'Photos',
+      render: (lead) => (
+        <div className="flex justify-center">
+          {lead.damagePhotos && lead.damagePhotos.length > 0 ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                openPhotoModal(lead.damagePhotos || []);
+              }}
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full hover:bg-gray-100 transition-colors"
+              title={`View ${lead.damagePhotos.length} photo(s)`}
+            >
+              <Eye className="w-4 h-4 text-gray-600" />
+            </button>
+          ) : (
+            <span className="text-xs text-gray-400">—</span>
+          )}
+        </div>
+      ),
     },
     {
       key: 'details',
@@ -238,9 +303,10 @@ export default function LeadsPage() {
         <button
           onClick={(e) => {
             e.stopPropagation();
+            markLeadAsViewed(lead.id);
             router.push(`/dashboard/leads/${lead.id}`);
           }}
-          className="text-[10px] text-blue-600 hover:text-blue-800 font-medium underline"
+          className="text-[10px] text-gray-700 hover:text-gray-900 font-medium underline"
           title="View details"
         >
           Details
@@ -371,8 +437,57 @@ export default function LeadsPage() {
         onPageChange={setCurrentPage}
         isLoading={isLoading}
         emptyMessage="No leads found. Create your first lead to get started!"
-        onRowClick={(lead) => router.push(`/dashboard/leads/${lead.id}`)}
+        onRowClick={(lead) => {
+          markLeadAsViewed(lead.id);
+          router.push(`/dashboard/leads/${lead.id}`);
+        }}
+        getRowClassName={(lead) => {
+          // Light golden background for unviewed leads
+          return !viewedLeads.has(lead.id) ? 'bg-amber-50/30' : '';
+        }}
       />
+
+      {/* Photo Modal */}
+      {photoModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" 
+          onClick={() => setPhotoModalOpen(false)}
+        >
+          <div 
+            className="relative max-w-4xl max-h-[90vh] bg-white rounded-lg shadow-xl" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setPhotoModalOpen(false)}
+              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-700" />
+            </button>
+            
+            {/* Photos grid */}
+            <div className="p-6 overflow-y-auto max-h-[85vh]">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Lead Photos ({selectedPhotos.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedPhotos.map((photo, idx) => (
+                  <div key={idx} className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                    <img
+                      src={photo}
+                      alt={`Damage photo ${idx + 1}`}
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
