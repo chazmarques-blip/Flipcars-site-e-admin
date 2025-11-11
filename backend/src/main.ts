@@ -105,40 +105,19 @@ async function bootstrap() {
     ? [...defaultOrigins, ...process.env.FRONTEND_URL.split(',').map((url) => url.trim())]
     : defaultOrigins;
 
+  // TEMPORARY: Allow all origins for debugging
+  // TODO: Restrict after confirming it works
   app.enableCors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) {
-        console.log('✅ CORS: Allowing request with no origin');
-        return callback(null, true);
-      }
-      
-      // Check if origin is in allowed list
-      if (allowedOrigins.includes(origin)) {
-        console.log(`✅ CORS: Allowing request from origin: ${origin}`);
-        return callback(null, true);
-      }
-      
-      // Allow sandbox domains for development (*.sandbox.novita.ai, localhost with any port)
-      const sandboxPattern = /^https:\/\/\d+-[a-z0-9-]+\.sandbox\.novita\.ai$/;
-      const localhostPattern = /^http:\/\/localhost:\d+$/;
-      
-      if (sandboxPattern.test(origin) || localhostPattern.test(origin)) {
-        console.log(`✅ CORS: Allowing development/sandbox origin: ${origin}`);
-        return callback(null, true);
-      }
-      
-      console.warn(`❌ CORS: Blocked request from origin: ${origin}`);
-      console.warn(`📝 Allowed origins:`, allowedOrigins);
-      console.warn(`💡 Tip: Sandbox (*.sandbox.novita.ai) and localhost are also allowed`);
-      callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true, // Enable credentials for auth cookies/tokens
+    origin: true, // Allow all origins temporarily
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
     exposedHeaders: ['Content-Type', 'X-Total-Count'],
-    maxAge: 3600, // Cache preflight request for 1 hour
+    maxAge: 3600,
   });
+  
+  console.log('🌐 CORS: Allowing ALL origins (temporary configuration)');
+  console.log('📝 Intended origins:', allowedOrigins);
 
   // Global validation pipe
   app.useGlobalPipes(
