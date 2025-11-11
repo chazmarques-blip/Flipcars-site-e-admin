@@ -1,0 +1,91 @@
+═══════════════════════════════════════════════════════════════════
+🚀 CONTINUAR AGORA NO SEU MAC - SUPER SIMPLES!
+═══════════════════════════════════════════════════════════════════
+
+✅ JÁ FEITO (você já fez!):
+   - Xcode Command Line Tools instalado
+   - Aceitou licença (digitou "A" + ENTER)
+
+═══════════════════════════════════════════════════════════════════
+📋 AGORA NO TERMINAL DO MAC
+═══════════════════════════════════════════════════════════════════
+
+COMANDO 1:
+cd ~/Desktop && git clone https://github.com/chazmarques-blip/Flipcars-site-e-admin.git && cd Flipcars-site-e-admin/migration_backup
+
+(Copiar tudo, colar no Terminal, apertar ENTER)
+
+-------------------------------------------------------------------
+
+COMANDO 2:
+pip3 install psycopg2-binary
+
+(Colar no Terminal, apertar ENTER, aguardar 1-2 minutos)
+
+-------------------------------------------------------------------
+
+COMANDO 3:
+python3 migrate.py
+
+(Colar no Terminal, apertar ENTER)
+
+Quando perguntar: "Continuar com a migração? [s/N]:"
+Digite: s
+(Apertar ENTER)
+
+═══════════════════════════════════════════════════════════════════
+⏱️ AGUARDAR MIGRAÇÃO (2-5 minutos)
+═══════════════════════════════════════════════════════════════════
+
+Você verá:
+  🚀 MIGRAÇÃO MY TRUCK ADMIN
+  ✅ Conectado ao ORIGEM!
+  ✅ Conectado ao DESTINO!
+  ... migrando dados ...
+  🎉 MIGRAÇÃO CONCLUÍDA
+  ✅ Todas as contagens conferem!
+
+═══════════════════════════════════════════════════════════════════
+📋 COPIAR ESTA URL (aparece no final)
+═══════════════════════════════════════════════════════════════════
+
+postgresql://postgres:ugbJr2fNV2Ur4nfT@db.kvjvieekkudeqtnunqlb.supabase.co:5432/postgres
+
+(Selecionar com mouse, Command + C)
+
+═══════════════════════════════════════════════════════════════════
+🌐 ATUALIZAR RAILWAY (no Safari)
+═══════════════════════════════════════════════════════════════════
+
+1. https://railway.app
+2. My Truck Backend
+3. Variables
+4. DATABASE_URL → Edit
+5. Apagar valor antigo
+6. Colar novo (Command + V)
+7. Save
+8. Deploy → Redeploy
+
+═══════════════════════════════════════════════════════════════════
+✅ TESTAR
+═══════════════════════════════════════════════════════════════════
+
+Admin → Login → Ver Leads → PRONTO! ✨
+
+═══════════════════════════════════════════════════════════════════
+⏱️ TEMPO TOTAL: 8-12 MINUTOS
+═══════════════════════════════════════════════════════════════════
+
+📁 ARQUIVOS CRIADOS PARA VOCÊ:
+   ✅ EXECUTAR_AGORA_NO_MAC.md (guia detalhado)
+   ✅ COMANDOS_MAC_COPIAR_COLAR.txt (comandos prontos)
+   ✅ CHECKLIST_MIGRACAO_COMPLETO.md (checklist completo)
+   ✅ AGORA_NO_SEU_MAC.txt (este arquivo!)
+   ✅ migration_backup/migrate.py (script Python)
+   ✅ migration_backup/credentials_complete.env (credenciais)
+
+═══════════════════════════════════════════════════════════════════
+
+💪 BORA LÁ! VOCÊ CONSEGUE!
+
+═══════════════════════════════════════════════════════════════════
