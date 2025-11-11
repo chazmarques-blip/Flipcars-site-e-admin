@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardHeader, CardContent, Badge } from '@/components/ui';
 import { EstimateFormModal } from '@/components/estimate';
+import { leadService } from '@/lib/api/lead.service';
+import { Lead, LeadStatus } from '@/types/lead';
+import { useRouter } from 'next/navigation';
 import {
   TrendingUp,
   Users,
@@ -18,79 +21,199 @@ import {
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [isEstimateModalOpen, setIsEstimateModalOpen] = useState(false);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalLeads: 0,
+    activeCustomers: 0,
+    openClaims: 0,
+    revenue: 0,
+    todayCompleted: 0,
+    todayPending: 0,
+    todayUrgent: 0,
+  });
 
-  const stats = [
+  // Fetch all leads and calculate statistics
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch all leads (use large limit to get all for stats)
+        const response = await leadService.getLeads(1, 1000);
+        const allLeads = response.data;
+        setLeads(allLeads);
+
+        // Calculate statistics
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const totalLeads = allLeads.length;
+        
+        // Active customers: converted leads
+        const activeCustomers = allLeads.filter(
+          (lead) => lead.status === LeadStatus.CONVERTED
+        ).length;
+        
+        // Open claims: non-archived, non-lost leads
+        const openClaims = allLeads.filter(
+          (lead) => 
+            lead.status !== LeadStatus.ARCHIVED && 
+            lead.status !== LeadStatus.LOST && 
+            lead.status !== LeadStatus.CONVERTED
+        ).length;
+        
+        // Revenue: sum of estimated values for converted leads (month-to-date)
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        const revenue = allLeads
+          .filter((lead) => {
+            if (lead.status !== LeadStatus.CONVERTED) return false;
+            const leadDate = new Date(lead.updatedAt);
+            return (
+              leadDate.getMonth() === currentMonth &&
+              leadDate.getFullYear() === currentYear
+            );
+          })
+          .reduce((sum, lead) => sum + (lead.estimatedValue || 0), 0);
+        
+        // Today's summary
+        const todayLeads = allLeads.filter((lead) => {
+          const createdDate = new Date(lead.createdAt);
+          createdDate.setHours(0, 0, 0, 0);
+          return createdDate.getTime() === today.getTime();
+        });
+        
+        const todayCompleted = todayLeads.filter(
+          (lead) => lead.status === LeadStatus.CONVERTED
+        ).length;
+        
+        const todayPending = todayLeads.filter(
+          (lead) => 
+            lead.status === LeadStatus.NEW ||
+            lead.status === LeadStatus.CONTACTED ||
+            lead.status === LeadStatus.QUALIFIED
+        ).length;
+        
+        const todayUrgent = todayLeads.filter(
+          (lead) => lead.priority === 'high'
+        ).length;
+
+        setStats({
+          totalLeads,
+          activeCustomers,
+          openClaims,
+          revenue,
+          todayCompleted,
+          todayPending,
+          todayUrgent,
+        });
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Format currency
+  const formatCurrency = (value: number): string => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(1)}M`;
+    }
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(1)}K`;
+    }
+    return `$${value.toFixed(0)}`;
+  };
+
+  const statsConfig = [
     {
       label: 'Total Leads',
-      value: '156',
-      change: '+12%',
-      trend: 'up',
+      value: isLoading ? '...' : stats.totalLeads.toString(),
       icon: Car,
       color: 'text-primary',
       bgColor: 'bg-primary-100',
     },
     {
       label: 'Active Customers',
-      value: '89',
-      change: '+8%',
-      trend: 'up',
+      value: isLoading ? '...' : stats.activeCustomers.toString(),
       icon: Users,
       color: 'text-secondary',
       bgColor: 'bg-secondary-100',
     },
     {
       label: 'Open Claims',
-      value: '34',
-      change: '-5%',
-      trend: 'down',
+      value: isLoading ? '...' : stats.openClaims.toString(),
       icon: FileText,
       color: 'text-accent',
       bgColor: 'bg-accent-100',
     },
     {
       label: 'Revenue (MTD)',
-      value: '$45.2K',
-      change: '+18%',
-      trend: 'up',
+      value: isLoading ? '...' : formatCurrency(stats.revenue),
       icon: DollarSign,
       color: 'text-success',
       bgColor: 'bg-green-100',
     },
   ];
 
-  const recentLeads = [
-    {
-      id: 'FLIP-20251028-0001',
-      customer: 'John Doe',
-      vehicle: '2023 Tesla Model 3',
-      status: 'qualified',
-      time: '2 hours ago',
-    },
-    {
-      id: 'FLIP-20251028-0002',
-      customer: 'Jane Smith',
-      vehicle: '2022 BMW X5',
-      status: 'new',
-      time: '4 hours ago',
-    },
-    {
-      id: 'FLIP-20251028-0003',
-      customer: 'Bob Johnson',
-      vehicle: '2021 Mercedes C-Class',
-      status: 'contacted',
-      time: '6 hours ago',
-    },
-  ];
+  // Get recent leads (last 5)
+  const recentLeads = leads.slice(0, 5);
 
-  const getStatusBadge = (status: string) => {
+  // Calculate relative time
+  const getRelativeTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) {
+      return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+    }
+    if (diffHours < 24) {
+      return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    }
+    return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+  };
+
+  // Format reference number
+  const formatReferenceNumber = (ref: string): string => {
+    if (ref && ref.startsWith('FLIP-')) {
+      const parts = ref.replace('FLIP-', '').split('-');
+      const date = parts[0]; // YYYYMMDD
+      const num = parts[1] || '001';
+      const year = date.substring(0, 4);
+      const monthDay = date.substring(4);
+      return `${year}-${monthDay}-${num.padStart(3, '0')}`;
+    }
+    return ref;
+  };
+
+  const getStatusBadge = (status: LeadStatus) => {
     switch (status) {
-      case 'qualified':
-        return <Badge variant="success">Qualified</Badge>;
-      case 'new':
+      case LeadStatus.NEW:
         return <Badge variant="primary">New</Badge>;
-      case 'contacted':
+      case LeadStatus.CONTACTED:
         return <Badge variant="secondary">Contacted</Badge>;
+      case LeadStatus.QUALIFIED:
+        return <Badge variant="success">Qualified</Badge>;
+      case LeadStatus.APPOINTMENT_SCHEDULED:
+        return <Badge variant="info">Scheduled</Badge>;
+      case LeadStatus.IN_PROGRESS:
+        return <Badge variant="warning">In Progress</Badge>;
+      case LeadStatus.CONVERTED:
+        return <Badge variant="success">Converted</Badge>;
+      case LeadStatus.LOST:
+        return <Badge variant="danger">Lost</Badge>;
+      case LeadStatus.ARCHIVED:
+        return <Badge variant="default">Archived</Badge>;
       default:
         return <Badge variant="default">{status}</Badge>;
     }
@@ -120,28 +243,13 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
+        {statsConfig.map((stat) => (
           <Card key={stat.label} variant="default">
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
                   <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    <TrendingUp
-                      className={`w-4 h-4 ${
-                        stat.trend === 'up' ? 'text-success' : 'text-danger'
-                      }`}
-                    />
-                    <span
-                      className={`text-sm font-medium ${
-                        stat.trend === 'up' ? 'text-success' : 'text-danger'
-                      }`}
-                    >
-                      {stat.change}
-                    </span>
-                    <span className="text-xs text-gray-500 ml-1">vs last month</span>
-                  </div>
                 </div>
                 <div className={`p-3 rounded-lg ${stat.bgColor}`}>
                   <stat.icon className={`w-6 h-6 ${stat.color}`} />
@@ -165,32 +273,55 @@ export default function DashboardPage() {
             }
           />
           <CardContent>
-            <div className="space-y-4">
-              {recentLeads.map((lead) => (
-                <div
-                  key={lead.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium text-gray-900">{lead.customer}</p>
-                      {getStatusBadge(lead.status)}
+            {isLoading ? (
+              <div className="text-center py-8 text-gray-500">
+                Loading recent leads...
+              </div>
+            ) : recentLeads.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No leads yet. Create your first lead to get started!
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentLeads.map((lead) => (
+                  <div
+                    key={lead.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium text-gray-900">{lead.name}</p>
+                        {getStatusBadge(lead.status)}
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {lead.vehicleYear && `${lead.vehicleYear} `}
+                        {lead.vehicleMake && `${lead.vehicleMake} `}
+                        {lead.vehicleModel}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        <Clock className="w-3 h-3 inline mr-1" />
+                        {getRelativeTime(lead.createdAt)}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-600">{lead.vehicle}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      <Clock className="w-3 h-3 inline mr-1" />
-                      {lead.time}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500 mb-2">
+                        {formatReferenceNumber(lead.referenceNumber)}
+                      </p>
+                      <button 
+                        className="text-sm text-primary hover:text-primary-600 font-medium"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/dashboard/leads/${lead.id}`);
+                        }}
+                      >
+                        View Details
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500 mb-2">{lead.id}</p>
-                    <button className="text-sm text-primary hover:text-primary-600 font-medium">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -222,21 +353,27 @@ export default function DashboardPage() {
                     <CheckCircle className="w-4 h-4 text-success" />
                     <span className="text-gray-600">Completed</span>
                   </div>
-                  <span className="font-medium text-gray-900">12</span>
+                  <span className="font-medium text-gray-900">
+                    {isLoading ? '...' : stats.todayCompleted}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-warning" />
                     <span className="text-gray-600">Pending</span>
                   </div>
-                  <span className="font-medium text-gray-900">8</span>
+                  <span className="font-medium text-gray-900">
+                    {isLoading ? '...' : stats.todayPending}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-danger" />
                     <span className="text-gray-600">Urgent</span>
                   </div>
-                  <span className="font-medium text-gray-900">3</span>
+                  <span className="font-medium text-gray-900">
+                    {isLoading ? '...' : stats.todayUrgent}
+                  </span>
                 </div>
               </div>
             </div>
