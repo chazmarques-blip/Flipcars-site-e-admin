@@ -9,11 +9,13 @@ import { Customer } from '@database/entities/customer.entity';
 import { Vehicle } from '@database/entities/vehicle.entity';
 import { User } from '@database/entities/user.entity';
 import { AuthModule } from '@modules/auth/auth.module';
+import { StorageModule } from '@modules/storage/storage.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Lead, Customer, Vehicle, User]),
     AuthModule, // Import AuthModule for guards
+    StorageModule, // Import StorageModule for Supabase Storage
   ],
   controllers: [LeadsController, PublicLeadsController, UploadController],
   providers: [LeadsService],

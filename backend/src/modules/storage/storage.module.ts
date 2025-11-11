@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StorageController } from './storage.controller';
 import { StorageService } from './storage.service';
+import { SupabaseStorageService } from './supabase-storage.service';
 import { FileUpload } from '@database/entities/file-upload.entity';
 import { AuthModule } from '@modules/auth/auth.module';
 
@@ -11,7 +12,7 @@ import { AuthModule } from '@modules/auth/auth.module';
     AuthModule, // Import AuthModule for guards
   ],
   controllers: [StorageController],
-  providers: [StorageService],
-  exports: [StorageService], // Export for use in other modules
+  providers: [StorageService, SupabaseStorageService],
+  exports: [StorageService, SupabaseStorageService], // Export for use in other modules
 })
 export class StorageModule {}
