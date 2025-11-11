@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Star, CheckCircle, ArrowRight, Zap, Shield, Clock, Phone, ChevronLeft, ChevronRight } from 'lucide-react'
 import StarRating from '../ui/StarRating'
+import { EstimateFormModal } from '@/components/estimate/EstimateFormModal'
 
 const heroSlides = [
   {
@@ -59,6 +60,7 @@ const heroSlides = [
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [estimateModalOpen, setEstimateModalOpen] = useState(false)
 
   // Auto-advance slides
   useEffect(() => {
@@ -161,13 +163,13 @@ export default function Hero() {
 
           {/* CTAs with urgency */}
           <div className="flex flex-col sm:flex-row gap-2 mb-3">
-            <Link 
-              href="/estimate" 
+            <button
+              onClick={() => setEstimateModalOpen(true)}
               className="group bg-primary hover:bg-primary-light text-black font-bold text-sm px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
             >
               Get FREE Estimate Now
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            </button>
             <a
               href="tel:+13219608661"
               className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white font-bold text-sm px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
@@ -221,6 +223,12 @@ export default function Hero() {
 
       {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent z-10"></div>
+
+      {/* Estimate Form Modal */}
+      <EstimateFormModal 
+        isOpen={estimateModalOpen} 
+        onClose={() => setEstimateModalOpen(false)} 
+      />
     </section>
   )
 }
