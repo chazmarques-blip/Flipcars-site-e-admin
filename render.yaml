@@ -2,10 +2,10 @@ services:
   # Backend API
   - type: web
     name: flipcars-backend
-    env: node
+    runtime: node
     region: oregon
     plan: free
-    root: backend
+    rootDir: backend
     buildCommand: npm install --include=dev && npm run build
     startCommand: npm run start:prod
     healthCheckPath: /api/health
