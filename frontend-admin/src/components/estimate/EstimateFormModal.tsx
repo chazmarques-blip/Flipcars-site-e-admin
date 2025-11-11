@@ -32,53 +32,109 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
     setCurrentStep((prev) => Math.max(1, prev - 1));
   };
 
-  const handleSubmit = async (finalData: Partial<EstimateRequest>) => {
-    const completeData = { ...formData, ...finalData };
+  const handleContactSubmit = async (finalData: Partial<EstimateRequest>) => {
+    const completeData = { ...formData, ...finalData } as EstimateRequest;
     
-    console.log('[EstimateForm] Submitting:', completeData);
-    
-    // Generate reference number
-    const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    setReferenceNumber(refNumber);
+    console.log('[EstimateForm] 🚀 Starting submission process');
+    console.log('[EstimateForm] Form data:', completeData);
     
     try {
-      // Import lead service dynamically to avoid circular dependencies
-      const { leadService } = await import('@/lib/api/lead.service');
+      // Import leadsService dynamically to avoid SSR issues
+      console.log('[EstimateForm] 📦 Loading API service...');
+      const { leadsService } = await import('@/lib/api/leads.service');
       
-      // Convert estimate data to lead format
-      const leadData = {
-        name: `${completeData.firstName} ${completeData.lastName}`,
-        email: completeData.email!,
-        phone: completeData.phone!,
-        source: 'website_estimate_form',
-        hasInsurance: completeData.serviceType === 'bodyshop' && !!completeData.insuranceCompany,
-        insuranceCompany: completeData.insuranceCompany,
-        insurancePolicyNumber: completeData.claimNumber,
-        serviceType: completeData.serviceType,
-        referenceNumber: refNumber,
-        vehicle: {
-          // Vehicle details would come from additional form fields if needed
-        },
-        damageDescription: completeData.additionalNotes || 'Estimate request from website',
-        notes: `Contact preferences: ${
-          completeData.contactPreferences?.phoneCall ? 'Phone ' : ''
-        }${
-          completeData.contactPreferences?.whatsapp ? 'WhatsApp ' : ''
-        }${
-          completeData.contactPreferences?.textMessage ? 'SMS' : ''
-        }`,
-      };
+      // Send to backend via public API
+      console.log('[EstimateForm] 📡 Sending to backend API...');
+      console.log('[EstimateForm] API URL:', process.env.NEXT_PUBLIC_API_URL || 'https://upbeat-dedication-production.up.railway.app/api');
       
-      // Create the lead
-      const newLead = await leadService.createLead(leadData as any);
-      console.log('[EstimateForm] Lead created successfully:', newLead);
-    } catch (error) {
-      console.error('[EstimateForm] Error creating lead:', error);
-      // Continue to confirmation anyway
+      const response = await leadsService.createLead(completeData);
+      
+      console.log('[EstimateForm] ✅ API Response received:', response);
+      console.log('[EstimateForm] ✅ Reference Number from backend:', response.data.referenceNumber);
+      
+      // CRITICAL: Verify response structure
+      if (!response || !response.data || !response.data.referenceNumber) {
+        throw new Error('Invalid response structure from backend');
+      }
+      
+      // Use server-generated reference number
+      setReferenceNumber(response.data.referenceNumber);
+      console.log('[EstimateForm] ✅ Reference number set to:', response.data.referenceNumber);
+      
+      // Also save to localStorage as backup
+      try {
+        const leadData = {
+          ...completeData,
+          referenceNumber: response.data.referenceNumber,
+          createdAt: response.data.createdAt,
+          status: response.data.status,
+          source: 'admin_test_form',
+        };
+        
+        const existingLeads = JSON.parse(localStorage.getItem('flipcars_completed_leads') || '[]');
+        existingLeads.push(leadData);
+        localStorage.setItem('flipcars_completed_leads', JSON.stringify(existingLeads));
+        
+        console.log('[EstimateForm] 💾 Backup saved to localStorage');
+      } catch (storageError) {
+        console.warn('[EstimateForm] ⚠️ Could not save to localStorage:', storageError);
+      }
+      
+    } catch (error: any) {
+      console.error('[EstimateForm] ❌ ERROR DETAILS:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data,
+        stack: error.stack,
+      });
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error('[EstimateForm] ❌ Response Error:', error.response.status, error.response.data);
+      } else if (error.request) {
+        console.error('[EstimateForm] ❌ Network Error: No response received');
+      } else {
+        console.error('[EstimateForm] ❌ Error:', error.message);
+      }
+      
+      // Fallback: Save to localStorage if backend fails
+      console.log('[EstimateForm] ⚠️ Using FALLBACK reference number generation');
+      const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      setReferenceNumber(refNumber);
+      console.log('[EstimateForm] ⚠️ Fallback reference number:', refNumber);
+      
+      try {
+        const leadData = {
+          ...completeData,
+          referenceNumber: refNumber,
+          createdAt: new Date().toISOString(),
+          status: 'new',
+          source: 'admin_test_form',
+          _failedSync: true, // Mark as failed sync
+          _error: error.message || 'Unknown error',
+          _errorDetails: {
+            status: error.response?.status,
+            data: error.response?.data,
+          },
+        };
+        
+        const existingLeads = JSON.parse(localStorage.getItem('flipcars_pending_leads') || '[]');
+        existingLeads.push(leadData);
+        localStorage.setItem('flipcars_pending_leads', JSON.stringify(existingLeads));
+        
+        console.log('[EstimateForm] ⚠️ Saved to localStorage (pending sync):', leadData);
+      } catch (storageError) {
+        console.error('[EstimateForm] ❌ Failed to save to localStorage:', storageError);
+      }
     }
+    
+    // Update form data with final data
+    setFormData(completeData);
     
     // Move to confirmation step
     const confirmationStep = formData.serviceType === 'bodyshop' ? 6 : 5;
+    console.log('[EstimateForm] 📍 Moving to confirmation step:', confirmationStep);
     setCurrentStep(confirmationStep);
   };
 
@@ -93,50 +149,51 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
   const isBodyshop = formData.serviceType === 'bodyshop';
   const maxSteps = isBodyshop ? 6 : 5; // Bodyshop: 6 steps, Mechanic: 5 steps (includes warranty docs)
 
+  // Calculate progress percentage
+  const progressPercentage = (currentStep / maxSteps) * 100;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="relative w-full max-w-md max-h-[90vh] m-4 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200 bg-black">
-          <div>
-            <h2 className="text-base font-bold text-gold">
-              {(currentStep === 5 && !isBodyshop) || currentStep === 6 ? 'Request Submitted!' : 'Free Estimate Request'}
-            </h2>
-            {((currentStep < 5 && !isBodyshop) || (currentStep < 6 && isBodyshop)) && (
-              <p className="text-[10px] text-gold/70 mt-0.5">
-                Step {currentStep} of {maxSteps}
-              </p>
-            )}
-          </div>
+          <h2 className="text-lg font-bold text-white">Free Estimate</h2>
           <button
             onClick={onClose}
-            className="p-1.5 text-gold/70 hover:text-gold hover:bg-gold/10 rounded-lg transition-colors"
-            aria-label="Close modal"
+            className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Close"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5 text-white" />
           </button>
         </div>
 
         {/* Progress Bar */}
-        {((currentStep < 5 && !isBodyshop) || (currentStep < 6 && isBodyshop)) && (
-          <div className="h-1 bg-neutral-200">
+        <div className="px-4 py-3 bg-gray-50 border-b border-neutral-200">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">
+              Step {currentStep} of {maxSteps}
+            </span>
+            <span className="text-sm text-gray-500">
+              {Math.round(progressPercentage)}%
+            </span>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gold transition-all duration-300 ease-in-out"
-              style={{ width: `${(currentStep / maxSteps) * 100}%` }}
+              className="h-full bg-[#D4AF37] transition-all duration-300 ease-in-out"
+              style={{ width: `${progressPercentage}%` }}
             />
           </div>
-        )}
+        </div>
 
-        {/* Content Area - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-3 py-3 pb-20 md:pb-3">
+        {/* Form Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-4">
           {currentStep === 1 && (
             <Step1BasicInfo
               initialData={formData}
               onNext={handleNext}
-              onCancel={onClose}
             />
           )}
-          
+
           {currentStep === 2 && (
             <Step2ServiceDetails
               initialData={formData}
@@ -145,40 +202,47 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
               onBack={handleBack}
             />
           )}
-          
-          {currentStep === 3 && !isBodyshop && (
+
+          {/* Warranty Docs - Only for mechanic */}
+          {currentStep === 3 && formData.serviceType === 'mechanic' && (
             <Step2bWarrantyDocs
               initialData={formData}
               onNext={handleNext}
               onBack={handleBack}
             />
           )}
-          
-          {currentStep === 3 && isBodyshop && (
+
+          {/* Photos - Only for bodyshop */}
+          {currentStep === 3 && formData.serviceType === 'bodyshop' && (
             <Step3Photos
               initialData={formData}
               onNext={handleNext}
               onBack={handleBack}
             />
           )}
-          
-          {currentStep === 4 && isBodyshop && (
+
+          {/* VIN Entry - Only for bodyshop */}
+          {currentStep === 4 && formData.serviceType === 'bodyshop' && (
             <Step3aVIN
               initialData={formData}
               onNext={handleNext}
               onBack={handleBack}
             />
           )}
-          
-          {((currentStep === 4 && !isBodyshop) || (currentStep === 5 && isBodyshop)) && (
+
+          {/* Contact Preferences */}
+          {((currentStep === 4 && formData.serviceType === 'mechanic') ||
+            (currentStep === 5 && formData.serviceType === 'bodyshop')) && (
             <Step4Contact
               initialData={formData}
-              onSubmit={handleSubmit}
+              onSubmit={handleContactSubmit}
               onBack={handleBack}
             />
           )}
-          
-          {((currentStep === 5 && !isBodyshop) || (currentStep === 6 && isBodyshop)) && (
+
+          {/* Confirmation */}
+          {((currentStep === 5 && formData.serviceType === 'mechanic') ||
+            (currentStep === 6 && formData.serviceType === 'bodyshop')) && (
             <Step5Confirmation
               data={formData as EstimateRequest}
               referenceNumber={referenceNumber}
