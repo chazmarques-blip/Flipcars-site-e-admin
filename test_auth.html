@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FlipCars Auth Test</title>
+</head>
+<body>
+    <h1>FlipCars Backend Test</h1>
+    <div id="result"></div>
+
+    <script>
+        async function testBackend() {
+            const result = document.getElementById('result');
+            
+            try {
+                // Test without auth
+                result.innerHTML += '<p>Testing backend without auth...</p>';
+                const response1 = await fetch('https://upbeat-dedication-production.up.railway.app/api/leads?page=1&limit=5');
+                const data1 = await response1.json();
+                result.innerHTML += `<p>Status: ${response1.status}</p>`;
+                result.innerHTML += `<p>Response: ${JSON.stringify(data1)}</p>`;
+                
+                if (response1.status === 401) {
+                    result.innerHTML += '<p style="color: red;"><strong>❌ Backend requires authentication!</strong></p>';
+                    result.innerHTML += '<p>You need to login in the admin panel to get a valid token.</p>';
+                }
+            } catch (error) {
+                result.innerHTML += `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        testBackend();
+    </script>
+</body>
+</html>
