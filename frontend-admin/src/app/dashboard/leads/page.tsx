@@ -67,31 +67,51 @@ export default function LeadsPage() {
     }
   };
 
-  const getStatusBadge = (status: LeadStatus) => {
-    return <LeadStatusBadge status={status} size="xs" showIcon={false} />;
+  // Determine service type from lead data
+  const getServiceType = (lead: Lead): 'Bodyshop' | 'Mechanic' => {
+    // Check if it's a body shop lead (has insurance)
+    if (lead.hasInsurance || lead.insuranceProvider) {
+      return 'Bodyshop';
+    }
+    // Otherwise it's mechanic (warranty/personal)
+    return 'Mechanic';
   };
 
-  const getPriorityBadge = (priority: LeadPriority) => {
-    const variants: Record<LeadPriority, 'success' | 'warning' | 'danger'> = {
-      [LeadPriority.LOW]: 'success',
-      [LeadPriority.MEDIUM]: 'warning',
-      [LeadPriority.HIGH]: 'danger',
-    };
-
-    // Show only first letter: L, M, H
-    const letter = priority.charAt(0).toUpperCase();
+  const getServiceBadge = (lead: Lead) => {
+    const serviceType = getServiceType(lead);
     return (
-      <span className={`inline-flex items-center gap-1 px-1.5 py-0 text-[10px] font-semibold rounded ${
-        priority === LeadPriority.HIGH ? 'bg-red-100 text-red-700' :
-        priority === LeadPriority.MEDIUM ? 'bg-yellow-100 text-yellow-700' :
-        'bg-green-100 text-green-700'
+      <span className={`inline-flex items-center px-1.5 py-0 text-[10px] font-semibold rounded ${
+        serviceType === 'Bodyshop' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
       }`}>
-        <span className={`w-1.5 h-1.5 rounded-full ${
-          priority === LeadPriority.HIGH ? 'bg-red-500' :
-          priority === LeadPriority.MEDIUM ? 'bg-yellow-500' :
-          'bg-green-500'
-        }`} />
-        {letter}
+        {serviceType}
+      </span>
+    );
+  };
+
+  // Determine who pays from lead data
+  const getWhoPays = (lead: Lead): 'Personal' | 'Insurance' | 'Warranty' => {
+    // Check insurance first
+    if (lead.hasInsurance || lead.insuranceProvider) {
+      return 'Insurance';
+    }
+    // Check warranty (warranty company in notes or source)
+    // TODO: Add warrantyCompany field to Lead entity
+    if (lead.notes && (lead.notes.toLowerCase().includes('warranty') || lead.notes.toLowerCase().includes('carchex') || lead.notes.toLowerCase().includes('carshield'))) {
+      return 'Warranty';
+    }
+    // Default to personal
+    return 'Personal';
+  };
+
+  const getWhoPaysBadge = (lead: Lead) => {
+    const whoPays = getWhoPays(lead);
+    return (
+      <span className={`inline-flex items-center px-1.5 py-0 text-[10px] font-semibold rounded ${
+        whoPays === 'Insurance' ? 'bg-emerald-100 text-emerald-700' :
+        whoPays === 'Warranty' ? 'bg-amber-100 text-amber-700' :
+        'bg-gray-100 text-gray-700'
+      }`}>
+        {whoPays}
       </span>
     );
   };
@@ -164,16 +184,16 @@ export default function LeadsPage() {
       ),
     },
     {
-      key: 'status',
-      label: 'Status',
-      sortable: true,
-      render: (lead) => getStatusBadge(lead.status),
+      key: 'service',
+      label: 'Service',
+      sortable: false,
+      render: (lead) => getServiceBadge(lead),
     },
     {
-      key: 'priority',
-      label: 'Priority',
-      sortable: true,
-      render: (lead) => getPriorityBadge(lead.priority),
+      key: 'whoPays',
+      label: 'Who Pay',
+      sortable: false,
+      render: (lead) => getWhoPaysBadge(lead),
     },
     {
       key: 'aiQualificationScore',
@@ -212,18 +232,18 @@ export default function LeadsPage() {
       },
     },
     {
-      key: 'actions',
-      label: '',
+      key: 'details',
+      label: 'Details',
       render: (lead) => (
         <button
           onClick={(e) => {
             e.stopPropagation();
             router.push(`/dashboard/leads/${lead.id}`);
           }}
-          className="p-1 hover:bg-gray-100 rounded transition-colors"
+          className="text-[10px] text-blue-600 hover:text-blue-800 font-medium underline"
           title="View details"
         >
-          <Eye className="w-3.5 h-3.5 text-gray-500" />
+          Details
         </button>
       ),
     },
