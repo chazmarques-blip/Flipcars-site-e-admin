@@ -1,0 +1,173 @@
+═══════════════════════════════════════════════════════════
+🚀 MIGRAÇÃO MY TRUCK ADMIN - COMANDOS PARA O MAC
+═══════════════════════════════════════════════════════════
+
+📝 COPIAR E COLAR UM POR VEZ NO TERMINAL DO MAC
+
+═══════════════════════════════════════════════════════════
+COMANDO 1: Ir para Desktop
+═══════════════════════════════════════════════════════════
+
+cd ~/Desktop
+
+(Apertar ENTER)
+
+═══════════════════════════════════════════════════════════
+COMANDO 2: Baixar projeto (SE JÁ TEM, PULAR PARA COMANDO 3)
+═══════════════════════════════════════════════════════════
+
+git clone https://github.com/chazmarques-blip/Flipcars-site-e-admin.git
+
+(Apertar ENTER e aguardar download)
+
+═══════════════════════════════════════════════════════════
+COMANDO 3: Entrar na pasta (SE JÁ TEM O PROJETO)
+═══════════════════════════════════════════════════════════
+
+cd Flipcars-site-e-admin && git pull && cd migration_backup
+
+(Apertar ENTER)
+
+═══════════════════════════════════════════════════════════
+COMANDO 3-ALT: Entrar na pasta (SE ACABOU DE BAIXAR)
+═══════════════════════════════════════════════════════════
+
+cd Flipcars-site-e-admin/migration_backup
+
+(Apertar ENTER)
+
+═══════════════════════════════════════════════════════════
+COMANDO 4: Instalar biblioteca Python
+═══════════════════════════════════════════════════════════
+
+pip3 install psycopg2-binary
+
+(Apertar ENTER e aguardar 1-2 minutos)
+
+Se der erro, tentar:
+
+python3 -m pip install psycopg2-binary
+
+═══════════════════════════════════════════════════════════
+COMANDO 5: Executar migração
+═══════════════════════════════════════════════════════════
+
+python3 migrate.py
+
+(Apertar ENTER)
+
+Quando perguntar:
+"Continuar com a migração? [s/N]:"
+
+DIGITE: s
+(Apertar ENTER)
+
+═══════════════════════════════════════════════════════════
+✅ AGUARDAR MIGRAÇÃO (2-5 minutos)
+═══════════════════════════════════════════════════════════
+
+Você verá mensagens como:
+
+  🚀 MIGRAÇÃO MY TRUCK ADMIN
+  
+  Conectando ao banco ORIGEM...
+  ✅ Conectado ao ORIGEM!
+  
+  Conectando ao banco DESTINO...
+  ✅ Conectado ao DESTINO!
+  
+  FASE 1: BACKUP DE METADADOS
+  ✅ Backup salvo
+  
+  FASE 2: LISTANDO TABELAS
+  ✅ Encontradas X tabelas
+  
+  FASE 3: MIGRANDO DADOS
+  [1/X] Migrando: users
+  ✅ users migrada com sucesso!
+  ...
+  
+  FASE 4: VERIFICANDO MIGRAÇÃO
+  ✅ Todas as contagens conferem!
+  
+  🎉 MIGRAÇÃO CONCLUÍDA
+  
+  📋 Próximos passos:
+     2. Atualizar DATABASE_URL no Railway:
+        postgresql://postgres:ugbJr2fNV2Ur4nfT@db.kvjvieekkudeqtnunqlb.supabase.co:5432/postgres
+
+═══════════════════════════════════════════════════════════
+📋 COPIAR ESTA URL (aparece no final)
+═══════════════════════════════════════════════════════════
+
+postgresql://postgres:ugbJr2fNV2Ur4nfT@db.kvjvieekkudeqtnunqlb.supabase.co:5432/postgres
+
+(Selecionar toda a linha com mouse e Command + C)
+
+═══════════════════════════════════════════════════════════
+🌐 ATUALIZAR RAILWAY (no navegador)
+═══════════════════════════════════════════════════════════
+
+1. Abrir Safari: https://railway.app
+2. Login
+3. Clicar: "My Truck Backend"
+4. Clicar: "Variables" (menu lateral)
+5. Encontrar: "DATABASE_URL"
+6. Clicar: "Edit" (ícone lápis)
+7. APAGAR valor antigo
+8. COLAR valor novo (Command + V)
+9. Clicar: "Save" ou "Update"
+10. Clicar: "Deploy" → "Redeploy"
+
+═══════════════════════════════════════════════════════════
+⏱️ AGUARDAR DEPLOY (2-3 minutos)
+═══════════════════════════════════════════════════════════
+
+Ver logs do Railway até aparecer:
+"✅ Deploy successful"
+
+═══════════════════════════════════════════════════════════
+🧪 TESTAR SISTEMA
+═══════════════════════════════════════════════════════════
+
+1. Abrir Admin Dashboard (URL do Railway)
+2. Fazer login
+3. Ver se leads aparecem
+4. Ver se fotos funcionam
+
+✅ SE FUNCIONAR: MIGRAÇÃO COMPLETA!
+
+═══════════════════════════════════════════════════════════
+🆘 PROBLEMAS?
+═══════════════════════════════════════════════════════════
+
+1. Tirar print da tela (Command + Shift + 4)
+2. Me enviar o print
+3. Vou te ajudar!
+
+═══════════════════════════════════════════════════════════
+⏱️ TEMPO TOTAL: 7-12 MINUTOS
+═══════════════════════════════════════════════════════════
+
+✅ Instalação Xcode: JÁ FEITO (você já fez!)
+✅ Download projeto: 30s
+✅ Instalar psycopg2: 1-2min
+✅ Migração: 2-5min
+✅ Atualizar Railway: 1min
+✅ Deploy: 2-3min
+
+═══════════════════════════════════════════════════════════
+📝 IMPORTANTE
+═══════════════════════════════════════════════════════════
+
+⚠️ NÃO FECHAR Terminal durante migração
+⚠️ NÃO DESLIGAR Mac durante migração
+✅ Credenciais JÁ estão no script
+✅ Backup automático antes de migrar
+✅ Pode rodar de novo se der erro (é seguro!)
+
+═══════════════════════════════════════════════════════════
+
+💪 VOCÊ CONSEGUE! BORA LÁ!
+
+═══════════════════════════════════════════════════════════
