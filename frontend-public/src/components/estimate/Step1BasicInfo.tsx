@@ -14,6 +14,21 @@ interface Step1BasicInfoProps {
   onCancel: () => void;
 }
 
+// Phone mask formatter - US format: (XXX) XXX-XXXX
+const formatPhoneNumber = (value: string): string => {
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, '');
+  
+  // Apply mask based on length
+  if (digits.length <= 3) {
+    return digits;
+  } else if (digits.length <= 6) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  } else {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  }
+};
+
 export function Step1BasicInfo({ initialData, onNext, onCancel }: Step1BasicInfoProps) {
   const {
     register,
@@ -34,6 +49,11 @@ export function Step1BasicInfo({ initialData, onNext, onCancel }: Step1BasicInfo
   });
 
   const serviceType = watch('serviceType');
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setValue('phone', formatted, { shouldValidate: true });
+  };
 
   const onSubmit = (data: Step1FormData) => {
     onNext(data);
@@ -133,7 +153,9 @@ export function Step1BasicInfo({ initialData, onNext, onCancel }: Step1BasicInfo
           id="phone"
           type="tel"
           {...register('phone')}
+          onChange={handlePhoneChange}
           placeholder="(321) 960-8661"
+          maxLength={14}
           className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
             errors.phone ? 'border-red-500' : 'border-neutral-300'
           }`}
