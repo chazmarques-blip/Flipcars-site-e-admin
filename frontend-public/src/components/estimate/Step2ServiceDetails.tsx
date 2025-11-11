@@ -201,7 +201,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             <button
               type="button"
               onClick={() => setShowDatePicker(true)}
-              className="w-full px-3 py-2.5 text-left text-base md:text-sm border border-neutral-300 rounded-lg hover:border-gold focus:ring-2 focus:ring-gold focus:border-gold transition-colors"
+              className="w-full px-3 py-2.5 text-left text-base md:text-sm text-black border border-neutral-300 rounded-lg hover:border-gold focus:ring-2 focus:ring-gold focus:border-gold transition-colors"
             >
               <Calendar className="w-5 h-5 md:w-4 md:h-4 inline mr-2 text-neutral-400" />
               <span className="text-neutral-500">Select a date:</span>
@@ -224,7 +224,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={date.toISOString()}
                   type="button"
                   onClick={() => handleDateSelect(date)}
-                  className="px-3 py-2 text-sm md:text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
+                  className="px-3 py-2 text-sm md:text-xs text-black border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
                 >
                   {formatDateDisplay(date)}
                 </button>
@@ -251,7 +251,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={slot.value}
                   type="button"
                   onClick={() => handleTimeSlotSelect(slot.value)}
-                  className="px-3 py-2.5 text-base md:text-sm border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
+                  className="px-3 py-2.5 text-base md:text-sm text-black border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
                 >
                   {slot.label}
                 </button>
