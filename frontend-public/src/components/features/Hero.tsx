@@ -114,21 +114,21 @@ export default function Hero() {
         />
       </div>
 
-      {/* Navigation Arrows - Mobile: Top corners, Desktop: Middle */}
+      {/* Navigation Arrows - Desktop Only: Middle sides */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 md:left-4 top-20 md:top-1/2 md:-translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 md:p-3 rounded-full transition-all duration-200 group"
+        className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-3 rounded-full transition-all duration-200 group"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white group-hover:text-black" />
+        <ChevronLeft className="w-6 h-6 text-white group-hover:text-black" />
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-2 md:right-4 top-20 md:top-1/2 md:-translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 md:p-3 rounded-full transition-all duration-200 group"
+        className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-3 rounded-full transition-all duration-200 group"
         aria-label="Next slide"
       >
-        <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white group-hover:text-black" />
+        <ChevronRight className="w-6 h-6 text-white group-hover:text-black" />
       </button>
 
       <div className="container-custom relative z-10 py-4 md:py-6">
@@ -161,22 +161,43 @@ export default function Hero() {
             {slide.description.includes('•') && ' • ' + slide.description.split('•').slice(1).join(' • ')}
           </p>
 
-          {/* CTAs with urgency */}
-          <div className="flex flex-col sm:flex-row gap-2 mb-3">
+          {/* CTAs with Navigation Arrows - Mobile: Arrows beside buttons */}
+          <div className="flex items-center gap-2 mb-3">
+            {/* Mobile Arrow Left */}
             <button
-              onClick={() => setEstimateModalOpen(true)}
-              className="group bg-primary hover:bg-primary-light text-black font-bold text-sm px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
+              onClick={prevSlide}
+              className="md:hidden flex-shrink-0 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 rounded-full transition-all duration-200 group"
+              aria-label="Previous slide"
             >
-              Get FREE Estimate Now
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ChevronLeft className="w-5 h-5 text-white group-hover:text-black" />
             </button>
-            <a
-              href="tel:+13219608661"
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white font-bold text-sm px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+
+            {/* Buttons Container */}
+            <div className="flex-1 flex flex-col sm:flex-row gap-2">
+              <button
+                onClick={() => setEstimateModalOpen(true)}
+                className="group bg-primary hover:bg-primary-light text-black font-bold text-sm px-5 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
+              >
+                Get FREE Estimate Now
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <a
+                href="tel:+13219608661"
+                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white font-bold text-sm px-5 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                <Phone className="w-4 h-4" />
+                321-960-8661
+              </a>
+            </div>
+
+            {/* Mobile Arrow Right */}
+            <button
+              onClick={nextSlide}
+              className="md:hidden flex-shrink-0 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 rounded-full transition-all duration-200 group"
+              aria-label="Next slide"
             >
-              <Phone className="w-4 h-4" />
-              321-960-8661
-            </a>
+              <ChevronRight className="w-5 h-5 text-white group-hover:text-black" />
+            </button>
           </div>
 
           {/* Trust Indicators - Compact */}
