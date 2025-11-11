@@ -24,8 +24,16 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
   };
 
   const formatTime = (timeSlot?: string) => {
-    if (!timeSlot) return '';
-    return timeSlot;
+    if (!timeSlot) return 'To be confirmed';
+    // Convert "9:00-11:00" to "9:00 AM - 11:00 AM"
+    const [start, end] = timeSlot.split('-');
+    const formatHour = (hour: string) => {
+      const h = parseInt(hour.split(':')[0]);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const displayHour = h > 12 ? h - 12 : h === 0 ? 12 : h;
+      return `${displayHour}:${hour.split(':')[1]} ${period}`;
+    };
+    return `${formatHour(start)} - ${formatHour(end)}`;
   };
 
   return (
@@ -164,13 +172,13 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
             <h1>FLIPCARS AUTO REPAIR</h1>
           </div>
           <div className="print-subtitle">
-            Estimate Request Confirmation
+            {data.serviceType === 'bodyshop' ? 'Body Shop Repair' : 'Mechanic Service'} - Estimate Request Confirmation
           </div>
         </div>
 
         {/* Reference Number - Prominent */}
         <div className="print-reference">
-          <div className="reference-label">Order Reference Number</div>
+          <div className="reference-label">Reference Number</div>
           <div className="reference-number">{referenceNumber}</div>
           <div className="reference-date">
             Submitted on {new Date().toLocaleDateString('en-US', { 
@@ -179,6 +187,12 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
               month: 'long', 
               day: 'numeric' 
             })}
+            {data.preferredDate && (
+              <div className="scheduled-date">
+                Scheduled: {formatDate(data.preferredDate)}
+                {data.preferredTimeSlot && ` at ${data.preferredTimeSlot}`}
+              </div>
+            )}
           </div>
         </div>
 
@@ -259,12 +273,24 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
               <div className="section-content">
                 <div className="info-row">
                   <span className="info-label">Date:</span>
-                  <span className="info-value">{formatDate(data.preferredDate)}</span>
+                  <span className="info-value">
+                    {data.preferredDate ? formatDate(data.preferredDate) : 'To be scheduled'}
+                  </span>
                 </div>
-                {data.preferredTime && (
+                <div className="info-row">
+                  <span className="info-label">Time:</span>
+                  <span className="info-value">{formatTime(data.preferredTimeSlot)}</span>
+                </div>
+                {data.serviceType === 'bodyshop' && data.insuranceCompany && (
                   <div className="info-row">
-                    <span className="info-label">Time:</span>
-                    <span className="info-value">{formatTime(data.preferredTime)}</span>
+                    <span className="info-label">Insurance:</span>
+                    <span className="info-value">{data.insuranceCompany}</span>
+                  </div>
+                )}
+                {data.serviceType === 'mechanic' && data.warrantyCompany && (
+                  <div className="info-row">
+                    <span className="info-label">Warranty:</span>
+                    <span className="info-value">{data.warrantyCompany}</span>
                   </div>
                 )}
                 <div className="info-note">
@@ -311,8 +337,8 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
                 {/* Map Image for Print */}
                 <div className="map-container">
                   <img 
-                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(FLIPCARS_LOCATION.address)}&zoom=15&size=400x200&markers=color:red%7C${encodeURIComponent(FLIPCARS_LOCATION.address)}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}
-                    alt="Location Map"
+                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&zoom=15&size=600x300&scale=2&markers=color:red%7Clabel:F%7C${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}
+                    alt="FlipCars Location Map"
                     className="location-map-img"
                     onError={(e) => {
                       // Fallback if map fails to load
@@ -324,9 +350,9 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
                   <div className="map-fallback" style={{ display: 'none' }}>
                     <div className="map-icon">📍</div>
                     <div className="map-text">
-                      For directions, visit:<br />
-                      <strong>maps.google.com</strong><br />
-                      Search: {FLIPCARS_LOCATION.address}
+                      <strong>{FLIPCARS_LOCATION.name}</strong><br />
+                      {FLIPCARS_LOCATION.address}<br />
+                      <strong>Phone:</strong> {FLIPCARS_LOCATION.phone}
                     </div>
                   </div>
                 </div>
@@ -464,6 +490,13 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
             opacity: 0.7;
           }
 
+          .scheduled-date {
+            margin-top: 4px;
+            font-size: 11px;
+            opacity: 0.9;
+            font-weight: 600;
+          }
+
           /* Grid Layout */
           .print-grid {
             display: grid;
@@ -541,17 +574,18 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           }
 
           .location-name {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             color: #000;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
           }
 
           .location-address {
-            font-size: 10px;
-            color: #666;
+            font-size: 11px;
+            color: #000;
+            font-weight: 500;
             margin-bottom: 12px;
-            line-height: 1.4;
+            line-height: 1.5;
           }
 
           .contact-info {
@@ -602,32 +636,39 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
             width: 100%;
             height: auto;
             display: block;
-            max-height: 150px;
+            max-height: 200px;
             object-fit: cover;
+            border-radius: 4px;
           }
 
           .map-fallback {
             background: #f9f9f9;
-            border: 1px dashed #ddd;
+            border: 2px dashed #ddd;
             border-radius: 4px;
-            padding: 10px;
+            padding: 15px;
             text-align: center;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
           }
 
           .map-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 36px;
+            margin-bottom: 8px;
           }
 
           .map-text {
-            font-size: 8px;
+            font-size: 10px;
             color: #666;
-            line-height: 1.5;
+            line-height: 1.8;
           }
 
           .map-text strong {
             color: #000;
-            font-size: 9px;
+            font-size: 11px;
+            display: block;
+            margin: 4px 0;
           }
 
           /* Next Steps */
