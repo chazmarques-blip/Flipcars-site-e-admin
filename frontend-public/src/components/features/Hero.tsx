@@ -112,21 +112,21 @@ export default function Hero() {
         />
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Mobile: Top corners, Desktop: Middle */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 rounded-full transition-all duration-200 group"
+        className="absolute left-2 md:left-4 top-20 md:top-1/2 md:-translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 md:p-3 rounded-full transition-all duration-200 group"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="w-6 h-6 text-white group-hover:text-black" />
+        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white group-hover:text-black" />
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 rounded-full transition-all duration-200 group"
+        className="absolute right-2 md:right-4 top-20 md:top-1/2 md:-translate-y-1/2 z-20 bg-black/50 hover:bg-primary/80 backdrop-blur-sm p-2 md:p-3 rounded-full transition-all duration-200 group"
         aria-label="Next slide"
       >
-        <ChevronRight className="w-6 h-6 text-white group-hover:text-black" />
+        <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white group-hover:text-black" />
       </button>
 
       <div className="container-custom relative z-10 py-4 md:py-6">
