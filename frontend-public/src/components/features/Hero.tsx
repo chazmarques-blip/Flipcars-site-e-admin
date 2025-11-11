@@ -41,10 +41,10 @@ const heroSlides = [
   },
   {
     id: 5,
-    title: "Fast Turnaround Time",
-    subtitle: "Back on the Road Quickly",
-    description: "Most repairs 3-5 days • Priority service available • Free rental while we work",
-    badge: "Express Service Available",
+    title: "Extended Warranty Specialists",
+    subtitle: "We Work With Your Warranty",
+    description: "Expert in extended warranty repairs • Direct billing to warranty companies • All major warranties accepted",
+    badge: "Warranty Claims Accepted",
     bgImage: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1920&auto=format&fit=crop" // Sports car/speed
   },
   {

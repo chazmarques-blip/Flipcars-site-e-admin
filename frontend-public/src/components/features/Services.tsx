@@ -1,8 +1,14 @@
-import { Wrench, Paintbrush, Shield, Car } from 'lucide-react'
+import { Wrench, Paintbrush, Shield, Car, FileText } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Services() {
   const services = [
+    {
+      icon: FileText,
+      title: 'Extended Warranty Repairs',
+      description: 'Specialized in processing extended warranty claims. We work directly with all major warranty companies to get your vehicle repaired quickly and hassle-free.',
+      link: '/services#extended-warranty'
+    },
     {
       icon: Wrench,
       title: 'Collision Repair',

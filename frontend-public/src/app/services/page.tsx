@@ -10,7 +10,8 @@ import {
   ArrowRight,
   Clock,
   Award,
-  ThumbsUp
+  ThumbsUp,
+  FileText
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -20,6 +21,35 @@ export const metadata: Metadata = {
 
 export default function ServicesPage() {
   const services = [
+    {
+      id: 'extended-warranty',
+      icon: Shield,
+      title: 'Extended Warranty Repairs',
+      subtitle: 'Expert Extended Warranty Claims Processing',
+      description: 'We specialize in helping customers utilize their extended warranty coverage for vehicle repairs. Our experienced team works directly with all major extended warranty companies including CARCHEX, CarShield, Endurance, and Protect My Car. We handle all documentation, authorization, and billing to ensure your repairs are covered and completed efficiently.',
+      features: [
+        'Direct billing to warranty companies',
+        'Work with all major warranty providers',
+        'Pre-authorization assistance',
+        'Complete documentation handling',
+        'Fast claim processing (24-48 hours)',
+        'No upfront payment required (in most cases)'
+      ],
+      process: [
+        'Contact us with your warranty information',
+        'We verify coverage with your warranty company',
+        'Pre-authorization request submitted',
+        'Approved repairs scheduled immediately',
+        'Direct billing to warranty provider',
+        'You pay only your deductible (if applicable)'
+      ],
+      benefits: [
+        'Experienced with all major warranty companies',
+        'Expedited authorization process',
+        'Clear communication throughout repair',
+        'Quality repairs covered by warranty'
+      ]
+    },
     {
       id: 'collision-repair',
       icon: Wrench,
