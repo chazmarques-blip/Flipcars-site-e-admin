@@ -24,6 +24,11 @@ const getInsuranceLogo = (company: string): string | null => {
     'Progressive': '/images/insurance-progressive.png',
     'State Farm': '/images/insurance-statefarm.png',
     'USAA': '/images/insurance-usaa.png',
+    'Geico': '/images/insurance-geico.png',
+    'Liberty Mutual': '/images/insurance-liberty-mutual.png',
+    'Farmers Insurance': '/images/insurance-farmers.png',
+    'Travelers': '/images/insurance-travelers.png',
+    'Erie Insurance': '/images/insurance-erie.png',
   };
   return logoMap[company] || null;
 };
@@ -112,7 +117,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           Who will pay for the repair? <span className="text-gold">*</span>
         </label>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
           {companies.map((company) => {
             const logo = isBodyshop ? getInsuranceLogo(company) : null;
             const isSelected = selectedCompany === company;
@@ -122,7 +127,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                 key={company}
                 type="button"
                 onClick={() => setValue(companyField, company as any, { shouldValidate: true })}
-                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all min-h-[80px] ${
+                className={`relative flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all min-h-[65px] ${
                   isSelected
                     ? 'border-gold bg-gold/5 shadow-md'
                     : 'border-neutral-300 hover:border-neutral-400 bg-white'
@@ -130,7 +135,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
               >
                 {logo ? (
                   <>
-                    <div className="relative w-full h-10 mb-1">
+                    <div className="relative w-full h-8 mb-0.5">
                       <Image
                         src={logo}
                         alt={company}
@@ -139,7 +144,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                         sizes="(max-width: 768px) 50vw, 33vw"
                       />
                     </div>
-                    <span className={`text-xs text-center font-medium ${
+                    <span className={`text-[10px] text-center font-medium leading-tight ${
                       isSelected ? 'text-black' : 'text-neutral-700'
                     }`}>
                       {company}
