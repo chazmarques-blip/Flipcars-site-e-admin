@@ -325,7 +325,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           {...register('symptomsDescription')}
           rows={4}
           placeholder="Example: Engine makes knocking sound when accelerating, especially when cold. The sound gets louder as I speed up..."
-          className={`w-full px-3 py-2 text-xs border-2 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none ${
+          className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-400 border-2 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none ${
             errors.symptomsDescription 
               ? 'border-red-500 bg-red-50' 
               : symptomsDescription && symptomsDescription.length >= 10
