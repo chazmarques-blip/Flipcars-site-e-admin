@@ -19,9 +19,7 @@ export type Step1FormData = z.infer<typeof step1Schema>;
 
 // Step 2A: Body Shop Service Details
 export const step2BodyshopSchema = z.object({
-  insuranceCompany: z.enum([...INSURANCE_COMPANIES] as [string, ...string[]], {
-    required_error: 'Please select who will pay for the repair',
-  }),
+  insuranceCompany: z.string().min(1, 'Please select who will pay for the repair'),
   claimNumber: z.string().optional(),
   hasClaimNumber: z.boolean().optional(),
   preferredDate: z.string().optional(),
@@ -31,9 +29,7 @@ export type Step2BodyshopFormData = z.infer<typeof step2BodyshopSchema>;
 
 // Step 2B: Mechanic Service Details
 export const step2MechanicSchema = z.object({
-  warrantyCompany: z.enum([...WARRANTY_COMPANIES] as [string, ...string[]], {
-    required_error: 'Please select who will pay for the repair',
-  }),
+  warrantyCompany: z.string().min(1, 'Please select who will pay for the repair'),
   warrantyClaimNumber: z.string().optional(),
   hasWarrantyClaimNumber: z.boolean().optional(),
   preferredDate: z.string().optional(),

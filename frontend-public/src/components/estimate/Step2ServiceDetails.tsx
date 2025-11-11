@@ -33,6 +33,17 @@ const getInsuranceLogo = (company: string): string | null => {
   return logoMap[company] || null;
 };
 
+// Map warranty companies to logo filenames
+const getWarrantyLogo = (company: string): string | null => {
+  const logoMap: Record<string, string> = {
+    'CARCHEX': '/images/warranty-carchex.png',
+    'CarShield': '/images/warranty-carshield.jpg',
+    'Endurance': '/images/warranty-endurance.png',
+    'Protect My Car': '/images/warranty-protect-my-car.png',
+  };
+  return logoMap[company] || null;
+};
+
 interface Step2ServiceDetailsProps {
   initialData: Partial<EstimateRequest>;
   serviceType: ServiceType;
@@ -44,6 +55,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
+  const [customCompanyName, setCustomCompanyName] = useState('');
   const isBodyshop = serviceType === 'bodyshop';
   
   const schema = isBodyshop ? step2BodyshopSchema : step2MechanicSchema;
@@ -87,7 +99,16 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   const availableTimeSlots = getAvailableTimeSlots();
 
   const onSubmit = (data: Step2BodyshopFormData | Step2MechanicFormData) => {
-    onNext(data);
+    // If "Other" is selected, append custom company name
+    if (selectedCompany === 'Other' && customCompanyName.trim()) {
+      const updatedData = {
+        ...data,
+        [companyField]: `Other: ${customCompanyName.trim()}`,
+      };
+      onNext(updatedData);
+    } else {
+      onNext(data);
+    }
   };
 
   const handleDateSelect = (date: Date) => {
@@ -119,7 +140,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
           {companies.map((company) => {
-            const logo = isBodyshop ? getInsuranceLogo(company) : null;
+            const logo = isBodyshop ? getInsuranceLogo(company) : getWarrantyLogo(company);
             const isSelected = selectedCompany === company;
             
             return (
@@ -166,6 +187,27 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           <p className="text-sm text-red-600">{errors[companyField]?.message}</p>
         )}
       </div>
+
+      {/* Custom Company Name Input (when "Other" is selected) */}
+      {selectedCompany === 'Other' && (
+        <div className="space-y-1.5">
+          <label htmlFor="customCompanyName" className="block text-sm font-medium text-black">
+            {isBodyshop ? 'Insurance' : 'Warranty'} Company Name <span className="text-gold">*</span>
+          </label>
+          <input
+            id="customCompanyName"
+            type="text"
+            value={customCompanyName}
+            onChange={(e) => setCustomCompanyName(e.target.value)}
+            placeholder={`Enter ${isBodyshop ? 'insurance' : 'warranty'} company name`}
+            className="w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors"
+          />
+          <p className="text-[10px] text-neutral-600">
+            Please enter the full name of your {isBodyshop ? 'insurance' : 'warranty'} company
+          </p>
+        </div>
+      )}
+    </div>
 
       {/* Claim Number (conditional) */}
       {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && (
@@ -324,7 +366,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           type="submit"
           variant="primary"
           className="flex-1 bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs"
-          disabled={!isValid}
+          disabled={!isValid || (selectedCompany === 'Other' && !customCompanyName.trim())}
         >
           Continue →
         </Button>
