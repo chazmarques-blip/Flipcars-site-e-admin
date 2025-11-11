@@ -75,15 +75,20 @@ async function runDatabaseSeeds() {
 }
 
 async function bootstrap() {
-  // Run migrations and seeds FIRST in production
-  if (process.env.NODE_ENV === 'production') {
-    const migrationsSucceeded = await runMigrations();
-    
-    // Only run seeds if migrations succeeded
-    if (migrationsSucceeded) {
-      await runDatabaseSeeds();
-    }
-  }
+  // ⚠️ MIGRATIONS AND SEEDS DISABLED IN PRODUCTION
+  // Database is already seeded via Supabase SQL Editor
+  // Migrations are run manually when needed to avoid startup delays
+  // 
+  // To run migrations manually:
+  // 1. Locally: npm run typeorm migration:run
+  // 2. Supabase: Execute migrations via SQL Editor
+  //
+  // if (process.env.NODE_ENV === 'production') {
+  //   const migrationsSucceeded = await runMigrations();
+  //   if (migrationsSucceeded) {
+  //     await runDatabaseSeeds();
+  //   }
+  // }
 
   const app = await NestFactory.create(AppModule);
 
@@ -105,10 +110,9 @@ async function bootstrap() {
     ? [...defaultOrigins, ...process.env.FRONTEND_URL.split(',').map((url) => url.trim())]
     : defaultOrigins;
 
-  // TEMPORARY: Allow all origins for debugging
-  // TODO: Restrict after confirming it works
+  // Production CORS configuration
   app.enableCors({
-    origin: true, // Allow all origins temporarily
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
@@ -116,8 +120,7 @@ async function bootstrap() {
     maxAge: 3600,
   });
   
-  console.log('🌐 CORS: Allowing ALL origins (temporary configuration)');
-  console.log('📝 Intended origins:', allowedOrigins);
+  console.log('🌐 CORS enabled for origins:', allowedOrigins);
 
   // Global validation pipe
   app.useGlobalPipes(
