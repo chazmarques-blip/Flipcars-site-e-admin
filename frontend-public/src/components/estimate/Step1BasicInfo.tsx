@@ -96,7 +96,7 @@ export function Step1BasicInfo({ initialData, onNext, onCancel }: Step1BasicInfo
           type="text"
           {...register('firstName')}
           placeholder="Enter your first name"
-          className={`w-full px-3 py-2.5 text-base md:text-sm border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+          className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-400 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
             errors.firstName ? 'border-red-500' : 'border-neutral-300'
           }`}
         />
@@ -115,7 +115,7 @@ export function Step1BasicInfo({ initialData, onNext, onCancel }: Step1BasicInfo
           type="text"
           {...register('lastName')}
           placeholder="Enter your last name"
-          className={`w-full px-3 py-2.5 text-base md:text-sm border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+          className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-400 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
             errors.lastName ? 'border-red-500' : 'border-neutral-300'
           }`}
         />
@@ -134,7 +134,7 @@ export function Step1BasicInfo({ initialData, onNext, onCancel }: Step1BasicInfo
           type="tel"
           {...register('phone')}
           placeholder="(321) 960-8661"
-          className={`w-full px-3 py-2.5 text-base md:text-sm border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+          className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-400 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
             errors.phone ? 'border-red-500' : 'border-neutral-300'
           }`}
         />
@@ -153,7 +153,7 @@ export function Step1BasicInfo({ initialData, onNext, onCancel }: Step1BasicInfo
           type="email"
           {...register('email')}
           placeholder="your.email@example.com"
-          className={`w-full px-3 py-2.5 text-base md:text-sm border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+          className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-400 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
             errors.email ? 'border-red-500' : 'border-neutral-300'
           }`}
         />
