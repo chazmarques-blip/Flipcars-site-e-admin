@@ -1,3 +1,6 @@
+// IMPORTANT: Import force-ipv4 FIRST to patch DNS before any connections
+import './utils/force-ipv4';
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
