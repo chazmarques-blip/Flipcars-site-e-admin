@@ -73,39 +73,43 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
           </div>
         </div>
 
-        {/* What Happens Next - Inline Compact */}
+        {/* What Happens Next - Updated Content */}
         <div className="space-y-1.5">
           <h4 className="text-xs font-semibold text-black">What happens next?</h4>
           
           <div className="space-y-1">
-            {/* Step 1 - Inline */}
-            <div className="flex items-center gap-1.5">
+            {/* Step 1 - Processing */}
+            <div className="flex items-start gap-1.5">
               <div className="flex-shrink-0 w-5 h-5 bg-gold text-black rounded-full flex items-center justify-center font-bold text-[10px]">
                 1
               </div>
-              <p className="text-[11px] text-black">
-                <span className="font-medium">Review</span> <span className="text-neutral-600">(~1 hour)</span>
+              <p className="text-[11px] text-black leading-tight">
+                <span className="font-medium">Your estimate is being processed.</span> <span className="text-neutral-600">If we have any questions, we'll contact you.</span>
               </p>
             </div>
 
-            {/* Step 2 - Inline */}
-            <div className="flex items-center gap-1.5">
+            {/* Step 2 - Appointment */}
+            <div className="flex items-start gap-1.5">
               <div className="flex-shrink-0 w-5 h-5 bg-gold text-black rounded-full flex items-center justify-center font-bold text-[10px]">
                 2
               </div>
-              <p className="text-[11px] text-black">
-                <span className="font-medium">Contact</span> <span className="text-neutral-600">via your preferred method</span>
-              </p>
-            </div>
-
-            {/* Step 3 - Inline */}
-            <div className="flex items-center gap-1.5">
-              <div className="flex-shrink-0 w-5 h-5 bg-gold text-black rounded-full flex items-center justify-center font-bold text-[10px]">
-                3
+              <div className="flex-1">
+                <p className="text-[11px] text-black leading-tight">
+                  <span className="font-medium">We're waiting for your visit</span> <span className="text-neutral-600">to finalize the process and repair your vehicle.</span>
+                </p>
+                {data.preferredDate && (
+                  <div className="mt-1 p-1.5 bg-gold/10 rounded border border-gold/30">
+                    <p className="text-[10px] font-medium text-black">
+                      📅 {formatDate(data.preferredDate)}
+                    </p>
+                    {data.preferredTimeSlot && (
+                      <p className="text-[10px] text-neutral-700">
+                        🕐 {formatTime(data.preferredTimeSlot)}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
-              <p className="text-[11px] text-black">
-                <span className="font-medium">Schedule</span> <span className="text-neutral-600">your appointment</span>
-              </p>
             </div>
           </div>
         </div>
