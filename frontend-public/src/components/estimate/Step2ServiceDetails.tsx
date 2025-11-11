@@ -276,20 +276,28 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         )}
 
         {preferredDate && !showTimeSlots && (
-          <div className="flex items-center justify-between p-2 border border-gold bg-gold/5 rounded-lg">
-            <span className="text-sm text-black">
-              Selected: {formatDateDisplay(new Date(preferredDate))}
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                setValue('preferredDate', '', { shouldValidate: true });
-                setSelectedDate(null);
-              }}
-              className="text-[10px] text-neutral-600 hover:text-black"
-            >
-              Change
-            </button>
+          <div className="flex flex-col gap-1 p-2 border border-gold bg-gold/5 rounded-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-black">
+                📅 {formatDateDisplay(new Date(preferredDate))}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue('preferredDate', '', { shouldValidate: true });
+                  setValue('preferredTimeSlot' as any, '', { shouldValidate: true });
+                  setSelectedDate(null);
+                }}
+                className="text-[10px] text-neutral-600 hover:text-black"
+              >
+                Change
+              </button>
+            </div>
+            {watch('preferredTimeSlot' as any) && (
+              <span className="text-xs text-neutral-700">
+                🕐 Time: {watch('preferredTimeSlot' as any)}
+              </span>
+            )}
           </div>
         )}
       </div>
