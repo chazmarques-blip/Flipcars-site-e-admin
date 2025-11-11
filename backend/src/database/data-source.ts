@@ -1,3 +1,7 @@
+// IMPORTANT: Force IPv4 DNS resolution FIRST - before any other imports
+// This MUST be the first import to patch DNS before database connections
+import '../utils/force-ipv4';
+
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 import { join } from 'path';
@@ -5,9 +9,10 @@ import { join } from 'path';
 // Load environment variables
 config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
 
-// Build database configuration
-// In production (Railway), use DATABASE_URL
-// In development, use individual variables
+/**
+ * Build database configuration
+ * DNS IPv4 enforcement is handled by force-ipv4.ts import
+ */
 const buildDatabaseConfig = (): DataSourceOptions => {
   const baseConfig = {
     type: 'postgres' as const,
@@ -20,14 +25,26 @@ const buildDatabaseConfig = (): DataSourceOptions => {
 
   // If DATABASE_URL is provided (Railway/production), use it
   if (process.env.DATABASE_URL) {
+    console.log('🔍 Using DATABASE_URL for connection...');
+    console.log('   (IPv4 enforcement active via DNS patch)');
+    
     return {
       ...baseConfig,
       url: process.env.DATABASE_URL,
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+      extra: {
+        // Connection timeout configurations
+        connectionTimeoutMillis: 30000,
+        query_timeout: 30000,
+        statement_timeout: 30000,
+        idle_in_transaction_session_timeout: 30000,
+      },
     };
   }
 
   // Otherwise, use individual variables (local development)
+  console.log('🔍 Using individual environment variables for connection...');
+  
   return {
     ...baseConfig,
     host: process.env.DATABASE_HOST || 'localhost',
@@ -39,8 +56,10 @@ const buildDatabaseConfig = (): DataSourceOptions => {
   };
 };
 
+// Build config
 export const dataSourceOptions: DataSourceOptions = buildDatabaseConfig();
 
+// Create data source
 const dataSource = new DataSource(dataSourceOptions);
 
 export default dataSource;
