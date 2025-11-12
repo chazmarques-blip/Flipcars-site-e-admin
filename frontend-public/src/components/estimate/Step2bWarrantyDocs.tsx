@@ -251,38 +251,61 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
   const UploadCard = ({ 
     title, 
     diagram, 
-    file, 
+    file,
+    photoUrl,
     fileType,
     accept 
   }: { 
     title: string; 
     diagram: React.ReactNode; 
     file: File | null;
+    photoUrl: string | null;
     fileType: 'policy' | 'vin' | 'odometer';
     accept: string;
   }) => {
     const isUploading = uploadingFile === fileType;
+    const isPDF = file?.type === 'application/pdf';
     
     return (
       <div className="space-y-1">
-        <label className={`relative flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-lg transition-colors bg-white overflow-hidden ${
+        <label className={`relative flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-lg transition-colors overflow-hidden ${
           isUploading 
             ? 'border-gold bg-gold/5 cursor-wait' 
             : file 
-            ? 'border-green-500 bg-green-50 cursor-default'
-            : 'border-neutral-200 cursor-pointer hover:border-gold hover:bg-gold/5'
+            ? 'border-green-500 bg-green-50 cursor-pointer group'
+            : 'border-neutral-200 cursor-pointer hover:border-gold hover:bg-gold/5 bg-white'
         }`}>
           {isUploading ? (
             <div className="flex flex-col items-center justify-center p-3 text-center">
               <div className="w-6 h-6 border-3 border-gold border-t-transparent rounded-full animate-spin mb-1" />
               <p className="text-[10px] text-neutral-600 font-medium">Uploading...</p>
             </div>
-          ) : file ? (
-            <div className="flex flex-col items-center justify-center p-3 text-center">
-              <Check className="w-6 h-6 text-green-600 mb-1" />
-              <p className="text-[10px] text-green-600 font-medium truncate max-w-full px-2">{file.name}</p>
-              <p className="text-[9px] text-green-600 mt-0.5">✓ Uploaded</p>
-            </div>
+          ) : file && photoUrl ? (
+            <>
+              {/* Show image preview for images */}
+              {!isPDF ? (
+                <img 
+                  src={photoUrl} 
+                  alt={title} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                /* Show PDF icon for PDFs */
+                <div className="flex flex-col items-center justify-center p-3 text-center">
+                  <svg className="w-12 h-12 text-red-600 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18.5,9H13V3.5L18.5,9M6,20V4H12V10H18V20H6Z" />
+                  </svg>
+                  <p className="text-[9px] text-neutral-700 font-medium">PDF Document</p>
+                </div>
+              )}
+              
+              {/* Overlay with checkmark and filename */}
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2">
+                <Check className="w-6 h-6 text-green-400 mb-1" />
+                <p className="text-[9px] text-white font-medium text-center truncate max-w-full px-1">{file.name}</p>
+                <p className="text-[8px] text-green-400 mt-0.5">✓ Uploaded - Click to replace</p>
+              </div>
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center p-3 text-center">
               {diagram}
@@ -318,6 +341,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           title="Policy Document"
           diagram={PhotoDiagrams.policy}
           file={policyFile}
+          photoUrl={policyUrl}
           fileType="policy"
           accept=".pdf,image/jpeg,image/jpg,image/png,image/webp"
         />
@@ -325,6 +349,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           title="VIN Number"
           diagram={PhotoDiagrams.vinNumber}
           file={vinFile}
+          photoUrl={vinUrl}
           fileType="vin"
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
@@ -332,6 +357,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           title="Odometer"
           diagram={PhotoDiagrams.odometer}
           file={odometerFile}
+          photoUrl={odometerUrl}
           fileType="odometer"
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
