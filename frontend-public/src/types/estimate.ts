@@ -114,7 +114,6 @@ export const INSURANCE_COMPANIES = [
   'Private (Self-Pay)',
   'Allstate',
   'American Family',
-  'Auto-Owners',
   'Erie Insurance',
   'Farmers Insurance',
   'Geico',
