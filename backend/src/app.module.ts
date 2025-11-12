@@ -5,7 +5,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { dataSourceOptions } from './database/data-source';
+import { getDataSourceOptions } from './database/data-source';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { LeadsModule } from './modules/leads/leads.module';
@@ -38,7 +38,10 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
     // TypeORM Database Connection
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: () => dataSourceOptions,
+      useFactory: async () => {
+        // Resolve hostname to IPv4 before connection
+        return await getDataSourceOptions();
+      },
       inject: [ConfigService],
     }),
     

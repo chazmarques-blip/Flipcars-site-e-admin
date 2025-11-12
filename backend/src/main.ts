@@ -7,7 +7,7 @@ initializeIPv4Enforcement();
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import dataSource from './database/data-source';
+import { getDataSource } from './database/data-source';
 import { runSeeds } from './database/seeds/run-seeds';
 
 async function runMigrations() {
@@ -16,6 +16,9 @@ async function runMigrations() {
   console.log('========================================\n');
 
   try {
+    // Get data source with IPv4-resolved hostname
+    const dataSource = await getDataSource();
+    
     // Initialize the data source
     if (!dataSource.isInitialized) {
       console.log('🔌 Initializing database connection...');
