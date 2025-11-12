@@ -74,7 +74,16 @@ export async function forceIPv4Lookup(
  * Patch the global dns.lookup to force IPv4
  * This affects ALL DNS lookups in the application
  */
+// Guard to prevent double patching
+let isDNSPatched = false;
+
 export function patchGlobalDNSLookup(): void {
+  // Skip if already patched
+  if (isDNSPatched) {
+    console.log('⏭️  DNS lookup already patched, skipping...');
+    return;
+  }
+
   const originalLookup = dns.lookup;
 
   // Create patched lookup function
@@ -121,6 +130,9 @@ export function patchGlobalDNSLookup(): void {
     writable: true,
     configurable: true,
   });
+
+  // Mark as patched to prevent double-patching
+  isDNSPatched = true;
 
   console.log('✅ [DNS Patch] Global DNS lookup patched to force IPv4');
 }
