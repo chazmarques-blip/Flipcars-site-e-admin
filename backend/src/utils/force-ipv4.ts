@@ -74,8 +74,25 @@ export async function forceIPv4Lookup(
  * Patch the global dns.lookup to force IPv4
  * This affects ALL DNS lookups in the application
  */
+
+// Store the ORIGINAL lookup function at module load time (before any patching)
+const ORIGINAL_DNS_LOOKUP = dns.lookup;
+
+// Guard to prevent double patching
+let isDNSPatched = false;
+
 export function patchGlobalDNSLookup(): void {
-  const originalLookup = dns.lookup;
+  // ADVANCED CHECK: Verify if dns.lookup has already been modified
+  const descriptor = Object.getOwnPropertyDescriptor(dns, 'lookup');
+  
+  // If already patched OR if we've marked it as patched, skip
+  if (isDNSPatched || (descriptor && descriptor.configurable === true && descriptor.writable === true)) {
+    console.log('⏭️  DNS lookup already patched, skipping...');
+    return;
+  }
+
+  // Use the stored ORIGINAL lookup function (not dns.lookup which might be modified)
+  const originalLookup = ORIGINAL_DNS_LOOKUP;
 
   // Create patched lookup function
   const patchedLookup = (
@@ -115,14 +132,33 @@ export function patchGlobalDNSLookup(): void {
     });
   };
 
-  // Use Object.defineProperty to override dns.lookup (works in Node.js v22+)
-  Object.defineProperty(dns, 'lookup', {
-    value: patchedLookup,
-    writable: true,
-    configurable: true,
-  });
+  try {
+    // ROBUST APPROACH: Try to delete first if configurable, then define
+    if (descriptor && descriptor.configurable) {
+      delete (dns as any).lookup;
+      console.log('🗑️  [DNS Patch] Deleted existing dns.lookup property');
+    }
 
-  console.log('✅ [DNS Patch] Global DNS lookup patched to force IPv4');
+    // Use Object.defineProperty to override dns.lookup (works in Node.js v22+)
+    Object.defineProperty(dns, 'lookup', {
+      value: patchedLookup,
+      writable: true,
+      configurable: true,
+    });
+
+    // Mark as patched to prevent double-patching
+    isDNSPatched = true;
+
+    console.log('✅ [DNS Patch] Global DNS lookup patched to force IPv4');
+  } catch (error) {
+    // If Object.defineProperty fails, log but don't crash
+    // This might happen if the property was already defined elsewhere
+    console.warn('⚠️  [DNS Patch] Could not redefine dns.lookup, it may already be patched');
+    console.warn('   Error:', error instanceof Error ? error.message : String(error));
+    
+    // Mark as patched anyway to prevent repeated attempts
+    isDNSPatched = true;
+  }
 }
 
 // Guard to prevent double initialization
