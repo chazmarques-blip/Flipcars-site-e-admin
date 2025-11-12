@@ -40,8 +40,13 @@ interface Step2bWarrantyDocsProps {
 
 export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarrantyDocsProps) {
   const [policyFile, setPolicyFile] = useState<File | null>(null);
+  const [policyUrl, setPolicyUrl] = useState<string | null>(null);
   const [vinFile, setVinFile] = useState<File | null>(null);
+  const [vinUrl, setVinUrl] = useState<string | null>(null);
   const [odometerFile, setOdometerFile] = useState<File | null>(null);
+  const [odometerUrl, setOdometerUrl] = useState<string | null>(null);
+  const [uploadingFile, setUploadingFile] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string>('');
   const [selectedIssues, setSelectedIssues] = useState<string[]>(
     (initialData.warrantyDocs?.selectedIssues as string[]) || []
   );
@@ -73,7 +78,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     });
   }, [selectedIssues, symptomsDescription, errors, isValid]);
 
-  const handleFileChange = (
+  const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     fileType: 'policy' | 'vin' | 'odometer'
   ) => {
@@ -96,19 +101,40 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
       return;
     }
 
-    switch (fileType) {
-      case 'policy':
-        setPolicyFile(file);
-        setValue('policyDocument', file, { shouldValidate: true });
-        break;
-      case 'vin':
-        setVinFile(file);
-        setValue('vinPhoto', file, { shouldValidate: true });
-        break;
-      case 'odometer':
-        setOdometerFile(file);
-        setValue('odometerPhoto', file, { shouldValidate: true });
-        break;
+    // Show uploading state
+    setUploadingFile(fileType);
+    setUploadError('');
+
+    try {
+      // Upload to server
+      const { uploadService } = await import('@/lib/api/upload.service');
+      const response = await uploadService.uploadPhoto(file);
+      const photoUrl = response.data.url;
+
+      // Store both file and URL
+      switch (fileType) {
+        case 'policy':
+          setPolicyFile(file);
+          setPolicyUrl(photoUrl);
+          setValue('policyDocument', file, { shouldValidate: true });
+          break;
+        case 'vin':
+          setVinFile(file);
+          setVinUrl(photoUrl);
+          setValue('vinPhoto', file, { shouldValidate: true });
+          break;
+        case 'odometer':
+          setOdometerFile(file);
+          setOdometerUrl(photoUrl);
+          setValue('odometerPhoto', file, { shouldValidate: true });
+          break;
+      }
+    } catch (error) {
+      console.error(`Error uploading ${fileType}:`, error);
+      setUploadError(`Failed to upload ${fileType}. Please try again.`);
+      alert(`Failed to upload ${fileType}. Please try again.`);
+    } finally {
+      setUploadingFile(null);
     }
   };
 
@@ -122,13 +148,12 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
   };
 
   const onSubmit = (data: WarrantyDocsFormData) => {
-    // In a real app, you would upload files to a server here
-    // For now, we'll just pass the data forward
+    // Pass URLs (not File objects) to the next step
     onNext({
       warrantyDocs: {
-        policyDocument: policyFile,
-        vinPhoto: vinFile,
-        odometerPhoto: odometerFile,
+        policyDocument: policyUrl || undefined,
+        vinPhoto: vinUrl || undefined,
+        odometerPhoto: odometerUrl || undefined,
         selectedIssues: data.selectedIssues,
         symptomsDescription: data.symptomsDescription,
       },
@@ -198,39 +223,72 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
   const UploadCard = ({ 
     title, 
     diagram, 
-    file, 
+    file,
+    photoUrl,
     fileType,
     accept 
   }: { 
     title: string; 
     diagram: React.ReactNode; 
     file: File | null;
+    photoUrl: string | null;
     fileType: 'policy' | 'vin' | 'odometer';
     accept: string;
-  }) => (
-    <div className="space-y-1">
-      <label className="relative flex flex-col items-center justify-center h-32 border-2 border-dashed border-neutral-200 rounded-lg cursor-pointer hover:border-gold hover:bg-gold/5 transition-colors bg-white overflow-hidden">
-        {file ? (
-          <div className="flex flex-col items-center justify-center p-3 text-center">
-            <Check className="w-6 h-6 text-green-600 mb-1" />
-            <p className="text-[10px] text-green-600 font-medium truncate max-w-full px-2">{file.name}</p>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center p-3 text-center">
-            {diagram}
-            <p className="text-[10px] text-neutral-600 font-medium mt-1">{title}</p>
-            <p className="text-gold text-[9px] mt-0.5">Required</p>
-          </div>
-        )}
-        <input
-          type="file"
-          className="hidden"
-          accept={accept}
-          onChange={(e) => handleFileChange(e, fileType)}
-        />
-      </label>
-    </div>
-  );
+  }) => {
+    const isPDF = file?.type === 'application/pdf';
+    const isUploading = uploadingFile === fileType;
+    
+    return (
+      <div className="space-y-1">
+        <label className="relative group flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors bg-white overflow-hidden hover:border-gold hover:bg-gold/5">
+          {file && photoUrl ? (
+            <>
+              {/* Show image preview or PDF icon */}
+              {!isPDF ? (
+                <img 
+                  src={photoUrl} 
+                  alt={title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center p-3">
+                  <svg className="w-12 h-12 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                    <text x="12" y="16" fontSize="4" fill="currentColor" textAnchor="middle" fontWeight="bold">PDF</text>
+                  </svg>
+                </div>
+              )}
+              
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 p-2">
+                <Check className="w-6 h-6 text-green-400" />
+                <p className="text-[10px] text-white font-medium text-center truncate max-w-full">{file.name}</p>
+                <p className="text-[9px] text-green-300">✓ Uploaded - Click to replace</p>
+              </div>
+            </>
+          ) : isUploading ? (
+            <div className="flex flex-col items-center justify-center p-3 text-center">
+              <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin mb-2"></div>
+              <p className="text-[10px] text-neutral-600">Uploading...</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-3 text-center">
+              {diagram}
+              <p className="text-[10px] text-neutral-600 font-medium mt-1">{title}</p>
+              <p className="text-gold text-[9px] mt-0.5">Required</p>
+            </div>
+          )}
+          <input
+            type="file"
+            className="hidden"
+            accept={accept}
+            onChange={(e) => handleFileChange(e, fileType)}
+            disabled={isUploading}
+          />
+        </label>
+      </div>
+    );
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -248,6 +306,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           title="Policy Document"
           diagram={PhotoDiagrams.policy}
           file={policyFile}
+          photoUrl={policyUrl}
           fileType="policy"
           accept=".pdf,image/jpeg,image/jpg,image/png,image/webp"
         />
@@ -255,6 +314,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           title="VIN Number"
           diagram={PhotoDiagrams.vinNumber}
           file={vinFile}
+          photoUrl={vinUrl}
           fileType="vin"
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
@@ -262,6 +322,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           title="Odometer"
           diagram={PhotoDiagrams.odometer}
           file={odometerFile}
+          photoUrl={odometerUrl}
           fileType="odometer"
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
