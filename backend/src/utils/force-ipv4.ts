@@ -77,8 +77,8 @@ export async function forceIPv4Lookup(
 export function patchGlobalDNSLookup(): void {
   const originalLookup = dns.lookup;
 
-  // Override dns.lookup globally
-  (dns as any).lookup = (
+  // Create patched lookup function
+  const patchedLookup = (
     hostname: string,
     optionsOrCallback?: dns.LookupOptions | ((err: NodeJS.ErrnoException | null, address: string, family: number) => void),
     callback?: (err: NodeJS.ErrnoException | null, address: string, family: number) => void,
@@ -114,6 +114,13 @@ export function patchGlobalDNSLookup(): void {
       actualCallback(err, addressString as string, family);
     });
   };
+
+  // Use Object.defineProperty to override dns.lookup (works in Node.js v22+)
+  Object.defineProperty(dns, 'lookup', {
+    value: patchedLookup,
+    writable: true,
+    configurable: true,
+  });
 
   console.log('✅ [DNS Patch] Global DNS lookup patched to force IPv4');
 }
