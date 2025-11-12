@@ -81,6 +81,10 @@ async function runDatabaseSeeds() {
 }
 
 async function bootstrap() {
+  console.log('\n========================================');
+  console.log('🚀 Starting FlipCars Backend Application');
+  console.log('========================================\n');
+
   // ⚠️ MIGRATIONS AND SEEDS DISABLED IN PRODUCTION
   // Database is already seeded via Supabase SQL Editor
   // Migrations are run manually when needed to avoid startup delays
@@ -96,13 +100,18 @@ async function bootstrap() {
   //   }
   // }
 
+  console.log('📦 Creating NestJS application...');
   const app = await NestFactory.create(AppModule);
+  console.log('✅ NestJS application created successfully');
 
   // Serve static files (uploaded photos)
+  console.log('📁 Setting up static file serving...');
   const express = await import('express');
   app.use('/uploads', express.static('uploads'));
+  console.log('✅ Static file serving configured');
 
   // Enable CORS - Support multiple origins
+  console.log('🔐 Configuring CORS...');
   const defaultOrigins = [
     'http://localhost:3000',
     'http://localhost:3002',
@@ -126,9 +135,10 @@ async function bootstrap() {
     maxAge: 3600,
   });
   
-  console.log('🌐 CORS enabled for origins:', allowedOrigins);
+  console.log('✅ CORS enabled for origins:', allowedOrigins);
 
   // Global validation pipe
+  console.log('✅ Configuring global validation pipe...');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -141,14 +151,36 @@ async function bootstrap() {
   );
 
   // API prefix
+  console.log('🔧 Setting API prefix to /api...');
   app.setGlobalPrefix('api');
+  console.log('✅ API prefix configured');
 
   const port = process.env.PORT || 3001;
+  console.log(`🌐 Starting server on port ${port}...`);
   await app.listen(port, '0.0.0.0'); // Listen on all interfaces for Railway
 
-  console.log(`🚀 FlipCars Backend API running on: http://localhost:${port}/api`);
+  console.log('\n========================================');
+  console.log(`🚀 FlipCars Backend API running on: http://0.0.0.0:${port}/api`);
   console.log(`📚 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 CORS enabled for origins:`, allowedOrigins);
 }
 
-bootstrap();
+// Global error handlers to catch uncaught errors
+process.on('uncaughtException', (error) => {
+  console.error('💥 [UNCAUGHT EXCEPTION] Unhandled error:', error);
+  console.error('Stack trace:', error.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 [UNHANDLED REJECTION] Promise rejection:', reason);
+  console.error('Promise:', promise);
+  process.exit(1);
+});
+
+// Start application with error handling
+bootstrap().catch((error) => {
+  console.error('💥 [BOOTSTRAP ERROR] Failed to start application:', error);
+  console.error('Stack trace:', error.stack);
+  process.exit(1);
+});
