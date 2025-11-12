@@ -40,10 +40,10 @@ interface Step2bWarrantyDocsProps {
 
 export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarrantyDocsProps) {
   const [policyFile, setPolicyFile] = useState<File | null>(null);
-  const [vinFile, setVinFile] = useState<File | null>(null);
-  const [odometerFile, setOdometerFile] = useState<File | null>(null);
   const [policyUrl, setPolicyUrl] = useState<string | null>(null);
+  const [vinFile, setVinFile] = useState<File | null>(null);
   const [vinUrl, setVinUrl] = useState<string | null>(null);
+  const [odometerFile, setOdometerFile] = useState<File | null>(null);
   const [odometerUrl, setOdometerUrl] = useState<string | null>(null);
   const [uploadingFile, setUploadingFile] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string>('');
@@ -85,8 +85,6 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     const file = event.target.files?.[0];
     if (!file) return;
 
-    console.log(`[Step2bWarrantyDocs] 📄 File selected: ${file.name} (${fileType})`);
-
     // Validate file type
     const validTypes = fileType === 'policy' 
       ? ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -103,21 +101,17 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
       return;
     }
 
-    // Upload file to server
+    // Show uploading state
     setUploadingFile(fileType);
     setUploadError('');
 
     try {
-      console.log(`[Step2bWarrantyDocs] ⬆️  Uploading ${fileType}...`);
-      
-      // Import upload service
+      // Upload to server
       const { uploadService } = await import('@/lib/api/upload.service');
       const response = await uploadService.uploadPhoto(file);
       const photoUrl = response.data.url;
-      
-      console.log(`[Step2bWarrantyDocs] ✅ Upload successful: ${photoUrl}`);
 
-      // Update state based on file type
+      // Store both file and URL
       switch (fileType) {
         case 'policy':
           setPolicyFile(file);
@@ -136,24 +130,9 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           break;
       }
     } catch (error) {
-      console.error(`[Step2bWarrantyDocs] ❌ Upload failed:`, error);
+      console.error(`Error uploading ${fileType}:`, error);
       setUploadError(`Failed to upload ${fileType}. Please try again.`);
-      
-      // Clear file on error
-      switch (fileType) {
-        case 'policy':
-          setPolicyFile(null);
-          setPolicyUrl(null);
-          break;
-        case 'vin':
-          setVinFile(null);
-          setVinUrl(null);
-          break;
-        case 'odometer':
-          setOdometerFile(null);
-          setOdometerUrl(null);
-          break;
-      }
+      alert(`Failed to upload ${fileType}. Please try again.`);
     } finally {
       setUploadingFile(null);
     }
@@ -169,19 +148,12 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
   };
 
   const onSubmit = (data: WarrantyDocsFormData) => {
-    console.log('[Step2bWarrantyDocs] 📝 Submitting warranty docs:', {
-      policyUrl,
-      vinUrl,
-      odometerUrl,
-      selectedIssues: data.selectedIssues,
-    });
-
-    // Pass uploaded URLs instead of file objects
+    // Pass URLs (not File objects) to the next step
     onNext({
       warrantyDocs: {
-        policyDocumentUrl: policyUrl,
-        vinPhotoUrl: vinUrl,
-        odometerPhotoUrl: odometerUrl,
+        policyDocument: policyUrl || undefined,
+        vinPhoto: vinUrl || undefined,
+        odometerPhoto: odometerUrl || undefined,
         selectedIssues: data.selectedIssues,
         symptomsDescription: data.symptomsDescription,
       },
@@ -263,49 +235,42 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     fileType: 'policy' | 'vin' | 'odometer';
     accept: string;
   }) => {
-    const isUploading = uploadingFile === fileType;
     const isPDF = file?.type === 'application/pdf';
+    const isUploading = uploadingFile === fileType;
     
     return (
       <div className="space-y-1">
-        <label className={`relative flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-lg transition-colors overflow-hidden ${
-          isUploading 
-            ? 'border-gold bg-gold/5 cursor-wait' 
-            : file 
-            ? 'border-green-500 bg-green-50 cursor-pointer group'
-            : 'border-neutral-200 cursor-pointer hover:border-gold hover:bg-gold/5 bg-white'
-        }`}>
-          {isUploading ? (
-            <div className="flex flex-col items-center justify-center p-3 text-center">
-              <div className="w-6 h-6 border-3 border-gold border-t-transparent rounded-full animate-spin mb-1" />
-              <p className="text-[10px] text-neutral-600 font-medium">Uploading...</p>
-            </div>
-          ) : file && photoUrl ? (
+        <label className="relative group flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors bg-white overflow-hidden hover:border-gold hover:bg-gold/5">
+          {file && photoUrl ? (
             <>
-              {/* Show image preview for images */}
+              {/* Show image preview or PDF icon */}
               {!isPDF ? (
                 <img 
                   src={photoUrl} 
-                  alt={title} 
+                  alt={title}
                   className="w-full h-full object-cover"
                 />
               ) : (
-                /* Show PDF icon for PDFs */
-                <div className="flex flex-col items-center justify-center p-3 text-center">
-                  <svg className="w-12 h-12 text-red-600 mb-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18.5,9H13V3.5L18.5,9M6,20V4H12V10H18V20H6Z" />
+                <div className="flex flex-col items-center justify-center p-3">
+                  <svg className="w-12 h-12 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                    <text x="12" y="16" fontSize="4" fill="currentColor" textAnchor="middle" fontWeight="bold">PDF</text>
                   </svg>
-                  <p className="text-[9px] text-neutral-700 font-medium">PDF Document</p>
                 </div>
               )}
               
-              {/* Overlay with checkmark and filename */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2">
-                <Check className="w-6 h-6 text-green-400 mb-1" />
-                <p className="text-[9px] text-white font-medium text-center truncate max-w-full px-1">{file.name}</p>
-                <p className="text-[8px] text-green-400 mt-0.5">✓ Uploaded - Click to replace</p>
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 p-2">
+                <Check className="w-6 h-6 text-green-400" />
+                <p className="text-[10px] text-white font-medium text-center truncate max-w-full">{file.name}</p>
+                <p className="text-[9px] text-green-300">✓ Uploaded - Click to replace</p>
               </div>
             </>
+          ) : isUploading ? (
+            <div className="flex flex-col items-center justify-center p-3 text-center">
+              <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin mb-2"></div>
+              <p className="text-[10px] text-neutral-600">Uploading...</p>
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center p-3 text-center">
               {diagram}
@@ -362,17 +327,6 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
       </div>
-
-      {/* Upload Error Message */}
-      {uploadError && (
-        <div className="flex items-start gap-2 p-2.5 bg-red-50 border border-red-200 rounded-lg">
-          <AlertCircle className="w-3.5 h-3.5 text-red-600 mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <p className="text-[10px] text-red-900 font-medium">Upload Error</p>
-            <p className="text-[9px] text-red-800 mt-0.5">{uploadError}</p>
-          </div>
-        </div>
-      )}
 
       {/* Issue Selection */}
       <div className="space-y-2">

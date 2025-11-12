@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Calendar, Info } from 'lucide-react';
+import { Calendar, Info, Wallet, HelpCircle } from 'lucide-react';
 import Image from 'next/image';
 import {
   Step2BodyshopFormData,
@@ -15,31 +15,31 @@ import { EstimateRequest, INSURANCE_COMPANIES, WARRANTY_COMPANIES, ServiceType }
 import { Button } from '@/components/ui/Button';
 import { formatDateDisplay, formatDateInput, getAvailableDates, getAvailableTimeSlots } from '@/lib/utils/calendar';
 
-// Map insurance companies to logo filenames
+// Map insurance companies to logo URLs from Supabase Storage
 const getInsuranceLogo = (company: string): string | null => {
   const logoMap: Record<string, string> = {
-    'Allstate': '/images/insurance-allstate.png',
-    'American Family': '/images/insurance-american-family.png',
-    'Nationwide': '/images/insurance-nationwide.png',
-    'Progressive': '/images/insurance-progressive.png',
-    'State Farm': '/images/insurance-statefarm.png',
-    'USAA': '/images/insurance-usaa.png',
-    'Geico': '/images/insurance-geico.png',
-    'Liberty Mutual': '/images/insurance-liberty-mutual.png',
-    'Farmers Insurance': '/images/insurance-farmers.png',
-    'Travelers': '/images/insurance-travelers.png',
-    'Erie Insurance': '/images/insurance-erie.png',
+    'Allstate': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-allstate.png',
+    'American Family': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-american-family.png',
+    'Erie Insurance': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-erie.png',
+    'Farmers Insurance': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-farmers.png',
+    'Geico': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-geico.png',
+    'Liberty Mutual': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-liberty-mutual.png',
+    'Nationwide': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-nationwide.png',
+    'Progressive': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-progressive.png',
+    'State Farm': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-statefarm.png',
+    'Travelers': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-travelers.png',
+    'USAA': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-usaa.png',
   };
   return logoMap[company] || null;
 };
 
-// Map warranty companies to logo filenames
+// Map warranty companies to logo URLs from Supabase Storage
 const getWarrantyLogo = (company: string): string | null => {
   const logoMap: Record<string, string> = {
-    'CARCHEX': '/images/warranty-carchex.png',
-    'CarShield': '/images/warranty-carshield.jpg',
-    'Endurance': '/images/warranty-endurance.png',
-    'Protect My Car': '/images/warranty-protect-my-car.png',
+    'CARCHEX': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-carchex.png',
+    'CarShield': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-carshield.jpg',
+    'Endurance': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-endurance.png',
+    'Protect My Car': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-protect-my-car.png',
   };
   return logoMap[company] || null;
 };
@@ -165,6 +165,28 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                         sizes="(max-width: 768px) 50vw, 33vw"
                       />
                     </div>
+                    <span className={`text-[10px] text-center font-medium leading-tight ${
+                      isSelected ? 'text-black' : 'text-neutral-700'
+                    }`}>
+                      {company}
+                    </span>
+                  </>
+                ) : company === 'Private (Self-Pay)' ? (
+                  <>
+                    <Wallet className={`w-8 h-8 mb-1 ${
+                      isSelected ? 'text-gold' : 'text-neutral-500'
+                    }`} />
+                    <span className={`text-[10px] text-center font-medium leading-tight ${
+                      isSelected ? 'text-black' : 'text-neutral-700'
+                    }`}>
+                      {company}
+                    </span>
+                  </>
+                ) : company === 'Other' ? (
+                  <>
+                    <HelpCircle className={`w-8 h-8 mb-1 ${
+                      isSelected ? 'text-gold' : 'text-neutral-500'
+                    }`} />
                     <span className={`text-[10px] text-center font-medium leading-tight ${
                       isSelected ? 'text-black' : 'text-neutral-700'
                     }`}>
