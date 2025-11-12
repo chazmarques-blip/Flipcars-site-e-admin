@@ -243,15 +243,37 @@ export default function LeadsPage() {
     {
       key: 'company',
       label: 'Company',
-      render: (lead) => (
-        <div className="text-xs">
-          {lead.insuranceCompany ? (
-            <span className="text-gray-700">{capitalizeFirst(lead.insuranceCompany)}</span>
-          ) : (
+      render: (lead) => {
+        // Show insurance provider if has insurance
+        if (lead.hasInsurance && lead.insuranceProvider) {
+          return (
+            <div className="text-xs">
+              <span className="text-gray-700">{capitalizeFirst(lead.insuranceProvider)}</span>
+            </div>
+          );
+        }
+        
+        // TODO: Show warranty company when field is added
+        // For now, check notes for warranty company names
+        if (lead.notes) {
+          const notesLower = lead.notes.toLowerCase();
+          if (notesLower.includes('carchex')) {
+            return <div className="text-xs"><span className="text-gray-700">CarChex</span></div>;
+          }
+          if (notesLower.includes('carshield')) {
+            return <div className="text-xs"><span className="text-gray-700">CarShield</span></div>;
+          }
+          if (notesLower.includes('endurance')) {
+            return <div className="text-xs"><span className="text-gray-700">Endurance</span></div>;
+          }
+        }
+        
+        return (
+          <div className="text-xs">
             <span className="text-gray-400">—</span>
-          )}
-        </div>
-      ),
+          </div>
+        );
+      },
     },
     {
       key: 'aiQualificationScore',

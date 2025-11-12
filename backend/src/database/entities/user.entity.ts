@@ -76,8 +76,9 @@ export class User {
   })
   roles: Role[];
 
-  @OneToMany(() => Lead, (lead) => lead.assignedHumanAgent)
-  assignedLeads: Lead[];
+  // TEMPORARY: Disabled until schema is fixed
+  // @OneToMany(() => Lead, (lead) => lead.assignedHumanAgent)
+  // assignedLeads: Lead[];
 
   @OneToMany(() => Claim, (claim) => claim.assignedAgent)
   assignedClaims: Claim[];

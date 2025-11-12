@@ -51,7 +51,8 @@ export interface Lead {
   accidentDate?: string;
   accidentDescription?: string;
   hasInsurance: boolean;
-  insuranceCompany?: string;
+  insuranceProvider?: string; // From backend (same as insuranceCompany)
+  insuranceCompany?: string; // Legacy field name
   insurancePolicyNumber?: string;
   claimNumber?: string;
   adjusterName?: string;
@@ -61,6 +62,7 @@ export interface Lead {
   status: LeadStatus;
   priority: LeadPriority;
   source?: string;
+  notes?: string;
   
   // Assignment
   assignedToId?: string | null;

@@ -7,13 +7,16 @@ initializeIPv4Enforcement();
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import dataSource from './database/data-source';
+import { getDataSource } from './database/data-source';
 import { runSeeds } from './database/seeds/run-seeds';
 
 async function runMigrations() {
   console.log('\n========================================');
   console.log('📦 Running Database Migrations...');
   console.log('========================================\n');
+
+  // Get data source with IPv4-resolved hostname (declare outside try for finally block)
+  const dataSource = await getDataSource();
 
   try {
     // Initialize the data source

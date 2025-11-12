@@ -1,6 +1,8 @@
 // IMPORTANT: Force IPv4 DNS resolution FIRST - before any other imports
 // This MUST be the first import to patch DNS before database connections
 import { initializeIPv4Enforcement } from '../utils/force-ipv4';
+import * as dns from 'dns';
+import { promisify } from 'util';
 
 // Initialize IPv4 enforcement (safe to call multiple times)
 initializeIPv4Enforcement();
@@ -9,14 +11,84 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 import { join } from 'path';
 
+// Promisified DNS lookup with IPv4 forcing
+const dnsLookup = promisify(dns.lookup);
+
 // Load environment variables
 config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
 
 /**
- * Build database configuration
- * DNS IPv4 enforcement is handled by force-ipv4.ts import
+ * Resolve hostname to IPv4 address manually
+ * This ensures we ALWAYS connect via IPv4, bypassing any IPv6 attempts
  */
-const buildDatabaseConfig = (): DataSourceOptions => {
+async function resolveHostnameToIPv4(hostname: string): Promise<string> {
+  try {
+    console.log(`🔍 [IPv4 Resolver] Resolving hostname: ${hostname}`);
+    
+    // Force IPv4 lookup (family: 4)
+    const result = await dnsLookup(hostname, { family: 4 });
+    const ipv4Address = typeof result === 'string' ? result : result.address;
+    
+    console.log(`✅ [IPv4 Resolver] Resolved ${hostname} → ${ipv4Address}`);
+    return ipv4Address;
+  } catch (error: any) {
+    console.error(`❌ [IPv4 Resolver] Failed to resolve ${hostname}`);
+    console.error(`   Error code: ${error?.code || 'unknown'}`);
+    console.error(`   Error message: ${error?.message || 'unknown'}`);
+    console.error(`   Syscall: ${error?.syscall || 'unknown'}`);
+    
+    // ENOTFOUND means DNS couldn't find the hostname
+    if (error?.code === 'ENOTFOUND') {
+      console.error(`\n⚠️  DNS LOOKUP FAILED - Hostname not found!`);
+      console.error(`   This could mean:`);
+      console.error(`   1. Hostname is incorrect in DATABASE_URL`);
+      console.error(`   2. Hostname is private/internal only`);
+      console.error(`   3. DNS server cannot resolve this hostname`);
+      console.error(`\n💡 Solution: Check your DATABASE_URL environment variable`);
+    }
+    
+    throw error;
+  }
+}
+
+/**
+ * Parse DATABASE_URL and replace hostname with IPv4 address
+ */
+async function replaceHostnameWithIPv4(databaseUrl: string): Promise<string> {
+  try {
+    const url = new URL(databaseUrl);
+    const originalHostname = url.hostname;
+    
+    // If already an IP address, return as-is
+    if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(originalHostname)) {
+      console.log(`✅ [IPv4 Resolver] Already IPv4 address: ${originalHostname}`);
+      return databaseUrl;
+    }
+    
+    // Resolve hostname to IPv4
+    const ipv4Address = await resolveHostnameToIPv4(originalHostname);
+    
+    // Replace hostname with IPv4 address
+    url.hostname = ipv4Address;
+    const newUrl = url.toString();
+    
+    console.log(`🔄 [IPv4 Resolver] Replaced hostname in DATABASE_URL`);
+    console.log(`   Original: ${originalHostname}`);
+    console.log(`   IPv4: ${ipv4Address}`);
+    
+    return newUrl;
+  } catch (error) {
+    console.error(`❌ [IPv4 Resolver] Failed to parse DATABASE_URL:`, error);
+    // Return original URL as fallback
+    return databaseUrl;
+  }
+}
+
+/**
+ * Build database configuration
+ * DNS IPv4 enforcement + manual hostname resolution for Railway compatibility
+ */
+const buildDatabaseConfig = async (): Promise<DataSourceOptions> => {
   const baseConfig = {
     type: 'postgres' as const,
     entities: [join(__dirname, 'entities', '*.entity{.ts,.js}')],
@@ -28,12 +100,26 @@ const buildDatabaseConfig = (): DataSourceOptions => {
 
   // If DATABASE_URL is provided (Railway/production), use it
   if (process.env.DATABASE_URL) {
-    console.log('🔍 Using DATABASE_URL for connection...');
-    console.log('   (IPv4 enforcement active via DNS patch)');
+    console.log('\n========================================');
+    console.log('🔍 Using DATABASE_URL for connection');
+    console.log('========================================');
+    
+    // LOG DATABASE_URL (without password for security)
+    try {
+      const url = new URL(process.env.DATABASE_URL);
+      url.password = '***';
+      console.log(`📋 DATABASE_URL: ${url.toString()}`);
+      console.log(`🌐 Hostname to resolve: ${new URL(process.env.DATABASE_URL).hostname}`);
+    } catch (e) {
+      console.log('⚠️  Could not parse DATABASE_URL');
+    }
+    
+    // CRITICAL: Replace hostname with IPv4 address to force IPv4 connection
+    const ipv4DatabaseUrl = await replaceHostnameWithIPv4(process.env.DATABASE_URL);
     
     return {
       ...baseConfig,
-      url: process.env.DATABASE_URL,
+      url: ipv4DatabaseUrl, // Use IPv4-resolved URL
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       extra: {
         // Connection timeout configurations
@@ -59,10 +145,37 @@ const buildDatabaseConfig = (): DataSourceOptions => {
   };
 };
 
-// Build config
-export const dataSourceOptions: DataSourceOptions = buildDatabaseConfig();
+// Build config asynchronously (requires hostname resolution)
+let dataSourceOptionsPromise: Promise<DataSourceOptions> | null = null;
+let dataSourceInstance: DataSource | null = null;
 
-// Create data source
-const dataSource = new DataSource(dataSourceOptions);
+/**
+ * Get or create data source options (cached)
+ */
+export async function getDataSourceOptions(): Promise<DataSourceOptions> {
+  if (!dataSourceOptionsPromise) {
+    dataSourceOptionsPromise = buildDatabaseConfig();
+  }
+  return dataSourceOptionsPromise;
+}
+
+/**
+ * Get or create data source instance (singleton)
+ */
+export async function getDataSource(): Promise<DataSource> {
+  if (!dataSourceInstance) {
+    const options = await getDataSourceOptions();
+    dataSourceInstance = new DataSource(options);
+  }
+  return dataSourceInstance;
+}
+
+// For backward compatibility: export synchronous placeholder
+// (actual initialization happens asynchronously via getDataSource())
+export const dataSourceOptions = buildDatabaseConfig();
+const dataSource = new DataSource({
+  type: 'postgres',
+  // Placeholder - will be replaced by getDataSource()
+} as any);
 
 export default dataSource;

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { dataSourceOptions } from '../data-source';
+import { getDataSource, getDataSourceOptions } from '../data-source';
 import { seedRolesAndPermissions } from './01-roles-permissions.seed';
 import { seedUsers } from './02-users.seed';
 import { seedKnowledgeBase } from './03-knowledge-base.seed';
@@ -16,8 +16,12 @@ export async function runSeeds(existingDataSource?: DataSource) {
   try {
     // If no existing data source, create and initialize one
     if (!dataSource) {
-      dataSource = new DataSource(dataSourceOptions);
-      await dataSource.initialize();
+      // Use async getDataSource() which resolves hostname to IPv4
+      dataSource = await getDataSource();
+      
+      if (!dataSource.isInitialized) {
+        await dataSource.initialize();
+      }
       shouldCloseConnection = true;
       console.log('✅ Database connection established\n');
     }
