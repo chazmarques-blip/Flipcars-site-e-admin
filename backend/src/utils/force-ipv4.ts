@@ -118,11 +118,20 @@ export function patchGlobalDNSLookup(): void {
   console.log('✅ [DNS Patch] Global DNS lookup patched to force IPv4');
 }
 
+// Guard to prevent double initialization
+let isInitialized = false;
+
 /**
  * Initialize IPv4 enforcement
- * Call this ONCE at application startup, before any database connections
+ * Safe to call multiple times - only initializes once
  */
 export function initializeIPv4Enforcement(): void {
+  // Skip if already initialized
+  if (isInitialized) {
+    console.log('⏭️  IPv4 enforcement already initialized, skipping...');
+    return;
+  }
+
   console.log('\n========================================');
   console.log('🌐 Initializing IPv4 Enforcement');
   console.log('========================================\n');
@@ -136,9 +145,10 @@ export function initializeIPv4Enforcement(): void {
 
   console.log('\n✅ IPv4 enforcement initialized successfully');
   console.log('   All DNS lookups will now return IPv4 addresses only\n');
+  
+  // Mark as initialized
+  isInitialized = true;
 }
 
-// Auto-initialize when imported (for production safety)
-if (process.env.NODE_ENV === 'production') {
-  initializeIPv4Enforcement();
-}
+// Manual initialization only (called from main.ts)
+// Removed auto-initialization to avoid potential issues during module loading

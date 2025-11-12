@@ -1,6 +1,9 @@
 // IMPORTANT: Force IPv4 DNS resolution FIRST - before any other imports
 // This MUST be the first import to patch DNS before database connections
-import '../utils/force-ipv4';
+import { initializeIPv4Enforcement } from '../utils/force-ipv4';
+
+// Initialize IPv4 enforcement (safe to call multiple times)
+initializeIPv4Enforcement();
 
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
