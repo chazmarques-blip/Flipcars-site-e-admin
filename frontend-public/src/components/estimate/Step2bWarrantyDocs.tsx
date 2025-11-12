@@ -42,6 +42,11 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
   const [policyFile, setPolicyFile] = useState<File | null>(null);
   const [vinFile, setVinFile] = useState<File | null>(null);
   const [odometerFile, setOdometerFile] = useState<File | null>(null);
+  const [policyUrl, setPolicyUrl] = useState<string | null>(null);
+  const [vinUrl, setVinUrl] = useState<string | null>(null);
+  const [odometerUrl, setOdometerUrl] = useState<string | null>(null);
+  const [uploadingFile, setUploadingFile] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string>('');
   const [selectedIssues, setSelectedIssues] = useState<string[]>(
     (initialData.warrantyDocs?.selectedIssues as string[]) || []
   );
@@ -73,12 +78,14 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     });
   }, [selectedIssues, symptomsDescription, errors, isValid]);
 
-  const handleFileChange = (
+  const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     fileType: 'policy' | 'vin' | 'odometer'
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    console.log(`[Step2bWarrantyDocs] 📄 File selected: ${file.name} (${fileType})`);
 
     // Validate file type
     const validTypes = fileType === 'policy' 
@@ -96,19 +103,59 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
       return;
     }
 
-    switch (fileType) {
-      case 'policy':
-        setPolicyFile(file);
-        setValue('policyDocument', file, { shouldValidate: true });
-        break;
-      case 'vin':
-        setVinFile(file);
-        setValue('vinPhoto', file, { shouldValidate: true });
-        break;
-      case 'odometer':
-        setOdometerFile(file);
-        setValue('odometerPhoto', file, { shouldValidate: true });
-        break;
+    // Upload file to server
+    setUploadingFile(fileType);
+    setUploadError('');
+
+    try {
+      console.log(`[Step2bWarrantyDocs] ⬆️  Uploading ${fileType}...`);
+      
+      // Import upload service
+      const { uploadService } = await import('@/lib/api/upload.service');
+      const response = await uploadService.uploadPhoto(file);
+      const photoUrl = response.data.url;
+      
+      console.log(`[Step2bWarrantyDocs] ✅ Upload successful: ${photoUrl}`);
+
+      // Update state based on file type
+      switch (fileType) {
+        case 'policy':
+          setPolicyFile(file);
+          setPolicyUrl(photoUrl);
+          setValue('policyDocument', file, { shouldValidate: true });
+          break;
+        case 'vin':
+          setVinFile(file);
+          setVinUrl(photoUrl);
+          setValue('vinPhoto', file, { shouldValidate: true });
+          break;
+        case 'odometer':
+          setOdometerFile(file);
+          setOdometerUrl(photoUrl);
+          setValue('odometerPhoto', file, { shouldValidate: true });
+          break;
+      }
+    } catch (error) {
+      console.error(`[Step2bWarrantyDocs] ❌ Upload failed:`, error);
+      setUploadError(`Failed to upload ${fileType}. Please try again.`);
+      
+      // Clear file on error
+      switch (fileType) {
+        case 'policy':
+          setPolicyFile(null);
+          setPolicyUrl(null);
+          break;
+        case 'vin':
+          setVinFile(null);
+          setVinUrl(null);
+          break;
+        case 'odometer':
+          setOdometerFile(null);
+          setOdometerUrl(null);
+          break;
+      }
+    } finally {
+      setUploadingFile(null);
     }
   };
 
@@ -122,13 +169,19 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
   };
 
   const onSubmit = (data: WarrantyDocsFormData) => {
-    // In a real app, you would upload files to a server here
-    // For now, we'll just pass the data forward
+    console.log('[Step2bWarrantyDocs] 📝 Submitting warranty docs:', {
+      policyUrl,
+      vinUrl,
+      odometerUrl,
+      selectedIssues: data.selectedIssues,
+    });
+
+    // Pass uploaded URLs instead of file objects
     onNext({
       warrantyDocs: {
-        policyDocument: policyFile,
-        vinPhoto: vinFile,
-        odometerPhoto: odometerFile,
+        policyDocumentUrl: policyUrl,
+        vinPhotoUrl: vinUrl,
+        odometerPhotoUrl: odometerUrl,
         selectedIssues: data.selectedIssues,
         symptomsDescription: data.symptomsDescription,
       },
@@ -207,30 +260,47 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     file: File | null;
     fileType: 'policy' | 'vin' | 'odometer';
     accept: string;
-  }) => (
-    <div className="space-y-1">
-      <label className="relative flex flex-col items-center justify-center h-32 border-2 border-dashed border-neutral-200 rounded-lg cursor-pointer hover:border-gold hover:bg-gold/5 transition-colors bg-white overflow-hidden">
-        {file ? (
-          <div className="flex flex-col items-center justify-center p-3 text-center">
-            <Check className="w-6 h-6 text-green-600 mb-1" />
-            <p className="text-[10px] text-green-600 font-medium truncate max-w-full px-2">{file.name}</p>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center p-3 text-center">
-            {diagram}
-            <p className="text-[10px] text-neutral-600 font-medium mt-1">{title}</p>
-            <p className="text-gold text-[9px] mt-0.5">Required</p>
-          </div>
-        )}
-        <input
-          type="file"
-          className="hidden"
-          accept={accept}
-          onChange={(e) => handleFileChange(e, fileType)}
-        />
-      </label>
-    </div>
-  );
+  }) => {
+    const isUploading = uploadingFile === fileType;
+    
+    return (
+      <div className="space-y-1">
+        <label className={`relative flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-lg transition-colors bg-white overflow-hidden ${
+          isUploading 
+            ? 'border-gold bg-gold/5 cursor-wait' 
+            : file 
+            ? 'border-green-500 bg-green-50 cursor-default'
+            : 'border-neutral-200 cursor-pointer hover:border-gold hover:bg-gold/5'
+        }`}>
+          {isUploading ? (
+            <div className="flex flex-col items-center justify-center p-3 text-center">
+              <div className="w-6 h-6 border-3 border-gold border-t-transparent rounded-full animate-spin mb-1" />
+              <p className="text-[10px] text-neutral-600 font-medium">Uploading...</p>
+            </div>
+          ) : file ? (
+            <div className="flex flex-col items-center justify-center p-3 text-center">
+              <Check className="w-6 h-6 text-green-600 mb-1" />
+              <p className="text-[10px] text-green-600 font-medium truncate max-w-full px-2">{file.name}</p>
+              <p className="text-[9px] text-green-600 mt-0.5">✓ Uploaded</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-3 text-center">
+              {diagram}
+              <p className="text-[10px] text-neutral-600 font-medium mt-1">{title}</p>
+              <p className="text-gold text-[9px] mt-0.5">Required</p>
+            </div>
+          )}
+          <input
+            type="file"
+            className="hidden"
+            accept={accept}
+            onChange={(e) => handleFileChange(e, fileType)}
+            disabled={isUploading}
+          />
+        </label>
+      </div>
+    );
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -266,6 +336,17 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
       </div>
+
+      {/* Upload Error Message */}
+      {uploadError && (
+        <div className="flex items-start gap-2 p-2.5 bg-red-50 border border-red-200 rounded-lg">
+          <AlertCircle className="w-3.5 h-3.5 text-red-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-[10px] text-red-900 font-medium">Upload Error</p>
+            <p className="text-[9px] text-red-800 mt-0.5">{uploadError}</p>
+          </div>
+        </div>
+      )}
 
       {/* Issue Selection */}
       <div className="space-y-2">
