@@ -31,8 +31,22 @@ async function resolveHostnameToIPv4(hostname: string): Promise<string> {
     
     console.log(`✅ [IPv4 Resolver] Resolved ${hostname} → ${ipv4Address}`);
     return ipv4Address;
-  } catch (error) {
-    console.error(`❌ [IPv4 Resolver] Failed to resolve ${hostname}:`, error);
+  } catch (error: any) {
+    console.error(`❌ [IPv4 Resolver] Failed to resolve ${hostname}`);
+    console.error(`   Error code: ${error?.code || 'unknown'}`);
+    console.error(`   Error message: ${error?.message || 'unknown'}`);
+    console.error(`   Syscall: ${error?.syscall || 'unknown'}`);
+    
+    // ENOTFOUND means DNS couldn't find the hostname
+    if (error?.code === 'ENOTFOUND') {
+      console.error(`\n⚠️  DNS LOOKUP FAILED - Hostname not found!`);
+      console.error(`   This could mean:`);
+      console.error(`   1. Hostname is incorrect in DATABASE_URL`);
+      console.error(`   2. Hostname is private/internal only`);
+      console.error(`   3. DNS server cannot resolve this hostname`);
+      console.error(`\n💡 Solution: Check your DATABASE_URL environment variable`);
+    }
+    
     throw error;
   }
 }
@@ -89,6 +103,16 @@ const buildDatabaseConfig = async (): Promise<DataSourceOptions> => {
     console.log('\n========================================');
     console.log('🔍 Using DATABASE_URL for connection');
     console.log('========================================');
+    
+    // LOG DATABASE_URL (without password for security)
+    try {
+      const url = new URL(process.env.DATABASE_URL);
+      url.password = '***';
+      console.log(`📋 DATABASE_URL: ${url.toString()}`);
+      console.log(`🌐 Hostname to resolve: ${new URL(process.env.DATABASE_URL).hostname}`);
+    } catch (e) {
+      console.log('⚠️  Could not parse DATABASE_URL');
+    }
     
     // CRITICAL: Replace hostname with IPv4 address to force IPv4 connection
     const ipv4DatabaseUrl = await replaceHostnameWithIPv4(process.env.DATABASE_URL);
