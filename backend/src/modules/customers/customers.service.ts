@@ -38,8 +38,9 @@ export class CustomersService {
     const queryBuilder = this.customerRepository
       .createQueryBuilder('customer')
       .leftJoinAndSelect('customer.user', 'user')
-      .leftJoinAndSelect('customer.vehicles', 'vehicles')
-      .leftJoinAndSelect('customer.leads', 'leads');
+      .leftJoinAndSelect('customer.vehicles', 'vehicles');
+      // TEMPORARY: Disabled until schema is fixed
+      // .leftJoinAndSelect('customer.leads', 'leads');
 
     // Search by name, email, or phone
     if (search) {
@@ -212,11 +213,12 @@ export class CustomersService {
     const customer = await this.findOne(id);
 
     // Check if customer has active leads or claims
-    if (customer.leads && customer.leads.length > 0) {
-      throw new BadRequestException(
-        'Cannot delete customer with existing leads. Archive instead.',
-      );
-    }
+    // TEMPORARY: Disabled until schema is fixed
+    // if (customer.leads && customer.leads.length > 0) {
+    //   throw new BadRequestException(
+    //     'Cannot delete customer with existing leads. Archive instead.',
+    //   );
+    // }
 
     if (customer.claims && customer.claims.length > 0) {
       throw new BadRequestException(
@@ -235,11 +237,13 @@ export class CustomersService {
   async getStatistics() {
     const totalCustomers = await this.customerRepository.count();
 
-    const customersWithLeads = await this.customerRepository
-      .createQueryBuilder('customer')
-      .leftJoin('customer.leads', 'leads')
-      .where('leads.id IS NOT NULL')
-      .getCount();
+    // TEMPORARY: Disabled until schema is fixed
+    const customersWithLeads = 0;
+    // const customersWithLeads = await this.customerRepository
+    //   .createQueryBuilder('customer')
+    //   .leftJoin('customer.leads', 'leads')
+    //   .where('leads.id IS NOT NULL')
+    //   .getCount();
 
     const customersWithClaims = await this.customerRepository
       .createQueryBuilder('customer')
@@ -280,7 +284,8 @@ export class CustomersService {
         phone: customer.phone,
         createdAt: customer.createdAt,
       },
-      leads: customer.leads || [],
+      // TEMPORARY: Disabled until schema is fixed
+      leads: [], // customer.leads || [],
       vehicles: customer.vehicles || [],
       claims: customer.claims || [],
     };

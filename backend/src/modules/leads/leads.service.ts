@@ -83,10 +83,11 @@ export class LeadsService {
     } = query;
 
     const queryBuilder = this.leadRepository
-      .createQueryBuilder('lead')
-      .leftJoinAndSelect('lead.customer', 'customer')
-      .leftJoinAndSelect('lead.vehicle', 'vehicle')
-      .leftJoinAndSelect('lead.assignedHumanAgent', 'agent');
+      .createQueryBuilder('lead');
+      // TEMPORARY: Joins disabled until we fix the schema mismatch
+      // .leftJoinAndSelect('lead.customer', 'customer')
+      // .leftJoinAndSelect('lead.vehicle', 'vehicle')
+      // .leftJoinAndSelect('lead.assignedHumanAgent', 'agent');
 
     // Search by reference number, name, email, or phone
     if (search) {
@@ -115,11 +116,12 @@ export class LeadsService {
     }
 
     // Filter by assigned agent
-    if (assignedAgentId) {
-      queryBuilder.andWhere('lead.assignedHumanAgentId = :assignedAgentId', {
-        assignedAgentId,
-      });
-    }
+    // TEMPORARY: Disabled until schema is fixed
+    // if (assignedAgentId) {
+    //   queryBuilder.andWhere('lead.assignedHumanAgentId = :assignedAgentId', {
+    //     assignedAgentId,
+    //   });
+    // }
 
     // Filter by AI score range
     if (minAiScore !== undefined && maxAiScore !== undefined) {
@@ -165,7 +167,8 @@ export class LeadsService {
   async findOne(id: string): Promise<Lead> {
     const lead = await this.leadRepository.findOne({
       where: { id },
-      relations: ['customer', 'vehicle', 'assignedHumanAgent'],
+      // TEMPORARY: Relations disabled until we fix the schema mismatch
+      // relations: ['customer', 'vehicle', 'assignedHumanAgent'],
     });
 
     if (!lead) {
@@ -181,7 +184,8 @@ export class LeadsService {
   async findByReferenceNumber(referenceNumber: string): Promise<Lead> {
     const lead = await this.leadRepository.findOne({
       where: { referenceNumber },
-      relations: ['customer', 'vehicle', 'assignedHumanAgent'],
+      // TEMPORARY: Relations disabled until we fix the schema mismatch
+      // relations: ['customer', 'vehicle', 'assignedHumanAgent'],
     });
 
     if (!lead) {
@@ -200,59 +204,60 @@ export class LeadsService {
     // Generate reference number
     const referenceNumber = await this.generateReferenceNumber();
 
-    // Handle customer - check if customer ID provided or find/create by email
-    let customerId = createLeadDto.customerId;
-    
-    if (!customerId && createLeadDto.email) {
-      // Check if customer exists by email
-      let customer = await this.customerRepository.findOne({
-        where: { email: createLeadDto.email },
-      });
-
-      // If customer doesn't exist, create one
-      if (!customer) {
-        customer = this.customerRepository.create({
-          name: createLeadDto.name,
-          email: createLeadDto.email,
-          phone: createLeadDto.phone,
-        });
-        customer = await this.customerRepository.save(customer);
-      }
-
-      customerId = customer.id;
-    }
-
-    // Handle vehicle - only create Vehicle entity if we have VIN
-    // Otherwise, just store make/model/year in lead fields directly
-    let vehicleId = createLeadDto.vehicleId;
-    
-    // Note: Vehicle entity requires VIN (unique constraint), so we only create
-    // a vehicle record when VIN is provided from the VIN decoder.
-    // For leads without VIN, vehicle info is stored in lead.vehicleMake/Model/Year fields
-    
-    // Skip vehicle entity creation for now - vehicle info stored in lead fields
-    // if (!vehicleId && customerId && createLeadDto.vehicleMake && createLeadDto.vehicleVin) {
-    //   const vehicle = this.vehicleRepository.create({
-    //     vin: createLeadDto.vehicleVin,
-    //     make: createLeadDto.vehicleMake,
-    //     model: createLeadDto.vehicleModel || '',
-    //     year: createLeadDto.vehicleYear || '',
-    //     color: createLeadDto.vehicleColor,
-    //     customerId,
+    // TEMPORARY: Customer/Vehicle/Agent handling disabled until schema is fixed
+    // // Handle customer - check if customer ID provided or find/create by email
+    // let customerId = createLeadDto.customerId;
+    // 
+    // if (!customerId && createLeadDto.email) {
+    //   // Check if customer exists by email
+    //   let customer = await this.customerRepository.findOne({
+    //     where: { email: createLeadDto.email },
     //   });
-    //   const savedVehicle = await this.vehicleRepository.save(vehicle);
-    //   vehicleId = savedVehicle.id;
+
+    //   // If customer doesn't exist, create one
+    //   if (!customer) {
+    //     customer = this.customerRepository.create({
+    //       name: createLeadDto.name,
+    //       email: createLeadDto.email,
+    //       phone: createLeadDto.phone,
+    //     });
+    //     customer = await this.customerRepository.save(customer);
+    //   }
+
+    //   customerId = customer.id;
     // }
 
-    // Validate assigned agent if provided
-    if (createLeadDto.assignedHumanAgentId) {
-      const agent = await this.userRepository.findOne({
-        where: { id: createLeadDto.assignedHumanAgentId },
-      });
-      if (!agent) {
-        throw new BadRequestException('Assigned agent not found');
-      }
-    }
+    // // Handle vehicle - only create Vehicle entity if we have VIN
+    // // Otherwise, just store make/model/year in lead fields directly
+    // let vehicleId = createLeadDto.vehicleId;
+    // 
+    // // Note: Vehicle entity requires VIN (unique constraint), so we only create
+    // // a vehicle record when VIN is provided from the VIN decoder.
+    // // For leads without VIN, vehicle info is stored in lead.vehicleMake/Model/Year fields
+    // 
+    // // Skip vehicle entity creation for now - vehicle info stored in lead fields
+    // // if (!vehicleId && customerId && createLeadDto.vehicleMake && createLeadDto.vehicleVin) {
+    // //   const vehicle = this.vehicleRepository.create({
+    // //     vin: createLeadDto.vehicleVin,
+    // //     make: createLeadDto.vehicleMake,
+    // //     model: createLeadDto.vehicleModel || '',
+    // //     year: createLeadDto.vehicleYear || '',
+    // //     color: createLeadDto.vehicleColor,
+    // //     customerId,
+    // //   });
+    // //   const savedVehicle = await this.vehicleRepository.save(vehicle);
+    // //   vehicleId = savedVehicle.id;
+    // // }
+
+    // // Validate assigned agent if provided
+    // if (createLeadDto.assignedHumanAgentId) {
+    //   const agent = await this.userRepository.findOne({
+    //     where: { id: createLeadDto.assignedHumanAgentId },
+    //   });
+    //   if (!agent) {
+    //     throw new BadRequestException('Assigned agent not found');
+    //   }
+    // }
 
     // Calculate priority from AI score if not provided
     const priority =
@@ -286,9 +291,10 @@ export class LeadsService {
       priority,
       notes: createLeadDto.notes,
       estimatedValue: createLeadDto.estimatedValue,
-      customerId,
-      vehicleId,
-      assignedHumanAgentId: createLeadDto.assignedHumanAgentId,
+      // TEMPORARY: Disabled until schema is fixed
+      // customerId,
+      // vehicleId,
+      // assignedHumanAgentId: createLeadDto.assignedHumanAgentId,
       aiQualificationScore: createLeadDto.aiQualificationScore,
       assignedAiAgent: createLeadDto.assignedAiAgent,
       aiConversationHistory: [],
@@ -334,15 +340,16 @@ export class LeadsService {
     if (updateLeadDto.estimatedValue !== undefined) lead.estimatedValue = updateLeadDto.estimatedValue;
 
     // Update assigned agent
-    if (updateLeadDto.assignedHumanAgentId) {
-      const agent = await this.userRepository.findOne({
-        where: { id: updateLeadDto.assignedHumanAgentId },
-      });
-      if (!agent) {
-        throw new BadRequestException('Assigned agent not found');
-      }
-      lead.assignedHumanAgentId = agent.id;
-    }
+    // TEMPORARY: Disabled until schema is fixed
+    // if (updateLeadDto.assignedHumanAgentId) {
+    //   const agent = await this.userRepository.findOne({
+    //     where: { id: updateLeadDto.assignedHumanAgentId },
+    //   });
+    //   if (!agent) {
+    //     throw new BadRequestException('Assigned agent not found');
+    //   }
+    //   lead.assignedHumanAgentId = agent.id;
+    // }
 
     // Update AI fields
     if (updateLeadDto.aiQualificationScore !== undefined) {
@@ -420,7 +427,8 @@ export class LeadsService {
       throw new BadRequestException('User is not an agent');
     }
 
-    lead.assignedHumanAgentId = agent.id;
+    // TEMPORARY: Disabled until schema is fixed
+    // lead.assignedHumanAgentId = agent.id;
     await this.leadRepository.save(lead);
 
     return this.findOne(id);

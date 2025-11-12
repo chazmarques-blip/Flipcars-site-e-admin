@@ -60,8 +60,9 @@ export class Customer {
   @Column({ type: 'jsonb', nullable: true, default: '[]', name: 'communication_preferences' })
   communicationPreferences: Record<string, any>;
 
-  @OneToMany(() => Lead, (lead) => lead.customer)
-  leads: Lead[];
+  // TEMPORARY: Disabled until schema is fixed
+  // @OneToMany(() => Lead, (lead) => lead.customer)
+  // leads: Lead[];
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.customer)
   vehicles: Vehicle[];

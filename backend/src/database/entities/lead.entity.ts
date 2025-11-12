@@ -34,13 +34,14 @@ export class Lead {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Customer, (customer) => customer.leads, { nullable: true })
-  @JoinColumn({ name: 'customer_id' })
-  customer: Customer;
+  // TEMPORARY: Disabled until schema is fixed
+  // @ManyToOne(() => Customer, (customer) => customer.leads, { nullable: true })
+  // @JoinColumn({ name: 'customer_id' })
+  // customer: Customer;
 
-  @Column({ type: 'uuid', nullable: true, name: 'customer_id' })
-  @Index('idx_lead_customer')
-  customerId: string;
+  // @Column({ type: 'uuid', nullable: true, name: 'customer_id' })
+  // @Index('idx_lead_customer')
+  // customerId: string;
 
   @Column({ type: 'varchar', length: 50, unique: true, name: 'reference_number' })
   @Index('idx_lead_reference')
@@ -59,12 +60,13 @@ export class Lead {
   preferredLanguage: string;
 
   // Vehicle Information
-  @ManyToOne(() => Vehicle, { nullable: true })
-  @JoinColumn({ name: 'vehicle_id' })
-  vehicle: Vehicle;
+  // TEMPORARY: Disabled until schema is fixed
+  // @ManyToOne(() => Vehicle, { nullable: true })
+  // @JoinColumn({ name: 'vehicle_id' })
+  // vehicle: Vehicle;
 
-  @Column({ type: 'uuid', nullable: true, name: 'vehicle_id' })
-  vehicleId: string;
+  // @Column({ type: 'uuid', nullable: true, name: 'vehicle_id' })
+  // vehicleId: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true, name: 'vehicle_year' })
   vehicleYear: string;
@@ -122,13 +124,14 @@ export class Lead {
   assignedAiAgent: string;
 
   // Human Assignment
-  @ManyToOne(() => User, (user) => user.assignedLeads, { nullable: true })
-  @JoinColumn({ name: 'assigned_human_agent_id' })
-  assignedHumanAgent: User;
+  // TEMPORARY: Disabled until schema is fixed
+  // @ManyToOne(() => User, (user) => user.assignedLeads, { nullable: true })
+  // @JoinColumn({ name: 'assigned_human_agent_id' })
+  // assignedHumanAgent: User;
 
-  @Column({ type: 'uuid', nullable: true, name: 'assigned_human_agent_id' })
-  @Index('idx_lead_assigned_agent')
-  assignedHumanAgentId: string;
+  // @Column({ type: 'uuid', nullable: true, name: 'assigned_human_agent_id' })
+  // @Index('idx_lead_assigned_agent')
+  // assignedHumanAgentId: string;
 
   @Column({ type: 'timestamp', nullable: true, name: 'last_human_interaction' })
   lastHumanInteraction: Date;
