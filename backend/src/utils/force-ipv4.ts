@@ -109,7 +109,9 @@ export function patchGlobalDNSLookup(): void {
       } else {
         console.log(`✅ [DNS Patch] Resolved ${hostname} to IPv4: ${address}`);
       }
-      actualCallback(err, address, family);
+      // Handle both string and array addresses
+      const addressString = Array.isArray(address) ? address[0] : address;
+      actualCallback(err, addressString as string, family);
     });
   };
 

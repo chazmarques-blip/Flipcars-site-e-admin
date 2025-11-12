@@ -109,8 +109,8 @@ async function bootstrap() {
     'https://flipcars.us',
   ];
   
-  const allowedOrigins = process.env.FRONTEND_URL
-    ? [...defaultOrigins, ...process.env.FRONTEND_URL.split(',').map((url) => url.trim())]
+  const allowedOrigins: string[] = process.env.FRONTEND_URL
+    ? [...defaultOrigins, ...process.env.FRONTEND_URL.split(',').map((url: string) => url.trim())]
     : defaultOrigins;
 
   // Production CORS configuration
