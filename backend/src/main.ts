@@ -15,10 +15,10 @@ async function runMigrations() {
   console.log('📦 Running Database Migrations...');
   console.log('========================================\n');
 
+  // Get data source with IPv4-resolved hostname (declare outside try for finally block)
+  const dataSource = await getDataSource();
+
   try {
-    // Get data source with IPv4-resolved hostname
-    const dataSource = await getDataSource();
-    
     // Initialize the data source
     if (!dataSource.isInitialized) {
       console.log('🔌 Initializing database connection...');
