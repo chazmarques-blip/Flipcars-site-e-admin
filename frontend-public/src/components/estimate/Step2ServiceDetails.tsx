@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Calendar, Info, Wallet, HelpCircle } from 'lucide-react';
+import { Calendar, Info } from 'lucide-react';
 import {
   Step2BodyshopFormData,
   Step2MechanicFormData,
@@ -13,35 +13,6 @@ import {
 import { EstimateRequest, INSURANCE_COMPANIES, WARRANTY_COMPANIES, ServiceType } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
 import { formatDateDisplay, formatDateInput, getAvailableDates, getAvailableTimeSlots } from '@/lib/utils/calendar';
-
-// Map insurance companies to logo URLs from Supabase Storage
-const getInsuranceLogo = (company: string): string | null => {
-  const logoMap: Record<string, string> = {
-    'Allstate': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-allstate.png',
-    'American Family': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-american-family.png',
-    'Erie Insurance': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-erie.png',
-    'Farmers Insurance': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-farmers.png',
-    'Geico': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-geico.png',
-    'Liberty Mutual': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-liberty-mutual.png',
-    'Nationwide': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-nationwide.png',
-    'Progressive': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-progressive.png',
-    'State Farm': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-statefarm.png',
-    'Travelers': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-travelers.png',
-    'USAA': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/insurance-usaa.png',
-  };
-  return logoMap[company] || null;
-};
-
-// Map warranty companies to logo URLs from Supabase Storage
-const getWarrantyLogo = (company: string): string | null => {
-  const logoMap: Record<string, string> = {
-    'CARCHEX': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-carchex.png',
-    'CarShield': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-carshield.jpg',
-    'Endurance': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-endurance.png',
-    'Protect My Car': 'https://kvjvieekkudeqtnunqlb.supabase.co/storage/v1/object/public/company-logos/warranty-protect-my-car.png',
-  };
-  return logoMap[company] || null;
-};
 
 interface Step2ServiceDetailsProps {
   initialData: Partial<EstimateRequest>;
@@ -54,7 +25,6 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
-  const [customCompanyName, setCustomCompanyName] = useState('');
   const isBodyshop = serviceType === 'bodyshop';
   
   const schema = isBodyshop ? step2BodyshopSchema : step2MechanicSchema;
@@ -98,16 +68,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   const availableTimeSlots = getAvailableTimeSlots();
 
   const onSubmit = (data: Step2BodyshopFormData | Step2MechanicFormData) => {
-    // If "Other" is selected, append custom company name
-    if (selectedCompany === 'Other' && customCompanyName.trim()) {
-      const updatedData = {
-        ...data,
-        [companyField]: `Other: ${customCompanyName.trim()}`,
-      };
-      onNext(updatedData);
-    } else {
-      onNext(data);
-    }
+    onNext(data);
   };
 
   const handleDateSelect = (date: Date) => {
@@ -132,102 +93,28 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Company Selection */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-black">
+      <div className="space-y-0.5">
+        <label htmlFor={companyField} className="block text-sm font-medium text-black">
           Who will pay for the repair? <span className="text-gold">*</span>
         </label>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-          {companies.map((company) => {
-            const logo = isBodyshop ? getInsuranceLogo(company) : getWarrantyLogo(company);
-            const isSelected = selectedCompany === company;
-            
-            return (
-              <button
-                key={company}
-                type="button"
-                onClick={() => setValue(companyField, company as any, { shouldValidate: true })}
-                className={`relative flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all min-h-[65px] ${
-                  isSelected
-                    ? 'border-gold bg-gold/5 shadow-md'
-                    : 'border-neutral-300 hover:border-neutral-400 bg-white'
-                } ${errors[companyField] ? 'border-red-500' : ''}`}
-              >
-                {logo ? (
-                  <>
-                    <div className="relative w-full h-8 mb-0.5 flex items-center justify-center">
-                      <img
-                        src={logo}
-                        alt={company}
-                        className="max-w-full max-h-full object-contain"
-                        loading="lazy"
-                      />
-                    </div>
-                    <span className={`text-[10px] text-center font-medium leading-tight ${
-                      isSelected ? 'text-black' : 'text-neutral-700'
-                    }`}>
-                      {company}
-                    </span>
-                  </>
-                ) : company === 'Private (Self-Pay)' ? (
-                  <>
-                    <Wallet className={`w-8 h-8 mb-1 ${
-                      isSelected ? 'text-gold' : 'text-neutral-500'
-                    }`} />
-                    <span className={`text-[10px] text-center font-medium leading-tight ${
-                      isSelected ? 'text-black' : 'text-neutral-700'
-                    }`}>
-                      {company}
-                    </span>
-                  </>
-                ) : company === 'Other' ? (
-                  <>
-                    <HelpCircle className={`w-8 h-8 mb-1 ${
-                      isSelected ? 'text-gold' : 'text-neutral-500'
-                    }`} />
-                    <span className={`text-[10px] text-center font-medium leading-tight ${
-                      isSelected ? 'text-black' : 'text-neutral-700'
-                    }`}>
-                      {company}
-                    </span>
-                  </>
-                ) : (
-                  <span className={`text-sm text-center font-medium ${
-                    isSelected ? 'text-black' : 'text-neutral-700'
-                  }`}>
-                    {company}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-        
+        <select
+          id={companyField}
+          {...register(companyField)}
+          className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+            errors[companyField] ? 'border-red-500' : 'border-neutral-300'
+          }`}
+        >
+          <option value="">Select {isBodyshop ? 'insurance' : 'warranty'} company</option>
+          {companies.map((company) => (
+            <option key={company} value={company}>
+              {company}
+            </option>
+          ))}
+        </select>
         {errors[companyField] && (
           <p className="text-sm text-red-600">{errors[companyField]?.message}</p>
         )}
       </div>
-
-      {/* Custom Company Name Input (when "Other" is selected) */}
-      {selectedCompany === 'Other' && (
-        <div className="space-y-1.5">
-          <label htmlFor="customCompanyName" className="block text-sm font-medium text-black">
-            {isBodyshop ? 'Insurance' : 'Warranty'} Company Name <span className="text-gold">*</span>
-          </label>
-          <input
-            id="customCompanyName"
-            type="text"
-            value={customCompanyName}
-            onChange={(e) => setCustomCompanyName(e.target.value)}
-            placeholder={`Enter ${isBodyshop ? 'insurance' : 'warranty'} company name`}
-            className="w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors"
-          />
-          <p className="text-[10px] text-neutral-600">
-            Please enter the full name of your {isBodyshop ? 'insurance' : 'warranty'} company
-          </p>
-        </div>
-      )}
-    </div>
 
       {/* Claim Number (conditional) */}
       {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && (
@@ -241,7 +128,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             {...register(claimField)}
             placeholder="Enter claim number if available"
             disabled={hasClaimNumber}
-            className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+            className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
               hasClaimNumber ? 'bg-neutral-100 cursor-not-allowed' : 'border-neutral-300'
             }`}
           />
@@ -268,9 +155,9 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             <button
               type="button"
               onClick={() => setShowDatePicker(true)}
-              className="w-full px-3 py-2.5 text-left text-base md:text-sm text-black border border-neutral-300 rounded-lg hover:border-gold focus:ring-2 focus:ring-gold focus:border-gold transition-colors"
+              className="w-full px-3 py-2 text-left text-sm border border-neutral-300 rounded-lg hover:border-gold focus:ring-2 focus:ring-gold focus:border-gold transition-colors"
             >
-              <Calendar className="w-5 h-5 md:w-4 md:h-4 inline mr-2 text-neutral-400" />
+              <Calendar className="w-4 h-4 inline mr-2 text-neutral-400" />
               <span className="text-neutral-500">Select a date:</span>
             </button>
             <div className="flex items-start gap-2 p-2 bg-neutral-50 rounded-lg">
@@ -291,7 +178,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={date.toISOString()}
                   type="button"
                   onClick={() => handleDateSelect(date)}
-                  className="px-3 py-2 text-sm md:text-xs text-black border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
+                  className="px-2 py-1.5 text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
                 >
                   {formatDateDisplay(date)}
                 </button>
@@ -318,7 +205,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={slot.value}
                   type="button"
                   onClick={() => handleTimeSlotSelect(slot.value)}
-                  className="px-3 py-2.5 text-base md:text-sm text-black border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
+                  className="px-3 py-1.5 text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
                 >
                   {slot.label}
                 </button>
@@ -338,28 +225,20 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         )}
 
         {preferredDate && !showTimeSlots && (
-          <div className="flex flex-col gap-1 p-2 border border-gold bg-gold/5 rounded-lg">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-black">
-                📅 {formatDateDisplay(new Date(preferredDate))}
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setValue('preferredDate', '', { shouldValidate: true });
-                  setValue('preferredTimeSlot' as any, '', { shouldValidate: true });
-                  setSelectedDate(null);
-                }}
-                className="text-[10px] text-neutral-600 hover:text-black"
-              >
-                Change
-              </button>
-            </div>
-            {watch('preferredTimeSlot' as any) && (
-              <span className="text-xs text-neutral-700">
-                🕐 Time: {watch('preferredTimeSlot' as any)}
-              </span>
-            )}
+          <div className="flex items-center justify-between p-2 border border-gold bg-gold/5 rounded-lg">
+            <span className="text-sm text-black">
+              Selected: {formatDateDisplay(new Date(preferredDate))}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setValue('preferredDate', '', { shouldValidate: true });
+                setSelectedDate(null);
+              }}
+              className="text-[10px] text-neutral-600 hover:text-black"
+            >
+              Change
+            </button>
           </div>
         )}
       </div>
@@ -386,7 +265,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           type="submit"
           variant="primary"
           className="flex-1 bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs"
-          disabled={!isValid || (selectedCompany === 'Other' && !customCompanyName.trim())}
+          disabled={!isValid}
         >
           Continue →
         </Button>
