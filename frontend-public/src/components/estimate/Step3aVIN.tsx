@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Car, Loader2 } from 'lucide-react';
+import { Car, Loader2, Camera } from 'lucide-react';
 import { EstimateRequest, VehicleInfo } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
+import { VINScanner } from './VINScanner';
 
 interface Step3aVINProps {
   initialData: Partial<EstimateRequest>;
@@ -16,6 +17,7 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
   const [isDecoding, setIsDecoding] = useState(false);
   const [vehicle, setVehicle] = useState<VehicleInfo | null>(initialData.vehicle || null);
   const [error, setError] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
 
   const validateVIN = (value: string): boolean => {
     // VIN must be exactly 17 characters, alphanumeric (no I, O, Q)
@@ -38,29 +40,15 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
         const result = data.Results[0];
         
         if (result.ErrorCode === '0' || result.Make) {
-          // Validate and sanitize year (must be 4 digits between 1900-2099)
-          let validYear = result.ModelYear || '';
-          if (validYear) {
-            const yearNum = parseInt(validYear, 10);
-            if (isNaN(yearNum) || yearNum < 1900 || yearNum > 2099) {
-              console.warn('[VIN Decode] Invalid year from API:', validYear);
-              validYear = '';
-            } else {
-              // Ensure it's exactly 4 digits
-              validYear = yearNum.toString();
-            }
-          }
-          
           const vehicleData: VehicleInfo = {
             vin: vinNumber.toUpperCase(),
-            year: validYear,
+            year: result.ModelYear || '',
             make: result.Make || '',
             model: result.Model || '',
           };
           
           setVehicle(vehicleData);
           console.log('[VIN Decode] Success:', vehicleData);
-          console.log('[VIN Decode] Raw API response - ModelYear:', result.ModelYear);
         } else {
           throw new Error('VIN not found or invalid');
         }
@@ -126,6 +114,11 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
     onNext({ vehicle });
   };
 
+  const handleVINScanned = (scannedVIN: string) => {
+    setVin(scannedVIN);
+    handleVINChange(scannedVIN);
+  };
+
   return (
     <div className="space-y-2">
       {/* Header */}
@@ -144,18 +137,32 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
         <label htmlFor="vin" className="block text-sm font-medium text-black">
           VIN Number <span className="text-gold">*</span>
         </label>
-        <input
-          id="vin"
-          type="text"
-          value={vin}
-          onChange={(e) => handleVINChange(e.target.value)}
-          placeholder="Enter 17-character VIN"
-          maxLength={17}
-          className={`w-full px-3 py-2.5 text-base md:text-sm font-mono uppercase text-gray-900 placeholder:text-gray-600 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
-            error ? 'border-red-500' : 'border-neutral-300'
-          }`}
-          disabled={isDecoding}
-        />
+        
+        {/* Input with Scan Button */}
+        <div className="relative">
+          <input
+            id="vin"
+            type="text"
+            value={vin}
+            onChange={(e) => handleVINChange(e.target.value)}
+            placeholder="Enter 17-character VIN"
+            maxLength={17}
+            className={`w-full px-3 py-1.5 pr-24 text-xs font-mono uppercase border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+              error ? 'border-red-500' : 'border-neutral-300'
+            }`}
+            disabled={isDecoding}
+          />
+          <button
+            type="button"
+            onClick={() => setShowScanner(true)}
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 px-3 py-1 bg-gold hover:bg-gold-dark text-black text-xs font-semibold rounded flex items-center gap-1 transition-colors"
+            disabled={isDecoding}
+          >
+            <Camera className="w-3 h-3" />
+            Scan
+          </button>
+        </div>
+        
         <p className="text-xs text-neutral-500">
           {vin.length}/17 characters
         </p>
@@ -241,6 +248,14 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
           {vehicle ? 'Continue →' : 'Verify VIN'}
         </Button>
       </div>
+
+      {/* VIN Scanner Modal */}
+      {showScanner && (
+        <VINScanner
+          onVINDetected={handleVINScanned}
+          onClose={() => setShowScanner(false)}
+        />
+      )}
     </div>
   );
 }

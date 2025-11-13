@@ -146,8 +146,8 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
   };
 
   // Determine max step based on service type
-  const isBodyshop = formData.serviceType === 'bodyshop';
-  const maxSteps = isBodyshop ? 6 : 5; // Bodyshop: 6 steps, Mechanic: 5 steps (includes warranty docs)
+  // Both now have 6 steps: Basic Info, Service Details, Warranty/Photos, VIN, Contact, Confirmation
+  const maxSteps = 6;
 
   // Calculate progress percentage
   const progressPercentage = (currentStep / maxSteps) * 100;
@@ -221,8 +221,9 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
             />
           )}
 
-          {/* VIN Entry - Only for bodyshop */}
-          {currentStep === 4 && formData.serviceType === 'bodyshop' && (
+          {/* VIN Entry - For both bodyshop and mechanic */}
+          {((currentStep === 4 && formData.serviceType === 'mechanic') ||
+            (currentStep === 4 && formData.serviceType === 'bodyshop')) && (
             <Step3aVIN
               initialData={formData}
               onNext={handleNext}
@@ -231,7 +232,7 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
           )}
 
           {/* Contact Preferences */}
-          {((currentStep === 4 && formData.serviceType === 'mechanic') ||
+          {((currentStep === 5 && formData.serviceType === 'mechanic') ||
             (currentStep === 5 && formData.serviceType === 'bodyshop')) && (
             <Step4Contact
               initialData={formData}
@@ -241,7 +242,7 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
           )}
 
           {/* Confirmation */}
-          {((currentStep === 5 && formData.serviceType === 'mechanic') ||
+          {((currentStep === 6 && formData.serviceType === 'mechanic') ||
             (currentStep === 6 && formData.serviceType === 'bodyshop')) && (
             <Step5Confirmation
               data={formData as EstimateRequest}
