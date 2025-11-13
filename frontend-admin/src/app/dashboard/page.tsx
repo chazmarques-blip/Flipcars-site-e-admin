@@ -282,34 +282,49 @@ export default function DashboardPage() {
                 No leads yet. Create your first lead to get started!
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {recentLeads.map((lead) => (
                   <div
                     key={lead.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group"
                     onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
                   >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-gray-900">{lead.name}</p>
-                        {getStatusBadge(lead.status)}
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {lead.vehicleYear && `${lead.vehicleYear} `}
-                        {lead.vehicleMake && `${lead.vehicleMake} `}
-                        {lead.vehicleModel}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        <Clock className="w-3 h-3 inline mr-1" />
-                        {getRelativeTime(lead.createdAt)}
-                      </p>
+                    {/* Nome e Badge */}
+                    <div className="flex items-center gap-2 min-w-[180px]">
+                      <p className="font-semibold text-gray-900">{lead.name}</p>
+                      {getStatusBadge(lead.status)}
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500 mb-2">
+                    
+                    {/* Veículo */}
+                    <div className="flex-1 min-w-[200px]">
+                      {lead.vehicleYear || lead.vehicleMake || lead.vehicleModel ? (
+                        <p className="text-sm text-gray-700 font-medium">
+                          {lead.vehicleYear && `${lead.vehicleYear} `}
+                          {lead.vehicleMake && `${lead.vehicleMake} `}
+                          {lead.vehicleModel}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-gray-500 italic">Vehicle info not provided</p>
+                      )}
+                    </div>
+                    
+                    {/* Tempo */}
+                    <div className="flex items-center gap-1 text-xs text-gray-500 min-w-[120px]">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{getRelativeTime(lead.createdAt)}</span>
+                    </div>
+                    
+                    {/* Número de Referência */}
+                    <div className="min-w-[130px] text-center">
+                      <p className="text-sm text-gray-600 font-mono">
                         {formatReferenceNumber(lead.referenceNumber)}
                       </p>
+                    </div>
+                    
+                    {/* Botão View Details */}
+                    <div className="min-w-[110px] text-right">
                       <button 
-                        className="text-sm text-primary hover:text-primary-600 font-medium"
+                        className="text-sm text-primary hover:text-primary-600 font-semibold transition-colors group-hover:underline"
                         onClick={(e) => {
                           e.stopPropagation();
                           router.push(`/dashboard/leads/${lead.id}`);
