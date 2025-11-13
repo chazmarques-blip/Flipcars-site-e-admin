@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Eye, X } from 'lucide-react';
+import { Plus, Eye, X, Phone, MessageCircle, MessageSquare } from 'lucide-react';
 import {
   Button,
   Badge,
@@ -209,6 +209,45 @@ export default function LeadsPage() {
           <span className="font-mono text-gray-700">{lead.phone}</span>
         </div>
       ),
+    },
+    {
+      key: 'contactPreferences',
+      label: 'Preferred Contact',
+      render: (lead) => {
+        const prefs = lead.contactPreferences;
+        if (!prefs || (!prefs.phoneCall && !prefs.whatsapp && !prefs.textMessage)) {
+          return <span className="text-xs text-gray-400">—</span>;
+        }
+        
+        return (
+          <div className="flex items-center gap-1">
+            {prefs.phoneCall && (
+              <div 
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gold/10 text-gold border border-gold/20"
+                title="Phone Call"
+              >
+                <Phone className="w-3 h-3" />
+              </div>
+            )}
+            {prefs.whatsapp && (
+              <div 
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-800 text-white border border-gray-700"
+                title="WhatsApp"
+              >
+                <MessageCircle className="w-3 h-3" />
+              </div>
+            )}
+            {prefs.textMessage && (
+              <div 
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 border border-gray-300"
+                title="Text Message"
+              >
+                <MessageSquare className="w-3 h-3" />
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: 'vehicle',
