@@ -68,97 +68,102 @@ export class LeadsService {
    * Find all leads with pagination, filtering, and search
    */
   async findAll(query: QueryLeadsDto) {
-    const {
-      page = 1,
-      limit = 10,
-      search,
-      status,
-      priority,
-      source,
-      assignedAgentId,
-      minAiScore,
-      maxAiScore,
-      sortBy = 'createdAt',
-      sortOrder = 'DESC',
-    } = query;
-
-    const queryBuilder = this.leadRepository
-      .createQueryBuilder('lead');
-      // TEMPORARY: Joins disabled until we fix the schema mismatch
-      // .leftJoinAndSelect('lead.customer', 'customer')
-      // .leftJoinAndSelect('lead.vehicle', 'vehicle')
-      // .leftJoinAndSelect('lead.assignedHumanAgent', 'agent');
-
-    // Search by reference number, name, email, or phone
-    if (search) {
-      queryBuilder.andWhere(
-        '(LOWER(lead.referenceNumber) LIKE LOWER(:search) OR ' +
-          'LOWER(lead.name) LIKE LOWER(:search) OR ' +
-          'LOWER(lead.email) LIKE LOWER(:search) OR ' +
-          'LOWER(lead.phone) LIKE LOWER(:search))',
-        { search: `%${search}%` },
-      );
-    }
-
-    // Filter by status
-    if (status) {
-      queryBuilder.andWhere('lead.status = :status', { status });
-    }
-
-    // Filter by priority
-    if (priority) {
-      queryBuilder.andWhere('lead.priority = :priority', { priority });
-    }
-
-    // Filter by source
-    if (source) {
-      queryBuilder.andWhere('lead.source = :source', { source });
-    }
-
-    // Filter by assigned agent
-    // TEMPORARY: Disabled until schema is fixed
-    // if (assignedAgentId) {
-    //   queryBuilder.andWhere('lead.assignedHumanAgentId = :assignedAgentId', {
-    //     assignedAgentId,
-    //   });
-    // }
-
-    // Filter by AI score range
-    if (minAiScore !== undefined && maxAiScore !== undefined) {
-      queryBuilder.andWhere(
-        'lead.aiQualificationScore BETWEEN :minAiScore AND :maxAiScore',
-        { minAiScore, maxAiScore },
-      );
-    } else if (minAiScore !== undefined) {
-      queryBuilder.andWhere('lead.aiQualificationScore >= :minAiScore', {
+    try {
+      const {
+        page = 1,
+        limit = 10,
+        search,
+        status,
+        priority,
+        source,
+        assignedAgentId,
         minAiScore,
-      });
-    } else if (maxAiScore !== undefined) {
-      queryBuilder.andWhere('lead.aiQualificationScore <= :maxAiScore', {
         maxAiScore,
-      });
+        sortBy = 'createdAt',
+        sortOrder = 'DESC',
+      } = query;
+
+      const queryBuilder = this.leadRepository
+        .createQueryBuilder('lead');
+        // TEMPORARY: Joins disabled until we fix the schema mismatch
+        // .leftJoinAndSelect('lead.customer', 'customer')
+        // .leftJoinAndSelect('lead.vehicle', 'vehicle')
+        // .leftJoinAndSelect('lead.assignedHumanAgent', 'agent');
+
+      // Search by reference number, name, email, or phone
+      if (search) {
+        queryBuilder.andWhere(
+          '(LOWER(lead.referenceNumber) LIKE LOWER(:search) OR ' +
+            'LOWER(lead.customer_name) LIKE LOWER(:search) OR ' +
+            'LOWER(lead.email) LIKE LOWER(:search) OR ' +
+            'LOWER(lead.phone) LIKE LOWER(:search))',
+          { search: `%${search}%` },
+        );
+      }
+
+      // Filter by status
+      if (status) {
+        queryBuilder.andWhere('lead.status = :status', { status });
+      }
+
+      // Filter by priority
+      if (priority) {
+        queryBuilder.andWhere('lead.priority = :priority', { priority });
+      }
+
+      // Filter by source
+      if (source) {
+        queryBuilder.andWhere('lead.source = :source', { source });
+      }
+
+      // Filter by assigned agent
+      // TEMPORARY: Disabled until schema is fixed
+      // if (assignedAgentId) {
+      //   queryBuilder.andWhere('lead.assignedHumanAgentId = :assignedAgentId', {
+      //     assignedAgentId,
+      //   });
+      // }
+
+      // Filter by AI score range
+      if (minAiScore !== undefined && maxAiScore !== undefined) {
+        queryBuilder.andWhere(
+          'lead.aiQualificationScore BETWEEN :minAiScore AND :maxAiScore',
+          { minAiScore, maxAiScore },
+        );
+      } else if (minAiScore !== undefined) {
+        queryBuilder.andWhere('lead.aiQualificationScore >= :minAiScore', {
+          minAiScore,
+        });
+      } else if (maxAiScore !== undefined) {
+        queryBuilder.andWhere('lead.aiQualificationScore <= :maxAiScore', {
+          maxAiScore,
+        });
+      }
+
+      // Sorting
+      const sortField = sortBy === 'createdAt' ? 'lead.created_at' : `lead.${sortBy}`;
+      queryBuilder.orderBy(sortField, sortOrder);
+
+      // Pagination
+      const skip = (page - 1) * limit;
+      queryBuilder.skip(skip).take(limit);
+
+      // Execute query
+      const [leads, total] = await queryBuilder.getManyAndCount();
+
+      return {
+        data: leads,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      console.error('Error in findAll leads:', error);
+      throw error;
     }
-
-    // Sorting
-    const sortField = sortBy === 'createdAt' ? 'lead.createdAt' : `lead.${sortBy}`;
-    queryBuilder.orderBy(sortField, sortOrder);
-
-    // Pagination
-    const skip = (page - 1) * limit;
-    queryBuilder.skip(skip).take(limit);
-
-    // Execute query
-    const [leads, total] = await queryBuilder.getManyAndCount();
-
-    return {
-      data: leads,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
   }
 
   /**
