@@ -136,6 +136,7 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
       <div className="space-y-2">
         <label htmlFor="vin" className="block text-sm font-medium text-black">
           VIN Number <span className="text-gold">*</span>
+          <span className="ml-2 text-xs text-green-600">📸 Scanner Ready!</span>
         </label>
         
         {/* Input with Scan Button */}
