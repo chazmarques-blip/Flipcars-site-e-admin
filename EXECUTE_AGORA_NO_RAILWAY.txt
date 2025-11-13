@@ -1,0 +1,33 @@
+═══════════════════════════════════════════════════════════════
+  🚀 EXECUTE ESTE COMANDO AGORA NO RAILWAY CONSOLE 🚀
+═══════════════════════════════════════════════════════════════
+
+1️⃣ ACESSE: https://railway.app/dashboard
+
+2️⃣ CLIQUE NO SERVIÇO: "backend" (ou "upbeat-dedication")
+
+3️⃣ CLIQUE EM: "Console" ou "Terminal" no menu lateral
+
+4️⃣ COPIE E COLE ESTE COMANDO:
+
+   npm run migration:run:prod
+
+5️⃣ PRESSIONE: Enter
+
+6️⃣ AGUARDE ATÉ VER: "Successfully ran 1 migration(s)"
+
+7️⃣ REINICIE O BACKEND:
+   - Clique no menu "⋯" (três pontos)
+   - Clique em "Restart"
+
+8️⃣ TESTE: https://admin.flipcars.us/dashboard/leads
+
+═══════════════════════════════════════════════════════════════
+  ✅ PRONTO! OS LEADS VÃO APARECER! ✅
+═══════════════════════════════════════════════════════════════
+
+DICA: Se não tiver "Console", vá em Settings → Custom Start Command
+      e adicione: npm run migration:run:prod && 
+      (antes do npm run start:prod)
+
+═══════════════════════════════════════════════════════════════
