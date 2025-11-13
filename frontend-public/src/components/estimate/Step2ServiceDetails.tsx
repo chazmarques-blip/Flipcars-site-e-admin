@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Calendar, Info, Wallet, HelpCircle } from 'lucide-react';
-import Image from 'next/image';
 import {
   Step2BodyshopFormData,
   Step2MechanicFormData,
@@ -156,13 +155,12 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
               >
                 {logo ? (
                   <>
-                    <div className="relative w-full h-8 mb-0.5">
-                      <Image
+                    <div className="relative w-full h-8 mb-0.5 flex items-center justify-center">
+                      <img
                         src={logo}
                         alt={company}
-                        fill
-                        className="object-contain"
-                        sizes="(max-width: 768px) 50vw, 33vw"
+                        className="max-w-full max-h-full object-contain"
+                        loading="lazy"
                       />
                     </div>
                     <span className={`text-[10px] text-center font-medium leading-tight ${
