@@ -20,9 +20,10 @@ export class AiConversation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Lead, (lead) => lead.aiConversations)
-  @JoinColumn({ name: 'lead_id' })
-  lead: Lead;
+  // TEMPORARY: Disabled until aiConversations relation is re-enabled in Lead entity
+  // @ManyToOne(() => Lead, (lead) => lead.aiConversations)
+  // @JoinColumn({ name: 'lead_id' })
+  // lead: Lead;
 
   @Column({ type: 'uuid', name: 'lead_id' })
   @Index('idx_conversation_lead')
