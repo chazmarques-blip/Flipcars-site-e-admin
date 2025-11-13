@@ -6,3 +6,4 @@ export { Step3Photos } from './Step3Photos';
 export { Step3aVIN } from './Step3aVIN';
 export { Step4Contact } from './Step4Contact';
 export { Step5Confirmation } from './Step5Confirmation';
+export { VINScanner } from './VINScanner';
