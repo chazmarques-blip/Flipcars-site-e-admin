@@ -10,6 +10,7 @@ import { Step3Photos } from './Step3Photos';
 import { Step3aVIN } from './Step3aVIN';
 import { Step4Contact } from './Step4Contact';
 import { Step5Confirmation } from './Step5Confirmation';
+import { trackConversion } from '@/components/GoogleAds';
 
 interface EstimateFormModalProps {
   isOpen: boolean;
@@ -60,6 +61,13 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
       // Use server-generated reference number
       setReferenceNumber(response.data.referenceNumber);
       console.log('[EstimateForm] ✅ Reference number set to:', response.data.referenceNumber);
+      
+      // 🎯 Track Google Ads conversion
+      const conversionLabel = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL;
+      if (conversionLabel) {
+        trackConversion(`${process.env.NEXT_PUBLIC_GOOGLE_ADS_ID}/${conversionLabel}`);
+        console.log('[EstimateForm] 🎯 Google Ads conversion tracked');
+      }
       
       // Also save to localStorage as backup
       try {

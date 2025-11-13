@@ -48,17 +48,19 @@ AW-123456789/AbC-D1e2F3g4H5i6
 
 ---
 
-## 🔧 **3️⃣ ME PASSE OS IDS:**
+## 🔧 **3️⃣ INSTALAR O CONVERSION LABEL:**
 
-Me forneça:
-- **Conversion ID**: `AW-XXXXXXXXXX`
-- **Conversion Label**: `XXXXXXXXXXX`
+✅ **JÁ INSTALADO**: Conversion ID `AW-803837087`
 
-E eu vou:
-1. ✅ Adicionar na variável de ambiente
-2. ✅ Instalar o tag global no layout
-3. ✅ Adicionar tracking no formulário de estimate
-4. ✅ Testar que está funcionando
+**FALTA APENAS**: Me passar o **Conversion Label** que você receberá ao criar a conversão no Google Ads.
+
+Será algo como: `AbC-D1e2F3g4H5i6`
+
+Assim que me passar, eu:
+1. ✅ Adiciono no .env.local
+2. ✅ Adiciono no Vercel (production)
+3. ✅ Testo que está funcionando
+4. ✅ Faço deploy
 
 ---
 
