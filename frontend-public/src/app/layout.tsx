@@ -3,6 +3,7 @@ import { Inter, Poppins } from 'next/font/google'
 import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { GoogleTagManager, GoogleTagManagerNoScript } from '@/components/GoogleTagManager'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const poppins = Poppins({ 
@@ -28,9 +29,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+      <head>
+        {gtmId && <GoogleTagManager gtmId={gtmId} />}
+      </head>
       <body className="font-sans">
+        {gtmId && <GoogleTagManagerNoScript gtmId={gtmId} />}
         <Header />
         {/* Spacer for fixed header - matches header height (h-28 = 7rem = 112px) */}
         <div className="h-28"></div>
