@@ -94,7 +94,7 @@ export class LeadsService {
       if (search) {
         queryBuilder.andWhere(
           '(LOWER(lead.referenceNumber) LIKE LOWER(:search) OR ' +
-            'LOWER(lead.customer_name) LIKE LOWER(:search) OR ' +
+            'LOWER(lead.name) LIKE LOWER(:search) OR ' +
             'LOWER(lead.email) LIKE LOWER(:search) OR ' +
             'LOWER(lead.phone) LIKE LOWER(:search))',
           { search: `%${search}%` },
@@ -141,7 +141,7 @@ export class LeadsService {
       }
 
       // Sorting
-      const sortField = sortBy === 'createdAt' ? 'lead.created_at' : `lead.${sortBy}`;
+      const sortField = sortBy === 'createdAt' ? 'lead.createdAt' : `lead.${sortBy}`;
       queryBuilder.orderBy(sortField, sortOrder);
 
       // Pagination

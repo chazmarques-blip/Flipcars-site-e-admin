@@ -48,7 +48,7 @@ export class Lead {
   @Index('idx_lead_reference')
   referenceNumber: string;
 
-  @Column({ type: 'varchar', length: 255, name: 'customer_name' })
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
   @Column({ type: 'varchar', length: 50 })
