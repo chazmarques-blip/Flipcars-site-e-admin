@@ -282,7 +282,8 @@ export class LeadsService {
       email: createLeadDto.email,
       phone: createLeadDto.phone,
       preferredLanguage: createLeadDto.preferredLanguage || 'en',
-      contactPreferences: createLeadDto.contactPreferences,
+      // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
+      // contactPreferences: createLeadDto.contactPreferences,
       vehicleMake: createLeadDto.vehicleMake,
       vehicleModel: createLeadDto.vehicleModel,
       vehicleYear: createLeadDto.vehicleYear,
@@ -328,7 +329,8 @@ export class LeadsService {
     if (updateLeadDto.email !== undefined) lead.email = updateLeadDto.email;
     if (updateLeadDto.phone !== undefined) lead.phone = updateLeadDto.phone;
     if (updateLeadDto.preferredLanguage) lead.preferredLanguage = updateLeadDto.preferredLanguage;
-    if (updateLeadDto.contactPreferences !== undefined) lead.contactPreferences = updateLeadDto.contactPreferences;
+    // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
+    // if (updateLeadDto.contactPreferences !== undefined) lead.contactPreferences = updateLeadDto.contactPreferences;
     
     if (updateLeadDto.vehicleMake !== undefined) lead.vehicleMake = updateLeadDto.vehicleMake;
     if (updateLeadDto.vehicleModel !== undefined) lead.vehicleModel = updateLeadDto.vehicleModel;

@@ -150,14 +150,16 @@ export class PublicLeadsController {
     }
 
     // Build contact preferences note
-    const contactPrefs: string[] = [];
-    if (dto.contactPreferences.phoneCall) contactPrefs.push('Phone Call');
-    if (dto.contactPreferences.whatsapp) contactPrefs.push('WhatsApp');
-    if (dto.contactPreferences.textMessage) contactPrefs.push('Text Message');
+    // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
+    // const contactPrefs: string[] = [];
+    // if (dto.contactPreferences.phoneCall) contactPrefs.push('Phone Call');
+    // if (dto.contactPreferences.whatsapp) contactPrefs.push('WhatsApp');
+    // if (dto.contactPreferences.textMessage) contactPrefs.push('Text Message');
     
-    const contactPrefsNote = contactPrefs.length > 0 
-      ? `\n\nPreferred Contact Methods: ${contactPrefs.join(', ')}`
-      : '';
+    const contactPrefsNote = ''; // Temporarily disabled
+    // const contactPrefsNote = contactPrefs.length > 0 
+    //   ? `\n\nPreferred Contact Methods: ${contactPrefs.join(', ')}`
+    //   : '';
 
     // Build scheduling note
     let schedulingNote = '';

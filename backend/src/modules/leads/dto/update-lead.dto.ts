@@ -39,12 +39,13 @@ export class UpdateLeadDto {
   preferredLanguage?: string;
 
   // Contact Preferences
-  @IsOptional()
-  contactPreferences?: {
-    phoneCall?: boolean;
-    whatsapp?: boolean;
-    textMessage?: boolean;
-  };
+  // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
+  // @IsOptional()
+  // contactPreferences?: {
+  //   phoneCall?: boolean;
+  //   whatsapp?: boolean;
+  //   textMessage?: boolean;
+  // };
 
   // Vehicle Information
   @IsString()

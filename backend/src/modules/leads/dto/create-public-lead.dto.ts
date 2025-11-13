@@ -19,19 +19,20 @@ import { Type } from 'class-transformer';
  * Supports both Body Shop and Mechanic service types
  */
 
-export class ContactPreferencesDto {
-  @IsBoolean()
-  @IsOptional()
-  phoneCall?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  whatsapp?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  textMessage?: boolean;
-}
+// TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
+// export class ContactPreferencesDto {
+//   @IsBoolean()
+//   @IsOptional()
+//   phoneCall?: boolean;
+//
+//   @IsBoolean()
+//   @IsOptional()
+//   whatsapp?: boolean;
+//
+//   @IsBoolean()
+//   @IsOptional()
+//   textMessage?: boolean;
+// }
 
 export class VehicleInfoDto {
   @IsString()
@@ -188,9 +189,10 @@ export class CreatePublicLeadDto {
   warrantyDocs?: WarrantyDocumentsDto;
 
   // Step 4: Contact Preferences (REQUIRED)
-  @ValidateNested()
-  @Type(() => ContactPreferencesDto)
-  contactPreferences: ContactPreferencesDto;
+  // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
+  // @ValidateNested()
+  // @Type(() => ContactPreferencesDto)
+  // contactPreferences: ContactPreferencesDto;
 
   @IsString()
   @IsOptional()
