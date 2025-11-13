@@ -60,20 +60,20 @@ export class Lead {
   @Column({ type: 'varchar', length: 10, default: 'en', name: 'preferred_language' })
   preferredLanguage: string;
 
-  // Contact Preferences - TEMPORARILY DISABLED (column doesn't exist in database)
-  // @Column({ type: 'jsonb', nullable: true, name: 'contact_preferences' })
-  // contactPreferences: {
-  //   phoneCall?: boolean;
-  //   whatsapp?: boolean;
-  //   textMessage?: boolean;
-  // };
+  // Contact Preferences
+  @Column({ type: 'jsonb', nullable: true, name: 'contact_preferences' })
+  contactPreferences?: {
+    phoneCall?: boolean;
+    whatsapp?: boolean;
+    textMessage?: boolean;
+  };
 
-  // Scheduling Information - TEMPORARILY DISABLED to fix leads display
-  // @Column({ type: 'date', nullable: true, name: 'preferred_date' })
-  // preferredDate: Date;
+  // Scheduling Information (NULL = no appointment scheduled)
+  @Column({ type: 'date', nullable: true, name: 'preferred_date' })
+  preferredDate?: Date;
 
-  // @Column({ type: 'varchar', length: 50, nullable: true, name: 'preferred_time_slot' })
-  // preferredTimeSlot: string;
+  @Column({ type: 'varchar', length: 50, nullable: true, name: 'preferred_time_slot' })
+  preferredTimeSlot?: string;
 
   // Vehicle Information
   // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)

@@ -36,6 +36,24 @@ export class CreateLeadDto {
   @IsOptional()
   preferredLanguage?: string;
 
+  // Contact Preferences
+  @IsOptional()
+  contactPreferences?: {
+    phoneCall?: boolean;
+    whatsapp?: boolean;
+    textMessage?: boolean;
+  };
+
+  // Scheduling Information
+  @IsDateString()
+  @IsOptional()
+  preferredDate?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  preferredTimeSlot?: string;
+
   // Vehicle Information
   @IsString()
   @IsOptional()
