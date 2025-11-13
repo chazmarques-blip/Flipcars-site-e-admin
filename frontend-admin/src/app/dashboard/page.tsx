@@ -17,6 +17,7 @@ import {
   CheckCircle,
   AlertCircle,
   ClipboardList,
+  RefreshCw,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -35,11 +36,10 @@ export default function DashboardPage() {
     todayUrgent: 0,
   });
 
-  // Fetch all leads and calculate statistics
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setIsLoading(true);
+  // Fetch dashboard data function
+  const fetchDashboardData = async () => {
+    try {
+      setIsLoading(true);
         
         // Fetch all leads (use max allowed limit: 100)
         const response = await leadService.getLeads(1, 100);
@@ -112,11 +112,13 @@ export default function DashboardPage() {
         });
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  // Fetch all leads and calculate statistics
+  useEffect(() => {
     fetchDashboardData();
   }, []);
 
@@ -267,9 +269,20 @@ export default function DashboardPage() {
             title="Recent Leads"
             subtitle="Latest lead submissions"
             action={
-              <a href="/dashboard/leads" className="text-sm text-primary hover:text-primary-600">
-                View all
-              </a>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={fetchDashboardData}
+                  disabled={isLoading}
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-primary transition-colors disabled:opacity-50"
+                  title="Refresh leads"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <span>Refresh</span>
+                </button>
+                <a href="/dashboard/leads" className="text-sm text-primary hover:text-primary-600">
+                  View all
+                </a>
+              </div>
             }
           />
           <CardContent>
