@@ -165,16 +165,6 @@ export class CreatePublicLeadDto {
   @IsOptional()
   hasWarrantyClaimNumber?: boolean;
 
-  // Scheduling Information (OPTIONAL)
-  @IsDateString()
-  @IsOptional()
-  preferredDate?: string;
-
-  @IsString()
-  @IsOptional()
-  @MaxLength(50)
-  preferredTimeSlot?: string;
-
   @IsBoolean()
   @IsOptional()
   dateSkipped?: boolean;

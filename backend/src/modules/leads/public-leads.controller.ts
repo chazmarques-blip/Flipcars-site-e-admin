@@ -161,12 +161,7 @@ export class PublicLeadsController {
 
     // Build scheduling note
     let schedulingNote = '';
-    if (dto.preferredDate && !dto.dateSkipped) {
-      schedulingNote = `\n\nPreferred Date: ${dto.preferredDate}`;
-      if (dto.preferredTimeSlot) {
-        schedulingNote += ` at ${dto.preferredTimeSlot}`;
-      }
-    } else if (dto.dateSkipped) {
+    if (dto.dateSkipped) {
       schedulingNote = '\n\nScheduling: Customer will call to schedule';
     }
 

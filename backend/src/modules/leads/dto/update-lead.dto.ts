@@ -46,16 +46,6 @@ export class UpdateLeadDto {
     textMessage?: boolean;
   };
 
-  // Scheduling Information
-  @IsDateString()
-  @IsOptional()
-  preferredDate?: string;
-
-  @IsString()
-  @IsOptional()
-  @MaxLength(50)
-  preferredTimeSlot?: string;
-
   // Vehicle Information
   @IsString()
   @IsOptional()

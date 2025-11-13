@@ -68,13 +68,6 @@ export class Lead {
     textMessage?: boolean;
   };
 
-  // Scheduling Information (NULL = no appointment scheduled)
-  @Column({ type: 'date', nullable: true, name: 'preferred_date' })
-  preferredDate?: Date;
-
-  @Column({ type: 'varchar', length: 50, nullable: true, name: 'preferred_time_slot' })
-  preferredTimeSlot?: string;
-
   // Vehicle Information
   // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
   // @ManyToOne(() => Vehicle, { nullable: true })

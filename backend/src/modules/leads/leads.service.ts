@@ -283,10 +283,6 @@ export class LeadsService {
       phone: createLeadDto.phone,
       preferredLanguage: createLeadDto.preferredLanguage || 'en',
       contactPreferences: createLeadDto.contactPreferences,
-      preferredDate: createLeadDto.preferredDate
-        ? new Date(createLeadDto.preferredDate)
-        : undefined,
-      preferredTimeSlot: createLeadDto.preferredTimeSlot,
       vehicleMake: createLeadDto.vehicleMake,
       vehicleModel: createLeadDto.vehicleModel,
       vehicleYear: createLeadDto.vehicleYear,
@@ -333,8 +329,6 @@ export class LeadsService {
     if (updateLeadDto.phone !== undefined) lead.phone = updateLeadDto.phone;
     if (updateLeadDto.preferredLanguage) lead.preferredLanguage = updateLeadDto.preferredLanguage;
     if (updateLeadDto.contactPreferences !== undefined) lead.contactPreferences = updateLeadDto.contactPreferences;
-    if (updateLeadDto.preferredDate) lead.preferredDate = new Date(updateLeadDto.preferredDate);
-    if (updateLeadDto.preferredTimeSlot !== undefined) lead.preferredTimeSlot = updateLeadDto.preferredTimeSlot;
     
     if (updateLeadDto.vehicleMake !== undefined) lead.vehicleMake = updateLeadDto.vehicleMake;
     if (updateLeadDto.vehicleModel !== undefined) lead.vehicleModel = updateLeadDto.vehicleModel;
