@@ -35,7 +35,7 @@ export class Lead {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // TEMPORARY: Disabled until schema is fixed
+  // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
   // @ManyToOne(() => Customer, (customer) => customer.leads, { nullable: true })
   // @JoinColumn({ name: 'customer_id' })
   // customer: Customer;
@@ -60,13 +60,13 @@ export class Lead {
   @Column({ type: 'varchar', length: 10, default: 'en', name: 'preferred_language' })
   preferredLanguage: string;
 
-  // Contact Preferences
-  @Column({ type: 'jsonb', nullable: true, name: 'contact_preferences' })
-  contactPreferences: {
-    phoneCall?: boolean;
-    whatsapp?: boolean;
-    textMessage?: boolean;
-  };
+  // Contact Preferences - TEMPORARILY DISABLED (column doesn't exist in database)
+  // @Column({ type: 'jsonb', nullable: true, name: 'contact_preferences' })
+  // contactPreferences: {
+  //   phoneCall?: boolean;
+  //   whatsapp?: boolean;
+  //   textMessage?: boolean;
+  // };
 
   // Scheduling Information - TEMPORARILY DISABLED to fix leads display
   // @Column({ type: 'date', nullable: true, name: 'preferred_date' })
@@ -76,7 +76,7 @@ export class Lead {
   // preferredTimeSlot: string;
 
   // Vehicle Information
-  // TEMPORARY: Disabled until schema is fixed
+  // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
   // @ManyToOne(() => Vehicle, { nullable: true })
   // @JoinColumn({ name: 'vehicle_id' })
   // vehicle: Vehicle;
