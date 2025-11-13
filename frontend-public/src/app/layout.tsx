@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+// Google Ads tracking enabled - AW-803837087
 import { Inter, Poppins } from 'next/font/google'
 import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
