@@ -41,8 +41,8 @@ export default function DashboardPage() {
       try {
         setIsLoading(true);
         
-        // Fetch all leads (use large limit to get all for stats)
-        const response = await leadService.getLeads(1, 1000);
+        // Fetch all leads (use max allowed limit: 100)
+        const response = await leadService.getLeads(1, 100);
         const allLeads = response.data;
         setLeads(allLeads);
 
