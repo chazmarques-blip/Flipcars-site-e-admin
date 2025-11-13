@@ -1,0 +1,26 @@
+Estávamos diagnosticando o problema "No leads found" no admin dashboard do FlipCars.
+
+STATUS ATUAL:
+✅ Migration contact_preferences JÁ EXECUTADA
+✅ 5 leads existem no banco Supabase
+✅ Backend Railway online
+✅ Usuário admin@flipcars.com existe
+🟡 Tentando criar admin@flipcars.us
+
+ONDE PARAMOS:
+Tentamos criar usuário admin@flipcars.us mas encontramos campos que não existem na tabela users (phone, email_confirmed_at, etc).
+
+PRÓXIMO PASSO:
+Executar SQL simplificado com apenas os campos que existem:
+
+```sql
+INSERT INTO users (id, name, email, password, role, is_active, created_at, updated_at)
+VALUES (gen_random_uuid(), 'Admin FlipCars US', 'admin@flipcars.us', 
+        '$2b$10$sOp.Px5gY8th1v9Ngp33M.9Sm7A36U2sGsraUyoZL7uSFeQCgsBOa',
+        'admin', true, NOW(), NOW())
+ON CONFLICT (email) DO NOTHING;
+```
+
+OU usar email existente: admin@flipcars.com (senha: Admin@FlipCars2024!)
+
+CONTEXTO COMPLETO em: COMANDO_PROXIMO_CHAT_2024-11-13.md
