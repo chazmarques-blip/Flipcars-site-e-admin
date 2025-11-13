@@ -12,7 +12,8 @@ import {
 import { Customer } from './customer.entity';
 import { User } from './user.entity';
 import { Vehicle } from './vehicle.entity';
-import { AiConversation } from './ai-conversation.entity';
+// TEMPORARY: Disabled until ai_conversations table is created
+// import { AiConversation } from './ai-conversation.entity';
 
 export enum LeadStatus {
   NEW = 'new',
@@ -171,8 +172,9 @@ export class Lead {
   @Column({ type: 'varchar', length: 50, nullable: true })
   source: string;
 
-  @OneToMany(() => AiConversation, (conversation) => conversation.lead)
-  aiConversations: AiConversation[];
+  // TEMPORARY: Disabled until ai_conversations table is created
+  // @OneToMany(() => AiConversation, (conversation) => conversation.lead)
+  // aiConversations: AiConversation[];
 
   @CreateDateColumn({ name: 'created_at' })
   @Index('idx_lead_created_at')
