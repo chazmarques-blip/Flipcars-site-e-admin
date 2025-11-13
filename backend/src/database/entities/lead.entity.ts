@@ -59,6 +59,14 @@ export class Lead {
   @Column({ type: 'varchar', length: 10, default: 'en', name: 'preferred_language' })
   preferredLanguage: string;
 
+  // Contact Preferences
+  @Column({ type: 'jsonb', nullable: true, name: 'contact_preferences' })
+  contactPreferences: {
+    phoneCall?: boolean;
+    whatsapp?: boolean;
+    textMessage?: boolean;
+  };
+
   // Vehicle Information
   // TEMPORARY: Disabled until schema is fixed
   // @ManyToOne(() => Vehicle, { nullable: true })

@@ -31,6 +31,13 @@ export interface Lead {
   state?: string;
   zipCode?: string;
   
+  // Contact preferences
+  contactPreferences?: {
+    phoneCall?: boolean;
+    whatsapp?: boolean;
+    textMessage?: boolean;
+  };
+  
   // Vehicle info
   vehicleMake?: string;
   vehicleModel?: string;
