@@ -69,6 +69,8 @@ export class LeadsService {
    */
   async findAll(query: QueryLeadsDto) {
     try {
+      console.log('[LeadsService] findAll called with query:', JSON.stringify(query));
+      
       const {
         page = 1,
         limit = 10,
@@ -149,7 +151,10 @@ export class LeadsService {
       queryBuilder.skip(skip).take(limit);
 
       // Execute query
+      console.log('[LeadsService] Executing query...');
       const [leads, total] = await queryBuilder.getManyAndCount();
+      
+      console.log(`[LeadsService] Query successful: found ${total} leads`);
 
       return {
         data: leads,
@@ -161,7 +166,8 @@ export class LeadsService {
         },
       };
     } catch (error) {
-      console.error('Error in findAll leads:', error);
+      console.error('[LeadsService] Error in findAll:', error.message);
+      console.error('[LeadsService] Error stack:', error.stack);
       throw error;
     }
   }
