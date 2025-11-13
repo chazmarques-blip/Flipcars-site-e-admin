@@ -223,7 +223,7 @@ export default function LeadsPage() {
           <div className="flex items-center gap-1">
             {prefs.phoneCall && (
               <div 
-                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-700"
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gold/10 text-gold border border-gold/20"
                 title="Phone Call"
               >
                 <Phone className="w-3 h-3" />
@@ -231,7 +231,7 @@ export default function LeadsPage() {
             )}
             {prefs.whatsapp && (
               <div 
-                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-700"
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-800 text-white border border-gray-700"
                 title="WhatsApp"
               >
                 <MessageCircle className="w-3 h-3" />
@@ -239,7 +239,7 @@ export default function LeadsPage() {
             )}
             {prefs.textMessage && (
               <div 
-                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-purple-100 text-purple-700"
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 border border-gray-300"
                 title="Text Message"
               >
                 <MessageSquare className="w-3 h-3" />
