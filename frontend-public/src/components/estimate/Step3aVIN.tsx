@@ -259,3 +259,4 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
     </div>
   );
 }
+// VIN Scanner with Camera - Updated Thu Nov 13 04:55:51 UTC 2025
