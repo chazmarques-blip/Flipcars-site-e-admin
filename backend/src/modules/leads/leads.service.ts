@@ -15,6 +15,7 @@ import { QueryLeadsDto } from './dto/query-leads.dto';
 import { AssignLeadDto } from './dto/assign-lead.dto';
 import { UpdateLeadStatusDto } from './dto/update-status.dto';
 import { QualifyLeadDto } from './dto/qualify-lead.dto';
+import { AppointmentsService } from '../appointments/appointments.service';
 
 @Injectable()
 export class LeadsService {
@@ -27,6 +28,7 @@ export class LeadsService {
     private readonly vehicleRepository: Repository<Vehicle>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly appointmentsService: AppointmentsService,
   ) {}
 
   /**
@@ -314,6 +316,26 @@ export class LeadsService {
     });
 
     const savedLead = await this.leadRepository.save(lead);
+
+    // AUTO-CREATE APPOINTMENT if preferredDate is provided
+    if (createLeadDto.preferredDate && createLeadDto.preferredTimeSlot) {
+      try {
+        console.log('[LeadsService] Auto-creating appointment for lead:', savedLead.referenceNumber);
+        
+        await this.appointmentsService.create({
+          leadId: savedLead.id,
+          appointmentDate: createLeadDto.preferredDate,
+          appointmentTimeSlot: createLeadDto.preferredTimeSlot,
+          contactPreferences: createLeadDto.contactPreferences,
+        });
+        
+        console.log(`[LeadsService] ✅ Appointment auto-created for lead ${savedLead.referenceNumber}`);
+      } catch (error) {
+        // Log error but don't fail lead creation
+        console.error('[LeadsService] ❌ Failed to auto-create appointment:', error.message);
+        console.error('[LeadsService] Lead was created successfully, but appointment creation failed');
+      }
+    }
 
     return this.findOne(savedLead.id);
   }
