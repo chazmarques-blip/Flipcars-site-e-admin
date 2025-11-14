@@ -57,7 +57,7 @@ export class AppointmentsController {
   update(
     @Param('id') id: string,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
-    @Request() req,
+    @Request() req: any,
   ) {
     return this.appointmentsService.update(
       id,

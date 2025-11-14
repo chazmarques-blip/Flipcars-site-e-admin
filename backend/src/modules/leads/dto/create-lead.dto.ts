@@ -13,8 +13,25 @@ import {
   IsBoolean,
   IsArray,
   IsNumber,
+  ValidateNested,
+  IsObject,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { LeadStatus, LeadPriority } from '@database/entities/lead.entity';
+
+export class ContactPreferencesDto {
+  @IsBoolean()
+  @IsOptional()
+  phoneCall?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  whatsapp?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  textMessage?: boolean;
+}
 
 export class CreateLeadDto {
   // Customer Information
@@ -37,13 +54,19 @@ export class CreateLeadDto {
   preferredLanguage?: string;
 
   // Contact Preferences
-  // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
-  // @IsOptional()
-  // contactPreferences?: {
-  //   phoneCall?: boolean;
-  //   whatsapp?: boolean;
-  //   textMessage?: boolean;
-  // };
+  @ValidateNested()
+  @Type(() => ContactPreferencesDto)
+  @IsOptional()
+  contactPreferences?: ContactPreferencesDto;
+
+  // Scheduling Preferences (for appointments)
+  @IsDateString()
+  @IsOptional()
+  preferredDate?: string;
+
+  @IsString()
+  @IsOptional()
+  preferredTimeSlot?: string;
 
   // Vehicle Information
   @IsString()

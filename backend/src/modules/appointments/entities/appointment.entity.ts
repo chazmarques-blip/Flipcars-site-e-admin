@@ -7,8 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Lead } from '../../leads/lead.entity';
-import { User } from '../../users/user.entity';
+import { Lead } from '@database/entities/lead.entity';
+import { User } from '@database/entities/user.entity';
 
 export enum AppointmentStatus {
   SCHEDULED = 'scheduled',
