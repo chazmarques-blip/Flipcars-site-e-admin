@@ -99,15 +99,16 @@ export class AppointmentsService {
       !appointment.confirmedAt
     ) {
       appointment.confirmedAt = new Date();
-      appointment.confirmedById = userId;
-      this.logger.log(`Appointment ${id} confirmed by user ${userId}`);
+      if (userId) {
+        appointment.confirmedById = userId;
+      }
+      this.logger.log(`Appointment ${id} confirmed by user ${userId || 'unknown'}`);
     }
 
     // Parse time slot se foi alterado
-    if (updateAppointmentDto.appointmentTimeSlot) {
-      const [startTime, endTime] = this.parseTimeSlot(
-        updateAppointmentDto.appointmentTimeSlot,
-      );
+    const timeSlot = (updateAppointmentDto as any).appointmentTimeSlot;
+    if (timeSlot) {
+      const [startTime, endTime] = this.parseTimeSlot(timeSlot);
       appointment.appointmentStartTime = startTime;
       appointment.appointmentEndTime = endTime;
     }
