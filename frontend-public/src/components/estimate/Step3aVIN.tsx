@@ -1,11 +1,27 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Car, Loader2, Camera } from 'lucide-react';
 import { EstimateRequest, VehicleInfo } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
-import { VINScanner } from './VINScanner';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
+
+// Dynamic import to prevent SSR issues with camera/scanner
+const VINScanner = dynamic(
+  () => import('./VINScanner').then((mod) => ({ default: mod.VINScanner })),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-gold animate-spin mx-auto mb-4" />
+          <p className="text-white text-sm">Loading scanner...</p>
+        </div>
+      </div>
+    )
+  }
+);
 
 interface Step3aVINProps {
   initialData: Partial<EstimateRequest>;

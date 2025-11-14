@@ -7,6 +7,7 @@ import { EstimateFormModal } from '@/components/estimate';
 import { leadService } from '@/lib/api/lead.service';
 import { Lead, LeadStatus } from '@/types/lead';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import {
   TrendingUp,
   Users,
@@ -41,27 +42,14 @@ export default function DashboardPage() {
     try {
       setIsLoading(true);
         
-        // Fetch all leads with pagination to avoid backend limit errors
-        // Backend may reject limit > 100, so we fetch multiple pages if needed
-        let allLeads: Lead[] = [];
-        let currentPage = 1;
-        const pageSize = 100; // Safe limit that backend accepts
-        let hasMore = true;
+        // SIMPLIFIED: Just fetch first page with safe limit
+        // Backend validation: @Max(100) in QueryLeadsDto
+        console.log('[Dashboard] Fetching leads with limit=50 (safe)');
+        const response = await leadService.getLeads(1, 50);
+        console.log('[Dashboard] Response received:', response);
         
-        // Fetch up to 500 leads (5 pages of 100)
-        while (hasMore && allLeads.length < 500) {
-          const pageResponse = await leadService.getLeads(currentPage, pageSize);
-          allLeads = [...allLeads, ...pageResponse.data];
-          
-          // Check if there are more pages
-          const pagination = pageResponse.meta || pageResponse.pagination || {};
-          hasMore = currentPage < (pagination.totalPages || pagination.pages || 1);
-          currentPage++;
-          
-          // Safety: stop after 5 pages
-          if (currentPage > 5) break;
-        }
-        
+        const allLeads = response.data || [];
+        console.log('[Dashboard] Leads loaded:', allLeads.length);
         setLeads(allLeads);
 
         // Calculate statistics
@@ -129,39 +117,45 @@ export default function DashboardPage() {
           todayUrgent,
         });
       } catch (error: any) {
-        console.error('[Dashboard] Failed to fetch dashboard data:', error);
+        console.error('[Dashboard] ❌ Failed to fetch dashboard data:', error);
+        console.error('[Dashboard] Error response:', error?.response);
+        console.error('[Dashboard] Error status:', error?.response?.status);
+        console.error('[Dashboard] Error data:', error?.response?.data);
         
-        // Show user-friendly error message
-        const errorMessage = error?.response?.data?.message || error?.message || 'Failed to load dashboard data';
-        console.error('[Dashboard] Error details:', errorMessage);
+        // Show toast error to user
+        toast.error('Failed to load dashboard data. Please try refreshing the page.');
         
-        // Try fallback with smaller limit
+        // Try fallback with very small limit
         try {
           console.log('[Dashboard] Trying fallback with limit=10...');
           const fallbackResponse = await leadService.getLeads(1, 10);
-          setLeads(fallbackResponse.data);
-          console.log('[Dashboard] ✅ Fallback succeeded, loaded', fallbackResponse.data.length, 'leads');
+          const fallbackLeads = fallbackResponse.data || [];
+          
+          setLeads(fallbackLeads);
+          console.log('[Dashboard] ✅ Fallback succeeded, loaded', fallbackLeads.length, 'leads');
           
           // Calculate stats with limited data
-          const limitedLeads = fallbackResponse.data;
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           
           setStats({
-            totalLeads: limitedLeads.length,
-            activeCustomers: limitedLeads.filter(l => l.status === LeadStatus.CONVERTED).length,
-            openClaims: limitedLeads.filter(l => 
+            totalLeads: fallbackLeads.length,
+            activeCustomers: fallbackLeads.filter(l => l.status === LeadStatus.CONVERTED).length,
+            openClaims: fallbackLeads.filter(l => 
               l.status !== LeadStatus.ARCHIVED && 
               l.status !== LeadStatus.LOST && 
               l.status !== LeadStatus.CONVERTED
             ).length,
-            revenue: 0, // Can't calculate accurately with limited data
+            revenue: 0,
             todayCompleted: 0,
             todayPending: 0,
             todayUrgent: 0,
           });
-        } catch (fallbackError) {
+          
+          toast.success('Loaded recent leads (limited view)');
+        } catch (fallbackError: any) {
           console.error('[Dashboard] ❌ Fallback also failed:', fallbackError);
+          toast.error('Cannot load leads. Please check your connection and try again.');
         }
     } finally {
       setIsLoading(false);
