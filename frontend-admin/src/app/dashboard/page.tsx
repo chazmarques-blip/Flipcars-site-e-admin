@@ -41,8 +41,9 @@ export default function DashboardPage() {
     try {
       setIsLoading(true);
         
-        // Fetch all leads (use max allowed limit: 100)
-        const response = await leadService.getLeads(1, 100);
+        // Fetch all leads (increased limit to ensure recent leads are included)
+        // Changed from 100 to 500 to fix issue where lead FL-2025-4645 wasn't showing
+        const response = await leadService.getLeads(1, 500);
         const allLeads = response.data;
         setLeads(allLeads);
 
