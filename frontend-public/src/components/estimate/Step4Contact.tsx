@@ -12,9 +12,10 @@ interface Step4ContactProps {
   initialData: Partial<EstimateRequest>;
   onSubmit: (data: Partial<EstimateRequest>) => void;
   onBack: () => void;
+  isSubmitting?: boolean;
 }
 
-export function Step4Contact({ initialData, onSubmit, onBack }: Step4ContactProps) {
+export function Step4Contact({ initialData, onSubmit, onBack, isSubmitting = false }: Step4ContactProps) {
   const {
     register,
     handleSubmit,
@@ -167,9 +168,9 @@ export function Step4Contact({ initialData, onSubmit, onBack }: Step4ContactProp
           type="submit"
           variant="primary"
           className="flex-1 bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs"
-          disabled={!hasSelection}
+          disabled={!hasSelection || isSubmitting}
         >
-          Submit Request
+          {isSubmitting ? 'Submitting...' : 'Submit Request'}
         </Button>
       </div>
     </form>
