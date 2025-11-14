@@ -128,10 +128,28 @@ export function VINScanner({ onVINDetected, onClose }: VINScannerProps) {
       
     } catch (error: any) {
       console.error('[VIN Scanner] ❌ Failed to start scanner:', error);
+      console.error('[VIN Scanner] Error name:', error.name);
+      console.error('[VIN Scanner] Error message:', error.message);
+      console.error('[VIN Scanner] Error stack:', error.stack);
+      
       setScanStatus('error');
-      setErrorMessage(
-        error.message || 'Failed to access camera. Please check permissions.'
-      );
+      
+      // Provide specific error messages based on error type
+      let userMessage = 'Failed to access camera. ';
+      
+      if (error.name === 'NotAllowedError' || error.message?.includes('permission')) {
+        userMessage = 'Camera permission denied. Please allow camera access in your browser settings and try again.';
+      } else if (error.name === 'NotFoundError' || error.message?.includes('no camera')) {
+        userMessage = 'No camera found on this device. Please use manual VIN entry.';
+      } else if (error.name === 'NotReadableError' || error.message?.includes('in use')) {
+        userMessage = 'Camera is already in use by another app. Please close other apps using the camera.';
+      } else if (error.name === 'SecurityError' || error.message?.includes('https')) {
+        userMessage = 'Camera access requires HTTPS. This is a security issue with the website.';
+      } else if (error.message) {
+        userMessage = `Camera error: ${error.message}`;
+      }
+      
+      setErrorMessage(userMessage);
       setIsScanning(false);
     }
   };
