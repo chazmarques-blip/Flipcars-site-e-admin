@@ -128,7 +128,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           Who will pay for the repair? <span className="text-gold">*</span>
         </label>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
           {companies.map((company) => {
             const logo = isBodyshop ? getInsuranceLogo(company) : getWarrantyLogo(company);
             const isSelected = selectedCompany === company;
@@ -138,7 +138,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                 key={company}
                 type="button"
                 onClick={() => setValue(companyField, company as any, { shouldValidate: true })}
-                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all min-h-[80px] ${
+                className={`relative flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-[70px] ${
                   isSelected
                     ? 'border-gold bg-gold/5 shadow-md'
                     : 'border-neutral-300 hover:border-neutral-400 bg-white'
@@ -146,7 +146,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
               >
                 {logo ? (
                   <>
-                    <div className="relative w-full h-10 mb-1">
+                    <div className="relative w-full h-7 sm:h-8 mb-0.5 sm:mb-1">
                       <Image
                         src={logo}
                         alt={company}
@@ -157,7 +157,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                         priority
                       />
                     </div>
-                    <span className={`text-xs text-center font-medium ${
+                    <span className={`text-[10px] sm:text-xs text-center font-medium leading-tight ${
                       isSelected ? 'text-black' : 'text-neutral-700'
                     }`}>
                       {company}
@@ -165,17 +165,17 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   </>
                 ) : company === 'Private (Self-Pay)' ? (
                   <>
-                    <div className="flex items-center justify-center w-full h-10 mb-1">
-                      <Wallet className={`w-8 h-8 ${isSelected ? 'text-gold' : 'text-neutral-500'}`} />
+                    <div className="flex items-center justify-center w-full h-7 sm:h-8 mb-0.5 sm:mb-1">
+                      <Wallet className={`w-6 h-6 sm:w-7 sm:h-7 ${isSelected ? 'text-gold' : 'text-neutral-500'}`} />
                     </div>
-                    <span className={`text-xs text-center font-medium ${
+                    <span className={`text-[10px] sm:text-xs text-center font-medium leading-tight ${
                       isSelected ? 'text-black' : 'text-neutral-700'
                     }`}>
                       {company}
                     </span>
                   </>
                 ) : (
-                  <span className={`text-sm text-center font-medium ${
+                  <span className={`text-xs sm:text-sm text-center font-medium ${
                     isSelected ? 'text-black' : 'text-neutral-700'
                   }`}>
                     {company}
