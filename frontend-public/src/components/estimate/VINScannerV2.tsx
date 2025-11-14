@@ -41,11 +41,43 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
     return vinMatch ? vinMatch[0] : null;
   };
 
-  // OCR simulation (in production, you'd use a real OCR library or API)
-  const extractTextFromImage = async (imageData: ImageData): Promise<string[]> => {
-    // This is a placeholder - in production, integrate with Tesseract.js or similar
-    // For now, we'll return empty array and rely on user manual entry
-    return [];
+  // Extract VIN using Google Vision API
+  const extractTextFromImage = async (canvas: HTMLCanvasElement): Promise<string | null> => {
+    try {
+      // Convert canvas to base64 (JPEG format for smaller size)
+      const base64Image = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+      
+      addDebug('Sending image to Vision API...');
+      
+      // Call backend API
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+      const response = await fetch(`${backendUrl}/vision/scan-vin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ image: base64Image }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        addDebug(`API Error: ${response.status} - ${errorData.message || 'Unknown'}`);
+        return null;
+      }
+
+      const data = await response.json();
+      addDebug(`API Response: ${data.success ? 'VIN found' : 'No VIN'}`);
+      
+      if (data.success && data.vin) {
+        return data.vin;
+      }
+      
+      return null;
+    } catch (error: any) {
+      addDebug(`Vision API error: ${error.message}`);
+      console.error('[VINScannerV2] Vision API error:', error);
+      return null;
+    }
   };
 
   // Scan frame for VIN
@@ -66,19 +98,18 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
       // Draw current video frame to canvas
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Get image data
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      // Try to extract VIN using Google Vision API
+      const detectedVIN = await extractTextFromImage(canvas);
 
-      // Try to extract text (placeholder - needs real OCR)
-      const texts = await extractTextFromImage(imageData);
-
-      // Check each extracted text for VIN
-      for (const text of texts) {
-        const vin = validateVIN(text);
-        if (vin) {
-          addDebug(`VIN detected: ${vin}`);
-          handleSuccess(vin);
+      if (detectedVIN) {
+        // Validate the detected VIN
+        const validatedVIN = validateVIN(detectedVIN);
+        if (validatedVIN) {
+          addDebug(`VIN detected: ${validatedVIN}`);
+          handleSuccess(validatedVIN);
           return;
+        } else {
+          addDebug(`Invalid VIN format: ${detectedVIN}`);
         }
       }
 
