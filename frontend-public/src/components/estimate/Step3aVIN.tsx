@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/Button';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 // Dynamic import to prevent SSR issues with camera/scanner
+// Using VINScannerV2 with Google Vision API for OCR
 const VINScanner = dynamic(
-  () => import('./VINScanner').then((mod) => ({ default: mod.VINScanner })),
+  () => import('./VINScannerV2').then((mod) => ({ default: mod.VINScannerV2 })),
   { 
     ssr: false,
     loading: () => (
