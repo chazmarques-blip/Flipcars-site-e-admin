@@ -38,21 +38,21 @@ export default function Services() {
   return (
     <section className="py-5 bg-white">
       <div className="container-custom">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           {services.map((service, index) => {
             const Icon = service.icon
             return (
               <div
                 key={index}
-                className="group bg-white p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:shadow-xl transition-all duration-300"
+                className="group bg-white p-3 lg:p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:shadow-xl transition-all duration-300 flex flex-col"
               >
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                  <Icon className="w-6 h-6 text-primary group-hover:text-white transition-colors duration-300" />
+                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2 lg:mb-3 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <Icon className="w-5 h-5 lg:w-6 lg:h-6 text-primary group-hover:text-white transition-colors duration-300" />
                 </div>
-                <h3 className="text-lg font-heading font-semibold text-secondary mb-2">
+                <h3 className="text-base lg:text-lg font-heading font-semibold text-secondary mb-2">
                   {service.title}
                 </h3>
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-xs lg:text-sm text-gray-600 mb-2 flex-grow">
                   {service.description}
                 </p>
                 <Link
