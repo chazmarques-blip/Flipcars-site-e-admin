@@ -17,6 +17,7 @@ import {
   Mail,
   Search,
   Activity,
+  Calendar,
 } from 'lucide-react';
 import { useSidebar } from '@/lib/hooks/useSidebar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -46,6 +47,12 @@ const navItems: NavItem[] = [
     label: 'Leads',
     href: '/dashboard/leads',
     icon: Car,
+    roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.AGENT],
+  },
+  {
+    label: 'Appointments',
+    href: '/dashboard/appointments',
+    icon: Calendar,
     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.AGENT],
   },
   {
