@@ -6,6 +6,90 @@
   body {
     @apply bg-white text-secondary font-sans;
   }
+
+  /* ============================================
+     MOBILE UX IMPROVEMENTS - Keyboard & Scroll
+     ============================================ */
+  
+  /* Prevent iOS Safari bounce/overscroll */
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    /* Prevent viewport height jumps when keyboard opens */
+    html {
+      height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: -webkit-fill-available; /* iOS Safari */
+    }
+
+    /* Prevent input zoom on iOS Safari (16px minimum) */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="search"],
+    input[type="password"],
+    input[type="url"],
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+
+    /* Prevent page shift when focusing inputs */
+    input:focus,
+    textarea:focus,
+    select:focus {
+      scroll-margin-top: 100px; /* Keep input visible below fixed headers */
+      scroll-behavior: smooth;
+    }
+
+    /* Modal/Form containers should handle their own scroll */
+    .modal-scroll-container,
+    [class*="overflow-y-auto"] {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+    }
+
+    /* Fixed bottom button bars */
+    .fixed-bottom-actions {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      background: white;
+      border-top: 1px solid #e5e5e5;
+      padding: 1rem;
+      /* Prevent keyboard from pushing this up */
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+
+    /* Prevent body scroll when modal is open */
+    body.modal-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  /* Image orientation support (allow landscape photos) */
+  img {
+    image-orientation: from-image;
+  }
+
+  /* Photo capture improvements */
+  input[type="file"] {
+    image-orientation: from-image;
+  }
 }
 
 @layer components {

@@ -348,6 +348,10 @@ function PhotoUploadBox({ label, photoUrl, isUploading, required, onFileChange, 
         capture="environment"
         onChange={(e) => onFileChange(e.target.files?.[0] || null)}
         className="hidden"
+        style={{
+          // Allow any orientation (portrait or landscape)
+          imageOrientation: 'from-image'
+        }}
       />
       
       <button
@@ -364,7 +368,16 @@ function PhotoUploadBox({ label, photoUrl, isUploading, required, onFileChange, 
       >
         {photoUrl ? (
           <>
-            <img src={photoUrl} alt={label} className="w-full h-full object-cover" />
+            <img 
+              src={photoUrl} 
+              alt={label} 
+              className="w-full h-full object-cover"
+              style={{
+                // Respect EXIF orientation metadata (auto-rotate based on how photo was taken)
+                imageOrientation: 'from-image',
+                objectFit: 'cover'
+              }}
+            />
             <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
               <button
                 type="button"

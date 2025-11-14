@@ -5,6 +5,7 @@ import { Car, Loader2, Camera } from 'lucide-react';
 import { EstimateRequest, VehicleInfo } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
 import { VINScanner } from './VINScanner';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 interface Step3aVINProps {
   initialData: Partial<EstimateRequest>;
@@ -18,6 +19,7 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
   const [vehicle, setVehicle] = useState<VehicleInfo | null>(initialData.vehicle || null);
   const [error, setError] = useState('');
   const [showScanner, setShowScanner] = useState(false);
+  const isMobile = useIsMobile();
 
   const validateVIN = (value: string): boolean => {
     // VIN must be exactly 17 characters, alphanumeric (no I, O, Q)

@@ -24,6 +24,20 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Prevent body scroll when modal is open (mobile UX improvement)
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleNext = (stepData: Partial<EstimateRequest>) => {
