@@ -156,7 +156,8 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                         unoptimized
                         priority
                       />
-                    </div>                    <span className={`text-xs text-center font-medium ${
+                    </div>
+                    <span className={`text-xs text-center font-medium ${
                       isSelected ? 'text-black' : 'text-neutral-700'
                     }`}>
                       {company}

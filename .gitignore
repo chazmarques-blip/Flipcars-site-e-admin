@@ -5,3 +5,4 @@ jwt_secret.txt
 jwt_refresh_secret.txt
 JWT_SECRETS_PRODUCTION.txt
 .vercel-credentials
+frontend-public/public/images/backup_corrupted/
