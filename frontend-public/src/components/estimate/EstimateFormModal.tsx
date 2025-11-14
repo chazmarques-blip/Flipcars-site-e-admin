@@ -21,6 +21,8 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<EstimateRequest>>({});
   const [referenceNumber, setReferenceNumber] = useState<string>('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -36,8 +38,21 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
   const handleContactSubmit = async (finalData: Partial<EstimateRequest>) => {
     const completeData = { ...formData, ...finalData } as EstimateRequest;
     
-    console.log('[EstimateForm] 🚀 Starting submission process');
-    console.log('[EstimateForm] Form data:', completeData);
+    // Reset previous errors
+    setSubmitError(null);
+    setIsSubmitting(true);
+    
+    console.log('[EstimateForm] 🚀 ========== SUBMIT START ==========');
+    console.log('[EstimateForm] 📊 Complete Data:', completeData);
+    console.log('[EstimateForm] 🌐 API URL:', process.env.NEXT_PUBLIC_API_URL || 'undefined');
+    
+    // Validate API URL is configured
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      console.error('[EstimateForm] ❌ CRITICAL: NEXT_PUBLIC_API_URL is not configured!');
+      setSubmitError('Configuration error. Please contact us at (321) 960-8661.');
+      setIsSubmitting(false);
+      return;
+    }
     
     try {
       // Import leadsService dynamically to avoid SSR issues
@@ -50,17 +65,19 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
       
       const response = await leadsService.createLead(completeData);
       
-      console.log('[EstimateForm] ✅ API Response received:', response);
-      console.log('[EstimateForm] ✅ Reference Number from backend:', response.data.referenceNumber);
+      console.log('[EstimateForm] ✅ ========== SUBMIT SUCCESS ==========');
+      console.log('[EstimateForm] 📝 API Response:', response);
+      console.log('[EstimateForm] 📝 Reference Number from backend:', response.data.referenceNumber);
       
       // CRITICAL: Verify response structure
       if (!response || !response.data || !response.data.referenceNumber) {
         throw new Error('Invalid response structure from backend');
       }
       
-      // Use server-generated reference number
+      // Use server-generated reference number (FLIP-YYYYMMDD-XXXX format)
       setReferenceNumber(response.data.referenceNumber);
       console.log('[EstimateForm] ✅ Reference number set to:', response.data.referenceNumber);
+      setIsSubmitting(false);
       
       // 🎯 Track Google Ads conversion
       const conversionLabel = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL;
@@ -88,61 +105,53 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
         console.warn('[EstimateForm] ⚠️ Could not save to localStorage:', storageError);
       }
       
+      // SUCCESS: Update form data and move to confirmation step
+      setFormData(completeData);
+      console.log('[EstimateForm] 📍 Moving to confirmation step: 6');
+      setCurrentStep(6);
+      
     } catch (error: any) {
-      console.error('[EstimateForm] ❌ ERROR DETAILS:', {
-        message: error.message,
-        response: error.response,
-        status: error.response?.status,
-        data: error.response?.data,
-        stack: error.stack,
-      });
+      console.error('[EstimateForm] ❌ ========== SUBMIT FAILED ==========');
+      console.error('[EstimateForm] Error message:', error.message);
+      console.error('[EstimateForm] Error response:', error.response);
+      console.error('[EstimateForm] Error status:', error.response?.status);
+      console.error('[EstimateForm] Error data:', error.response?.data);
+      console.error('[EstimateForm] Request URL:', error.config?.url);
+      console.error('[EstimateForm] Request headers:', error.config?.headers);
+      console.error('[EstimateForm] ==========================================');
       
-      // Log detailed error information
-      if (error.response) {
-        console.error('[EstimateForm] ❌ Response Error:', error.response.status, error.response.data);
-      } else if (error.request) {
+      setIsSubmitting(false);
+      
+      // Determine user-friendly error message
+      let userMessage = 'Unable to submit your estimate request. Please try again.';
+      
+      if (!error.response) {
+        // Network error
+        userMessage = 'Network error. Please check your internet connection and try again.';
         console.error('[EstimateForm] ❌ Network Error: No response received');
+      } else if (error.response.status >= 500) {
+        // Server error
+        userMessage = 'Server error. Our team has been notified. Please try again in a few moments.';
+        console.error('[EstimateForm] ❌ Server Error:', error.response.status, error.response.data);
+      } else if (error.response.status === 400) {
+        // Validation error
+        const validationMsg = error.response.data?.message || 'Invalid data provided.';
+        userMessage = `Validation error: ${validationMsg}`;
+        console.error('[EstimateForm] ❌ Validation Error:', error.response.data);
       } else {
-        console.error('[EstimateForm] ❌ Error:', error.message);
+        console.error('[EstimateForm] ❌ Unexpected Error:', error.message);
       }
       
-      // Fallback: Save to localStorage if backend fails
-      console.log('[EstimateForm] ⚠️ Using FALLBACK reference number generation');
-      const refNumber = `FL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-      setReferenceNumber(refNumber);
-      console.log('[EstimateForm] ⚠️ Fallback reference number:', refNumber);
+      // Set error state to show to user
+      setSubmitError(userMessage);
       
-      try {
-        const leadData = {
-          ...completeData,
-          referenceNumber: refNumber,
-          createdAt: new Date().toISOString(),
-          status: 'new',
-          source: 'website_estimate_form',
-          _failedSync: true, // Mark as failed sync
-          _error: error.message || 'Unknown error',
-          _errorDetails: {
-            status: error.response?.status,
-            data: error.response?.data,
-          },
-        };
-        
-        const existingLeads = JSON.parse(localStorage.getItem('flipcars_pending_leads') || '[]');
-        existingLeads.push(leadData);
-        localStorage.setItem('flipcars_pending_leads', JSON.stringify(existingLeads));
-        
-        console.log('[EstimateForm] ⚠️ Saved to localStorage (pending sync):', leadData);
-      } catch (storageError) {
-        console.error('[EstimateForm] ❌ Failed to save to localStorage:', storageError);
-      }
+      // Log for debugging
+      console.error('[EstimateForm] 📞 User should call: (321) 960-8661');
+      
+      // DO NOT go to confirmation step - user stays on current step
+      // DO NOT generate fake reference number
+      // User will see error message and can retry
     }
-    
-    // Update form data with final data
-    setFormData(completeData);
-    
-    // Move to confirmation step (always step 6 now)
-    console.log('[EstimateForm] 📍 Moving to confirmation step: 6');
-    setCurrentStep(6);
   };
 
   const handleReset = () => {
@@ -241,11 +250,49 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
           {/* Contact Preferences */}
           {((currentStep === 5 && formData.serviceType === 'mechanic') ||
             (currentStep === 5 && formData.serviceType === 'bodyshop')) && (
-            <Step4Contact
-              initialData={formData}
-              onSubmit={handleContactSubmit}
-              onBack={handleBack}
-            />
+            <>
+              {/* Error Message */}
+              {submitError && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-red-800 mb-1">Submission Failed</h4>
+                      <p className="text-sm text-red-700 mb-3">{submitError}</p>
+                      <div className="flex flex-col gap-2">
+                        <button
+                          onClick={() => handleContactSubmit(formData)}
+                          disabled={isSubmitting}
+                          className="text-sm font-medium text-red-600 hover:text-red-800 underline text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSubmitting ? 'Retrying...' : 'Try Again'}
+                        </button>
+                        <a
+                          href="tel:+13219608661"
+                          className="text-sm text-red-600 hover:text-red-800 flex items-center gap-1"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          Or call us: (321) 960-8661
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <Step4Contact
+                initialData={formData}
+                onSubmit={handleContactSubmit}
+                onBack={handleBack}
+                isSubmitting={isSubmitting}
+              />
+            </>
           )}
 
           {/* Confirmation */}
