@@ -19,20 +19,19 @@ import { Type } from 'class-transformer';
  * Supports both Body Shop and Mechanic service types
  */
 
-// TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
-// export class ContactPreferencesDto {
-//   @IsBoolean()
-//   @IsOptional()
-//   phoneCall?: boolean;
-//
-//   @IsBoolean()
-//   @IsOptional()
-//   whatsapp?: boolean;
-//
-//   @IsBoolean()
-//   @IsOptional()
-//   textMessage?: boolean;
-// }
+export class ContactPreferencesDto {
+  @IsBoolean()
+  @IsOptional()
+  phoneCall?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  whatsapp?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  textMessage?: boolean;
+}
 
 export class VehicleInfoDto {
   @IsString()
@@ -170,6 +169,14 @@ export class CreatePublicLeadDto {
   @IsOptional()
   dateSkipped?: boolean;
 
+  @IsDateString()
+  @IsOptional()
+  preferredDate?: string;
+
+  @IsString()
+  @IsOptional()
+  preferredTimeSlot?: string;
+
   // Vehicle Information (OPTIONAL)
   @ValidateNested()
   @Type(() => VehicleInfoDto)
@@ -188,11 +195,11 @@ export class CreatePublicLeadDto {
   @IsOptional()
   warrantyDocs?: WarrantyDocumentsDto;
 
-  // Step 4: Contact Preferences (REQUIRED)
-  // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
-  // @ValidateNested()
-  // @Type(() => ContactPreferencesDto)
-  // contactPreferences: ContactPreferencesDto;
+  // Step 4: Contact Preferences (OPTIONAL)
+  @ValidateNested()
+  @Type(() => ContactPreferencesDto)
+  @IsOptional()
+  contactPreferences?: ContactPreferencesDto;
 
   @IsString()
   @IsOptional()

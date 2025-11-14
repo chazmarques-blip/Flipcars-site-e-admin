@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Calendar, Info } from 'lucide-react';
+import { Calendar, Info, Wallet } from 'lucide-react';
+import Image from 'next/image';
 import {
   Step2BodyshopFormData,
   Step2MechanicFormData,
@@ -13,6 +14,35 @@ import {
 import { EstimateRequest, INSURANCE_COMPANIES, WARRANTY_COMPANIES, ServiceType } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
 import { formatDateDisplay, formatDateInput, getAvailableDates, getAvailableTimeSlots } from '@/lib/utils/calendar';
+
+// Map insurance companies to logo filenames
+const getInsuranceLogo = (company: string): string | null => {
+  const logoMap: Record<string, string> = {
+    'Allstate': '/images/insurance-allstate.png',
+    'American Family': '/images/insurance-american-family.png',
+    'Erie Insurance': '/images/insurance-erie.png',
+    'Farmers Insurance': '/images/insurance-farmers.png',
+    'Geico': '/images/insurance-geico.png',
+    'Liberty Mutual': '/images/insurance-liberty-mutual.png',
+    'Nationwide': '/images/insurance-nationwide.png',
+    'Progressive': '/images/insurance-progressive.png',
+    'State Farm': '/images/insurance-statefarm.png',
+    'Travelers': '/images/insurance-travelers.png',
+    'USAA': '/images/insurance-usaa.png',
+  };
+  return logoMap[company] || null;
+};
+
+// Map warranty companies to logo filenames
+const getWarrantyLogo = (company: string): string | null => {
+  const logoMap: Record<string, string> = {
+    'CARCHEX': '/images/warranty-carchex.png',
+    'CarShield': '/images/warranty-carshield.jpg',
+    'Endurance': '/images/warranty-endurance.png',
+    'Protect My Car': '/images/warranty-protect-my-car.png',
+  };
+  return logoMap[company] || null;
+};
 
 interface Step2ServiceDetailsProps {
   initialData: Partial<EstimateRequest>;
@@ -93,24 +123,67 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Company Selection */}
-      <div className="space-y-0.5">
-        <label htmlFor={companyField} className="block text-sm font-medium text-black">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-black">
           Who will pay for the repair? <span className="text-gold">*</span>
         </label>
-        <select
-          id={companyField}
-          {...register(companyField)}
-          className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
-            errors[companyField] ? 'border-red-500' : 'border-neutral-300'
-          }`}
-        >
-          <option value="">Select {isBodyshop ? 'insurance' : 'warranty'} company</option>
-          {companies.map((company) => (
-            <option key={company} value={company}>
-              {company}
-            </option>
-          ))}
-        </select>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {companies.map((company) => {
+            const logo = isBodyshop ? getInsuranceLogo(company) : getWarrantyLogo(company);
+            const isSelected = selectedCompany === company;
+            
+            return (
+              <button
+                key={company}
+                type="button"
+                onClick={() => setValue(companyField, company as any, { shouldValidate: true })}
+                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all min-h-[80px] ${
+                  isSelected
+                    ? 'border-gold bg-gold/5 shadow-md'
+                    : 'border-neutral-300 hover:border-neutral-400 bg-white'
+                } ${errors[companyField] ? 'border-red-500' : ''}`}
+              >
+                {logo ? (
+                  <>
+                    <div className="relative w-full h-10 mb-1">
+                      <Image
+                        src={logo}
+                        alt={company}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                      />
+                    </div>
+                    <span className={`text-xs text-center font-medium ${
+                      isSelected ? 'text-black' : 'text-neutral-700'
+                    }`}>
+                      {company}
+                    </span>
+                  </>
+                ) : company === 'Private (Self-Pay)' ? (
+                  <>
+                    <div className="flex items-center justify-center w-full h-10 mb-1">
+                      <Wallet className={`w-8 h-8 ${isSelected ? 'text-gold' : 'text-neutral-500'}`} />
+                    </div>
+                    <span className={`text-xs text-center font-medium ${
+                      isSelected ? 'text-black' : 'text-neutral-700'
+                    }`}>
+                      {company}
+                    </span>
+                  </>
+                ) : (
+                  <span className={`text-sm text-center font-medium ${
+                    isSelected ? 'text-black' : 'text-neutral-700'
+                  }`}>
+                    {company}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        
         {errors[companyField] && (
           <p className="text-sm text-red-600">{errors[companyField]?.message}</p>
         )}
@@ -128,7 +201,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             {...register(claimField)}
             placeholder="Enter claim number if available"
             disabled={hasClaimNumber}
-            className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+            className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
               hasClaimNumber ? 'bg-neutral-100 cursor-not-allowed' : 'border-neutral-300'
             }`}
           />
@@ -155,9 +228,9 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             <button
               type="button"
               onClick={() => setShowDatePicker(true)}
-              className="w-full px-3 py-2 text-left text-sm border border-neutral-300 rounded-lg hover:border-gold focus:ring-2 focus:ring-gold focus:border-gold transition-colors"
+              className="w-full px-3 py-2.5 text-left text-base md:text-sm border border-neutral-300 rounded-lg hover:border-gold focus:ring-2 focus:ring-gold focus:border-gold transition-colors"
             >
-              <Calendar className="w-4 h-4 inline mr-2 text-neutral-400" />
+              <Calendar className="w-5 h-5 md:w-4 md:h-4 inline mr-2 text-neutral-400" />
               <span className="text-neutral-500">Select a date:</span>
             </button>
             <div className="flex items-start gap-2 p-2 bg-neutral-50 rounded-lg">
@@ -178,7 +251,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={date.toISOString()}
                   type="button"
                   onClick={() => handleDateSelect(date)}
-                  className="px-2 py-1.5 text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
+                  className="px-3 py-2 text-sm md:text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
                 >
                   {formatDateDisplay(date)}
                 </button>
@@ -205,7 +278,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={slot.value}
                   type="button"
                   onClick={() => handleTimeSlotSelect(slot.value)}
-                  className="px-3 py-1.5 text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
+                  className="px-3 py-2.5 text-base md:text-sm border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
                 >
                   {slot.label}
                 </button>
