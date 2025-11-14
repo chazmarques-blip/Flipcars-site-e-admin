@@ -41,10 +41,27 @@ export default function DashboardPage() {
     try {
       setIsLoading(true);
         
-        // Fetch all leads (increased limit to ensure recent leads are included)
-        // Changed from 100 to 500 to fix issue where lead FL-2025-4645 wasn't showing
-        const response = await leadService.getLeads(1, 500);
-        const allLeads = response.data;
+        // Fetch all leads with pagination to avoid backend limit errors
+        // Backend may reject limit > 100, so we fetch multiple pages if needed
+        let allLeads: Lead[] = [];
+        let currentPage = 1;
+        const pageSize = 100; // Safe limit that backend accepts
+        let hasMore = true;
+        
+        // Fetch up to 500 leads (5 pages of 100)
+        while (hasMore && allLeads.length < 500) {
+          const pageResponse = await leadService.getLeads(currentPage, pageSize);
+          allLeads = [...allLeads, ...pageResponse.data];
+          
+          // Check if there are more pages
+          const pagination = pageResponse.meta || pageResponse.pagination || {};
+          hasMore = currentPage < (pagination.totalPages || pagination.pages || 1);
+          currentPage++;
+          
+          // Safety: stop after 5 pages
+          if (currentPage > 5) break;
+        }
+        
         setLeads(allLeads);
 
         // Calculate statistics
@@ -111,8 +128,41 @@ export default function DashboardPage() {
           todayPending,
           todayUrgent,
         });
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+      } catch (error: any) {
+        console.error('[Dashboard] Failed to fetch dashboard data:', error);
+        
+        // Show user-friendly error message
+        const errorMessage = error?.response?.data?.message || error?.message || 'Failed to load dashboard data';
+        console.error('[Dashboard] Error details:', errorMessage);
+        
+        // Try fallback with smaller limit
+        try {
+          console.log('[Dashboard] Trying fallback with limit=10...');
+          const fallbackResponse = await leadService.getLeads(1, 10);
+          setLeads(fallbackResponse.data);
+          console.log('[Dashboard] ✅ Fallback succeeded, loaded', fallbackResponse.data.length, 'leads');
+          
+          // Calculate stats with limited data
+          const limitedLeads = fallbackResponse.data;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          setStats({
+            totalLeads: limitedLeads.length,
+            activeCustomers: limitedLeads.filter(l => l.status === LeadStatus.CONVERTED).length,
+            openClaims: limitedLeads.filter(l => 
+              l.status !== LeadStatus.ARCHIVED && 
+              l.status !== LeadStatus.LOST && 
+              l.status !== LeadStatus.CONVERTED
+            ).length,
+            revenue: 0, // Can't calculate accurately with limited data
+            todayCompleted: 0,
+            todayPending: 0,
+            todayUrgent: 0,
+          });
+        } catch (fallbackError) {
+          console.error('[Dashboard] ❌ Fallback also failed:', fallbackError);
+        }
     } finally {
       setIsLoading(false);
     }
