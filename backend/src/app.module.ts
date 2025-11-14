@@ -13,6 +13,7 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { ClaimsModule } from './modules/claims/claims.module';
 import { AiModule } from './modules/ai/ai.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 
@@ -49,6 +50,7 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
     AuthModule,
     UsersModule,
     LeadsModule,
+    AppointmentsModule,
     CustomersModule,
     ClaimsModule,
     AiModule,
