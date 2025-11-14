@@ -20,7 +20,7 @@ import { Role } from '@/database/entities/role.entity';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get('JWT_EXPIRATION') || '15m',
+          expiresIn: configService.get('JWT_EXPIRES_IN') || '24h',
         },
       }),
       inject: [ConfigService],
