@@ -215,8 +215,8 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
           </div>
         </div>
 
-        {/* Form Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-4">
+        {/* Form Content - Scrollable with safe padding */}
+        <div className="flex-1 overflow-y-auto p-4 pb-6">
           {currentStep === 1 && (
             <Step1BasicInfo
               initialData={formData}

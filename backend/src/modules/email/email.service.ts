@@ -1,0 +1,509 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
+import { Lead } from '@database/entities/lead.entity';
+
+export interface EmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+}
+
+@Injectable()
+export class EmailService {
+  private readonly logger = new Logger(EmailService.name);
+  private transporter: nodemailer.Transporter;
+
+  constructor(private configService: ConfigService) {
+    this.initializeTransporter();
+  }
+
+  private initializeTransporter() {
+    const emailConfig = {
+      host: this.configService.get<string>('SMTP_HOST', 'smtp.gmail.com'),
+      port: this.configService.get<number>('SMTP_PORT', 587),
+      secure: this.configService.get<boolean>('SMTP_SECURE', false), // true for 465, false for other ports
+      auth: {
+        user: this.configService.get<string>('SMTP_USER'),
+        pass: this.configService.get<string>('SMTP_PASS'),
+      },
+    };
+
+    this.logger.log('📧 Initializing email transporter...');
+    this.logger.log(`SMTP Host: ${emailConfig.host}:${emailConfig.port}`);
+    this.logger.log(`SMTP User: ${emailConfig.auth.user}`);
+
+    if (!emailConfig.auth.user || !emailConfig.auth.pass) {
+      this.logger.warn('⚠️ SMTP credentials not configured. Email sending will fail.');
+      this.logger.warn('⚠️ Please set SMTP_USER and SMTP_PASS environment variables.');
+    }
+
+    this.transporter = nodemailer.createTransport(emailConfig);
+  }
+
+  /**
+   * Send a generic email
+   */
+  async sendEmail(options: EmailOptions): Promise<boolean> {
+    try {
+      const from = this.configService.get<string>(
+        'SMTP_FROM',
+        '"FlipCars Auto Repair" <noreply@flipcars.com>',
+      );
+
+      this.logger.log(`📤 Sending email to ${options.to}`);
+      this.logger.log(`Subject: ${options.subject}`);
+
+      const info = await this.transporter.sendMail({
+        from,
+        to: options.to,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+      });
+
+      this.logger.log(`✅ Email sent successfully! MessageId: ${info.messageId}`);
+      return true;
+    } catch (error) {
+      this.logger.error('❌ Failed to send email:', error.message);
+      this.logger.error(error.stack);
+      return false;
+    }
+  }
+
+  /**
+   * Send estimate confirmation email to customer
+   */
+  async sendEstimateConfirmation(lead: Lead): Promise<boolean> {
+    this.logger.log(
+      `📧 Preparing estimate confirmation email for ${lead.firstName} ${lead.lastName}`,
+    );
+
+    const subject = `Estimate Request Confirmation - ${lead.referenceNumber}`;
+    const html = this.generateEstimateConfirmationHtml(lead);
+    const text = this.generateEstimateConfirmationText(lead);
+
+    return this.sendEmail({
+      to: lead.email,
+      subject,
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Generate HTML email template for estimate confirmation
+   */
+  private generateEstimateConfirmationHtml(lead: Lead): string {
+    const serviceType =
+      lead.serviceType === 'bodyshop' ? 'Body Shop Repair' : 'Mechanic Service';
+
+    const preferredDateFormatted = lead.preferredDate
+      ? new Date(lead.preferredDate).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : 'To be scheduled';
+
+    const vehicleInfo = lead.vehicle
+      ? `${lead.vehicle.year || ''} ${lead.vehicle.make || ''} ${lead.vehicle.model || ''}`.trim()
+      : 'N/A';
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimate Confirmation - FlipCars</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #D4AF37;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #D4AF37;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .reference-box {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            border: 2px solid #D4AF37;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .reference-label {
+            color: #D4AF37;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .reference-number {
+            color: #D4AF37;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #D4AF37;
+        }
+        .info-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            min-width: 120px;
+        }
+        .info-value {
+            color: #000;
+            flex: 1;
+        }
+        .next-steps {
+            background-color: #f9f9f9;
+            border-left: 4px solid #D4AF37;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .next-steps h3 {
+            margin-top: 0;
+            color: #000;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 12px 0;
+        }
+        .step-number {
+            background-color: #D4AF37;
+            color: #000;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .step-text {
+            flex: 1;
+            padding-top: 4px;
+        }
+        .location-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .location-box h3 {
+            margin-top: 0;
+            color: #000;
+        }
+        .location-box p {
+            margin: 5px 0;
+            color: #333;
+        }
+        .contact-link {
+            display: inline-block;
+            background-color: #000;
+            color: #D4AF37;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 10px 0;
+            border: 2px solid #D4AF37;
+        }
+        .footer {
+            background-color: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #D4AF37;
+        }
+        .footer p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 12px;
+        }
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                margin: 10px;
+            }
+            .content {
+                padding: 20px 15px;
+            }
+            .reference-number {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚗 FLIPCARS AUTO REPAIR</h1>
+            <p>${serviceType} - Estimate Request Confirmation</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Greeting -->
+            <h2 style="color: #000; margin-top: 0;">Thank You, ${lead.firstName}!</h2>
+            <p style="color: #333; line-height: 1.6;">
+                We've received your estimate request and our team is already reviewing it. 
+                We'll contact you shortly to discuss the next steps.
+            </p>
+
+            <!-- Reference Number -->
+            <div class="reference-box">
+                <div class="reference-label">Your Reference Number</div>
+                <div class="reference-number">${lead.referenceNumber}</div>
+                <p style="color: #D4AF37; font-size: 12px; margin: 5px 0 0;">Save this for tracking your request</p>
+            </div>
+
+            <!-- Request Details -->
+            <div class="section">
+                <div class="section-title">📋 Request Details</div>
+                <div class="info-row">
+                    <span class="info-label">Service Type:</span>
+                    <span class="info-value">${serviceType}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Customer:</span>
+                    <span class="info-value">${lead.firstName} ${lead.lastName}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">${lead.email}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value">${lead.phone}</span>
+                </div>
+                ${
+                  lead.vehicle?.vin
+                    ? `
+                <div class="info-row">
+                    <span class="info-label">VIN:</span>
+                    <span class="info-value">${lead.vehicle.vin}</span>
+                </div>
+                `
+                    : ''
+                }
+                ${
+                  vehicleInfo !== 'N/A'
+                    ? `
+                <div class="info-row">
+                    <span class="info-label">Vehicle:</span>
+                    <span class="info-value">${vehicleInfo}</span>
+                </div>
+                `
+                    : ''
+                }
+                <div class="info-row">
+                    <span class="info-label">Preferred Date:</span>
+                    <span class="info-value">${preferredDateFormatted}</span>
+                </div>
+                ${
+                  lead.preferredTimeSlot
+                    ? `
+                <div class="info-row">
+                    <span class="info-label">Preferred Time:</span>
+                    <span class="info-value">${lead.preferredTimeSlot}</span>
+                </div>
+                `
+                    : ''
+                }
+            </div>
+
+            <!-- Next Steps -->
+            <div class="next-steps">
+                <h3>What Happens Next?</h3>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <strong>Review</strong> - Our team will review your request within 1 hour during business hours.
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <strong>Contact</strong> - We'll reach out via your preferred method to discuss details.
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <strong>Service</strong> - We'll confirm your appointment and provide a detailed estimate.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="location-box">
+                <h3>📍 Our Location</h3>
+                <p><strong>FlipCars Auto Repair</strong></p>
+                <p>1110 W Eau Gallie Blvd<br>Melbourne, FL 32935</p>
+                <p><strong>Phone:</strong> (321) 960-8661</p>
+                <p><strong>Hours:</strong><br>
+                Mon-Fri: 9:00 AM - 6:00 PM<br>
+                Saturday: 9:00 AM - 12:00 PM<br>
+                Sunday: Closed</p>
+                <a href="tel:+13219608661" class="contact-link">📞 Call Us Now</a>
+            </div>
+
+            <!-- Additional Info -->
+            <p style="color: #666; font-size: 14px; line-height: 1.6; margin-top: 30px;">
+                If you have any questions or need to update your request, please contact us at 
+                <a href="tel:+13219608661" style="color: #D4AF37; text-decoration: none; font-weight: bold;">(321) 960-8661</a> 
+                or reply to this email with your reference number: <strong>${lead.referenceNumber}</strong>
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>FlipCars Auto Repair</strong></p>
+            <p>1110 W Eau Gallie Blvd, Melbourne, FL 32935</p>
+            <p>Phone: (321) 960-8661</p>
+            <p style="margin-top: 15px;">
+                This is an automated confirmation email. Please do not reply directly to this email.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+    `.trim();
+  }
+
+  /**
+   * Generate plain text email template for estimate confirmation
+   */
+  private generateEstimateConfirmationText(lead: Lead): string {
+    const serviceType =
+      lead.serviceType === 'bodyshop' ? 'Body Shop Repair' : 'Mechanic Service';
+
+    const preferredDateFormatted = lead.preferredDate
+      ? new Date(lead.preferredDate).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : 'To be scheduled';
+
+    const vehicleInfo = lead.vehicle
+      ? `${lead.vehicle.year || ''} ${lead.vehicle.make || ''} ${lead.vehicle.model || ''}`.trim()
+      : 'N/A';
+
+    return `
+FLIPCARS AUTO REPAIR
+${serviceType} - Estimate Request Confirmation
+
+Thank You, ${lead.firstName}!
+
+We've received your estimate request and our team is already reviewing it. 
+We'll contact you shortly to discuss the next steps.
+
+YOUR REFERENCE NUMBER: ${lead.referenceNumber}
+(Save this for tracking your request)
+
+REQUEST DETAILS:
+- Service Type: ${serviceType}
+- Customer: ${lead.firstName} ${lead.lastName}
+- Email: ${lead.email}
+- Phone: ${lead.phone}
+${lead.vehicle?.vin ? `- VIN: ${lead.vehicle.vin}` : ''}
+${vehicleInfo !== 'N/A' ? `- Vehicle: ${vehicleInfo}` : ''}
+- Preferred Date: ${preferredDateFormatted}
+${lead.preferredTimeSlot ? `- Preferred Time: ${lead.preferredTimeSlot}` : ''}
+
+WHAT HAPPENS NEXT?
+
+1. REVIEW - Our team will review your request within 1 hour during business hours.
+2. CONTACT - We'll reach out via your preferred method to discuss details.
+3. SERVICE - We'll confirm your appointment and provide a detailed estimate.
+
+OUR LOCATION:
+FlipCars Auto Repair
+1110 W Eau Gallie Blvd
+Melbourne, FL 32935
+
+Phone: (321) 960-8661
+
+Business Hours:
+Mon-Fri: 9:00 AM - 6:00 PM
+Saturday: 9:00 AM - 12:00 PM
+Sunday: Closed
+
+If you have any questions or need to update your request, please contact us at 
+(321) 960-8661 or reply to this email with your reference number: ${lead.referenceNumber}
+
+---
+FlipCars Auto Repair
+1110 W Eau Gallie Blvd, Melbourne, FL 32935
+Phone: (321) 960-8661
+
+This is an automated confirmation email. Please do not reply directly to this email.
+    `.trim();
+  }
+
+  /**
+   * Test email configuration
+   */
+  async testConnection(): Promise<boolean> {
+    try {
+      this.logger.log('🧪 Testing email connection...');
+      await this.transporter.verify();
+      this.logger.log('✅ Email connection test successful!');
+      return true;
+    } catch (error) {
+      this.logger.error('❌ Email connection test failed:', error.message);
+      return false;
+    }
+  }
+}
