@@ -153,9 +153,10 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                         fill
                         className="object-contain"
                         sizes="(max-width: 768px) 50vw, 33vw"
+                        unoptimized
+                        priority
                       />
-                    </div>
-                    <span className={`text-xs text-center font-medium ${
+                    </div>                    <span className={`text-xs text-center font-medium ${
                       isSelected ? 'text-black' : 'text-neutral-700'
                     }`}>
                       {company}
