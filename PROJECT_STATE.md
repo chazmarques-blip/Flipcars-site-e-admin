@@ -256,7 +256,7 @@ JWT_SECRET=...
 JWT_EXPIRES_IN=7d
 
 # CORS (existing)
-ALLOWED_ORIGINS=https://flipcars.com,http://localhost:3000
+ALLOWED_ORIGINS=https://flipcars.us,http://localhost:3000
 ```
 
 ### Frontend (.env.local):

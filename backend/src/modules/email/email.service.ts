@@ -49,7 +49,7 @@ export class EmailService {
     try {
       const from = this.configService.get<string>(
         'SMTP_FROM',
-        '"FlipCars Auto Repair" <noreply@flipcars.com>',
+        '"FlipCars Auto Repair" <noreply@flipcars.us>',
       );
 
       this.logger.log(`📤 Sending email to ${options.to}`);
