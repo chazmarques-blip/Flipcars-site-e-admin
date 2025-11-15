@@ -15,6 +15,7 @@ import { AiModule } from './modules/ai/ai.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { VisionModule } from './modules/vision/vision.module';
+import { EmailModule } from './modules/email/email.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 
@@ -57,6 +58,7 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
     AiModule,
     StorageModule,
     VisionModule,
+    EmailModule,
     
     // Phase 1 Complete! 🎉
     // Phase 2 modules (future):

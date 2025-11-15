@@ -16,6 +16,7 @@ import { AssignLeadDto } from './dto/assign-lead.dto';
 import { UpdateLeadStatusDto } from './dto/update-status.dto';
 import { QualifyLeadDto } from './dto/qualify-lead.dto';
 import { AppointmentsService } from '../appointments/appointments.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class LeadsService {
@@ -29,6 +30,7 @@ export class LeadsService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly appointmentsService: AppointmentsService,
+    private readonly emailService: EmailService,
   ) {}
 
   /**
@@ -335,6 +337,22 @@ export class LeadsService {
         console.error('[LeadsService] ❌ Failed to auto-create appointment:', error.message);
         console.error('[LeadsService] Lead was created successfully, but appointment creation failed');
       }
+    }
+
+    // SEND CONFIRMATION EMAIL to customer
+    try {
+      console.log('[LeadsService] 📧 Sending confirmation email to:', savedLead.email);
+      const emailSent = await this.emailService.sendEstimateConfirmation(savedLead);
+      
+      if (emailSent) {
+        console.log(`[LeadsService] ✅ Confirmation email sent successfully to ${savedLead.email}`);
+      } else {
+        console.warn(`[LeadsService] ⚠️ Failed to send confirmation email to ${savedLead.email}`);
+      }
+    } catch (error) {
+      // Log error but don't fail lead creation
+      console.error('[LeadsService] ❌ Error sending confirmation email:', error.message);
+      console.error('[LeadsService] Lead was created successfully, but email sending failed');
     }
 
     return this.findOne(savedLead.id);
