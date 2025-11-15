@@ -10,6 +10,33 @@ interface VINScannerV2Props {
 }
 
 export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
+  // Lock screen orientation to portrait on mount
+  useEffect(() => {
+    const lockOrientation = async () => {
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock('portrait');
+          console.log('[VINScannerV2] Screen locked to portrait');
+        }
+      } catch (error) {
+        console.log('[VINScannerV2] Could not lock orientation:', error);
+      }
+    };
+    
+    lockOrientation();
+    
+    // Unlock on unmount
+    return () => {
+      try {
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+          console.log('[VINScannerV2] Screen orientation unlocked');
+        }
+      } catch (error) {
+        console.log('[VINScannerV2] Could not unlock orientation:', error);
+      }
+    };
+  }, []);
   const [scanStatus, setScanStatus] = useState<'idle' | 'loading' | 'requesting' | 'scanning' | 'success' | 'error'>('idle');
   const [detectedVIN, setDetectedVIN] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -44,14 +71,18 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
   // Extract VIN using Google Vision API
   const extractTextFromImage = async (canvas: HTMLCanvasElement): Promise<string | null> => {
     try {
-      // Convert canvas to base64 (JPEG format for smaller size)
-      const base64Image = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+      // Convert canvas to base64 (JPEG format, higher quality for OCR)
+      const base64Image = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
       
-      addDebug('Sending image to Vision API...');
+      addDebug(`Sending image (${Math.round(base64Image.length / 1024)}KB) to Vision API...`);
       
       // Call backend API
       const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-      const response = await fetch(`${backendUrl}/vision/scan-vin`, {
+      const apiUrl = `${backendUrl}/vision/scan-vin`;
+      
+      addDebug(`API URL: ${apiUrl}`);
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,22 +90,27 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
         body: JSON.stringify({ image: base64Image }),
       });
 
+      addDebug(`Response status: ${response.status}`);
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         addDebug(`API Error: ${response.status} - ${errorData.message || 'Unknown'}`);
+        console.error('[VINScannerV2] API Error:', errorData);
         return null;
       }
 
       const data = await response.json();
-      addDebug(`API Response: ${data.success ? 'VIN found' : 'No VIN'}`);
+      addDebug(`API Response: ${data.success ? `VIN: ${data.vin}` : 'No VIN detected'}`);
       
       if (data.success && data.vin) {
+        addDebug(`✅ Valid VIN detected: ${data.vin}`);
         return data.vin;
       }
       
+      addDebug('⚠️ No VIN found in this frame');
       return null;
     } catch (error: any) {
-      addDebug(`Vision API error: ${error.message}`);
+      addDebug(`❌ Vision API error: ${error.message}`);
       console.error('[VINScannerV2] Vision API error:', error);
       return null;
     }
@@ -160,12 +196,14 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
         throw new Error('Camera API not supported in this browser');
       }
 
-      // Request camera access with fallback constraints
+      // Request camera access with better constraints for VIN scanning
       const constraints: MediaStreamConstraints = {
         video: {
           facingMode: { ideal: 'environment' }, // Prefer back camera
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          width: { ideal: 1920, min: 1280 }, // Higher resolution for OCR
+          height: { ideal: 1080, min: 720 },
+          focusMode: { ideal: 'continuous' }, // Auto-focus
+          aspectRatio: { ideal: 16/9 }
         },
         audio: false
       };
@@ -190,10 +228,10 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
               addDebug('Video playing');
               setScanStatus('scanning');
               
-              // Start scanning interval
+              // Start scanning interval - More frequent for better detection
               scanIntervalRef.current = setInterval(() => {
                 scanFrame();
-              }, 1000); // Scan once per second
+              }, 2000); // Scan every 2 seconds to reduce API calls
               
             }).catch((err) => {
               addDebug(`Play error: ${err.message}`);
@@ -315,7 +353,7 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
   }, []); // Empty deps - only run once on mount
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black flex flex-col">
+    <div className="fixed inset-0 z-[60] bg-black flex flex-col" style={{ 'WebkitTransform': 'translate3d(0,0,0)' }}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-black border-b border-white/10">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -343,26 +381,43 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
           playsInline
           muted
           className="w-full h-full object-cover"
-          style={{ display: scanStatus === 'scanning' ? 'block' : 'none' }}
+          style={{ 
+            display: scanStatus === 'scanning' ? 'block' : 'none',
+            transform: 'scaleX(-1)' // Mirror video for better UX
+          }}
         />
 
         {/* Hidden canvas for frame capture */}
         <canvas ref={canvasRef} className="hidden" />
 
-        {/* Scan overlay box */}
+        {/* Scan overlay box - Fixed positioning for mobile */}
         {scanStatus === 'scanning' && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="relative w-[80%] max-w-md h-32">
-              <div className="absolute inset-0 border-4 border-gold/50 rounded-lg">
+            {/* Dimmed overlay */}
+            <div className="absolute inset-0 bg-black/40" />
+            
+            {/* VIN Frame - Landscape oriented */}
+            <div className="relative w-[85%] max-w-[400px]" style={{ height: '120px' }}>
+              <div className="absolute inset-0 border-4 border-gold rounded-lg shadow-2xl">
                 {/* Corner markers */}
-                <div className="absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 border-gold rounded-tl-lg" />
-                <div className="absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 border-gold rounded-tr-lg" />
-                <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 border-gold rounded-bl-lg" />
-                <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 border-gold rounded-br-lg" />
+                <div className="absolute -top-1.5 -left-1.5 w-10 h-10 border-t-4 border-l-4 border-gold rounded-tl-lg" />
+                <div className="absolute -top-1.5 -right-1.5 w-10 h-10 border-t-4 border-r-4 border-gold rounded-tr-lg" />
+                <div className="absolute -bottom-1.5 -left-1.5 w-10 h-10 border-b-4 border-l-4 border-gold rounded-bl-lg" />
+                <div className="absolute -bottom-1.5 -right-1.5 w-10 h-10 border-b-4 border-r-4 border-gold rounded-br-lg" />
+                
+                {/* Scanning line animation */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gold animate-pulse" />
               </div>
-              <p className="absolute -bottom-10 left-0 right-0 text-center text-white text-sm">
-                Position VIN within frame
-              </p>
+              
+              {/* Instruction text */}
+              <div className="absolute -bottom-16 left-0 right-0 text-center">
+                <p className="text-white text-base font-semibold mb-1">
+                  📸 Position VIN within gold frame
+                </p>
+                <p className="text-white/70 text-xs">
+                  VIN: 17 characters on dashboard or door jamb
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -424,22 +479,29 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
 
       {/* Instructions */}
       <div className="p-4 bg-black/95 border-t border-white/10">
-        {/* Debug info (only in dev) */}
-        {process.env.NODE_ENV === 'development' && debugInfo.length > 0 && (
-          <div className="mb-3 p-2 bg-gray-800 rounded text-xs text-gray-300 font-mono max-h-20 overflow-y-auto">
-            {debugInfo.map((info, i) => (
-              <div key={i}>{info}</div>
-            ))}
+        {/* Debug info - Always show for troubleshooting */}
+        {debugInfo.length > 0 && (
+          <div className="mb-3 p-3 bg-gray-900 rounded-lg border border-gold/30">
+            <p className="text-gold text-xs font-semibold mb-1">📊 Scanner Status:</p>
+            <div className="text-xs text-gray-300 font-mono space-y-0.5 max-h-24 overflow-y-auto">
+              {debugInfo.map((info, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <span className="text-gold">•</span>
+                  <span className="flex-1">{info}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
         <div className="text-center text-white/80 text-xs mb-4 space-y-1">
-          <p className="font-semibold text-gold text-sm mb-2">📸 Scanning Tips:</p>
-          <p>• Position VIN within the gold frame</p>
-          <p>• Use good lighting (avoid shadows)</p>
-          <p>• Hold camera steady</p>
-          <p>• VIN is on dashboard or driver door jamb</p>
-          <p className="text-amber-400 mt-2">⚠️ Note: OCR scanning is experimental. Manual entry recommended.</p>
+          <p className="font-semibold text-gold text-sm mb-2">📸 Tips for Better Scanning:</p>
+          <p>• <strong>Good lighting is essential</strong> (avoid shadows/glare)</p>
+          <p>• Hold phone <strong>horizontal/landscape</strong></p>
+          <p>• Keep VIN <strong>centered in gold frame</strong></p>
+          <p>• Hold camera <strong>steady for 2-3 seconds</strong></p>
+          <p>• VIN location: Dashboard or driver door jamb</p>
+          <p className="text-amber-400 mt-2 font-semibold">⚠️ Having trouble? Use manual entry below!</p>
         </div>
 
         {/* Action Buttons */}
