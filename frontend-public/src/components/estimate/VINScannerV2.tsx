@@ -10,22 +10,34 @@ interface VINScannerV2Props {
 }
 
 export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
-  // Lock screen orientation to portrait on mount
+  // Lock screen orientation to portrait and prevent auto-rotation
   useEffect(() => {
     const lockOrientation = async () => {
       try {
+        // Try modern Screen Orientation API
         if (screen.orientation && screen.orientation.lock) {
-          await screen.orientation.lock('portrait');
-          console.log('[VINScannerV2] Screen locked to portrait');
+          await screen.orientation.lock('portrait-primary');
+          console.log('[VINScannerV2] Screen locked to portrait-primary');
         }
       } catch (error) {
-        console.log('[VINScannerV2] Could not lock orientation:', error);
+        console.log('[VINScannerV2] Screen Orientation API not supported:', error);
       }
+      
+      // Fallback: Add viewport meta to prevent rotation
+      const meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, orientation=portrait';
+      meta.id = 'scanner-viewport';
+      document.head.appendChild(meta);
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     };
     
     lockOrientation();
     
-    // Unlock on unmount
+    // Unlock and cleanup on unmount
     return () => {
       try {
         if (screen.orientation && screen.orientation.unlock) {
@@ -35,6 +47,14 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
       } catch (error) {
         console.log('[VINScannerV2] Could not unlock orientation:', error);
       }
+      
+      // Remove viewport meta
+      const meta = document.getElementById('scanner-viewport');
+      if (meta) meta.remove();
+      
+      // Restore body scroll
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, []);
   const [scanStatus, setScanStatus] = useState<'idle' | 'loading' | 'requesting' | 'scanning' | 'success' | 'error'>('idle');
@@ -353,7 +373,26 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
   }, []); // Empty deps - only run once on mount
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black flex flex-col" style={{ 'WebkitTransform': 'translate3d(0,0,0)' }}>
+    <>
+      {/* Force portrait orientation with CSS */}
+      <style jsx>{`
+        @media screen and (orientation: landscape) {
+          .scanner-container {
+            transform: rotate(-90deg);
+            transform-origin: center center;
+            position: fixed;
+            width: 100vh;
+            height: 100vw;
+            overflow-x: hidden;
+            left: 50%;
+            top: 50%;
+            margin-left: -50vh;
+            margin-top: -50vw;
+          }
+        }
+      `}</style>
+      
+    <div className="scanner-container fixed inset-0 z-[60] bg-black flex flex-col" style={{ transform: 'translate3d(0,0,0)', WebkitTransform: 'translate3d(0,0,0)' }}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-black border-b border-white/10">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -374,7 +413,7 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
 
       {/* Camera View */}
       <div className="flex-1 relative overflow-hidden bg-black flex items-center justify-center">
-        {/* Video element */}
+        {/* Video element - NO MIRROR for OCR to work */}
         <video
           ref={videoRef}
           autoPlay
@@ -382,8 +421,8 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
           muted
           className="w-full h-full object-cover"
           style={{ 
-            display: scanStatus === 'scanning' ? 'block' : 'none',
-            transform: 'scaleX(-1)' // Mirror video for better UX
+            display: scanStatus === 'scanning' ? 'block' : 'none'
+            // NO transform - OCR needs original image orientation
           }}
         />
 
@@ -496,10 +535,10 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
 
         <div className="text-center text-white/80 text-xs mb-4 space-y-1">
           <p className="font-semibold text-gold text-sm mb-2">📸 Tips for Better Scanning:</p>
+          <p>• <strong>Keep phone VERTICAL</strong> (portrait mode)</p>
           <p>• <strong>Good lighting is essential</strong> (avoid shadows/glare)</p>
-          <p>• Hold phone <strong>horizontal/landscape</strong></p>
           <p>• Keep VIN <strong>centered in gold frame</strong></p>
-          <p>• Hold camera <strong>steady for 2-3 seconds</strong></p>
+          <p>• Hold camera <strong>steady for 3-4 seconds</strong></p>
           <p>• VIN location: Dashboard or driver door jamb</p>
           <p className="text-amber-400 mt-2 font-semibold">⚠️ Having trouble? Use manual entry below!</p>
         </div>
@@ -532,5 +571,6 @@ export function VINScannerV2({ onVINDetected, onClose }: VINScannerV2Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }
