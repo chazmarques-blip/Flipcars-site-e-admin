@@ -28,15 +28,15 @@ export default function AppointmentsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-2 p-2 max-w-[1600px] mx-auto">
+      {/* Page Header - Compacto */}
+      <div className="flex items-center justify-between mb-1">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Calendar className="w-7 h-7 text-blue-600" />
+          <h1 className="text-base font-semibold text-gray-900 flex items-center gap-1.5">
+            <Calendar className="w-4 h-4 text-[#D4AF37]" />
             Appointments Calendar
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-[10px] text-gray-600">
             Manage customer appointments and schedules
           </p>
         </div>
@@ -46,7 +46,7 @@ export default function AppointmentsPage() {
       <CalendarStats refreshKey={refreshKey} />
 
       {/* 🆕 3-Column Layout: Overdue | Calendar | Upcoming */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2">
         {/* Left Sidebar: Overdue (hidden on mobile) */}
         <div className="hidden lg:block lg:col-span-3">
           <CalendarSidebar 
