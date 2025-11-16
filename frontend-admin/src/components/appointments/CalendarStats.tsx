@@ -32,11 +32,11 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-1.5 mb-1.5">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-white rounded border border-gray-200 p-1.5 animate-pulse">
-            <div className="h-2.5 bg-gray-200 rounded w-16 mb-1"></div>
-            <div className="h-5 bg-gray-200 rounded w-10"></div>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-[5px] mb-[5px]">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="bg-white rounded-[5px] border border-[#e0e0e0] p-[5px_7px] animate-pulse">
+            <div className="h-2 bg-gray-200 rounded w-16 mb-0.5"></div>
+            <div className="h-3.5 bg-gray-200 rounded w-10"></div>
           </div>
         ))}
       </div>
@@ -45,42 +45,102 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
 
   if (error || !stats) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded p-2 text-red-700 text-xs mb-1.5">
+      <div className="bg-red-50 border border-red-200 rounded p-2 text-red-700 text-xs mb-[5px]">
         {error || 'Unable to load statistics'}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-1.5 mb-1.5">
-      {/* Total Appointments */}
-      <div className="bg-white rounded border border-gray-200 p-1.5 hover:border-[#D4AF37] transition-all hover:shadow-sm">
-        <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wider mb-0.5">
-          Total
-        </p>
-        <p className="text-xl font-bold text-gray-900">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-[5px] mb-[5px]">
+      {/* Total Events */}
+      <div 
+        className="bg-white rounded-[5px] p-[5px_7px] border border-[#e0e0e0] hover:border-[#D4AF37] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_6px_rgba(212,175,55,0.15)]"
+      >
+        <div className="text-[8px] font-semibold uppercase tracking-[0.3px] text-[#999] mb-[2px]">
+          Total Events
+        </div>
+        <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
           {stats.total}
-        </p>
+        </div>
+        <div className="text-[8px] text-[#666]">
+          This month
+        </div>
+      </div>
+
+      {/* Today */}
+      <div 
+        className="bg-white rounded-[5px] p-[5px_7px] border border-[#e0e0e0] hover:border-[#D4AF37] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_6px_rgba(212,175,55,0.15)]"
+      >
+        <div className="text-[8px] font-semibold uppercase tracking-[0.3px] text-[#999] mb-[2px]">
+          Today
+        </div>
+        <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
+          0
+        </div>
+        <div className="text-[8px] text-[#666]">
+          No appointments
+        </div>
       </div>
 
       {/* This Week */}
-      <div className="bg-white rounded border border-gray-200 p-1.5 hover:border-[#D4AF37] transition-all hover:shadow-sm">
-        <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wider mb-0.5">
+      <div 
+        className="bg-white rounded-[5px] p-[5px_7px] border border-[#e0e0e0] hover:border-[#D4AF37] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_6px_rgba(212,175,55,0.15)]"
+      >
+        <div className="text-[8px] font-semibold uppercase tracking-[0.3px] text-[#999] mb-[2px]">
           This Week
-        </p>
-        <p className="text-xl font-bold text-gray-900">
+        </div>
+        <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
           {stats.thisWeek}
-        </p>
+        </div>
+        <div className="text-[8px] text-[#666]">
+          Next 7 days
+        </div>
       </div>
 
-      {/* Estimated Revenue */}
-      <div className="bg-white rounded border border-gray-200 p-1.5 hover:border-[#D4AF37] transition-all hover:shadow-sm">
-        <p className="text-[9px] font-medium text-gray-500 uppercase tracking-wider mb-0.5">
+      {/* Overdue */}
+      <div 
+        className="bg-white rounded-[5px] p-[5px_7px] border border-[#e0e0e0] hover:border-[#D4AF37] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_6px_rgba(212,175,55,0.15)]"
+      >
+        <div className="text-[8px] font-semibold uppercase tracking-[0.3px] text-[#999] mb-[2px]">
+          Overdue
+        </div>
+        <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
+          0
+        </div>
+        <div className="text-[8px] text-[#666]">
+          None
+        </div>
+      </div>
+
+      {/* Revenue */}
+      <div 
+        className="bg-white rounded-[5px] p-[5px_7px] border border-[#e0e0e0] hover:border-[#D4AF37] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_6px_rgba(212,175,55,0.15)]"
+      >
+        <div className="text-[8px] font-semibold uppercase tracking-[0.3px] text-[#999] mb-[2px]">
           Revenue
-        </p>
-        <p className="text-xl font-bold text-[#D4AF37]">
+        </div>
+        <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
           {stats.formattedRevenue}
-        </p>
+        </div>
+        <div className="text-[8px] text-[#666]">
+          Expected
+        </div>
+      </div>
+
+      {/* Completion */}
+      <div 
+        className="bg-white rounded-[5px] p-[5px_7px] border border-[#e0e0e0] hover:border-[#D4AF37] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_6px_rgba(212,175,55,0.15)]"
+      >
+        <div className="text-[8px] font-semibold uppercase tracking-[0.3px] text-[#999] mb-[2px]">
+          Completion
+        </div>
+        <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
+          100%
+        </div>
+        <div className="text-[8px] text-[#666]">
+          On schedule
+        </div>
       </div>
     </div>
   );

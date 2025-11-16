@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Appointment, AppointmentStatus } from '@/lib/api/appointments.service';
-import { Clock, Car, Shield, AlertTriangle } from 'lucide-react';
+import { Phone, Car, DollarSign, Eye } from 'lucide-react';
 
 interface EventBadgeProps {
   appointment: Appointment;
@@ -10,42 +10,57 @@ interface EventBadgeProps {
   className?: string;
 }
 
-// Get badge color based on status
-const getStatusColor = (status: AppointmentStatus): string => {
+// Get background color based on status
+const getStatusBg = (status: AppointmentStatus): string => {
   const colorMap: Record<AppointmentStatus, string> = {
-    [AppointmentStatus.SCHEDULED]: 'bg-blue-50 border-blue-200 text-blue-700',
-    [AppointmentStatus.CONFIRMED]: 'bg-green-50 border-green-200 text-green-700',
-    [AppointmentStatus.COMPLETED]: 'bg-gray-50 border-gray-200 text-gray-700',
-    [AppointmentStatus.CANCELLED]: 'bg-red-50 border-red-200 text-red-700',
-    [AppointmentStatus.NO_SHOW]: 'bg-orange-50 border-orange-200 text-orange-700',
-    [AppointmentStatus.RESCHEDULED]: 'bg-purple-50 border-purple-200 text-purple-700',
+    [AppointmentStatus.SCHEDULED]: 'bg-white',
+    [AppointmentStatus.CONFIRMED]: 'bg-green-50',
+    [AppointmentStatus.COMPLETED]: 'bg-gray-50',
+    [AppointmentStatus.CANCELLED]: 'bg-red-50',
+    [AppointmentStatus.NO_SHOW]: 'bg-orange-50',
+    [AppointmentStatus.RESCHEDULED]: 'bg-blue-50',
   };
-  return colorMap[status] || colorMap[AppointmentStatus.SCHEDULED];
+  return colorMap[status] || 'bg-white';
 };
 
-// Get priority badge color
-const getPriorityColor = (priority?: string): string => {
-  if (!priority) return 'bg-gray-100 text-gray-700';
-  
-  const colorMap: Record<string, string> = {
-    low: 'bg-gray-100 text-gray-700',
-    medium: 'bg-yellow-100 text-yellow-700',
-    high: 'bg-red-100 text-red-700',
+// Get status button color and text
+const getStatusButton = (status: AppointmentStatus): { color: string; text: string } => {
+  const statusMap: Record<AppointmentStatus, { color: string; text: string }> = {
+    [AppointmentStatus.SCHEDULED]: { color: 'bg-yellow-500 text-white', text: 'Waiting' },
+    [AppointmentStatus.CONFIRMED]: { color: 'bg-green-500 text-white', text: 'Confirm' },
+    [AppointmentStatus.COMPLETED]: { color: 'bg-gray-400 text-white', text: 'Completed' },
+    [AppointmentStatus.CANCELLED]: { color: 'bg-red-500 text-white', text: 'Cancelled' },
+    [AppointmentStatus.NO_SHOW]: { color: 'bg-orange-500 text-white', text: 'No Show' },
+    [AppointmentStatus.RESCHEDULED]: { color: 'bg-blue-500 text-white', text: 'Check-in' },
   };
-  return colorMap[priority] || 'bg-gray-100 text-gray-700';
+  return statusMap[status] || statusMap[AppointmentStatus.SCHEDULED];
 };
 
-// Format status for display
-const formatStatus = (status: AppointmentStatus): string => {
-  const statusMap: Record<AppointmentStatus, string> = {
-    [AppointmentStatus.SCHEDULED]: 'Scheduled',
-    [AppointmentStatus.CONFIRMED]: 'Confirmed',
-    [AppointmentStatus.COMPLETED]: 'Completed',
-    [AppointmentStatus.CANCELLED]: 'Cancelled',
-    [AppointmentStatus.NO_SHOW]: 'No Show',
-    [AppointmentStatus.RESCHEDULED]: 'Rescheduled',
-  };
-  return statusMap[status] || status;
+// Generate avatar initials from name
+const getInitials = (name?: string): string => {
+  if (!name) return '?';
+  const parts = name.split(' ');
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
+};
+
+// Get random avatar background color (consistent per name)
+const getAvatarColor = (name?: string): string => {
+  const colors = [
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-indigo-500',
+    'bg-red-500',
+    'bg-orange-500',
+  ];
+  if (!name) return colors[0];
+  const index = name.length % colors.length;
+  return colors[index];
 };
 
 export function EventBadge({ appointment, onClick, className = '' }: EventBadgeProps) {
@@ -60,77 +75,109 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
     .filter(Boolean)
     .join(' ');
 
+  const statusButton = getStatusButton(status);
+  const estimatedValue = lead?.estimatedValue ? `$${Number(lead.estimatedValue).toFixed(2)}` : null;
+
   return (
     <div
-      onClick={onClick}
       className={`
-        ${getStatusColor(status)}
-        border rounded p-2 cursor-pointer
-        hover:shadow-md hover:border-[#D4AF37] transition-all
+        ${getStatusBg(status)}
+        border border-[#e0e0e0] rounded-[6px] p-[8px]
+        hover:border-[#D4AF37] hover:shadow-md transition-all
         ${className}
       `}
     >
-      {/* Header: Reference Number + Time */}
-      <div className="flex items-start justify-between mb-1">
-        <div className="flex items-center gap-1 text-[10px] font-semibold">
-          <span>{lead?.referenceNumber || 'N/A'}</span>
+      {/* Header: Avatar + Name + Time/Phone */}
+      <div className="flex items-start gap-2 mb-2">
+        {/* Avatar Circle */}
+        <div className={`w-8 h-8 rounded-full ${getAvatarColor(lead?.name)} flex items-center justify-center flex-shrink-0`}>
+          <span className="text-white text-[11px] font-bold">
+            {getInitials(lead?.name)}
+          </span>
         </div>
-        {appointmentTimeSlot && (
-          <div className="flex items-center gap-0.5 text-[9px]">
-            <Clock className="w-2.5 h-2.5" />
-            <span>{appointmentTimeSlot}</span>
+
+        {/* Name + Contact Info */}
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-[11px] text-[#1a1a1a] truncate mb-0.5">
+            {lead?.name || 'Unknown Customer'}
+          </div>
+          <div className="flex items-center gap-2 text-[9px] text-[#666]">
+            {appointmentTimeSlot && (
+              <span className="font-medium">{appointmentTimeSlot}</span>
+            )}
+            {lead?.phone && appointmentTimeSlot && <span>•</span>}
+            {lead?.phone && (
+              <span className="flex items-center gap-1">
+                <Phone className="w-2.5 h-2.5" />
+                {lead.phone}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Details Section */}
+      <div className="space-y-1 mb-2">
+        {/* Vehicle Info */}
+        {vehicleInfo && (
+          <div className="flex items-center gap-1.5 text-[9px] text-[#666]">
+            <Car className="w-3 h-3 text-[#999]" />
+            <span className="truncate">{vehicleInfo}</span>
+          </div>
+        )}
+
+        {/* Service Type + Insurance */}
+        <div className="flex items-center gap-1.5 text-[9px] text-[#666]">
+          <span className="text-[#999]">🔧</span>
+          <span>Body Repair</span>
+          {lead?.hasInsurance && (
+            <>
+              <span>•</span>
+              <span>Insurance</span>
+            </>
+          )}
+        </div>
+
+        {/* Estimated Value */}
+        {estimatedValue && (
+          <div className="flex items-center gap-1.5 text-[9px] text-[#666]">
+            <DollarSign className="w-3 h-3 text-[#999]" />
+            <span>Est. {estimatedValue}</span>
           </div>
         )}
       </div>
 
-      {/* Customer Name */}
-      <p className="font-semibold text-xs mb-0.5 truncate">
-        {lead?.name || 'Unknown Customer'}
-      </p>
+      {/* Action Buttons */}
+      <div className="flex items-center gap-1.5">
+        {/* Status Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
+          className={`flex-1 px-2 py-1 rounded-[4px] text-[9px] font-semibold ${statusButton.color} transition-all hover:opacity-90`}
+        >
+          {statusButton.text}
+        </button>
 
-      {/* Vehicle Info */}
-      {vehicleInfo && (
-        <div className="flex items-center gap-1 text-[10px] mb-1 text-gray-600">
-          <Car className="w-2.5 h-2.5" />
-          <span className="truncate">{vehicleInfo}</span>
-        </div>
-      )}
-
-      {/* Tags Row */}
-      <div className="flex flex-wrap gap-1 mt-1">
-        {/* Status Badge */}
-        <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-white/50">
-          {formatStatus(status)}
-        </span>
-
-        {/* Priority Badge */}
-        {lead?.priority && (
-          <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium ${getPriorityColor(lead.priority)}`}>
-            {lead.priority.toUpperCase()}
-          </span>
-        )}
-
-        {/* Insurance Badge */}
-        {lead?.hasInsurance && (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-blue-100 text-blue-700 flex items-center gap-0.5">
-            <Shield className="w-2.5 h-2.5" />
-            <span>Insured</span>
-          </span>
-        )}
-
-        {/* Estimated Value */}
-        {lead?.estimatedValue && lead.estimatedValue > 0 && (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-green-100 text-green-700">
-            ${Number(lead.estimatedValue).toLocaleString()}
-          </span>
-        )}
+        {/* View Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
+          className="px-2 py-1 rounded-[4px] text-[9px] font-semibold bg-white border border-[#e0e0e0] text-[#666] hover:border-[#D4AF37] hover:bg-[#fffbf0] hover:text-[#D4AF37] transition-all flex items-center gap-1"
+        >
+          <Eye className="w-3 h-3" />
+          View
+        </button>
       </div>
 
-      {/* Phone (hidden on small screens) */}
-      {lead?.phone && (
-        <p className="text-[9px] text-gray-500 mt-1 truncate hidden sm:block">
-          {lead.phone}
-        </p>
+      {/* Reference Number (subtle footer) */}
+      {lead?.referenceNumber && (
+        <div className="text-[8px] text-[#999] text-center mt-1.5 pt-1.5 border-t border-[#f0f0f0]">
+          {lead.referenceNumber}
+        </div>
       )}
     </div>
   );
