@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { appointmentsService, DashboardStats } from '@/lib/api/appointments.service';
+import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointments';
 
 interface CalendarStatsProps {
   refreshKey?: number;
@@ -20,8 +21,45 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
     try {
       setLoading(true);
       setError(null);
-      const data = await appointmentsService.getDashboardStats();
-      setStats(data);
+      
+      if (USE_TEST_DATA) {
+        // Calculate stats from test data
+        const now = new Date();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+        
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+
+        const total = TEST_APPOINTMENTS.length;
+        const thisWeek = TEST_APPOINTMENTS.filter(apt => {
+          const aptDate = new Date(apt.appointmentDate);
+          return aptDate >= startOfWeek && aptDate <= endOfWeek;
+        }).length;
+
+        const estimatedRevenue = TEST_APPOINTMENTS
+          .filter(apt => {
+            const aptDate = new Date(apt.appointmentDate);
+            return aptDate >= startOfWeek && aptDate <= endOfWeek;
+          })
+          .reduce((sum, apt) => sum + Number(apt.lead?.estimatedValue || 0), 0);
+
+        const formattedRevenue = estimatedRevenue >= 1000
+          ? `$${(estimatedRevenue / 1000).toFixed(1)}K`
+          : `$${estimatedRevenue.toFixed(0)}`;
+
+        setStats({
+          total,
+          thisWeek,
+          estimatedRevenue: estimatedRevenue.toFixed(2),
+          formattedRevenue,
+        });
+      } else {
+        const data = await appointmentsService.getDashboardStats();
+        setStats(data);
+      }
     } catch (err) {
       console.error('[CalendarStats] Failed to fetch stats:', err);
       setError('Failed to load statistics');
