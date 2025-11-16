@@ -75,9 +75,10 @@ export default function DemoAppointmentsPage() {
 
       {/* 🆕 3-Column Layout: Overdue | Calendar | Upcoming */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px_1fr] gap-2 flex-1 overflow-hidden">
-        {/* Left Sidebar: Overdue (hidden on mobile) */}
+        {/* Left Sidebar: Overdue ONLY (hidden on mobile) */}
         <div className="hidden lg:block overflow-y-auto">
           <CalendarSidebar 
+            type="overdue"
             onEventClick={handleEventClick} 
             refreshKey={refreshKey}
           />
@@ -91,9 +92,10 @@ export default function DemoAppointmentsPage() {
           />
         </div>
 
-        {/* Right Sidebar: Upcoming (visible on mobile, stacked below calendar) */}
+        {/* Right Sidebar: Upcoming ONLY (visible on mobile, stacked below calendar) */}
         <div className="overflow-y-auto">
           <CalendarSidebar 
+            type="upcoming"
             onEventClick={handleEventClick} 
             refreshKey={refreshKey}
           />

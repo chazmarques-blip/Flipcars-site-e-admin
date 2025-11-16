@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlipCars - Calendar Mockup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header */
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card.blue { border-left-color: #3b82f6; }
+    .stat-card.green { border-left-color: #10b981; }
+    .stat-card.yellow { border-left-color: #f59e0b; }
+    .stat-card.red { border-left-color: #ef4444; }
+    .stat-card.purple { border-left-color: #8b5cf6; }
+    .stat-card.indigo { border-left-color: #6366f1; }
+
+    .stat-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7280;
+    }
+
+    .stat-icon {
+      font-size: 24px;
+      opacity: 0.8;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .stat-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 280px;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1400px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .side-panel {
+        max-height: 400px;
+      }
+    }
+
+    /* Calendar Card */
+    .calendar-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .calendar-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .calendar-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-icon {
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .view-buttons {
+      display: flex;
+      gap: 4px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .view-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .view-btn.active {
+      background: white;
+      color: #3b82f6;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Calendar Grid */
+    .calendar-body {
+      padding: 20px;
+    }
+
+    .calendar-month-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .month-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      padding: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 8px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calendar-day:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .calendar-day.today {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      border-width: 2px;
+    }
+
+    .calendar-day.other-month {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .day-number {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .day-events {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .event-dot {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: #3b82f6;
+    }
+
+    .event-dot.appointment { background: #3b82f6; }
+    .event-dot.payment { background: #f59e0b; }
+    .event-dot.payment-overdue { background: #ef4444; }
+    .event-dot.reminder { background: #8b5cf6; }
+    .event-dot.completed { background: #10b981; }
+
+    .event-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* Side Panels */
+    .side-panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      max-height: 800px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f9fafb;
+    }
+
+    .side-panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      background: #ef4444;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .badge.blue { background: #3b82f6; }
+    .badge.green { background: #10b981; }
+    .badge.yellow { background: #f59e0b; }
+    .badge.red { background: #ef4444; }
+
+    .side-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .event-item {
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      border-left: 4px solid;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .event-item:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transform: translateX(4px);
+    }
+
+    .event-item.appointment { border-left-color: #3b82f6; }
+    .event-item.payment { border-left-color: #f59e0b; }
+    .event-item.payment-overdue { border-left-color: #ef4444; }
+    .event-item.reminder { border-left-color: #8b5cf6; }
+
+    .event-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .event-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .event-type.appointment { background: #dbeafe; color: #1e40af; }
+    .event-type.payment { background: #fef3c7; color: #92400e; }
+    .event-type.payment-overdue { background: #fee2e2; color: #991b1b; }
+    .event-type.reminder { background: #ede9fe; color: #5b21b6; }
+
+    .event-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .event-details {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .event-meta {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .event-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    /* Legend */
+    .legend {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .legend-dot.appointment { background: #3b82f6; }
+    .legend-dot.payment { background: #f59e0b; }
+    .legend-dot.payment-overdue { background: #ef4444; }
+    .legend-dot.reminder { background: #8b5cf6; }
+    .legend-dot.completed { background: #10b981; }
+    .legend-dot.cancelled { background: #6b7280; }
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Filters */
+    .filters {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #374151;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-select:hover {
+      border-color: #3b82f6;
+    }
+
+    .search-input {
+      padding: 8px 16px 8px 40px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      width: 280px;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>') no-repeat 12px center;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9ca3af;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+    }
+
+    /* Scrollbar */
+    .side-panel-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .side-panel-body::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+
+    .side-panel-body::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 3px;
+    }
+
+    .side-panel-body::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .calendar-day {
+        padding: 4px;
+        font-size: 12px;
+      }
+
+      .day-events {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>
+        📅 Appointments & Payments Calendar
+      </h1>
+      <p>Manage customer appointments, payment schedules, and follow-up reminders</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-label">Total Events</div>
+            <div class="stat-value">156</div>
+            <div class="stat-subtitle">This month</div>
+          </div>
+          <div class="stat-icon">📊</div>
+        </div>
+      </div>
+
+      <div class="stat-card indigo">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-label">Today</div>
+            <div class="stat-value">8</div>
+            <div class="stat-subtitle">3 appointments, 5 payments</div>
+          </div>
+          <div class="stat-icon">📅</div>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-label">This Week</div>
+            <div class="stat-value">34</div>
+            <div class="stat-subtitle">Next 7 days</div>
+          </div>
+          <div class="stat-icon">📆</div>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-label">Overdue</div>
+            <div class="stat-value">5</div>
+            <div class="stat-subtitle">Needs attention</div>
+          </div>
+          <div class="stat-icon">⚠️</div>
+        </div>
+      </div>
+
+      <div class="stat-card yellow">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-label">Revenue</div>
+            <div class="stat-value">$12.5K</div>
+            <div class="stat-subtitle">Expected this month</div>
+          </div>
+          <div class="stat-icon">💰</div>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-label">Completion</div>
+            <div class="stat-value">87%</div>
+            <div class="stat-subtitle">Completed on time</div>
+          </div>
+          <div class="stat-icon">✅</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-group">
+        <span class="filter-label">Type:</span>
+        <select class="filter-select">
+          <option>All Events</option>
+          <option>Appointments</option>
+          <option>Payments</option>
+          <option>Reminders</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Status:</span>
+        <select class="filter-select">
+          <option>All Status</option>
+          <option>Active</option>
+          <option>Completed</option>
+          <option>Cancelled</option>
+          <option>Overdue</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Date:</span>
+        <select class="filter-select">
+          <option>This Month</option>
+          <option>This Week</option>
+          <option>Next Week</option>
+          <option>Custom Range</option>
+        </select>
+      </div>
+
+      <input type="text" class="search-input" placeholder="Search customers, vehicles, VIN...">
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      <!-- Left Panel: Overdue -->
+      <div class="side-panel">
+        <div class="side-panel-header">
+          <div class="side-panel-title">
+            ⚠️ Overdue
+            <span class="badge red">5</span>
+          </div>
+        </div>
+        <div class="side-panel-body">
+          <div class="event-list">
+            <!-- Payment Overdue -->
+            <div class="event-item payment-overdue">
+              <div class="event-item-header">
+                <span class="event-type payment-overdue">💰 Payment</span>
+                <span class="badge red">3 days</span>
+              </div>
+              <div class="event-name">John Doe</div>
+              <div class="event-details">
+                <strong>$183.54</strong> - Installment 2/6<br>
+                2021 Mitsubishi Outlander<br>
+                📞 (689) 221-3162
+              </div>
+              <div class="event-meta">Due: Nov 9, 2025 • Parcela #2</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">💬 Contact</button>
+                <button class="btn btn-secondary btn-sm">👁️ View</button>
+              </div>
+            </div>
+
+            <!-- Payment Overdue -->
+            <div class="event-item payment-overdue">
+              <div class="event-item-header">
+                <span class="event-type payment-overdue">💰 Payment</span>
+                <span class="badge red">1 day</span>
+              </div>
+              <div class="event-name">Maria Silva</div>
+              <div class="event-details">
+                <strong>$146.30</strong> - Installment 1/2<br>
+                2020 Ford EcoSport<br>
+                📞 (654) 945-0938
+              </div>
+              <div class="event-meta">Due: Nov 13, 2025 • Parcela #1</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">💬 Contact</button>
+                <button class="btn btn-secondary btn-sm">👁️ View</button>
+              </div>
+            </div>
+
+            <!-- Appointment No Confirmation -->
+            <div class="event-item appointment">
+              <div class="event-item-header">
+                <span class="event-type appointment">🔧 Appointment</span>
+                <span class="badge yellow">48h</span>
+              </div>
+              <div class="event-name">Bob Johnson</div>
+              <div class="event-details">
+                Tomorrow 9:00-11:00<br>
+                2019 Honda Civic - Body Repair<br>
+                📞 (555) 123-4567
+              </div>
+              <div class="event-meta">Not confirmed yet</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">✅ Confirm</button>
+                <button class="btn btn-secondary btn-sm">📞 Call</button>
+              </div>
+            </div>
+
+            <!-- Reminder Pending -->
+            <div class="event-item reminder">
+              <div class="event-item-header">
+                <span class="event-type reminder">⏰ Reminder</span>
+                <span class="badge purple">High</span>
+              </div>
+              <div class="event-name">Alice Smith</div>
+              <div class="event-details">
+                Follow-up after service<br>
+                2018 Toyota Camry<br>
+                Service completed 5 days ago
+              </div>
+              <div class="event-meta">Pending feedback request</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">📧 Send</button>
+                <button class="btn btn-secondary btn-sm">⏭️ Skip</button>
+              </div>
+            </div>
+
+            <!-- Payment Overdue -->
+            <div class="event-item payment-overdue">
+              <div class="event-item-header">
+                <span class="event-type payment-overdue">💰 Payment</span>
+                <span class="badge red">7 days</span>
+              </div>
+              <div class="event-name">Carlos Rodriguez</div>
+              <div class="event-details">
+                <strong>$209.63</strong> - Installment 3/7<br>
+                2019 Chevrolet Silverado<br>
+                📞 (503) 376-1668
+              </div>
+              <div class="event-meta">Due: Nov 7, 2025 • Parcela #3</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">💬 Contact</button>
+                <button class="btn btn-secondary btn-sm">👁️ View</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Calendar -->
+      <div class="calendar-card">
+        <div class="calendar-header">
+          <div class="calendar-title">📅 Calendar</div>
+          <div class="calendar-nav">
+            <div class="view-buttons">
+              <button class="view-btn active">Month</button>
+              <button class="view-btn">Week</button>
+              <button class="view-btn">Day</button>
+              <button class="view-btn">Agenda</button>
+            </div>
+            <button class="btn btn-primary">+ New Event</button>
+          </div>
+        </div>
+
+        <div class="calendar-body">
+          <div class="calendar-month-nav">
+            <button class="btn btn-icon btn-secondary">◀</button>
+            <div class="month-title">November 2025</div>
+            <button class="btn btn-icon btn-secondary">▶</button>
+          </div>
+
+          <div class="calendar-grid">
+            <!-- Day Headers -->
+            <div class="calendar-day-header">Sun</div>
+            <div class="calendar-day-header">Mon</div>
+            <div class="calendar-day-header">Tue</div>
+            <div class="calendar-day-header">Wed</div>
+            <div class="calendar-day-header">Thu</div>
+            <div class="calendar-day-header">Fri</div>
+            <div class="calendar-day-header">Sat</div>
+
+            <!-- Previous Month Days -->
+            <div class="calendar-day other-month">
+              <div class="day-number">26</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">27</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">28</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">29</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">30</div>
+            </div>
+
+            <!-- November Days -->
+            <div class="calendar-day">
+              <div class="day-number">1</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">2</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">3</div>
+              <div class="day-events">
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">4</div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">5</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+                <div class="event-dot appointment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">6</div>
+              <div class="day-events">
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">7</div>
+              <div class="day-events">
+                <div class="event-dot payment-overdue"></div>
+              </div>
+              <span class="event-badge">1</span>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">8</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">9</div>
+              <div class="day-events">
+                <div class="event-dot payment-overdue"></div>
+              </div>
+              <span class="event-badge">1</span>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">10</div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">11</div>
+              <div class="day-events">
+                <div class="event-dot reminder"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">12</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">13</div>
+              <div class="day-events">
+                <div class="event-dot payment-overdue"></div>
+              </div>
+              <span class="event-badge">1</span>
+            </div>
+
+            <div class="calendar-day today">
+              <div class="day-number">14</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+                <div class="event-dot appointment"></div>
+                <div class="event-dot payment"></div>
+              </div>
+              <span class="event-badge">8</span>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">15</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+                <div class="event-dot payment"></div>
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">16</div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">17</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">18</div>
+              <div class="day-events">
+                <div class="event-dot reminder"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">19</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">20</div>
+              <div class="day-events">
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">21</div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">22</div>
+              <div class="day-events">
+                <div class="event-dot completed"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">23</div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">24</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">25</div>
+              <div class="day-events">
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">26</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+                <div class="event-dot payment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">27</div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">28</div>
+              <div class="day-events">
+                <div class="event-dot reminder"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">29</div>
+              <div class="day-events">
+                <div class="event-dot appointment"></div>
+              </div>
+            </div>
+
+            <div class="calendar-day">
+              <div class="day-number">30</div>
+            </div>
+
+            <!-- Next Month Days -->
+            <div class="calendar-day other-month">
+              <div class="day-number">1</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">2</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">3</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">4</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">5</div>
+            </div>
+            <div class="calendar-day other-month">
+              <div class="day-number">6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Upcoming -->
+      <div class="side-panel">
+        <div class="side-panel-header">
+          <div class="side-panel-title">
+            📅 Upcoming
+            <span class="badge blue">12</span>
+          </div>
+        </div>
+        <div class="side-panel-body">
+          <div class="event-list">
+            <!-- Appointment Today -->
+            <div class="event-item appointment">
+              <div class="event-item-header">
+                <span class="event-type appointment">🔧 Appointment</span>
+                <span class="badge green">Today</span>
+              </div>
+              <div class="event-name">Alice Smith</div>
+              <div class="event-details">
+                <strong>Today 14:00-16:00</strong><br>
+                2019 Honda Civic - Oil Change<br>
+                📞 (813) 786-5844
+              </div>
+              <div class="event-meta">Confirmed • #FL2025-1234</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">✅ Check-in</button>
+                <button class="btn btn-secondary btn-sm">👁️ Details</button>
+              </div>
+            </div>
+
+            <!-- Appointment Tomorrow -->
+            <div class="event-item appointment">
+              <div class="event-item-header">
+                <span class="event-type appointment">🔧 Appointment</span>
+                <span class="badge blue">Tomorrow</span>
+              </div>
+              <div class="event-name">David Wilson</div>
+              <div class="event-details">
+                <strong>Tomorrow 9:00-11:00</strong><br>
+                2020 Tesla Model 3 - Body Repair<br>
+                📞 (604) 945-0938
+              </div>
+              <div class="event-meta">Scheduled • #FL2025-5678</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">✅ Confirm</button>
+                <button class="btn btn-secondary btn-sm">📞 Call</button>
+              </div>
+            </div>
+
+            <!-- Payment Due -->
+            <div class="event-item payment">
+              <div class="event-item-header">
+                <span class="event-type payment">💰 Payment</span>
+                <span class="badge yellow">Nov 15</span>
+              </div>
+              <div class="event-name">Sarah Martinez</div>
+              <div class="event-details">
+                <strong>$209.63</strong> - Installment 1/7<br>
+                2020 RAM 2500 - Body Repair<br>
+                📞 (689) 345-3214
+              </div>
+              <div class="event-meta">Due in 1 day • Parcela #1</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">💬 Remind</button>
+                <button class="btn btn-secondary btn-sm">👁️ View</button>
+              </div>
+            </div>
+
+            <!-- Appointment Next Week -->
+            <div class="event-item appointment">
+              <div class="event-item-header">
+                <span class="event-type appointment">🔧 Appointment</span>
+                <span class="badge blue">Nov 19</span>
+              </div>
+              <div class="event-name">Michael Brown</div>
+              <div class="event-details">
+                <strong>Nov 19, 13:00-15:00</strong><br>
+                2017 Ford F-150 - Paint Job<br>
+                📞 (555) 987-6543
+              </div>
+              <div class="event-meta">Confirmed • #FL2025-9012</div>
+              <div class="event-actions">
+                <button class="btn btn-secondary btn-sm">👁️ Details</button>
+                <button class="btn btn-secondary btn-sm">📅 Reschedule</button>
+              </div>
+            </div>
+
+            <!-- Payment Due -->
+            <div class="event-item payment">
+              <div class="event-item-header">
+                <span class="event-type payment">💰 Payment</span>
+                <span class="badge yellow">Nov 20</span>
+              </div>
+              <div class="event-name">Emma Garcia</div>
+              <div class="event-details">
+                <strong>$150.00</strong> - Installment 2/5<br>
+                2018 Nissan Altima<br>
+                📞 (407) 123-4567
+              </div>
+              <div class="event-meta">Due in 6 days • Parcela #2</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">💬 Remind</button>
+                <button class="btn btn-secondary btn-sm">👁️ View</button>
+              </div>
+            </div>
+
+            <!-- Reminder -->
+            <div class="event-item reminder">
+              <div class="event-item-header">
+                <span class="event-type reminder">⏰ Reminder</span>
+                <span class="badge purple">Nov 18</span>
+              </div>
+              <div class="event-name">James Taylor</div>
+              <div class="event-details">
+                Appointment confirmation call<br>
+                2021 Chevrolet Silverado<br>
+                Appointment: Nov 19, 10:00
+              </div>
+              <div class="event-meta">48h before appointment</div>
+              <div class="event-actions">
+                <button class="btn btn-primary btn-sm">📞 Call Now</button>
+                <button class="btn btn-secondary btn-sm">⏭️ Skip</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend & Quick Actions -->
+    <div class="legend">
+      <div class="legend-items">
+        <span style="font-weight: 600; font-size: 14px; color: #374151;">Legend:</span>
+        <div class="legend-item">
+          <div class="legend-dot appointment"></div>
+          <span>🔧 Service Appointment</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot payment"></div>
+          <span>💰 Payment Due</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot payment-overdue"></div>
+          <span>🔴 Payment Overdue</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot reminder"></div>
+          <span>⏰ Reminder/Follow-up</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot completed"></div>
+          <span>✅ Completed</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot cancelled"></div>
+          <span>❌ Cancelled</span>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <button class="btn btn-secondary btn-sm">📊 Export</button>
+        <button class="btn btn-secondary btn-sm">📧 Email Report</button>
+        <button class="btn btn-secondary btn-sm">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

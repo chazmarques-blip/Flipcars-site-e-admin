@@ -9,9 +9,10 @@ import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointment
 interface CalendarSidebarProps {
   onEventClick: (appointment: Appointment) => void;
   refreshKey?: number;
+  type?: 'overdue' | 'upcoming'; // 🆕 Define which section to show
 }
 
-export function CalendarSidebar({ onEventClick, refreshKey = 0 }: CalendarSidebarProps) {
+export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue' }: CalendarSidebarProps) {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,9 +107,9 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0 }: CalendarSideba
     );
   }
 
-  return (
-    <div className="space-y-2">
-      {/* Overdue Section */}
+  // Render only the requested section
+  if (type === 'overdue') {
+    return (
       <div className="bg-white rounded border border-gray-200 shadow-sm">
         <div className="p-2 border-b border-gray-200">
           <div className="flex items-center gap-1">
@@ -122,7 +123,7 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0 }: CalendarSideba
           </div>
         </div>
         
-        <div className="p-2 max-h-[300px] overflow-y-auto">
+        <div className="p-2 max-h-[calc(100vh-200px)] overflow-y-auto">
           {overdue.length === 0 ? (
             <p className="text-[10px] text-gray-500 text-center py-4">
               No overdue appointments
@@ -140,45 +141,47 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0 }: CalendarSideba
           )}
         </div>
       </div>
+    );
+  }
 
-      {/* Upcoming Section */}
-      <div className="bg-white rounded border border-gray-200 shadow-sm">
-        <div className="p-2 border-b border-gray-200">
-          <div className="flex items-center gap-1">
-            <ChevronRight className="w-3.5 h-3.5 text-green-600" />
-            <h3 className="font-semibold text-xs text-gray-900">
-              Upcoming
-            </h3>
-            <span className="ml-auto px-1.5 py-0.5 bg-green-100 text-green-700 text-[9px] font-semibold rounded-full">
-              {upcoming.length}
-            </span>
-          </div>
-        </div>
-        
-        <div className="p-2 max-h-[400px] overflow-y-auto">
-          {upcoming.length === 0 ? (
-            <p className="text-[10px] text-gray-500 text-center py-4">
-              No upcoming appointments
-            </p>
-          ) : (
-            <div className="space-y-1.5">
-              {upcoming.slice(0, 10).map((apt) => (
-                <EventBadge
-                  key={apt.id}
-                  appointment={apt}
-                  onClick={() => onEventClick(apt)}
-                />
-              ))}
-              
-              {upcoming.length > 10 && (
-                <div className="text-[10px] text-gray-500 text-center pt-1 border-t">
-                  +{upcoming.length - 10} more upcoming
-                </div>
-              )}
+  // Upcoming section
+  return (
+    <div className="bg-white rounded border border-gray-200 shadow-sm">
+      <div className="p-2 border-b border-gray-200">
+        <div className="flex items-center gap-1">
+          <ChevronRight className="w-3.5 h-3.5 text-green-600" />
+          <h3 className="font-semibold text-xs text-gray-900">
+            Upcoming
+        </h3>
+        <span className="ml-auto px-1.5 py-0.5 bg-green-100 text-green-700 text-[9px] font-semibold rounded-full">
+          {upcoming.length}
+        </span>
+      </div>
+    </div>
+    
+    <div className="p-2 max-h-[calc(100vh-200px)] overflow-y-auto">
+      {upcoming.length === 0 ? (
+        <p className="text-[10px] text-gray-500 text-center py-4">
+          No upcoming appointments
+        </p>
+      ) : (
+        <div className="space-y-1.5">
+          {upcoming.slice(0, 10).map((apt) => (
+            <EventBadge
+              key={apt.id}
+              appointment={apt}
+              onClick={() => onEventClick(apt)}
+            />
+          ))}
+          
+          {upcoming.length > 10 && (
+            <div className="text-[10px] text-gray-500 text-center pt-1 border-t">
+              +{upcoming.length - 10} more upcoming
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
+  </div>
   );
 }

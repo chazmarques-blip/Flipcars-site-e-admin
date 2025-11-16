@@ -196,27 +196,35 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
                     {date.getDate()}
                   </div>
 
-                  {/* Appointments for this day */}
-                  <div className="space-y-0.5">
-                    {dayAppointments.slice(0, 2).map((apt) => (
-                      <div
-                        key={apt.id}
-                        onClick={() => onEventClick(apt)}
-                        className="text-[8px] p-0.5 rounded bg-blue-100 border border-blue-200 text-blue-800 cursor-pointer hover:bg-blue-200 transition-colors truncate"
-                      >
-                        <div className="font-semibold truncate">
-                          {apt.appointmentTimeSlot}
+                  {/* Appointments for this day - MOCKUP FORMAT: apenas barras minimalistas */}
+                  <div className="space-y-[2px]">
+                    {dayAppointments.slice(0, 3).map((apt) => {
+                      const estimatedValue = apt.lead?.estimatedValue || 0;
+                      const valueDisplay = estimatedValue >= 1000 
+                        ? `$${(estimatedValue / 1000).toFixed(1)}K` 
+                        : `$${estimatedValue.toFixed(0)}`;
+                      
+                      return (
+                        <div
+                          key={apt.id}
+                          onClick={() => onEventClick(apt)}
+                          className="flex items-center gap-[3px] cursor-pointer hover:opacity-80 transition-opacity"
+                          title={`${apt.lead?.name} - ${apt.appointmentTimeSlot} - ${valueDisplay}`}
+                        >
+                          {/* Barra horizontal colorida (como no mockup) */}
+                          <div className="h-[3px] flex-1 bg-[#fbbf24] rounded-full"></div>
+                          {/* Indicador de valor */}
+                          <span className="text-[7px] font-bold text-[#f59e0b]">
+                            {valueDisplay}
+                          </span>
                         </div>
-                        <div className="truncate">
-                          {apt.lead?.name || 'Unknown'}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     
-                    {/* Show "+X more" if there are more appointments */}
-                    {dayAppointments.length > 2 && (
-                      <div className="text-[8px] text-gray-500 font-medium px-0.5">
-                        +{dayAppointments.length - 2} more
+                    {/* Show total count if more than 3 appointments */}
+                    {dayAppointments.length > 3 && (
+                      <div className="text-[7px] text-gray-500 font-semibold text-center pt-[2px]">
+                        {dayAppointments.length} total
                       </div>
                     )}
                   </div>
