@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { AppointmentDetailsModal } from '@/components/appointments/AppointmentDetailsModal';
 import { Appointment } from '@/lib/api/appointments.service';
+import './calendar-mockup.css';
 
 // 🆕 Import new mockup components
 import { CalendarStats } from '@/components/appointments/CalendarStats';
