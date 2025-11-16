@@ -38,6 +38,11 @@ export class AppointmentsController {
     return this.appointmentsService.getStats(startDate, endDate);
   }
 
+  @Get('dashboard/stats')
+  getDashboardStats() {
+    return this.appointmentsService.getEnrichedStats();
+  }
+
   @Get('month/:year/:month')
   findByMonth(@Param('year') year: string, @Param('month') month: string) {
     return this.appointmentsService.findByMonth(parseInt(year), parseInt(month));

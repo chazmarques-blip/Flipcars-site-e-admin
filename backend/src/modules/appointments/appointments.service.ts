@@ -39,6 +39,38 @@ export class AppointmentsService {
   async findAll(): Promise<Appointment[]> {
     return this.appointmentRepository.find({
       relations: ['lead'],
+      select: {
+        // Appointment fields
+        id: true,
+        leadId: true,
+        appointmentDate: true,
+        appointmentTimeSlot: true,
+        appointmentStartTime: true,
+        appointmentEndTime: true,
+        status: true,
+        contactPreferences: true,
+        adminNotes: true,
+        confirmedAt: true,
+        confirmedById: true,
+        createdAt: true,
+        updatedAt: true,
+        // Lead fields (for mockup UI)
+        lead: {
+          id: true,
+          referenceNumber: true,
+          name: true,
+          phone: true,
+          email: true,
+          vehicleYear: true,
+          vehicleMake: true,
+          vehicleModel: true,
+          hasInsurance: true,
+          insuranceProvider: true,
+          priority: true,
+          status: true,
+          estimatedValue: true,
+        },
+      },
       order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
     });
   }
@@ -48,6 +80,38 @@ export class AppointmentsService {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
       relations: ['lead'],
+      select: {
+        // Appointment fields
+        id: true,
+        leadId: true,
+        appointmentDate: true,
+        appointmentTimeSlot: true,
+        appointmentStartTime: true,
+        appointmentEndTime: true,
+        status: true,
+        contactPreferences: true,
+        adminNotes: true,
+        confirmedAt: true,
+        confirmedById: true,
+        createdAt: true,
+        updatedAt: true,
+        // Lead fields (for mockup UI)
+        lead: {
+          id: true,
+          referenceNumber: true,
+          name: true,
+          phone: true,
+          email: true,
+          vehicleYear: true,
+          vehicleMake: true,
+          vehicleModel: true,
+          hasInsurance: true,
+          insuranceProvider: true,
+          priority: true,
+          status: true,
+          estimatedValue: true,
+        },
+      },
     });
 
     if (!appointment) {
@@ -62,6 +126,38 @@ export class AppointmentsService {
     return this.appointmentRepository.findOne({
       where: { leadId },
       relations: ['lead'],
+      select: {
+        // Appointment fields
+        id: true,
+        leadId: true,
+        appointmentDate: true,
+        appointmentTimeSlot: true,
+        appointmentStartTime: true,
+        appointmentEndTime: true,
+        status: true,
+        contactPreferences: true,
+        adminNotes: true,
+        confirmedAt: true,
+        confirmedById: true,
+        createdAt: true,
+        updatedAt: true,
+        // Lead fields (for mockup UI)
+        lead: {
+          id: true,
+          referenceNumber: true,
+          name: true,
+          phone: true,
+          email: true,
+          vehicleYear: true,
+          vehicleMake: true,
+          vehicleModel: true,
+          hasInsurance: true,
+          insuranceProvider: true,
+          priority: true,
+          status: true,
+          estimatedValue: true,
+        },
+      },
     });
   }
 
@@ -72,6 +168,38 @@ export class AppointmentsService {
         appointmentDate: Between(startDate, endDate),
       },
       relations: ['lead'],
+      select: {
+        // Appointment fields
+        id: true,
+        leadId: true,
+        appointmentDate: true,
+        appointmentTimeSlot: true,
+        appointmentStartTime: true,
+        appointmentEndTime: true,
+        status: true,
+        contactPreferences: true,
+        adminNotes: true,
+        confirmedAt: true,
+        confirmedById: true,
+        createdAt: true,
+        updatedAt: true,
+        // Lead fields (for mockup UI)
+        lead: {
+          id: true,
+          referenceNumber: true,
+          name: true,
+          phone: true,
+          email: true,
+          vehicleYear: true,
+          vehicleMake: true,
+          vehicleModel: true,
+          hasInsurance: true,
+          insuranceProvider: true,
+          priority: true,
+          status: true,
+          estimatedValue: true,
+        },
+      },
       order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
     });
   }
@@ -159,6 +287,77 @@ export class AppointmentsService {
         acc[status] = parseInt(count);
         return acc;
       }, {}),
+    };
+  }
+
+  /**
+   * Get enriched statistics for dashboard mockup
+   * Returns: total appointments, this week count, estimated revenue
+   */
+  async getEnrichedStats() {
+    const now = new Date();
+    
+    // Calculate start of week (Sunday)
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    // Calculate end of week (Saturday)
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    // Format dates for query (YYYY-MM-DD)
+    const startDateStr = startOfWeek.toISOString().split('T')[0];
+    const endDateStr = endOfWeek.toISOString().split('T')[0];
+
+    this.logger.log(`Getting enriched stats for week: ${startDateStr} to ${endDateStr}`);
+
+    // Total appointments
+    const total = await this.appointmentRepository.count();
+
+    // This week appointments
+    const thisWeek = await this.appointmentRepository.count({
+      where: {
+        appointmentDate: Between(startDateStr, endDateStr),
+      },
+    });
+
+    // Get this week appointments with lead data for revenue calculation
+    const thisWeekAppointments = await this.appointmentRepository.find({
+      where: {
+        appointmentDate: Between(startDateStr, endDateStr),
+      },
+      relations: ['lead'],
+      select: {
+        id: true,
+        lead: {
+          estimatedValue: true,
+        },
+      },
+    });
+
+    // Calculate estimated revenue
+    const estimatedRevenue = thisWeekAppointments.reduce(
+      (sum, appointment) => {
+        const value = appointment.lead?.estimatedValue || 0;
+        return sum + Number(value);
+      },
+      0
+    );
+
+    // Format revenue for display
+    const formattedRevenue = estimatedRevenue >= 1000
+      ? `$${(estimatedRevenue / 1000).toFixed(1)}K`
+      : `$${estimatedRevenue.toFixed(0)}`;
+
+    this.logger.log(`Stats calculated: total=${total}, thisWeek=${thisWeek}, revenue=${formattedRevenue}`);
+
+    return {
+      total,
+      thisWeek,
+      estimatedRevenue: estimatedRevenue.toFixed(2),
+      formattedRevenue,
     };
   }
 }
