@@ -12,6 +12,160 @@ import { showToast } from './mockup-utils';
  */
 export default function MockupExactPage() {
   useEffect(() => {
+    // Define all functions inside useEffect to ensure they're in the client bundle
+    // This prevents Next.js tree-shaking from removing them
+    
+    // Import functions and data that need to be available
+    const eventsByDate: Record<string, any[]> = {
+      '2025-11-15': [
+        {
+          type: 'appointment',
+          time: '9:00-11:00',
+          customer: 'Bob Johnson',
+          phone: '(555) 123-4567',
+          email: 'bob.johnson@email.com',
+          vehicle: '2019 Honda Civic',
+          vin: '2HGFC2F59KH123456',
+          serviceType: 'Body Repair',
+          serviceCategory: 'Body Shop',
+          paymentType: 'Insurance',
+          insuranceCompany: 'Progressive',
+          claimNumber: 'PRG-2025-12345',
+          estimateAmount: 'TBD',
+          status: 'Scheduled',
+          reference: '2025-1115-0001',
+          eventId: 'appt1'
+        },
+        {
+          type: 'payment',
+          amount: '$150.00',
+          installment: '3/5',
+          customer: 'Maria Garcia',
+          phone: '(321) 456-7890',
+          email: 'maria.garcia@email.com',
+          vehicle: '2019 Honda Accord',
+          vin: '1HGCV1F39KA123456',
+          serviceType: 'Paint Job',
+          serviceCategory: 'Body Shop',
+          paymentType: 'Private',
+          insuranceCompany: 'N/A',
+          totalAmount: '$750.00',
+          paidAmount: '$450.00',
+          remainingAmount: '$300.00',
+          dueDate: '2025-11-15',
+          status: 'Pending',
+          reference: '2025-1115-0002',
+          eventId: 'payment_nov15_maria'
+        },
+        {
+          type: 'appointment',
+          time: '14:00-16:00',
+          customer: 'Robert Williams',
+          phone: '(407) 789-0123',
+          email: 'robert.w@email.com',
+          vehicle: '2021 Ford F-150',
+          vin: '1FTFW1E84MFA12345',
+          serviceType: 'Oil Change + Inspection',
+          serviceCategory: 'Mechanical',
+          paymentType: 'Private',
+          insuranceCompany: 'N/A',
+          claimNumber: 'N/A',
+          estimateAmount: '$120.00',
+          status: 'Scheduled',
+          reference: '2025-1115-0003',
+          eventId: 'appt_nov15_robert'
+        }
+      ],
+      '2025-11-08': [
+        {
+          type: 'payment',
+          amount: '$183.54',
+          installment: '2/6',
+          customer: 'John Doe',
+          phone: '(689) 221-3162',
+          email: 'john.doe@email.com',
+          vehicle: '2021 Mitsubishi Outlander',
+          vin: 'JA4J3VA85MZ041362',
+          serviceType: 'Body Repair',
+          serviceCategory: 'Body Shop',
+          paymentType: 'Insurance',
+          insuranceCompany: 'State Farm',
+          totalAmount: '$1,101.24',
+          paidAmount: '$183.54',
+          remainingAmount: '$734.16',
+          dueDate: '2025-11-08',
+          status: 'Overdue',
+          reference: '2025-1010-0001',
+          eventId: 'payment1'
+        }
+      ],
+      '2025-11-12': [
+        {
+          type: 'payment',
+          amount: '$146.30',
+          installment: '1/2',
+          customer: 'Maria Silva',
+          phone: '(654) 945-0938',
+          email: 'maria.silva@email.com',
+          vehicle: '2020 Ford EcoSport',
+          vin: '5NPEB4AC1LH123456',
+          serviceType: 'Body Repair',
+          serviceCategory: 'Body Shop',
+          paymentType: 'Private',
+          insuranceCompany: 'Private (Self-Pay)',
+          totalAmount: '$292.60',
+          paidAmount: '$0.00',
+          remainingAmount: '$292.60',
+          dueDate: '2025-11-12',
+          status: 'Overdue',
+          reference: '2025-1015-0001',
+          eventId: 'payment2'
+        }
+      ],
+      '2025-11-14': [
+        {
+          type: 'appointment',
+          time: '13:00-15:00',
+          customer: 'Alice Smith',
+          phone: '(813) 786-5844',
+          email: 'alice.smith@email.com',
+          vehicle: '2019 Honda Civic',
+          vin: '19XFC2F59KE123456',
+          serviceType: 'Oil Change + Inspection',
+          serviceCategory: 'Mechanic',
+          paymentType: 'Private',
+          insuranceCompany: 'N/A',
+          estimateAmount: '$95.00',
+          status: 'Confirmed',
+          reference: '2025-1108-0001',
+          eventId: 'appt2'
+        }
+      ],
+      '2025-11-17': [
+        {
+          type: 'payment',
+          amount: '$209.63',
+          installment: '1/7',
+          customer: 'Sarah Martinez',
+          phone: '(689) 345-3214',
+          email: 'sarah.martinez@email.com',
+          vehicle: '2020 RAM 2500',
+          vin: '1C6RR7FT8LS123456',
+          serviceType: 'Body Repair',
+          serviceCategory: 'Body Shop',
+          paymentType: 'Insurance',
+          insuranceCompany: 'Allstate',
+          totalAmount: '$1,467.41',
+          paidAmount: '$0.00',
+          remainingAmount: '$1,467.41',
+          dueDate: '2025-11-17',
+          status: 'Pending',
+          reference: '2025-1020-0001',
+          eventId: 'payment3'
+        }
+      ]
+    };
+    
     // Initialize mockup JavaScript logic after mount
     initializeMockup();
     
@@ -19,6 +173,512 @@ export default function MockupExactPage() {
     return () => {
       // Remove event listeners if needed
     };
+    
+    // All functions defined here to be in scope
+    function initializeMockup() {
+      console.log('✅ Mockup initialized!');
+      
+      calculateAndUpdateStats();
+      
+      // Expose functions to window
+      if (typeof window !== 'undefined') {
+        (window as any).openModal = openModal;
+        (window as any).closeModal = closeModal;
+        (window as any).changeMonth = changeMonth;
+        (window as any).openDayModal = openDayModal;
+        (window as any).openRescheduledEventModal = openRescheduledEventModal;
+        (window as any).openNewEventModal = openNewEventModal;
+        (window as any).openRescheduleModal = openRescheduleModal;
+        (window as any).confirmReschedule = confirmReschedule;
+        (window as any).showToast = showToast;
+        (window as any).eventsByDate = eventsByDate;
+        (window as any).calculateAndUpdateStats = calculateAndUpdateStats;
+      }
+      
+      const filterType = document.getElementById('filterType');
+      const filterStatus = document.getElementById('filterStatus');
+      const filterDate = document.getElementById('filterDate');
+      const searchInput = document.getElementById('searchInput');
+      
+      if (filterType) filterType.addEventListener('change', () => showToast('Filter applied'));
+      if (filterStatus) filterStatus.addEventListener('change', () => showToast('Filter applied'));
+      if (filterDate) filterDate.addEventListener('change', () => showToast('Filter applied'));
+      if (searchInput) searchInput.addEventListener('input', () => console.log('Search...'));
+      
+      const viewButtons = document.querySelectorAll('.view-btn');
+      viewButtons.forEach(btn => {
+        btn.addEventListener('click', function(this: HTMLElement) {
+          viewButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          showToast(`Switched to ${this.textContent} view`);
+        });
+      });
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeModal();
+        }
+      });
+      
+      makeEventsDraggable();
+      showToast('✅ Calendar loaded successfully!', 2000);
+    }
+    
+    function calculateAndUpdateStats() {
+      const today = new Date('2025-11-15');
+      const todayStr = '2025-11-15';
+      
+      let total = 0;
+      let todayCount = 0;
+      let thisWeekCount = 0;
+      let overdueCount = 0;
+      let upcomingCount = 0;
+      let totalRevenue = 0;
+      
+      Object.keys(eventsByDate).forEach(dateStr => {
+        const events = eventsByDate[dateStr];
+        total += events.length;
+        
+        const eventDate = new Date(dateStr);
+        const daysDiff = Math.floor((eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (dateStr === todayStr) {
+          todayCount = events.length;
+        }
+        
+        if (daysDiff >= 0 && daysDiff <= 7) {
+          thisWeekCount += events.length;
+        }
+        
+        events.forEach(event => {
+          if (event.status === 'Overdue') {
+            overdueCount++;
+          }
+        });
+        
+        if (daysDiff >= 0) {
+          upcomingCount += events.length;
+        }
+        
+        events.forEach(event => {
+          if (event.type === 'payment') {
+            const amountStr = event.amount || '0';
+            const amount = parseFloat(amountStr.replace(/[$,]/g, ''));
+            if (!isNaN(amount)) {
+              totalRevenue += amount;
+            }
+          }
+        });
+      });
+      
+      const revenueFormatted = totalRevenue >= 1000 
+        ? `$${(totalRevenue / 1000).toFixed(1)}K`
+        : `$${totalRevenue.toFixed(0)}`;
+      
+      const completedEvents = total - overdueCount;
+      const completionPct = total > 0 ? Math.round((completedEvents / total) * 100) : 100;
+      
+      const statTotal = document.getElementById('statTotal');
+      const statToday = document.getElementById('statToday');
+      const statWeek = document.getElementById('statWeek');
+      const statOverdue = document.getElementById('statOverdue');
+      const statRevenue = document.getElementById('statRevenue');
+      const statCompletion = document.getElementById('statCompletion');
+      
+      if (statTotal) statTotal.textContent = total.toString();
+      if (statToday) statToday.textContent = todayCount.toString();
+      if (statWeek) statWeek.textContent = thisWeekCount.toString();
+      if (statOverdue) statOverdue.textContent = overdueCount.toString();
+      if (statRevenue) statRevenue.textContent = revenueFormatted;
+      if (statCompletion) statCompletion.textContent = `${completionPct}%`;
+      
+      const badgeOverdue = document.getElementById('badgeOverdue');
+      const badgeUpcoming = document.getElementById('badgeUpcoming');
+      
+      if (badgeOverdue) badgeOverdue.textContent = overdueCount.toString();
+      if (badgeUpcoming) badgeUpcoming.textContent = upcomingCount.toString();
+      
+      console.log('📊 Stats updated:', { 
+        total, 
+        todayCount, 
+        thisWeekCount, 
+        overdueCount, 
+        upcomingCount,
+        totalRevenue: revenueFormatted, 
+        completionPct: `${completionPct}%`
+      });
+    }
+    
+    function openDayModal(date: string) {
+      const modal = document.getElementById('modal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      if (!modal || !title || !body) return;
+
+      const dayEvents = eventsByDate[date] || [];
+      
+      console.log('Opening modal for date:', date);
+      console.log('Events found:', dayEvents);
+
+      title.textContent = `Events for ${date}`;
+      
+      if (dayEvents.length === 0) {
+        body.innerHTML = `
+          <div class="modal-section">
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+              <div style="font-size: 48px; margin-bottom: 16px;">📅</div>
+              <div style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">No events scheduled</div>
+              <div style="font-size: 11px;">Click on events in the side panels to view details, or create a new event.</div>
+            </div>
+          </div>
+        `;
+        modal.classList.add('active');
+        return;
+      }
+      
+      const eventsHtml = dayEvents.map((event, index) => {
+        const clickHandler = `window.openRescheduledEventModal('${date}', ${index})`;
+        
+        if (event.type === 'appointment') {
+          return `
+            <div class="day-modal-event appointment" onclick="${clickHandler}" style="cursor: pointer;">
+              <div class="dme-header">
+                <div class="dme-icon appointment">🔧</div>
+                <div class="dme-title">
+                  <strong>${event.customer}</strong>
+                  <small>${event.time} • ${event.phone}</small>
+                </div>
+              </div>
+              <div class="dme-info">
+                <div class="dme-row">
+                  <span>🚗 <strong>${event.vehicle}</strong></span>
+                  <span>• ${event.serviceType}</span>
+                </div>
+                <div class="dme-row">
+                  <span>${event.reference}</span>
+                  <span>•</span>
+                  <span>${event.paymentType === 'Insurance' ? `🛡️ ${event.insuranceCompany}` : '💳 Private'}</span>
+                  ${event.estimateAmount !== 'TBD' ? `<span>• <strong>${event.estimateAmount}</strong></span>` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="day-modal-event payment" onclick="${clickHandler}" style="cursor: pointer;">
+              <div class="dme-header">
+                <div class="dme-icon payment">💰</div>
+                <div class="dme-title">
+                  <strong>${event.customer}</strong>
+                  <small>${event.amount} • ${event.phone}</small>
+                </div>
+              </div>
+              <div class="dme-info">
+                <div class="dme-row">
+                  <span>🚗 <strong>${event.vehicle}</strong></span>
+                  <span>• ${event.serviceType}</span>
+                </div>
+                <div class="dme-row">
+                  <span>${event.reference}</span>
+                  <span>•</span>
+                  <span>Installment ${event.installment}</span>
+                  <span>• <strong>${event.status}</strong></span>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+      
+      body.innerHTML = `
+        <div class="modal-section">
+          <div class="day-modal-events">
+            ${eventsHtml}
+          </div>
+        </div>
+      `;
+      
+      modal.classList.add('active');
+    }
+    
+    function openRescheduledEventModal(date: string, eventIndex: number) {
+      const event = eventsByDate[date]?.[eventIndex];
+      if (!event) return;
+      
+      openModal(event.eventId);
+    }
+    
+    function openNewEventModal() {
+      showToast('➕ New event functionality coming soon!');
+    }
+    
+    function changeMonth(direction: number) {
+      showToast(`📅 Month navigation coming soon!`);
+    }
+    
+    function openModal(eventId: string) {
+      const modal = document.getElementById('modal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      if (!modal || !title || !body) return;
+
+      const data = mockEventData[eventId];
+      if (!data) {
+        console.error('Event not found:', eventId);
+        return;
+      }
+
+      title.textContent = data.type === 'payment' ? 'Payment Details' : 'Appointment Details';
+      
+      body.innerHTML = `
+        <div class="modal-section">
+          <div class="modal-section-title">Lead Information</div>
+          <div class="modal-grid">
+            <div class="modal-field"><strong>Reference:</strong> ${data.reference}</div>
+            <div class="modal-field"><strong>Created:</strong> ${data.created}</div>
+            <div class="modal-field"><strong>Source:</strong> ${data.source}</div>
+            <div class="modal-field"><strong>Status:</strong> <span class="status-badge ${data.status.toLowerCase()}">${data.status}</span></div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <div class="modal-section-title">${data.type === 'payment' ? 'Payment Schedule' : 'Appointment Details'}</div>
+          <div class="modal-grid">
+            ${data.type === 'payment' ? `
+              <div class="modal-field"><strong>Total Amount:</strong> ${data.totalAmount}</div>
+              <div class="modal-field"><strong>Installments:</strong> ${data.installments}</div>
+              <div class="modal-field"><strong>Due Date:</strong> ${data.dueDate}</div>
+              <div class="modal-field"><strong>Status:</strong> ${data.overdueStatus || 'On time'}</div>
+            ` : `
+              <div class="modal-field"><strong>Date:</strong> ${data.appointmentDate}</div>
+              <div class="modal-field"><strong>Time:</strong> ${data.appointmentTime}</div>
+              <div class="modal-field"><strong>Status:</strong> ${data.appointmentStatus}</div>
+              <div class="modal-field"><strong>Confirmation:</strong> ${data.appointmentConfirmation}</div>
+            `}
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <div class="modal-section-title">Customer Information</div>
+          <div class="modal-grid">
+            <div class="modal-field"><strong>Name:</strong> ${data.firstName} ${data.lastName}</div>
+            <div class="modal-field"><strong>Phone:</strong> ${data.phone}</div>
+            <div class="modal-field"><strong>Email:</strong> ${data.email}</div>
+            <div class="modal-field"><strong>Service Type:</strong> ${data.serviceType}</div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <div class="modal-section-title">Vehicle Information</div>
+          <div class="modal-grid">
+            <div class="modal-field"><strong>VIN:</strong> ${data.vin}</div>
+            <div class="modal-field"><strong>Vehicle:</strong> ${data.vehicle}</div>
+            ${data.insuranceCompany && data.insuranceCompany !== 'N/A' ? `
+              <div class="modal-field"><strong>Insurance:</strong> ${data.insuranceCompany}</div>
+              <div class="modal-field"><strong>Claim #:</strong> ${data.claimNumber || 'N/A'}</div>
+            ` : ''}
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <div class="modal-section-title">Contact Preferences</div>
+          <div class="modal-grid">
+            <div class="modal-field"><strong>Preferred:</strong> ${data.contactPreference || 'Phone'}</div>
+            <div class="modal-field"><strong>Best Time:</strong> ${data.bestTimeToContact || 'Anytime'}</div>
+          </div>
+        </div>
+        
+        ${data.additionalNotes ? `
+          <div class="modal-section">
+            <div class="modal-section-title">Additional Notes</div>
+            <div class="modal-notes">${data.additionalNotes}</div>
+          </div>
+        ` : ''}
+        
+        ${data.adminNotes ? `
+          <div class="modal-section">
+            <div class="modal-section-title">Admin Notes</div>
+            <div class="modal-notes">${data.adminNotes}</div>
+          </div>
+        ` : ''}
+      `;
+      
+      modal.classList.add('active');
+    }
+    
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      if (modal) {
+        modal.classList.remove('active');
+      }
+    }
+    
+    function openRescheduleModal(eventId: string, sourceDate: string) {
+      const modal = document.getElementById('modal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      if (!modal || !title || !body) return;
+
+      title.textContent = 'Reschedule Event';
+      
+      body.innerHTML = `
+        <div class="modal-section">
+          <div class="modal-section-title">Select New Time</div>
+          <div class="time-selector">
+            <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '09:00')">9:00 AM</button>
+            <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '10:00')">10:00 AM</button>
+            <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '11:00')">11:00 AM</button>
+            <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '13:00')">1:00 PM</button>
+            <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '14:00')">2:00 PM</button>
+            <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '15:00')">3:00 PM</button>
+            <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '16:00')">4:00 PM</button>
+          </div>
+        </div>
+      `;
+      
+      modal.classList.add('active');
+    }
+    
+    function confirmReschedule(eventId: string, sourceDate: string, newTime: string) {
+      const targetDate = (window as any).dragTargetDate;
+      
+      if (!targetDate) {
+        showToast('❌ Error: No target date selected');
+        return;
+      }
+      
+      const sourceEvents = eventsByDate[sourceDate];
+      if (!sourceEvents) return;
+      
+      const eventIndex = sourceEvents.findIndex((e: any) => e.eventId === eventId);
+      if (eventIndex === -1) return;
+      
+      const event = sourceEvents.splice(eventIndex, 1)[0];
+      event.time = `${newTime}-${(parseInt(newTime.split(':')[0]) + 2).toString().padStart(2, '0')}:00`;
+      
+      if (!eventsByDate[targetDate]) {
+        eventsByDate[targetDate] = [];
+      }
+      eventsByDate[targetDate].push(event);
+      
+      updateCalendarDay(sourceDate);
+      updateCalendarDay(targetDate);
+      
+      calculateAndUpdateStats();
+      
+      closeModal();
+      showToast(`✅ Event rescheduled to ${targetDate} at ${newTime}`);
+      
+      delete (window as any).dragTargetDate;
+    }
+    
+    function updateCalendarDay(dateStr: string) {
+      const dayNumber = parseInt(dateStr.split('-')[2]);
+      const days = document.querySelectorAll('.calendar-day');
+      
+      days.forEach(day => {
+        const dayNumEl = day.querySelector('.day-number');
+        if (dayNumEl && dayNumEl.textContent === dayNumber.toString()) {
+          const events = eventsByDate[dateStr] || [];
+          
+          let badge = day.querySelector('.event-badge');
+          if (events.length > 0) {
+            if (!badge) {
+              badge = document.createElement('span');
+              badge.className = 'event-badge';
+              day.appendChild(badge);
+            }
+            badge.textContent = events.length.toString();
+            
+            const targetDay = day as HTMLElement;
+            targetDay.setAttribute('onclick', `window.openDayModal('${dateStr}')`);
+          } else {
+            if (badge) {
+              badge.remove();
+            }
+            const targetDay = day as HTMLElement;
+            targetDay.removeAttribute('onclick');
+          }
+        }
+      });
+    }
+    
+    function makeEventsDraggable() {
+      const draggableEvents = document.querySelectorAll('.event-item');
+      
+      draggableEvents.forEach(event => {
+        event.setAttribute('draggable', 'true');
+        
+        event.addEventListener('dragstart', (e: Event) => {
+          const dragEvent = e as DragEvent;
+          const target = dragEvent.currentTarget as HTMLElement;
+          
+          target.style.opacity = '0.5';
+          
+          const onclickAttr = target.getAttribute('onclick');
+          if (onclickAttr) {
+            const match = onclickAttr.match(/window\.openModal\('([^']+)'\)/);
+            if (match) {
+              const eventId = match[1];
+              dragEvent.dataTransfer!.setData('eventId', eventId);
+              
+              let sourceDate = '';
+              Object.keys(eventsByDate).forEach(date => {
+                if (eventsByDate[date].some((ev: any) => ev.eventId === eventId)) {
+                  sourceDate = date;
+                }
+              });
+              
+              dragEvent.dataTransfer!.setData('sourceDate', sourceDate);
+            }
+          }
+        });
+        
+        event.addEventListener('dragend', (e: Event) => {
+          const target = e.currentTarget as HTMLElement;
+          target.style.opacity = '1';
+        });
+      });
+      
+      const calendarDays = document.querySelectorAll('.calendar-day');
+      
+      calendarDays.forEach(day => {
+        day.addEventListener('dragover', (e: Event) => {
+          e.preventDefault();
+          const target = e.currentTarget as HTMLElement;
+          target.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+        });
+        
+        day.addEventListener('dragleave', (e: Event) => {
+          const target = e.currentTarget as HTMLElement;
+          target.style.backgroundColor = '';
+        });
+        
+        day.addEventListener('drop', (e: Event) => {
+          e.preventDefault();
+          const dragEvent = e as DragEvent;
+          const target = dragEvent.currentTarget as HTMLElement;
+          
+          target.style.backgroundColor = '';
+          
+          const eventId = dragEvent.dataTransfer!.getData('eventId');
+          const sourceDate = dragEvent.dataTransfer!.getData('sourceDate');
+          
+          const dayNumEl = target.querySelector('.day-number');
+          if (dayNumEl) {
+            const dayNumber = dayNumEl.textContent;
+            const targetDate = `2025-11-${dayNumber!.padStart(2, '0')}`;
+            
+            (window as any).dragTargetDate = targetDate;
+            
+            openRescheduleModal(eventId, sourceDate);
+          }
+        });
+      });
+    }
   }, []);
 
   return (
