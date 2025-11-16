@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 import { Appointment, appointmentsService } from '@/lib/api/appointments.service';
 import { EventBadge } from './EventBadge';
+import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointments';
 
 interface CalendarSidebarProps {
   onEventClick: (appointment: Appointment) => void;
@@ -21,19 +22,25 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0 }: CalendarSideba
   const fetchAppointments = async () => {
     try {
       setLoading(true);
-      // Fetch current month and next month appointments
-      const now = new Date();
-      const currentMonth = await appointmentsService.getAppointmentsByMonth(
-        now.getFullYear(),
-        now.getMonth() + 1
-      );
       
-      const nextMonth = await appointmentsService.getAppointmentsByMonth(
-        now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear(),
-        now.getMonth() === 11 ? 1 : now.getMonth() + 2
-      );
-      
-      setAppointments([...currentMonth, ...nextMonth]);
+      // Use test data if enabled
+      if (USE_TEST_DATA) {
+        setAppointments(TEST_APPOINTMENTS);
+      } else {
+        // Fetch current month and next month appointments
+        const now = new Date();
+        const currentMonth = await appointmentsService.getAppointmentsByMonth(
+          now.getFullYear(),
+          now.getMonth() + 1
+        );
+        
+        const nextMonth = await appointmentsService.getAppointmentsByMonth(
+          now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear(),
+          now.getMonth() === 11 ? 1 : now.getMonth() + 2
+        );
+        
+        setAppointments([...currentMonth, ...nextMonth]);
+      }
     } catch (error) {
       console.error('[CalendarSidebar] Failed to fetch appointments:', error);
     } finally {

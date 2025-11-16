@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Appointment, appointmentsService } from '@/lib/api/appointments.service';
 import { EventBadge } from './EventBadge';
+import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointments';
 
 interface CalendarGridProps {
   onEventClick: (appointment: Appointment) => void;
@@ -72,8 +73,19 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
   const fetchAppointments = async () => {
     try {
       setLoading(true);
-      const data = await appointmentsService.getAppointmentsByMonth(year, month + 1);
-      setAppointments(data);
+      
+      // Use test data if enabled
+      if (USE_TEST_DATA) {
+        // Filter test appointments for current month
+        const filteredData = TEST_APPOINTMENTS.filter((apt) => {
+          const aptDate = new Date(apt.appointmentDate);
+          return aptDate.getFullYear() === year && aptDate.getMonth() === month;
+        });
+        setAppointments(filteredData);
+      } else {
+        const data = await appointmentsService.getAppointmentsByMonth(year, month + 1);
+        setAppointments(data);
+      }
     } catch (error) {
       console.error('[CalendarGrid] Failed to fetch appointments:', error);
     } finally {
