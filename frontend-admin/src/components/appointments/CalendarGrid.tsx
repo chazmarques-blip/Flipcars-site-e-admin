@@ -214,8 +214,8 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
                       <div className="absolute bottom-1 right-1 bg-[#D4AF37] text-white text-[8px] font-bold px-1 py-0.5 rounded-full leading-none">
                         {dayAppointments.length}
                       </div>
-                    )}
-                  </div>
+                    </>
+                  )}
                 </div>
               );
             })}
