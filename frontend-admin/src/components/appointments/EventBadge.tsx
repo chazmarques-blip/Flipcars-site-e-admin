@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Appointment, AppointmentStatus } from '@/lib/api/appointments.service';
-import { Phone, Car, DollarSign, Eye } from 'lucide-react';
+import { Phone } from 'lucide-react';
 
 interface EventBadgeProps {
   appointment: Appointment;
@@ -14,8 +14,8 @@ interface EventBadgeProps {
 const getStatusBg = (status: AppointmentStatus): string => {
   const colorMap: Record<AppointmentStatus, string> = {
     [AppointmentStatus.SCHEDULED]: 'bg-white',
-    [AppointmentStatus.CONFIRMED]: 'bg-green-50',
-    [AppointmentStatus.COMPLETED]: 'bg-gray-50',
+    [AppointmentStatus.CONFIRMED]: 'bg-white',
+    [AppointmentStatus.COMPLETED]: 'bg-[#f5f5f5]',
     [AppointmentStatus.CANCELLED]: 'bg-red-50',
     [AppointmentStatus.NO_SHOW]: 'bg-orange-50',
     [AppointmentStatus.RESCHEDULED]: 'bg-blue-50',
@@ -23,44 +23,66 @@ const getStatusBg = (status: AppointmentStatus): string => {
   return colorMap[status] || 'bg-white';
 };
 
-// Get status button color and text
-const getStatusButton = (status: AppointmentStatus): { color: string; text: string } => {
-  const statusMap: Record<AppointmentStatus, { color: string; text: string }> = {
-    [AppointmentStatus.SCHEDULED]: { color: 'bg-yellow-500 text-white', text: 'Waiting' },
-    [AppointmentStatus.CONFIRMED]: { color: 'bg-green-500 text-white', text: 'Confirm' },
-    [AppointmentStatus.COMPLETED]: { color: 'bg-gray-400 text-white', text: 'Completed' },
-    [AppointmentStatus.CANCELLED]: { color: 'bg-red-500 text-white', text: 'Cancelled' },
-    [AppointmentStatus.NO_SHOW]: { color: 'bg-orange-500 text-white', text: 'No Show' },
-    [AppointmentStatus.RESCHEDULED]: { color: 'bg-blue-500 text-white', text: 'Check-in' },
-  };
-  return statusMap[status] || statusMap[AppointmentStatus.SCHEDULED];
-};
-
-// Generate avatar initials from name
-const getInitials = (name?: string): string => {
-  if (!name) return '?';
-  const parts = name.split(' ');
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+// Get emoji icon based on type and status
+const getEventIcon = (appointment: Appointment): string => {
+  // Check if overdue (past date)
+  const aptDate = new Date(appointment.appointmentDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isOverdue = aptDate < today && appointment.status !== 'completed';
+  
+  if (isOverdue) {
+    return '💰'; // Payment overdue icon
   }
-  return name.substring(0, 2).toUpperCase();
+  
+  // Check if payment (has estimatedValue)
+  if (appointment.lead?.estimatedValue && appointment.lead.estimatedValue > 0) {
+    return '💰'; // Payment icon
+  }
+  
+  return '🔧'; // Appointment icon (wrench for service)
 };
 
-// Get random avatar background color (consistent per name)
-const getAvatarColor = (name?: string): string => {
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-red-500',
-    'bg-orange-500',
-  ];
-  if (!name) return colors[0];
-  const index = name.length % colors.length;
-  return colors[index];
+// Get status button
+const getActionButton = (appointment: Appointment): { color: string; icon: string; text: string } => {
+  const aptDate = new Date(appointment.appointmentDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isOverdue = aptDate < today && appointment.status !== 'completed';
+  
+  if (isOverdue) {
+    return { color: 'bg-[#D4AF37] text-white hover:bg-[#B8941F]', icon: '💬', text: 'Remind' };
+  }
+  
+  const statusMap: Record<AppointmentStatus, { color: string; icon: string; text: string }> = {
+    [AppointmentStatus.SCHEDULED]: { color: 'bg-[#D4AF37] text-white hover:bg-[#B8941F]', icon: '✅', text: 'Confirm' },
+    [AppointmentStatus.CONFIRMED]: { color: 'bg-[#4caf50] text-white hover:bg-[#45a049]', icon: '📍', text: 'Check-in' },
+    [AppointmentStatus.COMPLETED]: { color: 'bg-gray-400 text-white', icon: '✓', text: 'Done' },
+    [AppointmentStatus.CANCELLED]: { color: 'bg-red-500 text-white', icon: '✗', text: 'Cancelled' },
+    [AppointmentStatus.NO_SHOW]: { color: 'bg-orange-500 text-white', icon: '⚠️', text: 'No Show' },
+    [AppointmentStatus.RESCHEDULED]: { color: 'bg-blue-500 text-white', icon: '🔄', text: 'Reschedule' },
+  };
+  return statusMap[appointment.status] || statusMap[AppointmentStatus.SCHEDULED];
+};
+
+// Get badge text (Today, 7d, 3d, etc)
+const getBadgeText = (appointment: Appointment): { text: string; color: string } | null => {
+  const aptDate = new Date(appointment.appointmentDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const diffTime = aptDate.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) {
+    return { text: 'Today', color: 'bg-[#D4AF37] text-white' };
+  } else if (diffDays < 0) {
+    return { text: `${Math.abs(diffDays)}d`, color: 'bg-red-500 text-white' };
+  } else if (diffDays <= 7) {
+    return { text: `${diffDays}d`, color: 'bg-[#D4AF37] text-white' };
+  }
+  
+  return null;
 };
 
 export function EventBadge({ appointment, onClick, className = '' }: EventBadgeProps) {
@@ -75,110 +97,101 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
     .filter(Boolean)
     .join(' ');
 
-  const statusButton = getStatusButton(status);
+  const actionButton = getActionButton(appointment);
+  const badge = getBadgeText(appointment);
+  const icon = getEventIcon(appointment);
+  
+  // Check if overdue for value display
+  const aptDate = new Date(appointment.appointmentDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isOverdue = aptDate < today && status !== 'completed';
+  
   const estimatedValue = lead?.estimatedValue ? `$${Number(lead.estimatedValue).toFixed(2)}` : null;
 
   return (
     <div
       className={`
         ${getStatusBg(status)}
-        border border-[#e0e0e0] rounded-[6px] p-[8px]
-        hover:border-[#D4AF37] hover:shadow-md transition-all
+        border border-[#e0e0e0] rounded-[4px]
+        hover:border-[#D4AF37] hover:shadow-sm transition-all
         ${className}
       `}
     >
-      {/* Header: Avatar + Name + Time/Phone */}
-      <div className="flex items-start gap-2 mb-2">
-        {/* Avatar Circle */}
-        <div className={`w-8 h-8 rounded-full ${getAvatarColor(lead?.name)} flex items-center justify-center flex-shrink-0`}>
-          <span className="text-white text-[11px] font-bold">
-            {getInitials(lead?.name)}
-          </span>
-        </div>
-
-        {/* Name + Contact Info */}
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold text-[11px] text-[#1a1a1a] truncate mb-0.5">
-            {lead?.name || 'Unknown Customer'}
+      {/* Event Item Content */}
+      <div className="p-[6px]">
+        {/* Header with icon, name, and badge */}
+        <div className="flex items-start gap-[6px] mb-[4px]">
+          {/* Icon (24x24 emoji) */}
+          <div className="text-[20px] leading-none flex-shrink-0">
+            {icon}
           </div>
-          <div className="flex items-center gap-2 text-[9px] text-[#666]">
-            {appointmentTimeSlot && (
-              <span className="font-medium">{appointmentTimeSlot}</span>
-            )}
-            {lead?.phone && appointmentTimeSlot && <span>•</span>}
-            {lead?.phone && (
-              <span className="flex items-center gap-1">
-                <Phone className="w-2.5 h-2.5" />
-                {lead.phone}
-              </span>
-            )}
+          
+          {/* Main info */}
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold text-[11px] text-[#1a1a1a] leading-tight mb-[2px]">
+              {lead?.name || 'Unknown Customer'}
+            </div>
+            <div className="flex items-center gap-[4px] text-[10px] text-[#666] leading-tight">
+              {isOverdue && estimatedValue ? (
+                <>
+                  <strong className="text-[#1a1a1a]">{estimatedValue}</strong>
+                  <span>•</span>
+                </>
+              ) : appointmentTimeSlot ? (
+                <>
+                  <strong className="text-[#1a1a1a]">{appointmentTimeSlot}</strong>
+                  <span>•</span>
+                </>
+              ) : null}
+              {lead?.phone && (
+                <span className="flex items-center gap-[2px]">
+                  📞 {lead.phone}
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Details Section */}
-      <div className="space-y-1 mb-2">
-        {/* Vehicle Info */}
-        {vehicleInfo && (
-          <div className="flex items-center gap-1.5 text-[9px] text-[#666]">
-            <Car className="w-3 h-3 text-[#999]" />
-            <span className="truncate">{vehicleInfo}</span>
-          </div>
-        )}
-
-        {/* Service Type + Insurance */}
-        <div className="flex items-center gap-1.5 text-[9px] text-[#666]">
-          <span className="text-[#999]">🔧</span>
-          <span>Body Repair</span>
-          {lead?.hasInsurance && (
-            <>
-              <span>•</span>
-              <span>Insurance</span>
-            </>
+          
+          {/* Badge */}
+          {badge && (
+            <span className={`${badge.color} px-[6px] py-[2px] rounded-full text-[8px] font-bold flex-shrink-0 leading-none`}>
+              {badge.text}
+            </span>
           )}
         </div>
-
-        {/* Estimated Value */}
-        {estimatedValue && (
-          <div className="flex items-center gap-1.5 text-[9px] text-[#666]">
-            <DollarSign className="w-3 h-3 text-[#999]" />
-            <span>Est. {estimatedValue}</span>
+        
+        {/* Vehicle details */}
+        {vehicleInfo && (
+          <div className="text-[10px] text-[#666] mb-[6px] leading-tight">
+            {vehicleInfo} • {isOverdue ? 'Install 2/6' : 'Body Repair'}
           </div>
         )}
       </div>
-
-      {/* Action Buttons */}
-      <div className="flex items-center gap-1.5">
-        {/* Status Button */}
+      
+      {/* Action buttons */}
+      <div className="flex items-center gap-[4px] px-[6px] pb-[6px]">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onClick?.();
           }}
-          className={`flex-1 px-2 py-1 rounded-[4px] text-[9px] font-semibold ${statusButton.color} transition-all hover:opacity-90`}
+          className={`flex-1 px-[8px] py-[4px] rounded-[4px] text-[10px] font-semibold ${actionButton.color} transition-all flex items-center justify-center gap-[4px] leading-none`}
         >
-          {statusButton.text}
+          <span>{actionButton.icon}</span>
+          <span>{actionButton.text}</span>
         </button>
-
-        {/* View Button */}
+        
         <button
           onClick={(e) => {
             e.stopPropagation();
             onClick?.();
           }}
-          className="px-2 py-1 rounded-[4px] text-[9px] font-semibold bg-white border border-[#e0e0e0] text-[#666] hover:border-[#D4AF37] hover:bg-[#fffbf0] hover:text-[#D4AF37] transition-all flex items-center gap-1"
+          className="px-[8px] py-[4px] rounded-[4px] text-[10px] font-semibold bg-white border border-[#e0e0e0] text-[#666] hover:border-[#D4AF37] hover:bg-[#fffbf0] hover:text-[#D4AF37] transition-all flex items-center gap-[4px] leading-none"
         >
-          <Eye className="w-3 h-3" />
-          View
+          <span>👁️</span>
+          <span>View</span>
         </button>
       </div>
-
-      {/* Reference Number (subtle footer) */}
-      {lead?.referenceNumber && (
-        <div className="text-[8px] text-[#999] text-center mt-1.5 pt-1.5 border-t border-[#f0f0f0]">
-          {lead.referenceNumber}
-        </div>
-      )}
     </div>
   );
 }

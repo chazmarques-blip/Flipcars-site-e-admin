@@ -184,7 +184,7 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
                 <div
                   key={index}
                   className={`
-                    min-h-[60px] p-1 border rounded
+                    relative min-h-[60px] p-1 border rounded
                     ${isCurrentMonth ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100'}
                     ${today ? 'border-[#D4AF37] border-2 bg-amber-50/30' : ''}
                   `}
@@ -196,35 +196,23 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
                     {date.getDate()}
                   </div>
 
-                  {/* Appointments for this day - MOCKUP FORMAT: apenas barras minimalistas */}
-                  <div className="space-y-[2px]">
-                    {dayAppointments.slice(0, 3).map((apt) => {
-                      const estimatedValue = apt.lead?.estimatedValue || 0;
-                      const valueDisplay = estimatedValue >= 1000 
-                        ? `$${(estimatedValue / 1000).toFixed(1)}K` 
-                        : `$${estimatedValue.toFixed(0)}`;
+                  {/* Appointments indicators - EXACT MOCKUP FORMAT */}
+                  {dayAppointments.length > 0 && (
+                    <>
+                      <div className="space-y-[2px] mt-1">
+                        {dayAppointments.slice(0, 3).map((apt) => (
+                          <div
+                            key={apt.id}
+                            onClick={() => onEventClick(apt)}
+                            className="h-[2px] w-full rounded-[1px] bg-[#D4AF37] cursor-pointer hover:opacity-80 transition-opacity"
+                            title={`${apt.lead?.name} - ${apt.appointmentTimeSlot}`}
+                          />
+                        ))}
+                      </div>
                       
-                      return (
-                        <div
-                          key={apt.id}
-                          onClick={() => onEventClick(apt)}
-                          className="flex items-center gap-[3px] cursor-pointer hover:opacity-80 transition-opacity"
-                          title={`${apt.lead?.name} - ${apt.appointmentTimeSlot} - ${valueDisplay}`}
-                        >
-                          {/* Barra horizontal colorida (como no mockup) */}
-                          <div className="h-[3px] flex-1 bg-[#fbbf24] rounded-full"></div>
-                          {/* Indicador de valor */}
-                          <span className="text-[7px] font-bold text-[#f59e0b]">
-                            {valueDisplay}
-                          </span>
-                        </div>
-                      );
-                    })}
-                    
-                    {/* Show total count if more than 3 appointments */}
-                    {dayAppointments.length > 3 && (
-                      <div className="text-[7px] text-gray-500 font-semibold text-center pt-[2px]">
-                        {dayAppointments.length} total
+                      {/* Event count badge (MOCKUP: absolute positioned) */}
+                      <div className="absolute bottom-1 right-1 bg-[#D4AF37] text-white text-[8px] font-bold px-1 py-0.5 rounded-full leading-none">
+                        {dayAppointments.length}
                       </div>
                     )}
                   </div>
