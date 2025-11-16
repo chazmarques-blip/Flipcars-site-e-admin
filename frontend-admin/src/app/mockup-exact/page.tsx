@@ -1626,6 +1626,7 @@ let currentYear = 2025;
  * This function counts events, calculates revenue, and updates DOM elements
  */
 function calculateAndUpdateStats() {
+  console.log('🔵 calculateAndUpdateStats() CHAMADA!');
   const today = new Date('2025-11-15'); // Mockup "today" date
   const todayStr = '2025-11-15';
   
@@ -1983,8 +1984,10 @@ let draggedEvent: HTMLElement | null = null;
 let draggedEventData: any = null;
 
 function makeEventsDraggable() {
+  console.log('🔵 makeEventsDraggable() CHAMADA!');
   // Make all event items in side panels draggable
   const eventItems = document.querySelectorAll('.event-item');
+  console.log('🔍 Eventos encontrados para drag:', eventItems.length);
   eventItems.forEach(item => {
     const htmlItem = item as HTMLElement;
     htmlItem.setAttribute('draggable', 'true');
@@ -2275,12 +2278,15 @@ function updateCalendarDay(dayNumber: string, eventName: string, timeSlot: strin
 
 function initializeMockup() {
   console.log('✅ Mockup initialized!');
+  console.log('🔍 Window object exists:', typeof window !== 'undefined');
+  console.log('🔍 EventsByDate:', eventsByDate);
   
   // Calculate and update stats
   calculateAndUpdateStats();
   
   // Expose functions to window for onclick handlers
   if (typeof window !== 'undefined') {
+    console.log('🔵 Expondo funções ao window...');
     (window as any).openModal = openModal;
     (window as any).closeModal = closeModal;
     (window as any).changeMonth = changeMonth;
@@ -2292,6 +2298,8 @@ function initializeMockup() {
     (window as any).showToast = showToast;
     (window as any).eventsByDate = eventsByDate;
     (window as any).calculateAndUpdateStats = calculateAndUpdateStats;
+    console.log('✅ Funções expostas ao window com sucesso!');
+    console.log('🔍 window.openDayModal:', typeof (window as any).openDayModal);
   }
   
   // Setup filter handlers
