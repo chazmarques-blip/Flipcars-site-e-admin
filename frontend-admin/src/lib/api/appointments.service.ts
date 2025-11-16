@@ -39,6 +39,16 @@ export interface Appointment {
     email: string;
     phone: string;
     serviceType: string;
+    // 🆕 New fields from backend DIA 1
+    vehicleYear?: string;
+    vehicleMake?: string;
+    vehicleModel?: string;
+    hasInsurance?: boolean;
+    insuranceProvider?: string;
+    priority?: 'low' | 'medium' | 'high';
+    status?: string;
+    estimatedValue?: number;
+    // Legacy vehicle object (for backward compatibility)
     vehicle?: {
       year?: string;
       make?: string;
@@ -77,6 +87,14 @@ export interface AppointmentStats {
   cancelled: number;
   noShow: number;
   rescheduled: number;
+}
+
+// 🆕 Dashboard stats from new backend endpoint
+export interface DashboardStats {
+  total: number;
+  thisWeek: number;
+  estimatedRevenue: string; // "15000.00"
+  formattedRevenue: string; // "$15.0K"
 }
 
 export const appointmentsService = {
@@ -217,5 +235,14 @@ export const appointmentsService = {
    */
   async markNoShow(id: string, adminNotes?: string): Promise<Appointment> {
     return this.updateStatus(id, AppointmentStatus.NO_SHOW, adminNotes);
+  },
+
+  /**
+   * 🆕 Get dashboard statistics (DIA 1 backend implementation)
+   * Returns: total appointments, this week count, estimated revenue
+   */
+  async getDashboardStats(): Promise<DashboardStats> {
+    const response = await apiClient.get<DashboardStats>('/appointments/dashboard/stats');
+    return response.data;
   },
 };

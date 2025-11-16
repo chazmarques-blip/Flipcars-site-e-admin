@@ -1,29 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar, TrendingUp, CheckCircle, Clock, Ban, AlertCircle } from 'lucide-react';
-import { AppointmentsCalendar } from '@/components/appointments/AppointmentsCalendar';
+import { Calendar } from 'lucide-react';
 import { AppointmentDetailsModal } from '@/components/appointments/AppointmentDetailsModal';
-import { Appointment, appointmentsService, AppointmentStats } from '@/lib/api/appointments.service';
+import { Appointment } from '@/lib/api/appointments.service';
+
+// 🆕 Import new mockup components
+import { CalendarStats } from '@/components/appointments/CalendarStats';
+import { CalendarGrid } from '@/components/appointments/CalendarGrid';
+import { CalendarSidebar } from '@/components/appointments/CalendarSidebar';
 
 export default function AppointmentsPage() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [stats, setStats] = useState<AppointmentStats | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-
-  // Fetch stats on mount
-  React.useEffect(() => {
-    fetchStats();
-  }, [refreshKey]);
-
-  const fetchStats = async () => {
-    try {
-      const data = await appointmentsService.getStatistics();
-      setStats(data);
-    } catch (error) {
-      console.error('Failed to fetch appointment stats:', error);
-    }
-  };
 
   const handleEventClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
@@ -36,7 +25,6 @@ export default function AppointmentsPage() {
   const handleUpdate = () => {
     // Trigger calendar refresh
     setRefreshKey((prev) => prev + 1);
-    fetchStats();
   };
 
   return (
@@ -54,85 +42,35 @@ export default function AppointmentsPage() {
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Total
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-blue-500 opacity-80" />
-            </div>
-          </div>
+      {/* 🆕 Dashboard Statistics (3 cards: Total | This Week | Revenue) */}
+      <CalendarStats refreshKey={refreshKey} />
 
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-indigo-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Scheduled
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.scheduled}</p>
-              </div>
-              <Clock className="w-8 h-8 text-indigo-500 opacity-80" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Confirmed
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.confirmed}</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500 opacity-80" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-gray-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Completed
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.completed}</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-gray-500 opacity-80" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Cancelled
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.cancelled}</p>
-              </div>
-              <Ban className="w-8 h-8 text-red-500 opacity-80" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-orange-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  No Show
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.noShow}</p>
-              </div>
-              <AlertCircle className="w-8 h-8 text-orange-500 opacity-80" />
-            </div>
-          </div>
+      {/* 🆕 3-Column Layout: Overdue | Calendar | Upcoming */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Sidebar: Overdue (hidden on mobile) */}
+        <div className="hidden lg:block lg:col-span-3">
+          <CalendarSidebar 
+            onEventClick={handleEventClick} 
+            refreshKey={refreshKey}
+          />
         </div>
-      )}
 
-      {/* Calendar Component */}
-      <AppointmentsCalendar key={refreshKey} onEventClick={handleEventClick} />
+        {/* Center: Calendar Grid */}
+        <div className="lg:col-span-6">
+          <CalendarGrid 
+            onEventClick={handleEventClick} 
+            refreshKey={refreshKey}
+          />
+        </div>
+
+        {/* Right Sidebar: Upcoming (visible on mobile, stacked below calendar) */}
+        <div className="lg:col-span-3">
+          <CalendarSidebar 
+            onEventClick={handleEventClick} 
+            refreshKey={refreshKey}
+          />
+        </div>
+      </div>
 
       {/* Details Modal */}
       <AppointmentDetailsModal
