@@ -161,11 +161,7 @@ export default function AppointmentsV2Page() {
             <button className="modal-close" onClick={() => closeModal()}>&times;</button>
           </div>
           <div className="modal-body" id="modalBody">
-            {/* Dynamic content */}
-          </div>
-          <div className="modal-footer">
-            <button className="btn" onClick={() => closeModal()}>Cancel</button>
-            <button className="btn btn-primary">Save Changes</button>
+            {/* Dynamic content populated by JavaScript */}
           </div>
         </div>
       </div>

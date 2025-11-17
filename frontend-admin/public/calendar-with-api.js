@@ -446,13 +446,414 @@ function openRescheduledEventModal(date, eventIndex) {
 
 function openModal(eventId) {
   console.log('Opening modal for eventId:', eventId);
-  window.showToast('📋 Event details: ' + eventId);
+  
+  const modal = document.getElementById('modal');
+  const title = document.getElementById('modalTitle');
+  const body = document.getElementById('modalBody');
+
+  if (!modal || !title || !body) {
+    console.error('Modal elements not found');
+    return;
+  }
+
+  // Find the event in eventsByDate
+  let event = null;
+  let eventDate = '';
+  
+  Object.keys(window.eventsByDate).forEach(date => {
+    const found = window.eventsByDate[date].find(e => e.eventId === eventId || e.id === eventId);
+    if (found) {
+      event = found;
+      eventDate = date;
+    }
+  });
+
+  if (!event) {
+    console.error('Event not found:', eventId);
+    window.showToast('❌ Event not found');
+    return;
+  }
+
+  console.log('Found event:', event);
+
+  // Format date nicely
+  const dateObj = new Date(eventDate + 'T00:00:00');
+  const formattedDate = dateObj.toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+
+  // Determine status color
+  const statusColors = {
+    'Confirmed': 'green',
+    'Scheduled': 'blue',
+    'Completed': 'gray',
+    'Cancelled': 'red',
+    'Overdue': 'red',
+    'Pending': 'yellow'
+  };
+  const statusColor = statusColors[event.status] || 'gray';
+
+  title.textContent = 'Appointment Details';
+  
+  body.innerHTML = `
+    <div style="padding: 20px;">
+      <!-- Status Badge and Reference -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <span style="
+          display: inline-block;
+          padding: 6px 16px;
+          background: ${statusColor === 'green' ? '#d1fae5' : statusColor === 'red' ? '#fee2e2' : '#dbeafe'};
+          color: ${statusColor === 'green' ? '#065f46' : statusColor === 'red' ? '#991b1b' : '#1e40af'};
+          border-radius: 16px;
+          font-size: 13px;
+          font-weight: 600;
+        ">${event.status}</span>
+        
+        <a href="/dashboard/leads/${event.leadData?.id || event.id}" 
+           style="color: #2563eb; text-decoration: none; font-size: 14px; font-weight: 500;">
+          View Lead #${event.reference}
+        </a>
+      </div>
+
+      <!-- Customer Information -->
+      <div style="margin-bottom: 24px;">
+        <div style="
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #6b7280;
+          margin-bottom: 12px;
+        ">CUSTOMER INFORMATION</div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="color: #9ca3af; font-size: 14px;">👤</span>
+              <span style="font-size: 11px; color: #6b7280;">Name</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 500; color: #111827;">
+              ${event.customer || 'Unknown'}
+            </div>
+          </div>
+          
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="color: #9ca3af; font-size: 14px;">📞</span>
+              <span style="font-size: 11px; color: #6b7280;">Phone</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 500; color: #2563eb;">
+              ${event.phone || 'N/A'}
+            </div>
+          </div>
+          
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="color: #9ca3af; font-size: 14px;">📧</span>
+              <span style="font-size: 11px; color: #6b7280;">Email</span>
+            </div>
+            <div style="font-size: 13px; color: #111827;">
+              ${event.email || 'N/A'}
+            </div>
+          </div>
+          
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="color: #9ca3af; font-size: 14px;">📋</span>
+              <span style="font-size: 11px; color: #6b7280;">Service Type</span>
+            </div>
+            <div style="font-size: 13px; color: #111827;">
+              ${event.serviceType || 'N/A'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Details -->
+      <div style="margin-bottom: 24px;">
+        <div style="
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #6b7280;
+          margin-bottom: 12px;
+        ">APPOINTMENT DETAILS</div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="color: #9ca3af; font-size: 14px;">📅</span>
+              <span style="font-size: 11px; color: #6b7280;">Date</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 500; color: #111827;">
+              ${formattedDate}
+            </div>
+          </div>
+          
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="color: #9ca3af; font-size: 14px;">🕐</span>
+              <span style="font-size: 11px; color: #6b7280;">Time Slot</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 500; color: #111827;">
+              ${event.time || 'N/A'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Notes -->
+      <div style="margin-bottom: 0;">
+        <div style="
+          font-size: 13px;
+          font-weight: 600;
+          color: #111827;
+          margin-bottom: 8px;
+        ">Admin Notes</div>
+        
+        <textarea 
+          placeholder="Add notes about this appointment..."
+          style="
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+          "
+        >${event.notes || ''}</textarea>
+        
+        <button 
+          onclick="window.saveAppointmentNotes('${eventId}')"
+          style="
+            margin-top: 8px;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+          "
+        >Save Notes</button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #e5e7eb;
+      ">
+        <button 
+          onclick="window.confirmAppointment('${eventId}')"
+          style="
+            padding: 10px;
+            background: #d1fae5;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #065f46;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+          "
+        >
+          ✅ Confirm
+        </button>
+        
+        <button 
+          onclick="window.completeAppointment('${eventId}')"
+          style="
+            padding: 10px;
+            background: #e5e7eb;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+          "
+        >
+          ✔️ Complete
+        </button>
+        
+        <button 
+          onclick="window.cancelAppointment('${eventId}')"
+          style="
+            padding: 10px;
+            background: #fee2e2;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #991b1b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+          "
+        >
+          🚫 Cancel
+        </button>
+        
+        <button 
+          onclick="window.noShowAppointment('${eventId}')"
+          style="
+            padding: 10px;
+            background: #fed7aa;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9a3412;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+          "
+        >
+          🚷 No Show
+        </button>
+      </div>
+    </div>
+  `;
+  
+  modal.classList.add('active');
 }
 
 function closeModal() {
   const modal = document.getElementById('modal');
   if (modal) {
     modal.classList.remove('active');
+  }
+}
+
+// ============================================
+// APPOINTMENT ACTION FUNCTIONS
+// ============================================
+async function confirmAppointment(eventId) {
+  await updateAppointmentStatus(eventId, 'Confirmed');
+}
+
+async function completeAppointment(eventId) {
+  await updateAppointmentStatus(eventId, 'Completed');
+}
+
+async function cancelAppointment(eventId) {
+  await updateAppointmentStatus(eventId, 'Cancelled');
+}
+
+async function noShowAppointment(eventId) {
+  await updateAppointmentStatus(eventId, 'No-Show');
+}
+
+async function updateAppointmentStatus(eventId, newStatus) {
+  try {
+    const token = localStorage.getItem('accessToken') || 
+                  localStorage.getItem('auth_token') || 
+                  localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    window.showToast(`⏳ Updating status to ${newStatus}...`);
+
+    const response = await fetch(`/api/appointments/${eventId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        status: newStatus
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    // Update local data
+    Object.keys(window.eventsByDate).forEach(date => {
+      const event = window.eventsByDate[date].find(e => e.eventId === eventId || e.id === eventId);
+      if (event) {
+        event.status = newStatus;
+      }
+    });
+
+    // Reload calendar data to ensure consistency
+    await loadCalendarData(window.currentYear, window.currentMonth);
+
+    closeModal();
+    window.showToast(`✅ Status updated to ${newStatus}`);
+  } catch (error) {
+    console.error('❌ Error updating status:', error);
+    window.showToast('❌ Error updating status. Please try again.');
+  }
+}
+
+async function saveAppointmentNotes(eventId) {
+  try {
+    const token = localStorage.getItem('accessToken') || 
+                  localStorage.getItem('auth_token') || 
+                  localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const notesTextarea = document.querySelector('textarea');
+    const notes = notesTextarea ? notesTextarea.value : '';
+
+    window.showToast('⏳ Saving notes...');
+
+    const response = await fetch(`/api/appointments/${eventId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        notes: notes
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    // Update local data
+    Object.keys(window.eventsByDate).forEach(date => {
+      const event = window.eventsByDate[date].find(e => e.eventId === eventId || e.id === eventId);
+      if (event) {
+        event.notes = notes;
+      }
+    });
+
+    window.showToast('✅ Notes saved successfully');
+  } catch (error) {
+    console.error('❌ Error saving notes:', error);
+    window.showToast('❌ Error saving notes. Please try again.');
   }
 }
 
@@ -684,6 +1085,11 @@ async function initializeMockupCalendar() {
   window.openNewEventModal = openNewEventModal;
   window.openRescheduleModal = openRescheduleModal;
   window.confirmReschedule = confirmReschedule;
+  window.confirmAppointment = confirmAppointment;
+  window.completeAppointment = completeAppointment;
+  window.cancelAppointment = cancelAppointment;
+  window.noShowAppointment = noShowAppointment;
+  window.saveAppointmentNotes = saveAppointmentNotes;
   window.eventsByDate = eventsByDate;
   window.calculateAndUpdateStats = calculateAndUpdateStats;
   
