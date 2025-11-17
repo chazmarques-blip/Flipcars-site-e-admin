@@ -252,55 +252,16 @@ function getMainLayoutHTML(): string {
           <div class="calendar-day"><div class="day-number">6</div></div>
           <div class="calendar-day"><div class="day-number">7</div></div>
 
-          <div class="calendar-day" onclick="window.openDayModal('2025-11-08')">
-            <div class="day-number">8</div>
-            <div class="day-events">
-              <div class="event-indicator payment-overdue"></div>
-            </div>
-            <span class="event-badge">1</span>
-          </div>
-
+          <div class="calendar-day"><div class="day-number">8</div></div>
           <div class="calendar-day"><div class="day-number">9</div></div>
           <div class="calendar-day"><div class="day-number">10</div></div>
           <div class="calendar-day"><div class="day-number">11</div></div>
-
-          <div class="calendar-day" onclick="window.openDayModal('2025-11-12')">
-            <div class="day-number">12</div>
-            <div class="day-events">
-              <div class="event-indicator payment-overdue"></div>
-            </div>
-            <span class="event-badge">1</span>
-          </div>
-
+          <div class="calendar-day"><div class="day-number">12</div></div>
           <div class="calendar-day"><div class="day-number">13</div></div>
-
-          <div class="calendar-day" onclick="window.openDayModal('2025-11-14')">
-            <div class="day-number">14</div>
-            <div class="day-events">
-              <div class="event-indicator appointment"></div>
-            </div>
-            <span class="event-badge">1</span>
-          </div>
-
-          <div class="calendar-day today" onclick="window.openDayModal('2025-11-15')">
-            <div class="day-number">15</div>
-            <div class="day-events">
-              <div class="event-indicator appointment"></div>
-              <div class="event-indicator appointment"></div>
-              <div class="event-indicator payment"></div>
-            </div>
-            <span class="event-badge">3</span>
-          </div>
-
+          <div class="calendar-day"><div class="day-number">14</div></div>
+          <div class="calendar-day today"><div class="day-number">15</div></div>
           <div class="calendar-day"><div class="day-number">16</div></div>
-
-          <div class="calendar-day" onclick="window.openDayModal('2025-11-17')">
-            <div class="day-number">17</div>
-            <div class="day-events">
-              <div class="event-indicator payment"></div>
-            </div>
-            <span class="event-badge">1</span>
-          </div>
+          <div class="calendar-day"><div class="day-number">17</div></div>
 
           <div class="calendar-day"><div class="day-number">18</div></div>
           <div class="calendar-day"><div class="day-number">19</div></div>

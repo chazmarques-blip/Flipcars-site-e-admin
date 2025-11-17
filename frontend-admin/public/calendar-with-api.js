@@ -221,7 +221,7 @@ async function loadCalendarData(year, month) {
  * Render/update calendar days with event badges
  */
 function renderCalendarWithData() {
-  // Update each day with event count
+  // Update each day with event count and indicators
   const days = document.querySelectorAll('.calendar-day');
   
   days.forEach(day => {
@@ -234,14 +234,45 @@ function renderCalendarWithData() {
     const dateStr = `${window.currentYear}-${String(window.currentMonth).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
     const events = window.eventsByDate[dateStr] || [];
     
-    // Remove existing badge
+    // Remove existing indicators container and badge
+    let eventsContainer = day.querySelector('.day-events');
+    if (eventsContainer) {
+      eventsContainer.remove();
+    }
+    
     let badge = day.querySelector('.event-badge');
     if (badge) {
       badge.remove();
     }
     
-    // Add badge if events exist
+    // Add indicators and badge if events exist
     if (events.length > 0) {
+      // Create events container
+      eventsContainer = document.createElement('div');
+      eventsContainer.className = 'day-events';
+      
+      // Add up to 3 event indicators
+      events.slice(0, 3).forEach(event => {
+        const indicator = document.createElement('div');
+        indicator.className = 'event-indicator';
+        
+        // Determine indicator class based on event type/status
+        if (event.status === 'Overdue' || event.type === 'payment-overdue') {
+          indicator.classList.add('payment-overdue');
+        } else if (event.type === 'appointment') {
+          indicator.classList.add('appointment');
+        } else if (event.type === 'payment') {
+          indicator.classList.add('payment');
+        } else if (event.status === 'Completed') {
+          indicator.classList.add('completed');
+        }
+        
+        eventsContainer.appendChild(indicator);
+      });
+      
+      day.appendChild(eventsContainer);
+      
+      // Add badge with count
       badge = document.createElement('span');
       badge.className = 'event-badge';
       badge.textContent = events.length.toString();
@@ -253,6 +284,8 @@ function renderCalendarWithData() {
       day.removeAttribute('onclick');
     }
   });
+  
+  console.log('✅ Calendar days rendered with event indicators');
 }
 
 // ============================================
