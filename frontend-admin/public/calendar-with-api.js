@@ -200,6 +200,7 @@ async function loadCalendarData(year, month) {
     // Render calendar after loading
     renderCalendarWithData();
     calculateAndUpdateStats();
+    populateSidePanels();
     
     console.log('📅 Calendar rendered with real data');
     window.showToast(`✅ Loaded ${appointments.length} appointments`);
@@ -212,6 +213,7 @@ async function loadCalendarData(year, month) {
     window.eventsByDate = {};
     renderCalendarWithData();
     calculateAndUpdateStats();
+    populateSidePanels();
   }
 }
 
@@ -339,6 +341,120 @@ function calculateAndUpdateStats() {
     totalRevenue: revenueFormatted, 
     completionPct: `${completionPct}%`
   });
+}
+
+// ============================================
+// POPULATE SIDE PANELS
+// ============================================
+function populateSidePanels() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  
+  const overdueList = document.getElementById('overdueEventsList');
+  const upcomingList = document.getElementById('upcomingEventsList');
+  
+  if (!overdueList || !upcomingList) {
+    console.warn('Side panel lists not found');
+    return;
+  }
+  
+  const overdueEvents = [];
+  const upcomingEvents = [];
+  
+  // Categorize events
+  Object.keys(window.eventsByDate).forEach(dateStr => {
+    const events = window.eventsByDate[dateStr];
+    const eventDate = new Date(dateStr);
+    const daysDiff = Math.floor((eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    events.forEach(event => {
+      if (event.status === 'Overdue' || daysDiff < 0) {
+        overdueEvents.push({ ...event, date: dateStr, daysDiff });
+      } else if (daysDiff >= 0) {
+        upcomingEvents.push({ ...event, date: dateStr, daysDiff });
+      }
+    });
+  });
+  
+  // Sort
+  overdueEvents.sort((a, b) => a.daysDiff - b.daysDiff);
+  upcomingEvents.sort((a, b) => a.daysDiff - b.daysDiff);
+  
+  // Render overdue
+  overdueList.innerHTML = overdueEvents.length === 0 
+    ? '<div style="padding: 20px; text-align: center; color: #999; font-size: 11px;">No overdue events</div>'
+    : overdueEvents.map(event => renderEventItem(event, 'overdue')).join('');
+  
+  // Render upcoming (limit to 10)
+  upcomingList.innerHTML = upcomingEvents.length === 0
+    ? '<div style="padding: 20px; text-align: center; color: #999; font-size: 11px;">No upcoming events</div>'
+    : upcomingEvents.slice(0, 10).map(event => renderEventItem(event, 'upcoming')).join('');
+  
+  // Re-setup drag and drop after rendering
+  makeEventsDraggable();
+  
+  console.log('✅ Side panels populated:', { 
+    overdue: overdueEvents.length, 
+    upcoming: upcomingEvents.length 
+  });
+}
+
+function renderEventItem(event, panel) {
+  const eventId = event.eventId || event.id;
+  const eventClass = event.type === 'appointment' ? 'appointment' : 
+                     event.status === 'Overdue' || panel === 'overdue' ? 'payment-overdue' : 'payment';
+  
+  const icon = event.type === 'appointment' ? '🔧' : '💰';
+  const timeDisplay = event.type === 'appointment' 
+    ? event.time 
+    : `$${event.amount || event.estimateAmount || '0.00'}`;
+  
+  // Calculate badge
+  const eventDate = new Date(event.date);
+  const today = new Date();
+  const daysDiff = Math.floor((eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  
+  let badgeText = '';
+  let badgeClass = 'gold';
+  if (daysDiff < 0) {
+    badgeText = `${Math.abs(daysDiff)}d`;
+    badgeClass = 'red';
+  } else if (daysDiff === 0) {
+    badgeText = 'Today';
+    badgeClass = 'gold';
+  } else if (daysDiff <= 7) {
+    const dateObj = new Date(event.date);
+    badgeText = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    badgeClass = 'gold';
+  } else {
+    const dateObj = new Date(event.date);
+    badgeText = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    badgeClass = 'blue';
+  }
+  
+  return `
+    <div class="event-item ${eventClass}" 
+         data-event-id="${eventId}" 
+         data-event-date="${event.date}"
+         onclick="window.openModal('${eventId}')" 
+         draggable="true">
+      <div class="event-item-content">
+        <div class="event-item-header">
+          <div class="event-icon ${eventClass}">${icon}</div>
+          <div class="event-main-info">
+            <div class="event-name">${event.customer || 'Unknown'}</div>
+            <div class="event-time-phone"><strong>${timeDisplay}</strong> • 📞 ${event.phone || 'N/A'}</div>
+          </div>
+          <span class="event-badge ${badgeClass}">${badgeText}</span>
+        </div>
+        <div class="event-details">${event.vehicle || 'Unknown Vehicle'} • ${event.serviceType || 'N/A'}</div>
+      </div>
+      <div class="event-actions">
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.showToast('💬 Reminder sent!')">💬 Remind</button>
+        <button class="btn btn-sm" onclick="event.stopPropagation(); window.openModal('${eventId}')">👁️ View</button>
+      </div>
+    </div>
+  `;
 }
 
 // ============================================
@@ -851,29 +967,41 @@ function makeEventsDraggable() {
     
     event.addEventListener('dragstart', (e) => {
       e.currentTarget.style.opacity = '0.5';
+      e.currentTarget.classList.add('dragging');
       
-      const onclickAttr = e.currentTarget.getAttribute('onclick');
-      if (onclickAttr) {
-        const match = onclickAttr.match(/window\.openModal\('([^']+)'\)/);
-        if (match) {
-          const eventId = match[1];
-          e.dataTransfer.setData('eventId', eventId);
-          
-          let sourceDate = '';
-          Object.keys(window.eventsByDate).forEach(date => {
-            if (window.eventsByDate[date].some(ev => ev.eventId === eventId)) {
-              sourceDate = date;
-            }
-          });
-          
-          e.dataTransfer.setData('sourceDate', sourceDate);
-          console.log('🎯 Drag started:', eventId, sourceDate);
+      // Try data attributes first (new dynamic events)
+      let eventId = e.currentTarget.getAttribute('data-event-id');
+      let sourceDate = e.currentTarget.getAttribute('data-event-date');
+      
+      // Fallback to onclick parsing (legacy hardcoded events)
+      if (!eventId) {
+        const onclickAttr = e.currentTarget.getAttribute('onclick');
+        if (onclickAttr) {
+          const match = onclickAttr.match(/window\.openModal\('([^']+)'\)/);
+          if (match) {
+            eventId = match[1];
+            // Find sourceDate from eventsByDate
+            Object.keys(window.eventsByDate).forEach(date => {
+              if (window.eventsByDate[date].some(ev => (ev.eventId === eventId || ev.id === eventId))) {
+                sourceDate = date;
+              }
+            });
+          }
         }
+      }
+      
+      if (eventId && sourceDate) {
+        e.dataTransfer.setData('eventId', eventId);
+        e.dataTransfer.setData('sourceDate', sourceDate);
+        console.log('🎯 Drag started:', eventId, 'from', sourceDate);
+      } else {
+        console.warn('⚠️ Could not extract eventId/sourceDate for drag');
       }
     });
     
     event.addEventListener('dragend', (e) => {
       e.currentTarget.style.opacity = '1';
+      e.currentTarget.classList.remove('dragging');
     });
   });
   
@@ -898,8 +1026,8 @@ function makeEventsDraggable() {
       
       const dayNumEl = e.currentTarget.querySelector('.day-number');
       if (dayNumEl) {
-        const dayNumber = dayNumEl.textContent;
-        const targetDate = `2025-11-${dayNumber.padStart(2, '0')}`;
+        const dayNumber = dayNumEl.textContent.trim();
+        const targetDate = `${window.currentYear}-${String(window.currentMonth).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
         
         console.log('📍 Dropped on:', targetDate);
         window.dragTargetDate = targetDate;
@@ -1066,6 +1194,7 @@ async function initializeMockupCalendar() {
   window.saveAppointmentNotes = saveAppointmentNotes;
   window.eventsByDate = eventsByDate;
   window.calculateAndUpdateStats = calculateAndUpdateStats;
+  window.populateSidePanels = populateSidePanels;
   
   // Setup event listeners
   const filterType = document.getElementById('filterType');

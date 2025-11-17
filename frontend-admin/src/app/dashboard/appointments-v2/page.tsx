@@ -189,53 +189,17 @@ function closeModalOnOverlay(event: React.MouseEvent) {
 // Get main layout HTML (EXACT mockup structure)
 function getMainLayoutHTML(): string {
   return `
-    <!-- Left Panel: Overdue -->
+    <!-- Left Panel: Overdue (Populated by JavaScript) -->
     <div class="side-panel">
       <div class="side-panel-header">
         <div class="side-panel-title">
           ⚠️ Overdue
         </div>
-        <span class="badge red" id="badgeOverdue">2</span>
+        <span class="badge red" id="badgeOverdue">0</span>
       </div>
       <div class="side-panel-body">
-        <div class="event-list">
-          <!-- Payment Overdue -->
-          <div class="event-item payment-overdue" onclick="window.openModal('payment1')">
-            <div class="event-item-content">
-              <div class="event-item-header">
-                <div class="event-icon payment-overdue">💰</div>
-                <div class="event-main-info">
-                  <div class="event-name">John Doe</div>
-                  <div class="event-time-phone"><strong>$183.54</strong> • 📞 (689) 221-3162</div>
-                </div>
-                <span class="event-badge red">7d</span>
-              </div>
-              <div class="event-details">2021 Mitsubishi Outlander • Install 2/6</div>
-            </div>
-            <div class="event-actions">
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.showToast('💬 Reminder sent!')">💬 Remind</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); window.openModal('payment1')">👁️ View</button>
-            </div>
-          </div>
-
-          <!-- Payment Overdue -->
-          <div class="event-item payment-overdue" onclick="window.openModal('payment2')">
-            <div class="event-item-content">
-              <div class="event-item-header">
-                <div class="event-icon payment-overdue">💰</div>
-                <div class="event-main-info">
-                  <div class="event-name">Maria Silva</div>
-                  <div class="event-time-phone"><strong>$146.30</strong> • 📞 (654) 945-0938</div>
-                </div>
-                <span class="event-badge red">3d</span>
-              </div>
-              <div class="event-details">2020 Ford EcoSport • Install 1/2</div>
-            </div>
-            <div class="event-actions">
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.showToast('💬 Reminder sent!')">💬 Remind</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); window.openModal('payment2')">👁️ View</button>
-            </div>
-          </div>
+        <div class="event-list" id="overdueEventsList">
+          <!-- Populated dynamically by calendar-with-api.js -->
         </div>
       </div>
     </div>
@@ -363,91 +327,17 @@ function getMainLayoutHTML(): string {
       </div>
     </div>
 
-    <!-- Right Panel: Upcoming -->
+    <!-- Right Panel: Upcoming (Populated by JavaScript) -->
     <div class="side-panel">
       <div class="side-panel-header">
         <div class="side-panel-title">
           📅 Upcoming
         </div>
-        <span class="badge gold" id="badgeUpcoming">8</span>
+        <span class="badge gold" id="badgeUpcoming">0</span>
       </div>
       <div class="side-panel-body">
-        <div class="event-list">
-          <!-- Appointment Today - Bob Johnson -->
-          <div class="event-item appointment" onclick="window.openModal('appt1')">
-            <div class="event-item-content">
-              <div class="event-item-header">
-                <div class="event-icon appointment">🔧</div>
-                <div class="event-main-info">
-                  <div class="event-name">Bob Johnson</div>
-                  <div class="event-time-phone"><strong>9:00-11:00</strong> • 📞 (555) 123-4567</div>
-                </div>
-                <span class="event-badge gold">Today</span>
-              </div>
-              <div class="event-details">2019 Honda Civic • Body Repair</div>
-            </div>
-            <div class="event-actions">
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.showToast('✅ Confirmed!')">✅ Confirm</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); window.showToast('📞 Calling...')">📞 Call</button>
-            </div>
-          </div>
-
-          <!-- Payment Today - Maria Garcia -->
-          <div class="event-item payment" onclick="window.openModal('payment_nov15_maria')">
-            <div class="event-item-content">
-              <div class="event-item-header">
-                <div class="event-icon payment">💰</div>
-                <div class="event-main-info">
-                  <div class="event-name">Maria Garcia</div>
-                  <div class="event-time-phone"><strong>$150.00</strong> • 📞 (321) 456-7890</div>
-                </div>
-                <span class="event-badge gold">Today</span>
-              </div>
-              <div class="event-details">2019 Honda Accord • Install 3/5</div>
-            </div>
-            <div class="event-actions">
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.showToast('💰 Payment collected!')">💰 Collect</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); window.openModal('payment_nov15_maria')">👁️ View</button>
-            </div>
-          </div>
-
-          <!-- Appointment Today - Robert Williams -->
-          <div class="event-item appointment" onclick="window.openModal('appt_nov15_robert')">
-            <div class="event-item-content">
-              <div class="event-item-header">
-                <div class="event-icon appointment">🔧</div>
-                <div class="event-main-info">
-                  <div class="event-name">Robert Williams</div>
-                  <div class="event-time-phone"><strong>14:00-16:00</strong> • 📞 (407) 789-0123</div>
-                </div>
-                <span class="event-badge gold">Today</span>
-              </div>
-              <div class="event-details">2021 Ford F-150 • Oil Change</div>
-            </div>
-            <div class="event-actions">
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.showToast('✅ Checked in!')">✅ Check-in</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); window.openModal('appt_nov15_robert')">👁️ Details</button>
-            </div>
-          </div>
-
-          <!-- More upcoming events would go here... -->
-          <div class="event-item payment" onclick="window.openModal('payment3')">
-            <div class="event-item-content">
-              <div class="event-item-header">
-                <div class="event-icon payment">💰</div>
-                <div class="event-main-info">
-                  <div class="event-name">Sarah Martinez</div>
-                  <div class="event-time-phone"><strong>$209.63</strong> • 📞 (689) 345-3214</div>
-                </div>
-                <span class="event-badge gold">Nov 17</span>
-              </div>
-              <div class="event-details">2020 RAM 2500 • Install 1/7</div>
-            </div>
-            <div class="event-actions">
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.showToast('💬 Reminder sent!')">💬 Remind</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); window.openModal('payment3')">👁️ View</button>
-            </div>
-          </div>
+        <div class="event-list" id="upcomingEventsList">
+          <!-- Populated dynamically by calendar-with-api.js -->
         </div>
       </div>
     </div>
