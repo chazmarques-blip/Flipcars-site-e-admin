@@ -351,21 +351,28 @@ function openDayModal(date) {
 
   if (!modal || !title || !body) return;
 
-  const dayEvents = window.window.eventsByDate[date] || [];
+  const dayEvents = window.eventsByDate[date] || [];
   
   console.log('Opening modal for date:', date);
   console.log('Events found:', dayEvents);
 
-  title.textContent = `Events for ${date}`;
+  // Format date nicely
+  const dateObj = new Date(date + 'T00:00:00');
+  const formattedDate = dateObj.toLocaleDateString('en-US', { 
+    weekday: 'short',
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+
+  title.textContent = `Events for ${formattedDate}`;
   
   if (dayEvents.length === 0) {
     body.innerHTML = `
-      <div class="modal-section">
-        <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-          <div style="font-size: 48px; margin-bottom: 16px;">📅</div>
-          <div style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">No events scheduled</div>
-          <div style="font-size: 11px;">Click on events in the side panels to view details, or create a new event.</div>
-        </div>
+      <div style="text-align: center; padding: 40px 20px; color: #999;">
+        <div style="font-size: 36px; margin-bottom: 12px;">📅</div>
+        <div style="font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #666;">No events scheduled</div>
+        <div style="font-size: 11px; color: #999;">Click on events in the side panels to view details.</div>
       </div>
     `;
     modal.classList.add('active');
@@ -373,7 +380,7 @@ function openDayModal(date) {
   }
   
   const eventsHtml = dayEvents.map((event, index) => {
-    const clickHandler = `window.openRescheduledEventModal('${date}', ${index})`;
+    const clickHandler = `window.openEventDetailsModal('${event.eventId || event.id}')`;
     
     if (event.type === 'appointment') {
       return `
@@ -437,15 +444,13 @@ function openDayModal(date) {
   modal.classList.add('active');
 }
 
-function openRescheduledEventModal(date, eventIndex) {
-  const event = window.window.eventsByDate[date]?.[eventIndex];
-  if (!event) return;
-  
-  openModal(event.eventId);
+function openEventDetailsModal(eventId) {
+  // This is the detailed modal (Modal Type 2)
+  openModal(eventId);
 }
 
 function openModal(eventId) {
-  console.log('Opening modal for eventId:', eventId);
+  console.log('Opening EVENT DETAILS modal for eventId:', eventId);
   
   const modal = document.getElementById('modal');
   const title = document.getElementById('modalTitle');
@@ -484,192 +489,163 @@ function openModal(eventId) {
     year: 'numeric' 
   });
 
-  // Determine status color
-  const statusColors = {
-    'Confirmed': 'green',
-    'Scheduled': 'blue',
-    'Completed': 'gray',
-    'Cancelled': 'red',
-    'Overdue': 'red',
-    'Pending': 'yellow'
-  };
-  const statusColor = statusColors[event.status] || 'gray';
-
   title.textContent = 'Appointment Details';
   
   body.innerHTML = `
-    <div style="padding: 20px;">
-      <!-- Status Badge and Reference -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <span style="
-          display: inline-block;
-          padding: 6px 16px;
-          background: ${statusColor === 'green' ? '#d1fae5' : statusColor === 'red' ? '#fee2e2' : '#dbeafe'};
-          color: ${statusColor === 'green' ? '#065f46' : statusColor === 'red' ? '#991b1b' : '#1e40af'};
-          border-radius: 16px;
-          font-size: 13px;
-          font-weight: 600;
-        ">${event.status}</span>
-        
-        <a href="/dashboard/leads/${event.leadData?.id || event.id}" 
-           style="color: #2563eb; text-decoration: none; font-size: 14px; font-weight: 500;">
-          View Lead #${event.reference}
-        </a>
-      </div>
+    <!-- Status Badge and View Lead Link -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px 4px 12px; border-bottom: 1px solid #e0e0e0;">
+      <span style="
+        display: inline-block;
+        padding: 3px 8px;
+        background: #f5f5f5;
+        color: #666;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      ">${event.status}</span>
+      
+      <a href="/dashboard/leads/${event.leadData?.id || event.id}" 
+         style="color: #666; text-decoration: none; font-size: 10px; font-weight: 500;">
+        View Lead #${event.reference}
+      </a>
+    </div>
 
-      <!-- Customer Information -->
-      <div style="margin-bottom: 24px;">
-        <div style="
-          font-size: 11px;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: #6b7280;
-          margin-bottom: 12px;
-        ">CUSTOMER INFORMATION</div>
+    <!-- Customer Information -->
+    <div style="padding: 8px 12px; border-bottom: 1px solid #e0e0e0;">
+      <div style="font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: #999; margin-bottom: 6px;">
+        CUSTOMER INFORMATION
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px;">
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Name</div>
+          <div style="font-size: 11px; font-weight: 500; color: #1a1a1a;">
+            ${event.customer || 'Unknown'}
+          </div>
+        </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="color: #9ca3af; font-size: 14px;">👤</span>
-              <span style="font-size: 11px; color: #6b7280;">Name</span>
-            </div>
-            <div style="font-size: 15px; font-weight: 500; color: #111827;">
-              ${event.customer || 'Unknown'}
-            </div>
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Phone</div>
+          <div style="font-size: 11px; font-weight: 500; color: #1a1a1a;">
+            ${event.phone || 'N/A'}
           </div>
-          
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="color: #9ca3af; font-size: 14px;">📞</span>
-              <span style="font-size: 11px; color: #6b7280;">Phone</span>
-            </div>
-            <div style="font-size: 15px; font-weight: 500; color: #2563eb;">
-              ${event.phone || 'N/A'}
-            </div>
+        </div>
+        
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Email</div>
+          <div style="font-size: 10px; color: #666;">
+            ${event.email || 'N/A'}
           </div>
-          
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="color: #9ca3af; font-size: 14px;">📧</span>
-              <span style="font-size: 11px; color: #6b7280;">Email</span>
-            </div>
-            <div style="font-size: 13px; color: #111827;">
-              ${event.email || 'N/A'}
-            </div>
-          </div>
-          
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="color: #9ca3af; font-size: 14px;">📋</span>
-              <span style="font-size: 11px; color: #6b7280;">Service Type</span>
-            </div>
-            <div style="font-size: 13px; color: #111827;">
-              ${event.serviceType || 'N/A'}
-            </div>
+        </div>
+        
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Vehicle</div>
+          <div style="font-size: 10px; color: #666;">
+            ${event.vehicle || 'N/A'}
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Appointment Details -->
-      <div style="margin-bottom: 24px;">
-        <div style="
-          font-size: 11px;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: #6b7280;
-          margin-bottom: 12px;
-        ">APPOINTMENT DETAILS</div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="color: #9ca3af; font-size: 14px;">📅</span>
-              <span style="font-size: 11px; color: #6b7280;">Date</span>
-            </div>
-            <div style="font-size: 15px; font-weight: 500; color: #111827;">
-              ${formattedDate}
-            </div>
+    <!-- Appointment Details -->
+    <div style="padding: 8px 12px; border-bottom: 1px solid #e0e0e0;">
+      <div style="font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: #999; margin-bottom: 6px;">
+        APPOINTMENT DETAILS
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px;">
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Date</div>
+          <div style="font-size: 11px; font-weight: 500; color: #1a1a1a;">
+            ${formattedDate}
           </div>
-          
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="color: #9ca3af; font-size: 14px;">🕐</span>
-              <span style="font-size: 11px; color: #6b7280;">Time Slot</span>
-            </div>
-            <div style="font-size: 15px; font-weight: 500; color: #111827;">
-              ${event.time || 'N/A'}
-            </div>
+        </div>
+        
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Time Slot</div>
+          <div style="font-size: 11px; font-weight: 500; color: #1a1a1a;">
+            ${event.time || 'N/A'}
+          </div>
+        </div>
+        
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Service</div>
+          <div style="font-size: 10px; color: #666;">
+            ${event.serviceType || 'N/A'}
+          </div>
+        </div>
+        
+        <div>
+          <div style="font-size: 8px; color: #999; text-transform: uppercase; margin-bottom: 2px;">Reference</div>
+          <div style="font-size: 10px; color: #666;">
+            ${event.reference}
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Admin Notes -->
-      <div style="margin-bottom: 0;">
-        <div style="
-          font-size: 13px;
-          font-weight: 600;
-          color: #111827;
-          margin-bottom: 8px;
-        ">Admin Notes</div>
-        
-        <textarea 
-          placeholder="Add notes about this appointment..."
-          style="
-            width: 100%;
-            min-height: 120px;
-            padding: 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: inherit;
-            resize: vertical;
-            box-sizing: border-box;
-          "
-        >${event.notes || ''}</textarea>
-        
-        <button 
-          onclick="window.saveAppointmentNotes('${eventId}')"
-          style="
-            margin-top: 8px;
-            padding: 8px 16px;
-            background: #f3f4f6;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #374151;
-            cursor: pointer;
-          "
-        >Save Notes</button>
+    <!-- Admin Notes (Compacto) -->
+    <div style="padding: 8px 12px; border-bottom: 1px solid #e0e0e0;">
+      <div style="font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: #999; margin-bottom: 4px;">
+        ADMIN NOTES
       </div>
+      
+      <textarea 
+        id="appointmentNotes"
+        placeholder="Add notes..."
+        style="
+          width: 100%;
+          min-height: 60px;
+          padding: 6px 8px;
+          border: 1px solid #e0e0e0;
+          border-radius: 4px;
+          font-size: 10px;
+          font-family: inherit;
+          resize: vertical;
+          box-sizing: border-box;
+          color: #666;
+        "
+      >${event.notes || ''}</textarea>
+      
+      <button 
+        onclick="window.saveAppointmentNotes('${eventId}')"
+        style="
+          margin-top: 4px;
+          padding: 4px 8px;
+          background: #f5f5f5;
+          border: 1px solid #e0e0e0;
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 500;
+          color: #666;
+          cursor: pointer;
+          transition: all 0.2s;
+        "
+        onmouseover="this.style.background='#e0e0e0'"
+        onmouseout="this.style.background='#f5f5f5'"
+      >Save Notes</button>
+    </div>
 
-      <!-- Action Buttons -->
-      <div style="
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin-top: 24px;
-        padding-top: 24px;
-        border-top: 1px solid #e5e7eb;
-      ">
+    <!-- Action Buttons (Cores Sutis) -->
+    <div style="padding: 8px 12px;">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
         <button 
           onclick="window.confirmAppointment('${eventId}')"
           style="
-            padding: 10px;
-            background: #d1fae5;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #065f46;
+            padding: 6px 8px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 500;
+            color: #666;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            transition: all 0.2s;
           "
+          onmouseover="this.style.background='#e8f5e9'; this.style.borderColor='#c8e6c9'"
+          onmouseout="this.style.background='#f5f5f5'; this.style.borderColor='#e0e0e0'"
         >
           ✅ Confirm
         </button>
@@ -677,19 +653,18 @@ function openModal(eventId) {
         <button 
           onclick="window.completeAppointment('${eventId}')"
           style="
-            padding: 10px;
-            background: #e5e7eb;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #374151;
+            padding: 6px 8px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 500;
+            color: #666;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            transition: all 0.2s;
           "
+          onmouseover="this.style.background='#e0e0e0'"
+          onmouseout="this.style.background='#f5f5f5'"
         >
           ✔️ Complete
         </button>
@@ -697,19 +672,18 @@ function openModal(eventId) {
         <button 
           onclick="window.cancelAppointment('${eventId}')"
           style="
-            padding: 10px;
-            background: #fee2e2;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #991b1b;
+            padding: 6px 8px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 500;
+            color: #666;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            transition: all 0.2s;
           "
+          onmouseover="this.style.background='#ffebee'; this.style.borderColor='#ffcdd2'"
+          onmouseout="this.style.background='#f5f5f5'; this.style.borderColor='#e0e0e0'"
         >
           🚫 Cancel
         </button>
@@ -717,19 +691,18 @@ function openModal(eventId) {
         <button 
           onclick="window.noShowAppointment('${eventId}')"
           style="
-            padding: 10px;
-            background: #fed7aa;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #9a3412;
+            padding: 6px 8px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 500;
+            color: #666;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            transition: all 0.2s;
           "
+          onmouseover="this.style.background='#fff3e0'; this.style.borderColor='#ffe0b2'"
+          onmouseout="this.style.background='#f5f5f5'; this.style.borderColor='#e0e0e0'"
         >
           🚷 No Show
         </button>
@@ -1085,6 +1058,7 @@ async function initializeMockupCalendar() {
   window.openNewEventModal = openNewEventModal;
   window.openRescheduleModal = openRescheduleModal;
   window.confirmReschedule = confirmReschedule;
+  window.openEventDetailsModal = openEventDetailsModal;
   window.confirmAppointment = confirmAppointment;
   window.completeAppointment = completeAppointment;
   window.cancelAppointment = cancelAppointment;
