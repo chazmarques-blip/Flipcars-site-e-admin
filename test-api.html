@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API</title>
+</head>
+<body>
+    <h1>Testing Appointments API</h1>
+    <button onclick="testAPI()">Test API</button>
+    <pre id="result"></pre>
+    
+    <script>
+    async function testAPI() {
+        const result = document.getElementById('result');
+        result.textContent = 'Testing...';
+        
+        // Get token
+        const token = localStorage.getItem('accessToken');
+        result.textContent += '\n\n1. Token: ' + (token ? token.substring(0, 20) + '...' : 'NOT FOUND');
+        
+        if (!token) {
+            result.textContent += '\n\n❌ No token found! Please login first.';
+            return;
+        }
+        
+        // Test API
+        try {
+            result.textContent += '\n\n2. Calling API: /api/appointments/month/2025/11';
+            
+            const response = await fetch('https://api.flipcars.us/api/appointments/month/2025/11', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            result.textContent += '\n\n3. Response status: ' + response.status;
+            
+            const data = await response.json();
+            
+            result.textContent += '\n\n4. Response data:';
+            result.textContent += '\n' + JSON.stringify(data, null, 2);
+            
+            if (Array.isArray(data)) {
+                result.textContent += '\n\n✅ Total appointments: ' + data.length;
+                
+                if (data.length > 0) {
+                    result.textContent += '\n\n📅 First appointment:';
+                    result.textContent += '\n- Date: ' + data[0].appointmentDate;
+                    result.textContent += '\n- Time: ' + data[0].appointmentTimeSlot;
+                    result.textContent += '\n- Lead: ' + data[0].lead?.name;
+                    result.textContent += '\n- Reference: ' + data[0].lead?.referenceNumber;
+                }
+            }
+        } catch (error) {
+            result.textContent += '\n\n❌ Error: ' + error.message;
+        }
+    }
+    </script>
+</body>
+</html>

@@ -13,14 +13,16 @@ import { showToast } from '../../mockup-exact/mockup-utils';
 export default function AppointmentsV2Page() {
   useEffect(() => {
     // Load external script from public/ with REAL API integration
+    // Add timestamp to bypass cache
+    const timestamp = Date.now();
     const script = document.createElement('script');
-    script.src = '/calendar-with-api.js'; // ← LOAD API VERSION
+    script.src = `/calendar-with-api-v2.js?v=${timestamp}`; // ← LOAD API VERSION with cache bust
     script.async = true;
     script.onload = () => {
-      console.log('✅ calendar-with-api.js loaded successfully');
+      console.log('✅ calendar-with-api-v2.js loaded successfully');
     };
     script.onerror = () => {
-      console.error('❌ Failed to load calendar-with-api.js');
+      console.error('❌ Failed to load calendar-with-api-v2.js');
     };
     document.body.appendChild(script);
     
