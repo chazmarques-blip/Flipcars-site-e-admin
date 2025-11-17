@@ -31,7 +31,7 @@ export class Appointment {
   id: string;
 
   // Relacionamento com Lead
-  @ManyToOne(() => Lead, { eager: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Lead, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'lead_id' })
   lead: Lead;
 
