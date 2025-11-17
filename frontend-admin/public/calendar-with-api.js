@@ -5,6 +5,10 @@
 
 console.log('📅 Loading calendar-with-api.js...');
 
+// API Configuration
+const API_BASE_URL = 'https://upbeat-dedication-production.up.railway.app/api';
+console.log('🔧 API Base URL:', API_BASE_URL);
+
 // ============================================
 // TOAST NOTIFICATION SYSTEM
 // ============================================
@@ -120,7 +124,7 @@ async function loadCalendarData(year, month) {
     console.log('✅ Found auth token:', token.substring(0, 20) + '...');
     
     // Call API
-    const apiUrl = `/api/appointments/month/${year}/${month}`;
+    const apiUrl = `${API_BASE_URL}/appointments/month/${year}/${month}`;
     console.log('📡 Calling API:', apiUrl);
     
     const response = await fetch(apiUrl, {
@@ -900,7 +904,7 @@ async function updateAppointmentStatus(eventId, newStatus) {
 
     window.showToast(`⏳ Updating status to ${newStatus}...`);
 
-    const response = await fetch(`/api/appointments/${eventId}`, {
+    const response = await fetch(`${API_BASE_URL}/appointments/${eventId}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -949,7 +953,7 @@ async function saveAppointmentNotes(eventId) {
 
     window.showToast('⏳ Saving notes...');
 
-    const response = await fetch(`/api/appointments/${eventId}`, {
+    const response = await fetch(`${API_BASE_URL}/appointments/${eventId}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -1154,7 +1158,7 @@ async function confirmReschedule(eventId, sourceDate, newTime) {
     }
     
     // Update via API
-    const response = await fetch(`/api/appointments/${eventId}`, {
+    const response = await fetch(`${API_BASE_URL}/appointments/${eventId}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
