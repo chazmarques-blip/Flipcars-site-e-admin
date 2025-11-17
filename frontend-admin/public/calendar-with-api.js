@@ -1229,9 +1229,15 @@ function updateCalendarDay(dateStr) {
 // ============================================
 async function initializeMockupCalendar() {
   console.log('✅ Initializing calendar with real API data...');
+  console.log('🔍 DEBUG: loadCalendarData type:', typeof loadCalendarData);
+  console.log('🔍 DEBUG: window.loadCalendarData type:', typeof window.loadCalendarData);
   
   // Load data from API first
-  await loadCalendarData(window.currentYear, window.currentMonth);
+  try {
+    await loadCalendarData(window.currentYear, window.currentMonth);
+  } catch (error) {
+    console.error('❌ ERROR in loadCalendarData:', error);
+  }
   
   // Expose functions to window
   window.loadCalendarData = loadCalendarData;
