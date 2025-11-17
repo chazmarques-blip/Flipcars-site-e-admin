@@ -93,67 +93,97 @@ window.currentMonth = 11; // November (1-indexed for API)
  */
 async function loadCalendarData(year, month) {
   try {
-    console.log(`📡 Loading calendar data for ${year}-${month}...`);
+    console.log(`📡 Loading calendar data for ${year}-${String(month).padStart(2, '0')}...`);
     
     // Get auth token from localStorage
     const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
     
     if (!token) {
-      console.error('❌ No auth token found');
+      console.error('❌ No auth token found in localStorage');
+      console.log('Available localStorage keys:', Object.keys(localStorage));
       window.showToast('❌ Authentication required');
       return;
     }
     
+    console.log('✅ Found auth token:', token.substring(0, 20) + '...');
+    
     // Call API
-    const response = await fetch(`/api/appointments/month/${year}/${month}`, {
+    const apiUrl = `/api/appointments/month/${year}/${month}`;
+    console.log('📡 Calling API:', apiUrl);
+    
+    const response = await fetch(apiUrl, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
     
+    console.log('📡 API Response status:', response.status, response.statusText);
+    
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ API error response:', errorText);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
     
     const appointments = await response.json();
     console.log(`✅ Loaded ${appointments.length} appointments from API`);
+    console.log('📋 Appointments data:', appointments);
     
     // Transform API data to calendar format
+    console.log('🔄 Transforming appointments to calendar format...');
     window.eventsByDate = {};
-    appointments.forEach(apt => {
-      const date = apt.appointmentDate; // YYYY-MM-DD
-      
-      if (!window.eventsByDate[date]) {
-        window.eventsByDate[date] = [];
-      }
-      
-      const lead = apt.lead || {};
-      const vehicle = lead.vehicleYear && lead.vehicleMake && lead.vehicleModel
-        ? `${lead.vehicleYear} ${lead.vehicleMake} ${lead.vehicleModel}`
-        : (lead.vehicle ? `${lead.vehicle.year || ''} ${lead.vehicle.make || ''} ${lead.vehicle.model || ''}`.trim() : 'Unknown Vehicle');
-      
-      window.eventsByDate[date].push({
-        id: apt.id,
-        type: 'appointment',
-        time: apt.appointmentTimeSlot || '9:00-11:00',
-        customer: lead.name || 'Unknown',
-        phone: lead.phone || '',
-        email: lead.email || '',
-        vehicle: vehicle,
-        vin: lead.vehicle?.vin || '',
-        serviceType: lead.serviceType || '',
-        serviceCategory: 'Service',
-        paymentType: lead.hasInsurance ? 'Insurance' : 'Private',
-        insuranceCompany: lead.insuranceProvider || 'N/A',
-        claimNumber: '',
-        estimateAmount: lead.estimatedValue ? `$${lead.estimatedValue}` : 'TBD',
-        status: apt.status || 'Scheduled',
-        reference: lead.referenceNumber || apt.id.substring(0, 8),
-        eventId: apt.id,
-        leadData: lead
+    
+    if (!appointments || appointments.length === 0) {
+      console.warn('⚠️ No appointments returned from API');
+      window.showToast('ℹ️ No appointments found for this month');
+    } else {
+      appointments.forEach((apt, index) => {
+        const date = apt.appointmentDate; // YYYY-MM-DD
+        console.log(`  Processing appointment ${index + 1}:`, {
+          id: apt.id,
+          date: date,
+          status: apt.status,
+          timeSlot: apt.appointmentTimeSlot
+        });
+        
+        if (!window.eventsByDate[date]) {
+          window.eventsByDate[date] = [];
+        }
+        
+        const lead = apt.lead || {};
+        const vehicle = lead.vehicleYear && lead.vehicleMake && lead.vehicleModel
+          ? `${lead.vehicleYear} ${lead.vehicleMake} ${lead.vehicleModel}`
+          : (lead.vehicle ? `${lead.vehicle.year || ''} ${lead.vehicle.make || ''} ${lead.vehicle.model || ''}`.trim() : 'Unknown Vehicle');
+        
+        window.eventsByDate[date].push({
+          id: apt.id,
+          type: 'appointment',
+          time: apt.appointmentTimeSlot || '9:00-11:00',
+          customer: lead.name || 'Unknown',
+          phone: lead.phone || '',
+          email: lead.email || '',
+          vehicle: vehicle,
+          vin: lead.vehicle?.vin || '',
+          serviceType: lead.serviceType || '',
+          serviceCategory: 'Service',
+          paymentType: lead.hasInsurance ? 'Insurance' : 'Private',
+          insuranceCompany: lead.insuranceProvider || 'N/A',
+          claimNumber: '',
+          estimateAmount: lead.estimatedValue ? `$${lead.estimatedValue}` : 'TBD',
+          status: apt.status || 'Scheduled',
+          reference: lead.referenceNumber || apt.id.substring(0, 8),
+          eventId: apt.id,
+          leadData: lead
+        });
       });
-    });
+      
+      console.log('✅ Transformed data - eventsByDate:', window.eventsByDate);
+      console.log('📊 Events by date summary:');
+      Object.keys(window.eventsByDate).forEach(date => {
+        console.log(`  ${date}: ${window.eventsByDate[date].length} events`);
+      });
+    }
     
     // Render calendar after loading
     renderCalendarWithData();
