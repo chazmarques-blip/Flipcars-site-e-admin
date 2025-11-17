@@ -979,8 +979,31 @@ async function saveAppointmentNotes(eventId) {
   }
 }
 
-function changeMonth(direction) {
-  window.showToast(`📅 Month navigation: ${direction > 0 ? 'Next' : 'Previous'}`);
+async function changeMonth(direction) {
+  // Update current month
+  window.currentMonth += direction;
+  
+  // Handle year wraparound
+  if (window.currentMonth > 12) {
+    window.currentMonth = 1;
+    window.currentYear++;
+  } else if (window.currentMonth < 1) {
+    window.currentMonth = 12;
+    window.currentYear--;
+  }
+  
+  // Update calendar header
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+  const calendarHeader = document.querySelector('.calendar-header h2');
+  if (calendarHeader) {
+    calendarHeader.textContent = `${monthNames[window.currentMonth - 1]} ${window.currentYear}`;
+  }
+  
+  // Reload data for new month
+  await loadCalendarData(window.currentYear, window.currentMonth);
+  
+  window.showToast(`📅 ${monthNames[window.currentMonth - 1]} ${window.currentYear}`);
 }
 
 function openNewEventModal() {
@@ -1211,6 +1234,7 @@ async function initializeMockupCalendar() {
   await loadCalendarData(window.currentYear, window.currentMonth);
   
   // Expose functions to window
+  window.loadCalendarData = loadCalendarData;
   window.openModal = openModal;
   window.closeModal = closeModal;
   window.changeMonth = changeMonth;
