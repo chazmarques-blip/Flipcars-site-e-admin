@@ -51,7 +51,7 @@ const navItems: NavItem[] = [
   },
   {
     label: 'Appointments',
-    href: '/dashboard/appointments',
+    href: '/dashboard/appointments-v2',
     icon: Calendar,
     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.AGENT],
   },
