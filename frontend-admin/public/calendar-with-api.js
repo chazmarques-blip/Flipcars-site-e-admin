@@ -95,13 +95,25 @@ async function loadCalendarData(year, month) {
   try {
     console.log(`📡 Loading calendar data for ${year}-${String(month).padStart(2, '0')}...`);
     
-    // Get auth token from localStorage
-    const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+    // Get auth token from localStorage (try multiple possible key names)
+    const token = localStorage.getItem('accessToken') || 
+                  localStorage.getItem('auth_token') || 
+                  localStorage.getItem('token');
     
     if (!token) {
       console.error('❌ No auth token found in localStorage');
-      console.log('Available localStorage keys:', Object.keys(localStorage));
-      window.showToast('❌ Authentication required');
+      console.log('📋 Checked keys: accessToken, auth_token, token');
+      console.log('📋 Available localStorage keys:', Object.keys(localStorage));
+      console.log('📋 localStorage contents:', { ...localStorage });
+      window.showToast('❌ Authentication required - Please log in');
+      
+      // Redirect to login if not authenticated
+      if (window.location.pathname !== '/auth/login') {
+        console.log('🔄 Redirecting to login...');
+        setTimeout(() => {
+          window.location.href = '/auth/login';
+        }, 2000);
+      }
       return;
     }
     
@@ -574,8 +586,14 @@ async function confirmReschedule(eventId, sourceDate, newTime) {
   window.showToast('⏳ Saving changes...');
   
   try {
-    // Get auth token
-    const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+    // Get auth token (try multiple possible key names)
+    const token = localStorage.getItem('accessToken') || 
+                  localStorage.getItem('auth_token') || 
+                  localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
     
     // Update via API
     const response = await fetch(`/api/appointments/${eventId}`, {
