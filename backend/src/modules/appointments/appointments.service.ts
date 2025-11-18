@@ -39,38 +39,6 @@ export class AppointmentsService {
   async findAll(): Promise<Appointment[]> {
     return this.appointmentRepository.find({
       relations: ['lead'],
-      select: {
-        // Appointment fields
-        id: true,
-        leadId: true,
-        appointmentDate: true,
-        appointmentTimeSlot: true,
-        appointmentStartTime: true,
-        appointmentEndTime: true,
-        status: true,
-        contactPreferences: true,
-        adminNotes: true,
-        confirmedAt: true,
-        confirmedById: true,
-        createdAt: true,
-        updatedAt: true,
-        // Lead fields (for mockup UI)
-        lead: {
-          id: true,
-          referenceNumber: true,
-          name: true,
-          phone: true,
-          email: true,
-          vehicleYear: true,
-          vehicleMake: true,
-          vehicleModel: true,
-          hasInsurance: true,
-          insuranceProvider: true,
-          priority: true,
-          status: true,
-          estimatedValue: true,
-        },
-      },
       order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
     });
   }
@@ -80,38 +48,6 @@ export class AppointmentsService {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
       relations: ['lead'],
-      select: {
-        // Appointment fields
-        id: true,
-        leadId: true,
-        appointmentDate: true,
-        appointmentTimeSlot: true,
-        appointmentStartTime: true,
-        appointmentEndTime: true,
-        status: true,
-        contactPreferences: true,
-        adminNotes: true,
-        confirmedAt: true,
-        confirmedById: true,
-        createdAt: true,
-        updatedAt: true,
-        // Lead fields (for mockup UI)
-        lead: {
-          id: true,
-          referenceNumber: true,
-          name: true,
-          phone: true,
-          email: true,
-          vehicleYear: true,
-          vehicleMake: true,
-          vehicleModel: true,
-          hasInsurance: true,
-          insuranceProvider: true,
-          priority: true,
-          status: true,
-          estimatedValue: true,
-        },
-      },
     });
 
     if (!appointment) {
@@ -126,38 +62,6 @@ export class AppointmentsService {
     return this.appointmentRepository.findOne({
       where: { leadId },
       relations: ['lead'],
-      select: {
-        // Appointment fields
-        id: true,
-        leadId: true,
-        appointmentDate: true,
-        appointmentTimeSlot: true,
-        appointmentStartTime: true,
-        appointmentEndTime: true,
-        status: true,
-        contactPreferences: true,
-        adminNotes: true,
-        confirmedAt: true,
-        confirmedById: true,
-        createdAt: true,
-        updatedAt: true,
-        // Lead fields (for mockup UI)
-        lead: {
-          id: true,
-          referenceNumber: true,
-          name: true,
-          phone: true,
-          email: true,
-          vehicleYear: true,
-          vehicleMake: true,
-          vehicleModel: true,
-          hasInsurance: true,
-          insuranceProvider: true,
-          priority: true,
-          status: true,
-          estimatedValue: true,
-        },
-      },
     });
   }
 
@@ -168,38 +72,6 @@ export class AppointmentsService {
         appointmentDate: Between(startDate, endDate),
       },
       relations: ['lead'],
-      select: {
-        // Appointment fields
-        id: true,
-        leadId: true,
-        appointmentDate: true,
-        appointmentTimeSlot: true,
-        appointmentStartTime: true,
-        appointmentEndTime: true,
-        status: true,
-        contactPreferences: true,
-        adminNotes: true,
-        confirmedAt: true,
-        confirmedById: true,
-        createdAt: true,
-        updatedAt: true,
-        // Lead fields (for mockup UI)
-        lead: {
-          id: true,
-          referenceNumber: true,
-          name: true,
-          phone: true,
-          email: true,
-          vehicleYear: true,
-          vehicleMake: true,
-          vehicleModel: true,
-          hasInsurance: true,
-          insuranceProvider: true,
-          priority: true,
-          status: true,
-          estimatedValue: true,
-        },
-      },
       order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
     });
   }
@@ -329,12 +201,6 @@ export class AppointmentsService {
         appointmentDate: Between(startDateStr, endDateStr),
       },
       relations: ['lead'],
-      select: {
-        id: true,
-        lead: {
-          estimatedValue: true,
-        },
-      },
     });
 
     // Calculate estimated revenue
