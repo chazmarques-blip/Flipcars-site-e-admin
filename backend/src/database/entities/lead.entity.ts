@@ -173,6 +173,13 @@ export class Lead {
   @Column({ type: 'varchar', length: 50, nullable: true })
   source: string;
 
+  // Preferred Appointment Date/Time (for auto-creating appointments)
+  @Column({ type: 'date', nullable: true, name: 'preferred_date' })
+  preferredDate: string; // YYYY-MM-DD
+
+  @Column({ type: 'varchar', length: 20, nullable: true, name: 'preferred_time_slot' })
+  preferredTimeSlot: string; // "9:00-11:00"
+
   // TEMPORARY: Disabled until ai_conversations table is created
   // @OneToMany(() => AiConversation, (conversation) => conversation.lead)
   // aiConversations: AiConversation[];
