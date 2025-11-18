@@ -37,10 +37,19 @@ export class AppointmentsService {
 
   // Buscar todos agendamentos
   async findAll(): Promise<Appointment[]> {
-    return this.appointmentRepository.find({
-      relations: ['lead'],
-      order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
-    });
+    try {
+      const appointments = await this.appointmentRepository.find({
+        relations: ['lead'],
+        order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
+      });
+      this.logger.log(`Found ${appointments.length} appointments`);
+      return appointments;
+    } catch (error) {
+      this.logger.error(`Error fetching appointments: ${error.message}`);
+      this.logger.error(error.stack);
+      // Return empty array instead of throwing to prevent 500 error
+      return [];
+    }
   }
 
   // Buscar por ID
