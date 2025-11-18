@@ -1231,7 +1231,7 @@ function updateCalendarDay(dateStr) {
 // ============================================
 // INITIALIZATION
 // ============================================
-async function initializeMockupCalendar() {
+async function initializeProductionCalendar() {
   console.log('✅ Initializing calendar with real API data...');
   console.log('🔍 DEBUG: loadCalendarData type:', typeof loadCalendarData);
   console.log('🔍 DEBUG: window.loadCalendarData type:', typeof window.loadCalendarData);
@@ -1249,7 +1249,6 @@ async function initializeMockupCalendar() {
   window.closeModal = closeModal;
   window.changeMonth = changeMonth;
   window.openDayModal = openDayModal;
-  window.openRescheduledEventModal = openRescheduledEventModal;
   window.openNewEventModal = openNewEventModal;
   window.openRescheduleModal = openRescheduleModal;
   window.confirmReschedule = confirmReschedule;
@@ -1293,12 +1292,12 @@ async function initializeMockupCalendar() {
   makeEventsDraggable();
   
   window.showToast('✅ Calendar loaded successfully!', 2000);
-  console.log('✅ Mockup calendar initialized!');
+  console.log('✅ Production calendar initialized with API data!');
 }
 
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeMockupCalendar);
+  document.addEventListener('DOMContentLoaded', initializeProductionCalendar);
 } else {
-  initializeMockupCalendar();
+  initializeProductionCalendar();
 }
