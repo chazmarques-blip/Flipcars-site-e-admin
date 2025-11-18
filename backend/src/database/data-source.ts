@@ -91,9 +91,12 @@ async function replaceHostnameWithIPv4(databaseUrl: string): Promise<string> {
 const buildDatabaseConfig = async (): Promise<DataSourceOptions> => {
   const baseConfig = {
     type: 'postgres' as const,
-    entities: [join(__dirname, 'entities', '*.entity{.ts,.js}')],
+    entities: [
+      join(__dirname, 'entities', '*.entity{.ts,.js}'),
+      join(__dirname, '..', 'modules', '**', '*.entity{.ts,.js}'), // Include module entities
+    ],
     migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
-    synchronize: false, // Never use synchronize in production
+    synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true' || false, // Enable via env var if needed
     logging: process.env.DATABASE_LOGGING === 'true',
     subscribers: [],
   };
