@@ -1107,19 +1107,164 @@ function openRescheduleModal(eventId, sourceDate) {
 
   if (!modal || !title || !body) return;
 
-  title.textContent = 'Reschedule Event';
+  // Find the event to show current time
+  let currentEvent = null;
+  Object.keys(window.eventsByDate).forEach(date => {
+    const found = window.eventsByDate[date].find(e => e.eventId === eventId || e.id === eventId);
+    if (found) currentEvent = found;
+  });
+
+  const currentTime = currentEvent?.time || 'N/A';
+  const targetDate = window.dragTargetDate || 'Unknown';
+  const targetDateFormatted = new Date(targetDate + 'T00:00:00').toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+
+  title.textContent = '🗓️ Reschedule Appointment';
   
   body.innerHTML = `
-    <div class="modal-section">
-      <div class="modal-section-title">Select New Time</div>
-      <div class="time-selector">
-        <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '09:00')">9:00 AM</button>
-        <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '10:00')">10:00 AM</button>
-        <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '11:00')">11:00 AM</button>
-        <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '13:00')">1:00 PM</button>
-        <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '14:00')">2:00 PM</button>
-        <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '15:00')">3:00 PM</button>
-        <button class="time-option" onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '16:00')">4:00 PM</button>
+    <div style="padding: 16px;">
+      <!-- Current Info -->
+      <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 3px solid #D4AF37;">
+        <div style="font-size: 11px; color: #666; margin-bottom: 4px; font-weight: 600;">📍 MOVING TO</div>
+        <div style="font-size: 13px; font-weight: 600; color: #1a1a1a;">${targetDateFormatted}</div>
+        <div style="font-size: 10px; color: #999; margin-top: 2px;">Current time: ${currentTime}</div>
+      </div>
+
+      <!-- Time Slot Instructions -->
+      <div style="font-size: 12px; font-weight: 600; color: #333; margin-bottom: 12px;">
+        ⏰ Select 2-Hour Time Slot
+      </div>
+
+      <!-- Time Selector Grid (2-hour slots) -->
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+        <button 
+          class="time-slot-btn" 
+          onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '09:00-11:00')"
+          style="
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+          "
+          onmouseover="this.style.background='#fffbf0'; this.style.borderColor='#D4AF37'; this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='white'; this.style.borderColor='#e0e0e0'; this.style.transform='translateY(0)'"
+        >
+          <span style="font-size: 16px;">🌅</span>
+          <span>9:00 AM - 11:00 AM</span>
+          <span style="font-size: 9px; color: #999;">Morning</span>
+        </button>
+
+        <button 
+          class="time-slot-btn" 
+          onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '11:00-13:00')"
+          style="
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+          "
+          onmouseover="this.style.background='#fffbf0'; this.style.borderColor='#D4AF37'; this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='white'; this.style.borderColor='#e0e0e0'; this.style.transform='translateY(0)'"
+        >
+          <span style="font-size: 16px;">☀️</span>
+          <span>11:00 AM - 1:00 PM</span>
+          <span style="font-size: 9px; color: #999;">Late Morning</span>
+        </button>
+
+        <button 
+          class="time-slot-btn" 
+          onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '13:00-15:00')"
+          style="
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+          "
+          onmouseover="this.style.background='#fffbf0'; this.style.borderColor='#D4AF37'; this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='white'; this.style.borderColor='#e0e0e0'; this.style.transform='translateY(0)'"
+        >
+          <span style="font-size: 16px;">🌤️</span>
+          <span>1:00 PM - 3:00 PM</span>
+          <span style="font-size: 9px; color: #999;">Afternoon</span>
+        </button>
+
+        <button 
+          class="time-slot-btn" 
+          onclick="window.confirmReschedule('${eventId}', '${sourceDate}', '15:00-17:00')"
+          style="
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+          "
+          onmouseover="this.style.background='#fffbf0'; this.style.borderColor='#D4AF37'; this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='white'; this.style.borderColor='#e0e0e0'; this.style.transform='translateY(0)'"
+        >
+          <span style="font-size: 16px;">🌆</span>
+          <span>3:00 PM - 5:00 PM</span>
+          <span style="font-size: 9px; color: #999;">Late Afternoon</span>
+        </button>
+      </div>
+
+      <!-- Cancel Button -->
+      <div style="margin-top: 16px; text-align: center;">
+        <button 
+          onclick="window.closeModal()"
+          style="
+            padding: 8px 24px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+          "
+          onmouseover="this.style.background='#e0e0e0'"
+          onmouseout="this.style.background='#f5f5f5'"
+        >
+          ❌ Cancel
+        </button>
       </div>
     </div>
   `;
@@ -1127,7 +1272,7 @@ function openRescheduleModal(eventId, sourceDate) {
   modal.classList.add('active');
 }
 
-async function confirmReschedule(eventId, sourceDate, newTime) {
+async function confirmReschedule(eventId, sourceDate, newTimeSlot) {
   const targetDate = window.dragTargetDate;
   
   if (!targetDate) {
@@ -1142,7 +1287,9 @@ async function confirmReschedule(eventId, sourceDate, newTime) {
   if (eventIndex === -1) return;
   
   const event = sourceEvents[eventIndex];
-  const newTimeSlot = `${newTime}-${(parseInt(newTime.split(':')[0]) + 2).toString().padStart(2, '0')}:00`;
+  
+  // newTimeSlot is already in format "HH:MM-HH:MM" (e.g., "09:00-11:00")
+  // No need to calculate end time anymore
   
   // Show loading
   window.showToast('⏳ Saving changes...');
@@ -1190,7 +1337,7 @@ async function confirmReschedule(eventId, sourceDate, newTime) {
     populateSidePanels(); // ← FIX: Recarrega side panels com dados atualizados
     
     closeModal();
-    window.showToast(`✅ Event rescheduled to ${targetDate} at ${newTime}`);
+    window.showToast(`✅ Event rescheduled to ${targetDate} at ${newTimeSlot}`);
     
   } catch (error) {
     console.error('❌ Error rescheduling event:', error);
