@@ -873,25 +873,27 @@
     .calendar-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 2px;
+      gap: 1px;
+      background: #e5e7eb;
+      border: 1px solid #e5e7eb;
     }
 
     .calendar-day {
       aspect-ratio: 1;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
+      align-items: flex-start;
+      justify-content: flex-start;
+      font-size: 12px;
       font-weight: 400;
-      border-radius: 4px;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: background 0.15s;
       position: relative;
-      color: #374151;
+      color: #1f2937;
       background: #ffffff;
-      border: 1px solid #e5e7eb;
-      padding: 8px;
-      min-height: 36px;
+      border: none;
+      padding: 4px 6px;
+      min-height: 60px;
+      text-align: left;
     }
 
     .calendar-day:hover {
@@ -901,45 +903,43 @@
     .calendar-day.other-month {
       color: #d1d5db;
       background: #fafafa;
-      opacity: 0.5;
     }
 
-    /* Current day - Yellow border exactly like FullCalendar */
+    /* Current day - Golden border like Google Calendar */
     .calendar-day.today {
-      background: #fffbeb;
+      background: #ffffff;
       border: 2px solid #D4AF37;
       color: #1f2937;
-      font-weight: 600;
-      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.1);
+      font-weight: 500;
+      padding: 3px;
     }
 
     .calendar-day.today:hover {
-      background: #fef3c7;
+      background: #fffef7;
     }
 
-    /* Days with events - Thin black bar in the middle/center */
+    /* Days with events - Thin black bar at BOTTOM like Google Calendar */
     .calendar-day.has-event::after {
       content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: calc(100% - 12px);
-      height: 1px;
+      bottom: 4px;
+      left: 4px;
+      right: 4px;
+      height: 2px;
       background: #1f2937;
-      border-radius: 0.5px;
+      border-radius: 1px;
     }
 
-    /* Badge with count - Yellow circular badge in top-right */
+    /* Badge with count - Small golden badge near the number */
     .calendar-day.has-badge::before {
       content: attr(data-count);
       position: absolute;
-      top: 3px;
-      right: 3px;
+      top: 2px;
+      left: 24px;
       width: 16px;
       height: 16px;
       background: #D4AF37;
-      color: #ffffff;
+      color: #1f2937;
       border-radius: 50%;
       font-size: 9px;
       font-weight: 700;
@@ -947,7 +947,6 @@
       align-items: center;
       justify-content: center;
       line-height: 1;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     }
 
     .calendar-appointments-list {
