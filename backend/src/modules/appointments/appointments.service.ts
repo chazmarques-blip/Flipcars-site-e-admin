@@ -98,9 +98,12 @@ export class AppointmentsService {
   async findByMonth(year: number, month: number): Promise<Appointment[]> {
     try {
       const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-      // FIX: month + 1 porque new Date(year, month, 0) pega último dia do mês ANTERIOR
-      // Para novembro (11), new Date(2025, 12, 0) retorna 30 de novembro
-      const lastDay = new Date(year, month + 1, 0).getDate();
+      
+      // CRITICAL FIX: API uses 1-indexed months (1=Jan, 11=Nov), but JS Date uses 0-indexed (0=Jan, 10=Nov)
+      // For month=11 (November in API), we need new Date(year, 11, 0) which gives last day of October
+      // But we want last day of November, so we use month (not month+1)
+      // new Date(2025, 11, 0) = Last day of November = 30 ✅
+      const lastDay = new Date(year, month, 0).getDate();
       const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
 
       this.logger.log(`findByMonth: ${year}-${month} → ${startDate} to ${endDate} (last day: ${lastDay})`);
