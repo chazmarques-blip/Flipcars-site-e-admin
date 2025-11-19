@@ -1187,6 +1187,7 @@ async function confirmReschedule(eventId, sourceDate, newTime) {
     updateCalendarDay(sourceDate);
     updateCalendarDay(targetDate);
     calculateAndUpdateStats();
+    populateSidePanels(); // ← FIX: Recarrega side panels com dados atualizados
     
     closeModal();
     window.showToast(`✅ Event rescheduled to ${targetDate} at ${newTime}`);
