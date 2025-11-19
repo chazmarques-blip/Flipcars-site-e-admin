@@ -88,9 +88,12 @@ export class AppointmentsService {
   // Buscar por mês
   async findByMonth(year: number, month: number): Promise<Appointment[]> {
     const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-    const lastDay = new Date(year, month, 0).getDate();
+    // FIX: month + 1 porque new Date(year, month, 0) pega último dia do mês ANTERIOR
+    // Para novembro (11), new Date(2025, 12, 0) retorna 30 de novembro
+    const lastDay = new Date(year, month + 1, 0).getDate();
     const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
 
+    this.logger.log(`findByMonth: ${year}-${month} → ${startDate} to ${endDate} (last day: ${lastDay})`);
     return this.findByDateRange(startDate, endDate);
   }
 
