@@ -26,7 +26,12 @@ export class AppointmentsController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Query('year') year?: string, @Query('month') month?: string) {
+    // Se year e month forem fornecidos, buscar por mês
+    if (year && month) {
+      return this.appointmentsService.findByMonth(parseInt(year), parseInt(month));
+    }
+    // Caso contrário, retornar todos
     return this.appointmentsService.findAll();
   }
 

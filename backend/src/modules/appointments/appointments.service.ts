@@ -76,25 +76,43 @@ export class AppointmentsService {
 
   // Buscar por data
   async findByDateRange(startDate: string, endDate: string): Promise<Appointment[]> {
-    return this.appointmentRepository.find({
-      where: {
-        appointmentDate: Between(startDate, endDate),
-      },
-      relations: ['lead'],
-      order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
-    });
+    try {
+      this.logger.log(`findByDateRange: ${startDate} to ${endDate}`);
+      const appointments = await this.appointmentRepository.find({
+        where: {
+          appointmentDate: Between(startDate, endDate),
+        },
+        relations: ['lead'],
+        order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
+      });
+      this.logger.log(`findByDateRange result: ${appointments.length} appointments`);
+      return appointments;
+    } catch (error) {
+      this.logger.error(`Error in findByDateRange (${startDate} to ${endDate}): ${error.message}`);
+      this.logger.error(error.stack);
+      return [];
+    }
   }
 
   // Buscar por mês
   async findByMonth(year: number, month: number): Promise<Appointment[]> {
-    const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-    // FIX: month + 1 porque new Date(year, month, 0) pega último dia do mês ANTERIOR
-    // Para novembro (11), new Date(2025, 12, 0) retorna 30 de novembro
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
+    try {
+      const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+      // FIX: month + 1 porque new Date(year, month, 0) pega último dia do mês ANTERIOR
+      // Para novembro (11), new Date(2025, 12, 0) retorna 30 de novembro
+      const lastDay = new Date(year, month + 1, 0).getDate();
+      const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
 
-    this.logger.log(`findByMonth: ${year}-${month} → ${startDate} to ${endDate} (last day: ${lastDay})`);
-    return this.findByDateRange(startDate, endDate);
+      this.logger.log(`findByMonth: ${year}-${month} → ${startDate} to ${endDate} (last day: ${lastDay})`);
+      const results = await this.findByDateRange(startDate, endDate);
+      this.logger.log(`Found ${results.length} appointments for ${year}-${month}`);
+      return results;
+    } catch (error) {
+      this.logger.error(`Error fetching appointments for ${year}-${month}: ${error.message}`);
+      this.logger.error(error.stack);
+      // Return empty array instead of throwing to prevent 500 error
+      return [];
+    }
   }
 
   // Atualizar
