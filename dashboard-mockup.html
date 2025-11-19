@@ -917,17 +917,17 @@
       background: #fef3c7;
     }
 
-    /* Days with events - Black indicator bar at bottom */
+    /* Days with events - Thin black bar in the middle/center */
     .calendar-day.has-event::after {
       content: '';
       position: absolute;
-      bottom: 1px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 8px);
-      height: 4px;
+      transform: translate(-50%, -50%);
+      width: calc(100% - 12px);
+      height: 1px;
       background: #1f2937;
-      border-radius: 2px;
+      border-radius: 0.5px;
     }
 
     /* Badge with count - Yellow circular badge in top-right */
