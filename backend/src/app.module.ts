@@ -29,9 +29,9 @@ import { ClaimTimeline } from './database/entities/claim-timeline.entity';
 import { Vehicle } from './database/entities/vehicle.entity';
 import { Communication } from './database/entities/communication.entity';
 import { FileUpload } from './database/entities/file-upload.entity';
-import { AIConversation } from './database/entities/ai-conversation.entity';
-import { AIFeedback } from './database/entities/ai-feedback.entity';
-import { AIKnowledgeBase } from './database/entities/ai-knowledge-base.entity';
+import { AiConversation } from './database/entities/ai-conversation.entity';
+import { AiFeedback } from './database/entities/ai-feedback.entity';
+import { AiKnowledgeBase } from './database/entities/ai-knowledge-base.entity';
 import { Message } from './database/entities/message.entity';
 import { Page } from './database/entities/page.entity';
 import { BlogPost } from './database/entities/blog-post.entity';
@@ -74,7 +74,7 @@ import { RolesGuard } from './modules/auth/guards/roles.guard';
           Appointment, // ← CRITICAL: This was missing!
           Claim, ClaimDocument, ClaimTimeline,
           Vehicle, Communication,
-          FileUpload, AIConversation, AIFeedback, AIKnowledgeBase,
+          FileUpload, AiConversation, AiFeedback, AiKnowledgeBase,
           Message, Page, BlogPost, GalleryItem,
         ];
         
