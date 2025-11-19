@@ -89,12 +89,37 @@ async function replaceHostnameWithIPv4(databaseUrl: string): Promise<string> {
  * DNS IPv4 enforcement + manual hostname resolution for Railway compatibility
  */
 const buildDatabaseConfig = async (): Promise<DataSourceOptions> => {
+  // In production (dist/), __dirname is dist/database
+  // In development (src/), __dirname is src/database
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  // Entity paths for production (compiled .js files)
+  const productionEntities = [
+    join(__dirname, 'entities', '*.entity.js'),
+    join(__dirname, '..', 'modules', '**', '*.entity.js'),
+  ];
+  
+  // Entity paths for development (.ts and .js files)
+  const developmentEntities = [
+    join(__dirname, 'entities', '*.entity{.ts,.js}'),
+    join(__dirname, '..', 'modules', '**', '*.entity{.ts,.js}'),
+  ];
+  
+  const entityPaths = isProduction ? productionEntities : developmentEntities;
+  
+  // Log entity paths for debugging
+  console.log('\n========================================');
+  console.log('🔍 TypeORM Entity Configuration');
+  console.log('========================================');
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`__dirname: ${__dirname}`);
+  console.log(`Entity paths:`);
+  entityPaths.forEach(path => console.log(`  - ${path}`));
+  console.log('========================================\n');
+  
   const baseConfig = {
     type: 'postgres' as const,
-    entities: [
-      join(__dirname, 'entities', '*.entity{.ts,.js}'),
-      join(__dirname, '..', 'modules', '**', '*.entity{.ts,.js}'), // Include module entities
-    ],
+    entities: entityPaths,
     migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
     synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true' || false, // Enable via env var if needed
     logging: process.env.DATABASE_LOGGING === 'true',
