@@ -340,6 +340,61 @@
       font-weight: 600;
     }
 
+    /* Urgent Item Variations by Priority */
+    .urgent-item.priority-high {
+      border-left-color: #ff6b6b;
+      background: #fff5f5;
+    }
+
+    .urgent-item.priority-medium {
+      border-left-color: #ffa500;
+      background: #fff8f0;
+    }
+
+    .urgent-item.priority-low {
+      border-left-color: #fbbf24;
+      background: #fffef7;
+    }
+
+    .urgent-count.priority-high {
+      background: #ff6b6b;
+    }
+
+    .urgent-count.priority-medium {
+      background: #ffa500;
+    }
+
+    .urgent-count.priority-low {
+      background: #fbbf24;
+    }
+
+    .urgent-action-btn {
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      border: 1px solid #e0e0e0;
+      background: white;
+      color: #666;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .urgent-action-btn:hover {
+      background: #D4AF37;
+      color: white;
+      border-color: #D4AF37;
+      transform: translateY(-1px);
+    }
+
+    .urgent-item-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
     /* Timeline Chart */
     .timeline-tab {
       padding: 6px 16px;
@@ -1819,13 +1874,47 @@
           <div class="card-header">
             <div>
               <div class="card-title">⚠️ Urgent Actions</div>
-              <div class="card-subtitle">Needs attention</div>
+              <div class="card-subtitle">5 items need attention</div>
             </div>
           </div>
           <div class="card-body">
-            <div class="empty-state">
-              <div class="empty-icon">✅</div>
-              <div class="empty-text">All caught up! No urgent items.</div>
+            <!-- High Priority -->
+            <div class="urgent-item priority-high">
+              <div class="urgent-icon">🔴</div>
+              <div class="urgent-item-content">
+                <div class="urgent-text">
+                  <strong>Estimates pending review</strong>
+                  <div style="font-size: 10px; color: #999; margin-top: 2px;">Waiting > 3 days</div>
+                </div>
+                <span class="urgent-count priority-high">2</span>
+              </div>
+              <button class="urgent-action-btn" onclick="window.location.href='#estimates'">Review Now</button>
+            </div>
+
+            <!-- Medium Priority -->
+            <div class="urgent-item priority-medium">
+              <div class="urgent-icon">🟠</div>
+              <div class="urgent-item-content">
+                <div class="urgent-text">
+                  <strong>Leads awaiting response</strong>
+                  <div style="font-size: 10px; color: #999; margin-top: 2px;">No contact made yet</div>
+                </div>
+                <span class="urgent-count priority-medium">3</span>
+              </div>
+              <button class="urgent-action-btn" onclick="window.location.href='#leads'">Contact</button>
+            </div>
+
+            <!-- Low Priority -->
+            <div class="urgent-item priority-low">
+              <div class="urgent-icon">🟡</div>
+              <div class="urgent-item-content">
+                <div class="urgent-text">
+                  <strong>Appointments to confirm</strong>
+                  <div style="font-size: 10px; color: #999; margin-top: 2px;">Next 24 hours</div>
+                </div>
+                <span class="urgent-count priority-low">1</span>
+              </div>
+              <button class="urgent-action-btn" onclick="window.location.href='#calendar'">Confirm</button>
             </div>
           </div>
         </div>
