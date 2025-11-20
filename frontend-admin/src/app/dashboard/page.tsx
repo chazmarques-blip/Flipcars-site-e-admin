@@ -1,380 +1,724 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { leadService } from '@/lib/api/lead.service';
-import { Lead, LeadStatus } from '@/types/lead';
-import toast from 'react-hot-toast';
-
-// Import new dashboard components
-import ActiveLeadsCard from '@/components/dashboard/kpi-cards/ActiveLeadsCard';
-import AppointmentsCard from '@/components/dashboard/kpi-cards/AppointmentsCard';
-import OverdueCard from '@/components/dashboard/kpi-cards/OverdueCard';
-import ApprovedCard from '@/components/dashboard/kpi-cards/ApprovedCard';
-import PendingCard from '@/components/dashboard/kpi-cards/PendingCard';
-import JobsCard from '@/components/dashboard/kpi-cards/JobsCard';
-import WeeksLeadsTable from '@/components/dashboard/tables/WeeksLeadsTable';
-import EstimatesTable from '@/components/dashboard/tables/EstimatesTable';
-import BusinessActionsCard from '@/components/dashboard/actions/BusinessActionsCard';
-import ConversionFunnelCard from '@/components/dashboard/actions/ConversionFunnelCard';
-import MiniCalendar from '@/components/dashboard/sidebar/MiniCalendar';
-import UrgentActions from '@/components/dashboard/sidebar/UrgentActions';
-import PerformanceTimeline from '@/components/dashboard/sidebar/PerformanceTimeline';
-
-import styles from '@/components/dashboard/Dashboard.module.css';
+import React from 'react';
+import styles from '@/components/dashboard/Dashboard-Mockup-Exact.module.css';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // KPI Stats
-  const [kpiStats, setKpiStats] = useState({
-    activeLeads: 0,
-    todaysAppointments: 0,
-    overdue: 0,
-    approved: 0,
-    pending: 0,
-    jobsInProgress: 0
-  });
-
-  // Mock data for estimates (TODO: Replace with real API)
-  const [estimates] = useState([
-    {
-      id: '1',
-      customerName: 'John Smith',
-      vehicleInfo: '2020 Honda Accord',
-      amount: 1200,
-      status: 'APPROVED',
-      createdAt: new Date()
-    },
-    {
-      id: '2',
-      customerName: 'Sarah Johnson',
-      vehicleInfo: '2019 Toyota Camry',
-      amount: 850,
-      status: 'PENDING',
-      createdAt: new Date()
-    },
-    {
-      id: '3',
-      customerName: 'Mike Davis',
-      vehicleInfo: '2021 Ford F-150',
-      amount: 2400,
-      status: 'APPROVED',
-      createdAt: new Date()
-    },
-    {
-      id: '4',
-      customerName: 'Emily Wilson',
-      vehicleInfo: '2018 Nissan Altima',
-      amount: 950,
-      status: 'PENDING',
-      createdAt: new Date()
-    },
-    {
-      id: '5',
-      customerName: 'Robert Brown',
-      vehicleInfo: '2022 Chevrolet Silverado',
-      amount: 3200,
-      status: 'APPROVED',
-      createdAt: new Date()
-    },
-    {
-      id: '6',
-      customerName: 'Jennifer Lee',
-      vehicleInfo: '2020 Hyundai Elantra',
-      amount: 750,
-      status: 'PENDING',
-      createdAt: new Date()
-    },
-    {
-      id: '7',
-      customerName: 'David Martinez',
-      vehicleInfo: '2019 Mazda CX-5',
-      amount: 1800,
-      status: 'APPROVED',
-      createdAt: new Date()
-    }
-  ]);
-
-  // Mock appointments (TODO: Replace with real API)
-  const [appointments] = useState([
-    {
-      id: '1',
-      name: 'John Smith',
-      time: '9:00 AM',
-      icon: '🚗',
-      details: 'Vehicle inspection'
-    },
-    {
-      id: '2',
-      name: 'Sarah Johnson',
-      time: '11:30 AM',
-      icon: '📋',
-      details: 'Estimate review'
-    },
-    {
-      id: '3',
-      name: 'Mike Davis',
-      time: '2:00 PM',
-      icon: '🔧',
-      details: 'Service appointment'
-    },
-    {
-      id: '4',
-      name: 'Emily Wilson',
-      time: '3:30 PM',
-      icon: '📞',
-      details: 'Follow-up call'
-    },
-    {
-      id: '5',
-      name: 'Robert Brown',
-      time: '4:30 PM',
-      icon: '✅',
-      details: 'Final approval'
-    }
-  ]);
-
-  // Fetch dashboard data
-  const fetchDashboardData = async () => {
-    try {
-      setIsLoading(true);
-      
-      console.log('[Dashboard] Fetching leads...');
-      const response = await leadService.getLeads(1, 50);
-      const allLeads = response.data || [];
-      console.log('[Dashboard] Leads loaded:', allLeads.length);
-      
-      setLeads(allLeads);
-
-      // Calculate KPI stats
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      // Active Leads: All non-archived leads
-      const activeLeads = allLeads.filter(
-        (lead) => lead.status !== LeadStatus.ARCHIVED
-      ).length;
-
-      // Today's Appointments: Mock data for now (TODO: Real API)
-      const todaysAppointments = 5;
-
-      // Overdue: Mock data (TODO: Real appointments API)
-      const overdue = 3;
-
-      // Approved: Calculate from estimates
-      const approved = estimates
-        .filter(e => e.status === 'APPROVED')
-        .reduce((sum, e) => sum + e.amount, 0);
-
-      // Pending: Calculate from estimates
-      const pending = estimates
-        .filter(e => e.status === 'PENDING')
-        .reduce((sum, e) => sum + e.amount, 0);
-
-      // Jobs In Progress: Mock data (TODO: Real jobs API)
-      const jobsInProgress = 5;
-
-      setKpiStats({
-        activeLeads,
-        todaysAppointments,
-        overdue,
-        approved,
-        pending,
-        jobsInProgress
-      });
-
-    } catch (error: any) {
-      console.error('[Dashboard] ❌ Failed to fetch dashboard data:', error);
-      toast.error('Failed to load dashboard data. Please try refreshing the page.');
-      
-      // Try fallback with smaller limit
-      try {
-        console.log('[Dashboard] Trying fallback with limit=10...');
-        const fallbackResponse = await leadService.getLeads(1, 10);
-        const fallbackLeads = fallbackResponse.data || [];
-        setLeads(fallbackLeads);
-        console.log('[Dashboard] ✅ Fallback succeeded, loaded', fallbackLeads.length, 'leads');
-        toast.success('Loaded recent leads (limited view)');
-      } catch (fallbackError: any) {
-        console.error('[Dashboard] ❌ Fallback also failed:', fallbackError);
-        toast.error('Cannot load leads. Please check your connection and try again.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  // Conversion funnel data
-  const funnelStages = [
-    {
-      label: 'Leads Generated',
-      count: kpiStats.activeLeads,
-      percentage: 100,
-      type: 'leads' as const
-    },
-    {
-      label: 'Estimates Created',
-      count: estimates.length,
-      percentage: Math.round((estimates.length / Math.max(kpiStats.activeLeads, 1)) * 100),
-      type: 'estimates' as const
-    },
-    {
-      label: 'Approved',
-      count: estimates.filter(e => e.status === 'APPROVED').length,
-      percentage: Math.round((estimates.filter(e => e.status === 'APPROVED').length / Math.max(kpiStats.activeLeads, 1)) * 100),
-      type: 'approved' as const
-    },
-    {
-      label: 'Jobs Created',
-      count: kpiStats.jobsInProgress,
-      percentage: Math.round((kpiStats.jobsInProgress / Math.max(kpiStats.activeLeads, 1)) * 100),
-      type: 'jobs' as const
-    }
-  ];
-
-  // Performance timeline data (mock - TODO: Real data)
-  const timelineData = [
-    { label: 'Mon', leads: 12, estimates: 8 },
-    { label: 'Tue', leads: 15, estimates: 10 },
-    { label: 'Wed', leads: 9, estimates: 6 },
-    { label: 'Thu', leads: 18, estimates: 12 },
-    { label: 'Fri', leads: 14, estimates: 9 },
-    { label: 'Sat', leads: 6, estimates: 4 },
-    { label: 'Sun', leads: 4, estimates: 2 }
-  ];
-
-  // Urgent actions data (mock - TODO: Real data)
-  const urgentActions = [
-    {
-      id: '1',
-      icon: '📞',
-      text: 'Missed Calls',
-      count: 3,
-      priority: 'high' as const,
-      actionLabel: 'Call Back'
-    },
-    {
-      id: '2',
-      icon: '📧',
-      text: 'Unread Messages',
-      count: 7,
-      priority: 'medium' as const,
-      actionLabel: 'View'
-    },
-    {
-      id: '3',
-      icon: '⏰',
-      text: 'Overdue Tasks',
-      count: kpiStats.overdue,
-      priority: 'high' as const,
-      actionLabel: 'Review'
-    },
-    {
-      id: '4',
-      icon: '💰',
-      text: 'Pending Approvals',
-      count: estimates.filter(e => e.status === 'PENDING').length,
-      priority: 'medium' as const,
-      actionLabel: 'Approve'
-    },
-    {
-      id: '5',
-      icon: '📋',
-      text: 'Follow-ups Due',
-      count: 4,
-      priority: 'low' as const,
-      actionLabel: 'Schedule'
-    }
-  ];
-
-  if (isLoading) {
-    return (
-      <div className={styles.loading}>
-        <div>Loading dashboard...</div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ padding: '20px', background: '#f8f9fa', minHeight: '100vh' }}>
+    <div className={styles.container}>
       {/* Header */}
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '4px' }}>
-          FlipCars Dashboard
-        </h1>
-        <p style={{ fontSize: '13px', color: '#666' }}>
-          Welcome back, {user?.name || 'User'}! Here's your business overview.
-        </p>
+      <div className={styles.header}>
+        <div className={styles['header-title']}>
+          <h1>Welcome back, Admin FlipCars US! 👋</h1>
+          <p className={styles['header-subtitle']}>Here&apos;s what&apos;s happening with your auto body shop today</p>
+        </div>
+        <div className={styles['header-actions']}>
+          <button className={`${styles.btn} ${styles['btn-secondary']}`}>
+            <span>📊</span>
+            <span>Export</span>
+          </button>
+          <button className={`${styles.btn} ${styles['btn-primary']}`}>
+            <span>📋</span>
+            <span>New Estimate</span>
+          </button>
+        </div>
       </div>
 
-      {/* KPI Cards - 6 columns */}
-      <div className={styles.kpiGrid}>
-        <ActiveLeadsCard 
-          count={kpiStats.activeLeads} 
-          subtitle="Active in pipeline"
-          trend="up"
-        />
-        <AppointmentsCard 
-          count={kpiStats.todaysAppointments} 
-          subtitle="Scheduled today"
-          trend="neutral"
-        />
-        <OverdueCard 
-          count={kpiStats.overdue} 
-          subtitle="Need attention"
-          trend="down"
-        />
-        <ApprovedCard 
-          amount={kpiStats.approved} 
-          subtitle="Ready to proceed"
-          trend="up"
-        />
-        <PendingCard 
-          amount={kpiStats.pending} 
-          subtitle="Awaiting review"
-          trend="neutral"
-        />
-        <JobsCard 
-          count={kpiStats.jobsInProgress} 
-          subtitle="Currently active"
-          trend="neutral"
-        />
+      {/* KPI Cards */}
+      <div className={styles['kpi-grid']}>
+        <div className={styles['kpi-card']}>
+          <span className={styles['kpi-trend']}>📈</span>
+          <div className={styles['kpi-label']}>Active Leads</div>
+          <div className={styles['kpi-value']}>18</div>
+          <div className={styles['kpi-subtitle']}>6 qualified today</div>
+        </div>
+
+        <div className={styles['kpi-card']}>
+          <span className={styles['kpi-trend']}>📅</span>
+          <div className={styles['kpi-label']}>Today&apos;s Appointments</div>
+          <div className={styles['kpi-value']}>2</div>
+          <div className={styles['kpi-subtitle']}>Nov 15, 2025</div>
+        </div>
+
+        <div className={styles['kpi-card']}>
+          <span className={styles['kpi-trend']}>⚠️</span>
+          <div className={styles['kpi-label']}>Overdue</div>
+          <div className={styles['kpi-value']}>0</div>
+          <div className={styles['kpi-subtitle']}>All on track!</div>
+        </div>
+
+        <div className={styles['kpi-card']}>
+          <span className={styles['kpi-trend']}>✅</span>
+          <div className={styles['kpi-label']}>Approved</div>
+          <div className={styles['kpi-value']}>$6.32K</div>
+          <div className={styles['kpi-subtitle']}>1 estimate approved</div>
+        </div>
+
+        <div className={styles['kpi-card']}>
+          <span className={styles['kpi-trend']}>⏳</span>
+          <div className={styles['kpi-label']}>Pending</div>
+          <div className={styles['kpi-value']}>$7.75K</div>
+          <div className={styles['kpi-subtitle']}>2 estimates awaiting</div>
+        </div>
+
+        <div className={styles['kpi-card']}>
+          <span className={styles['kpi-trend']}>🔧</span>
+          <div className={styles['kpi-label']}>Jobs In Progress</div>
+          <div className={styles['kpi-value']}>5</div>
+          <div className={styles['kpi-subtitle']}>3 completing this week</div>
+        </div>
       </div>
 
-      {/* Main Layout - 2 columns */}
-      <div className={styles.mainLayout}>
+      {/* Main Layout */}
+      <div className={styles['main-layout']}>
         {/* Left Column */}
-        <div className={styles.leftColumn}>
+        <div>
           {/* Week's Leads Table */}
-          <WeeksLeadsTable leads={leads} maxHeight="400px" />
+          <div className={styles.card} style={{ marginBottom: '24px' }}>
+            <div className={styles['card-header']}>
+              <div>
+                <div className={styles['card-title']}>🎯 Week&apos;s Leads</div>
+                <div className={styles['card-subtitle']}>New leads received in the last 7 days</div>
+              </div>
+              <a href="#" className={styles['view-all']}>View All</a>
+            </div>
+            <div className={styles['card-body']} style={{ padding: 0, maxHeight: '400px', overflowX: 'auto', overflowY: 'auto' }}>
+              <table className={styles['leads-table']}>
+                <thead>
+                  <tr>
+                    <th style={{ width: '30px' }}>#</th>
+                    <th style={{ width: '100px' }}>Reference</th>
+                    <th style={{ width: '90px' }}>Customer</th>
+                    <th style={{ width: '90px' }}>Contact</th>
+                    <th style={{ width: '40px', textAlign: 'center' }}>Pref</th>
+                    <th style={{ width: '120px' }}>Vehicle</th>
+                    <th style={{ width: '70px' }}>Service</th>
+                    <th style={{ width: '70px' }}>Who Pay</th>
+                    <th style={{ width: '80px' }}>Company</th>
+                    <th style={{ width: '70px' }}>AI Score</th>
+                    <th style={{ width: '40px', textAlign: 'center' }}>Photos</th>
+                    <th style={{ width: '55px' }}>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Lead 1 */}
+                  <tr>
+                    <td><span className={styles['lead-index']}>20</span></td>
+                    <td><span className={styles['lead-ref']}>2025-1119-0002</span></td>
+                    <td><span className={styles['lead-customer']}>Jose Silva</span></td>
+                    <td><span className={styles['lead-phone']}>(321) 405-6789</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div style={{ display: 'inline-flex', gap: '2px' }}>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#fffbf0', border: '1px solid #D4AF37', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Phone">
+                          <span style={{ fontSize: '10px' }}>📞</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-vehicle']}>CHEVROLET Silverado<span className={styles['lead-vehicle-year']}>2021</span></span></td>
+                    <td><span className={styles['badge-service']}>Bodyshop</span></td>
+                    <td><span className={styles['badge-whopay']}>Insurance</span></td>
+                    <td><span className={styles['lead-company']}>Progressive</span></td>
+                    <td>
+                      <div className={styles['lead-score']}>
+                        <div className={styles['lead-score-bar']}>
+                          <div className={styles['lead-score-fill']} style={{ width: '85%' }}></div>
+                        </div>
+                        <span className={styles['lead-score-num']}>85</span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ fontSize: '16px', cursor: 'pointer' }} title="View photos">👁️</span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
 
-          {/* Estimates Table */}
-          <EstimatesTable estimates={estimates} maxHeight="300px" limit={7} />
+                  {/* Lead 2 */}
+                  <tr>
+                    <td><span className={styles['lead-index']}>19</span></td>
+                    <td><span className={styles['lead-ref']}>2025-1119-0001</span></td>
+                    <td><span className={styles['lead-customer']}>Lourenco Gadella</span></td>
+                    <td><span className={styles['lead-phone']}>(858) 531-9800</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div style={{ display: 'inline-flex', gap: '2px' }}>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="WhatsApp">
+                          <span style={{ fontSize: '10px' }}>💬</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-vehicle']}>CHEVROLET Tahoe<span className={styles['lead-vehicle-year']}>2022</span></span></td>
+                    <td><span className={styles['badge-service']}>Bodyshop</span></td>
+                    <td><span className={styles['badge-whopay']}>Insurance</span></td>
+                    <td><span className={styles['lead-company']}>USAA</span></td>
+                    <td>
+                      <div className={styles['lead-score']}>
+                        <div className={styles['lead-score-bar']}>
+                          <div className={styles['lead-score-fill']} style={{ width: '92%' }}></div>
+                        </div>
+                        <span className={styles['lead-score-num']}>92</span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ fontSize: '16px', cursor: 'pointer' }} title="View photos">👁️</span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
 
-          {/* Business Actions & Conversion Funnel - 2 columns */}
-          <div className={styles.actionsGrid}>
-            <BusinessActionsCard />
-            <ConversionFunnelCard stages={funnelStages} />
+                  {/* Lead 3 */}
+                  <tr>
+                    <td><span className={styles['lead-index']}>18</span></td>
+                    <td><span className={styles['lead-ref']}>2025-1118-0006</span></td>
+                    <td><span className={styles['lead-customer']}>Maria Silva</span></td>
+                    <td><span className={styles['lead-phone']}>(321) 456-7890</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div style={{ display: 'inline-flex', gap: '2px' }}>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#fffbf0', border: '1px solid #D4AF37', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Phone">
+                          <span style={{ fontSize: '10px' }}>📞</span>
+                        </div>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Text">
+                          <span style={{ fontSize: '10px' }}>💭</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-vehicle']}>CHEVROLET Silverado<span className={styles['lead-vehicle-year']}>2021</span></span></td>
+                    <td><span className={styles['badge-service']}>Bodyshop</span></td>
+                    <td><span className={styles['badge-whopay']}>Insurance</span></td>
+                    <td><span className={styles['lead-company']}>USAA</span></td>
+                    <td>
+                      <div className={styles['lead-score']}>
+                        <div className={styles['lead-score-bar']}>
+                          <div className={styles['lead-score-fill']} style={{ width: '78%' }}></div>
+                        </div>
+                        <span className={styles['lead-score-num']}>78</span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ color: '#ccc', fontSize: '11px' }}>—</span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+
+                  {/* Lead 4 */}
+                  <tr>
+                    <td><span className={styles['lead-index']}>17</span></td>
+                    <td><span className={styles['lead-ref']}>2025-1118-0005</span></td>
+                    <td><span className={styles['lead-customer']}>Cliente 4</span></td>
+                    <td><span className={styles['lead-phone']}>11999999994</span></td>
+                    <td style={{ textAlign: 'center' }}>—</td>
+                    <td><span className={styles['lead-vehicle']}>Toyota Corolla<span className={styles['lead-vehicle-year']}>2020</span></span></td>
+                    <td><span className={styles['badge-service']}>Bodyshop</span></td>
+                    <td><span className={styles['badge-whopay']}>Insurance</span></td>
+                    <td><span className={styles['lead-company']}>—</span></td>
+                    <td>
+                      <div className={styles['lead-score']}>
+                        <div className={styles['lead-score-bar']}>
+                          <div className={styles['lead-score-fill']} style={{ width: '65%' }}></div>
+                        </div>
+                        <span className={styles['lead-score-num']}>65</span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ color: '#ccc', fontSize: '11px' }}>—</span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+
+                  {/* Lead 5 */}
+                  <tr>
+                    <td><span className={styles['lead-index']}>16</span></td>
+                    <td><span className={styles['lead-ref']}>2025-1118-0004</span></td>
+                    <td><span className={styles['lead-customer']}>Cliente 3</span></td>
+                    <td><span className={styles['lead-phone']}>11999999993</span></td>
+                    <td style={{ textAlign: 'center' }}>—</td>
+                    <td><span className={styles['lead-vehicle']}>Toyota Corolla<span className={styles['lead-vehicle-year']}>2020</span></span></td>
+                    <td><span className={styles['badge-service']}>Bodyshop</span></td>
+                    <td><span className={styles['badge-whopay']}>Insurance</span></td>
+                    <td><span className={styles['lead-company']}>—</span></td>
+                    <td>
+                      <div className={styles['lead-score']}>
+                        <div className={styles['lead-score-bar']}>
+                          <div className={styles['lead-score-fill']} style={{ width: '88%' }}></div>
+                        </div>
+                        <span className={styles['lead-score-num']}>88</span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ color: '#ccc', fontSize: '11px' }}>—</span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Estimates in Progress Table */}
+          <div className={styles.card} style={{ marginBottom: '24px' }}>
+            <div className={styles['card-header']}>
+              <div>
+                <div className={styles['card-title']}>📋 Estimates in Progress</div>
+                <div className={styles['card-subtitle']}>7 estimates awaiting action</div>
+              </div>
+              <a href="/dashboard/estimates" className={styles['view-all']}>View All</a>
+            </div>
+            <div className={styles['card-body']} style={{ padding: 0, overflowX: 'auto', maxHeight: '400px', overflowY: 'auto' }}>
+              <table className={styles['leads-table']}>
+                <thead>
+                  <tr>
+                    <th style={{ width: '30px', textAlign: 'center' }}>#</th>
+                    <th style={{ width: '110px' }}>Reference</th>
+                    <th style={{ width: '100px' }}>Customer</th>
+                    <th style={{ width: '130px' }}>Vehicle</th>
+                    <th style={{ width: '80px' }}>Amount</th>
+                    <th style={{ width: '100px' }}>Status</th>
+                    <th style={{ width: '80px' }}>Company</th>
+                    <th style={{ width: '100px' }}>Created/Updated</th>
+                    <th style={{ width: '55px' }}>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Estimate 1 */}
+                  <tr>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: '#666' }}>1</td>
+                    <td><span className={styles['lead-ref']}>EST-2025-1119-001</span></td>
+                    <td><span className={styles['lead-customer']}>Maria Silva</span></td>
+                    <td><span className={styles['lead-vehicle']}>2021 CHEVROLET Silverado</span></td>
+                    <td><span style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a' }}>$4,850.00</span></td>
+                    <td>
+                      <div className={styles['status-dropdown']}>
+                        <button className={`${styles['status-button']} ${styles['status-pending']}`} style={{ width: '100%', fontSize: '10px', padding: '4px 8px' }}>
+                          <span>⏳ Pending</span>
+                          <span style={{ fontSize: '8px' }}>▼</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-company']}>Progressive</span></td>
+                    <td><span style={{ fontSize: '10px', color: '#999' }}>Created 2 days ago</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+
+                  {/* Estimate 2 */}
+                  <tr>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: '#666' }}>2</td>
+                    <td><span className={styles['lead-ref']}>EST-2025-1118-005</span></td>
+                    <td><span className={styles['lead-customer']}>Lourenco Gadelha</span></td>
+                    <td><span className={styles['lead-vehicle']}>2022 CHEVROLET Tahoe</span></td>
+                    <td><span style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a' }}>$6,320.00</span></td>
+                    <td>
+                      <div className={styles['status-dropdown']}>
+                        <button className={`${styles['status-button']} ${styles['status-approved']}`} style={{ width: '100%', fontSize: '10px', padding: '4px 8px' }}>
+                          <span>✅ Approved</span>
+                          <span style={{ fontSize: '8px' }}>▼</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-company']}>USAA</span></td>
+                    <td><span style={{ fontSize: '10px', color: '#999' }}>Approved 1 day ago</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+
+                  {/* Estimate 3 */}
+                  <tr>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: '#666' }}>3</td>
+                    <td><span className={styles['lead-ref']}>EST-2025-1117-012</span></td>
+                    <td><span className={styles['lead-customer']}>Jose Silva</span></td>
+                    <td><span className={styles['lead-vehicle']}>2020 Toyota Corolla</span></td>
+                    <td><span style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a' }}>$2,900.00</span></td>
+                    <td>
+                      <div className={styles['status-dropdown']}>
+                        <button className={`${styles['status-button']} ${styles['status-pending']}`} style={{ width: '100%', fontSize: '10px', padding: '4px 8px' }}>
+                          <span>⏳ Pending</span>
+                          <span style={{ fontSize: '8px' }}>▼</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-company']}>State Farm</span></td>
+                    <td><span style={{ fontSize: '10px', color: '#999' }}>Created 3 days ago</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+
+                  {/* Estimate 4 - Completed */}
+                  <tr style={{ opacity: 0.7 }}>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: '#666' }}>4</td>
+                    <td><span className={styles['lead-ref']}>EST-2025-1116-008</span></td>
+                    <td><span className={styles['lead-customer']}>Ana Costa</span></td>
+                    <td><span className={styles['lead-vehicle']}>2019 Honda Civic</span></td>
+                    <td><span style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a' }}>$5,450.00</span></td>
+                    <td>
+                      <div className={styles['status-dropdown']}>
+                        <button className={`${styles['status-button']} ${styles['status-completed']}`} style={{ width: '100%', fontSize: '10px', padding: '4px 8px' }}>
+                          <span>🎉 Completed</span>
+                          <span style={{ fontSize: '8px' }}>▼</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-company']}>Allstate</span></td>
+                    <td><span style={{ fontSize: '10px', color: '#999' }}>Completed 5 days ago</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+
+                  {/* Estimate 5 */}
+                  <tr>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: '#666' }}>5</td>
+                    <td><span className={styles['lead-ref']}>EST-2025-1117-003</span></td>
+                    <td><span className={styles['lead-customer']}>Roberto Santos</span></td>
+                    <td><span className={styles['lead-vehicle']}>2020 FORD F-150</span></td>
+                    <td><span style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a' }}>$3,200.00</span></td>
+                    <td>
+                      <div className={styles['status-dropdown']}>
+                        <button className={`${styles['status-button']} ${styles['status-pending']}`} style={{ width: '100%', fontSize: '10px', padding: '4px 8px' }}>
+                          <span>⏳ Pending</span>
+                          <span style={{ fontSize: '8px' }}>▼</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-company']}>State Farm</span></td>
+                    <td><span style={{ fontSize: '10px', color: '#999' }}>Created 4 days ago</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+
+                  {/* Estimate 6 */}
+                  <tr>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: '#666' }}>6</td>
+                    <td><span className={styles['lead-ref']}>EST-2025-1115-012</span></td>
+                    <td><span className={styles['lead-customer']}>Patricia Lima</span></td>
+                    <td><span className={styles['lead-vehicle']}>2023 TOYOTA Camry</span></td>
+                    <td><span style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a' }}>$2,750.00</span></td>
+                    <td>
+                      <div className={styles['status-dropdown']}>
+                        <button className={`${styles['status-button']} ${styles['status-approved']}`} style={{ width: '100%', fontSize: '10px', padding: '4px 8px' }}>
+                          <span>✅ Approved</span>
+                          <span style={{ fontSize: '8px' }}>▼</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><span className={styles['lead-company']}>Geico</span></td>
+                    <td><span style={{ fontSize: '10px', color: '#999' }}>Approved 3 days ago</span></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <a href="#" className={styles['lead-btn-view']}>Details</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Business Actions & Conversion Funnel Grid */}
+          <div className={styles['actions-grid']}>
+            {/* Business Actions */}
+            <div className={styles.card}>
+              <div className={styles['card-header']}>
+                <div>
+                  <div className={styles['card-title']}>💼 Business Actions</div>
+                  <div className={styles['card-subtitle']}>Quick access to common tasks</div>
+                </div>
+              </div>
+              <div className={styles['card-body']}>
+                <a href="#leads" className={styles['action-button']}>
+                  <div className={styles['action-content']}>
+                    <div className={styles['action-icon']}>📞</div>
+                    <div className={styles['action-text']}>
+                      <div className={styles['action-title']}>Call Pending Leads</div>
+                      <div className={styles['action-subtitle']}>3 leads awaiting contact</div>
+                    </div>
+                  </div>
+                  <div className={styles['action-arrow']}>→</div>
+                </a>
+
+                <a href="#estimates" className={styles['action-button']}>
+                  <div className={styles['action-content']}>
+                    <div className={styles['action-icon']}>📋</div>
+                    <div className={styles['action-text']}>
+                      <div className={styles['action-title']}>Create New Estimate</div>
+                      <div className={styles['action-subtitle']}>Start new quote</div>
+                    </div>
+                  </div>
+                  <div className={styles['action-arrow']}>→</div>
+                </a>
+
+                <a href="#calendar" className={styles['action-button']}>
+                  <div className={styles['action-content']}>
+                    <div className={styles['action-icon']}>📅</div>
+                    <div className={styles['action-text']}>
+                      <div className={styles['action-title']}>Schedule Appointment</div>
+                      <div className={styles['action-subtitle']}>Book customer visit</div>
+                    </div>
+                  </div>
+                  <div className={styles['action-arrow']}>→</div>
+                </a>
+
+                <a href="#messages" className={styles['action-button']}>
+                  <div className={styles['action-content']}>
+                    <div className={styles['action-icon']}>💬</div>
+                    <div className={styles['action-text']}>
+                      <div className={styles['action-title']}>Send Follow-up</div>
+                      <div className={styles['action-subtitle']}>Message customers</div>
+                    </div>
+                  </div>
+                  <div className={styles['action-arrow']}>→</div>
+                </a>
+              </div>
+            </div>
+
+            {/* Conversion Funnel */}
+            <div className={styles.card}>
+              <div className={styles['card-header']}>
+                <div>
+                  <div className={styles['card-title']}>📈 Conversion Funnel</div>
+                  <div className={styles['card-subtitle']}>Pipeline performance</div>
+                </div>
+              </div>
+              <div className={styles['card-body']}>
+                {/* Stage 1: Leads */}
+                <div className={styles['funnel-stage']}>
+                  <div className={styles['funnel-header']}>
+                    <div className={styles['funnel-label']}>
+                      <span>🎯</span>
+                      <span>Leads</span>
+                    </div>
+                    <div className={styles['funnel-value']}>18</div>
+                  </div>
+                  <div className={styles['funnel-bar-container']}>
+                    <div className={`${styles['funnel-bar']} ${styles.leads}`} style={{ width: '100%' }}>
+                      <span>100%</span>
+                      <span>18 leads</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stage 2: Estimates */}
+                <div className={styles['funnel-stage']}>
+                  <div className={styles['funnel-header']}>
+                    <div className={styles['funnel-label']}>
+                      <span>📋</span>
+                      <span>Estimates</span>
+                    </div>
+                    <div className={styles['funnel-value']}>7</div>
+                  </div>
+                  <div className={styles['funnel-bar-container']}>
+                    <div className={`${styles['funnel-bar']} ${styles.estimates}`} style={{ width: '78%' }}>
+                      <span>78%</span>
+                      <span>7 estimates</span>
+                    </div>
+                  </div>
+                  <div className={styles['funnel-percentage']}>↓ 39% conversion from leads</div>
+                </div>
+
+                {/* Stage 3: Approved */}
+                <div className={styles['funnel-stage']}>
+                  <div className={styles['funnel-header']}>
+                    <div className={styles['funnel-label']}>
+                      <span>✅</span>
+                      <span>Approved</span>
+                    </div>
+                    <div className={styles['funnel-value']}>3</div>
+                  </div>
+                  <div className={styles['funnel-bar-container']}>
+                    <div className={`${styles['funnel-bar']} ${styles.approved}`} style={{ width: '43%' }}>
+                      <span>43%</span>
+                      <span>3 approved</span>
+                    </div>
+                  </div>
+                  <div className={styles['funnel-percentage']}>↓ 43% approval rate</div>
+                </div>
+
+                {/* Stage 4: Jobs */}
+                <div className={styles['funnel-stage']}>
+                  <div className={styles['funnel-header']}>
+                    <div className={styles['funnel-label']}>
+                      <span>🔧</span>
+                      <span>Jobs</span>
+                    </div>
+                    <div className={styles['funnel-value']}>5</div>
+                  </div>
+                  <div className={styles['funnel-bar-container']}>
+                    <div className={`${styles['funnel-bar']} ${styles.jobs}`} style={{ width: '56%' }}>
+                      <span>56%</span>
+                      <span>5 jobs</span>
+                    </div>
+                  </div>
+                  <div className={styles['funnel-percentage']}>↓ 28% overall conversion</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Right Sidebar */}
-        <div className={styles.rightSidebar}>
-          {/* Mini Calendar + Today's Appointments */}
-          <MiniCalendar appointments={appointments} />
+        <div>
+          {/* Mini Calendar with Today's Appointments */}
+          <div className={styles.card} style={{ marginBottom: '24px' }}>
+            <div className={styles['card-header']}>
+              <div>
+                <div className={styles['card-title']}>📅 Agenda</div>
+                <div className={styles['card-subtitle']}>Appointments & Schedule</div>
+              </div>
+              <a href="/dashboard/calendar" className={styles['view-all']}>View Calendar</a>
+            </div>
+            <div className={styles['card-body']} style={{ padding: '12px' }}>
+              <div className={styles['mini-calendar']}>
+                <div className={styles['calendar-header']}>
+                  <div className={styles['calendar-month']}>November 2025</div>
+                  <div className={styles['calendar-nav']}>
+                    <button className={styles['calendar-nav-btn']}>◀</button>
+                    <button className={styles['calendar-nav-btn']}>▶</button>
+                  </div>
+                </div>
+                
+                <div className={styles['calendar-weekdays']}>
+                  <div className={styles['calendar-weekday']}>Sun</div>
+                  <div className={styles['calendar-weekday']}>Mon</div>
+                  <div className={styles['calendar-weekday']}>Tue</div>
+                  <div className={styles['calendar-weekday']}>Wed</div>
+                  <div className={styles['calendar-weekday']}>Thu</div>
+                  <div className={styles['calendar-weekday']}>Fri</div>
+                  <div className={styles['calendar-weekday']}>Sat</div>
+                </div>
+                
+                <div className={styles['calendar-days']}>
+                  {/* Previous month days */}
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>27</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>28</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>29</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>30</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>31</div>
+                  
+                  {/* November 2025 */}
+                  <div className={styles['calendar-day']}>1</div>
+                  <div className={styles['calendar-day']}>2</div>
+                  <div className={styles['calendar-day']}>3</div>
+                  <div className={styles['calendar-day']}>4</div>
+                  <div className={styles['calendar-day']}>5</div>
+                  <div className={styles['calendar-day']}>6</div>
+                  <div className={styles['calendar-day']}>7</div>
+                  <div className={styles['calendar-day']}>8</div>
+                  <div className={styles['calendar-day']}>9</div>
+                  <div className={styles['calendar-day']}>10</div>
+                  <div className={styles['calendar-day']}>11</div>
+                  <div className={styles['calendar-day']}>12</div>
+                  <div className={styles['calendar-day']}>13</div>
+                  <div className={styles['calendar-day']}>14</div>
+                  <div className={`${styles['calendar-day']} ${styles.today}`}>15</div>
+                  <div className={styles['calendar-day']}>16</div>
+                  <div className={styles['calendar-day']}>17</div>
+                  <div className={styles['calendar-day']}>18</div>
+                  <div className={styles['calendar-day']}>19</div>
+                  <div className={styles['calendar-day']}>20</div>
+                  <div className={styles['calendar-day']}>21</div>
+                  <div className={styles['calendar-day']}>22</div>
+                  <div className={styles['calendar-day']}>23</div>
+                  <div className={styles['calendar-day']}>24</div>
+                  <div className={`${styles['calendar-day']} ${styles['has-event']} ${styles['has-badge']}`} data-count="1">25</div>
+                  <div className={styles['calendar-day']}>26</div>
+                  <div className={`${styles['calendar-day']} ${styles['has-event']} ${styles['has-badge']}`} data-count="1">27</div>
+                  <div className={styles['calendar-day']}>28</div>
+                  <div className={styles['calendar-day']}>29</div>
+                  <div className={styles['calendar-day']}>30</div>
+                  
+                  {/* Next month */}
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>1</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>2</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>3</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>4</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>5</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>6</div>
+                  <div className={`${styles['calendar-day']} ${styles['other-month']}`}>7</div>
+                </div>
+                
+                {/* Today's Appointments */}
+                <div className={styles['calendar-appointments-list']}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#1f2937', marginBottom: '8px' }}>
+                    Today&apos;s Appointments
+                  </div>
+                  
+                  <div className={styles['calendar-appointment-mini']}>
+                    <div className={styles['calendar-appointment-time-mini']}>10:00</div>
+                    <div className={styles['calendar-appointment-info-mini']}>
+                      <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '2px' }}>Maria Silva</div>
+                      <div style={{ fontSize: '10px', color: '#6b7280' }}>2021 CHEVROLET Silverado</div>
+                    </div>
+                  </div>
+                  
+                  <div className={styles['calendar-appointment-mini']}>
+                    <div className={styles['calendar-appointment-time-mini']}>14:00</div>
+                    <div className={styles['calendar-appointment-info-mini']}>
+                      <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '2px' }}>Lourenco Gadelha</div>
+                      <div style={{ fontSize: '10px', color: '#6b7280' }}>2022 CHEVROLET Tahoe</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Urgent Actions */}
-          <UrgentActions actions={urgentActions} />
+          <div className={styles.card} style={{ marginBottom: '24px' }}>
+            <div className={styles['card-header']}>
+              <div>
+                <div className={styles['card-title']}>⚠️ Urgent Actions</div>
+                <div className={styles['card-subtitle']}>5 items need attention</div>
+              </div>
+            </div>
+            <div className={styles['card-body']}>
+              {/* High Priority */}
+              <div className={`${styles['urgent-item']} ${styles['priority-high']}`}>
+                <div className={styles['urgent-icon']}>🔴</div>
+                <div className={styles['urgent-item-content']}>
+                  <div className={styles['urgent-text']}>
+                    <strong>Estimates pending review</strong>
+                    <div style={{ fontSize: '10px', color: '#999', marginTop: '2px' }}>Waiting &gt; 3 days</div>
+                  </div>
+                  <span className={`${styles['urgent-count']} ${styles['priority-high']}`}>2</span>
+                </div>
+                <button className={styles['urgent-action-btn']}>Review Now</button>
+              </div>
 
-          {/* Performance Timeline (at bottom) */}
-          <PerformanceTimeline data={timelineData} period="week" />
+              {/* Medium Priority */}
+              <div className={`${styles['urgent-item']} ${styles['priority-medium']}`}>
+                <div className={styles['urgent-icon']}>🟠</div>
+                <div className={styles['urgent-item-content']}>
+                  <div className={styles['urgent-text']}>
+                    <strong>Leads awaiting response</strong>
+                    <div style={{ fontSize: '10px', color: '#999', marginTop: '2px' }}>No contact made yet</div>
+                  </div>
+                  <span className={`${styles['urgent-count']} ${styles['priority-medium']}`}>3</span>
+                </div>
+                <button className={styles['urgent-action-btn']}>Contact</button>
+              </div>
+
+              {/* Low Priority */}
+              <div className={`${styles['urgent-item']} ${styles['priority-low']}`}>
+                <div className={styles['urgent-icon']}>🟡</div>
+                <div className={styles['urgent-item-content']}>
+                  <div className={styles['urgent-text']}>
+                    <strong>Appointments to confirm</strong>
+                    <div style={{ fontSize: '10px', color: '#999', marginTop: '2px' }}>Next 24 hours</div>
+                  </div>
+                  <span className={`${styles['urgent-count']} ${styles['priority-low']}`}>1</span>
+                </div>
+                <button className={styles['urgent-action-btn']}>Confirm</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
