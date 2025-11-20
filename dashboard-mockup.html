@@ -1249,7 +1249,7 @@
             </div>
             <a href="#" class="view-all">View All</a>
           </div>
-          <div class="card-body" style="padding: 0; overflow-x: auto;">
+          <div class="card-body" style="padding: 0; max-height: 400px; overflow-x: auto; overflow-y: auto;">
             <table class="leads-table">
               <thead>
                 <tr>
@@ -1433,7 +1433,7 @@
           <div class="card-header">
             <div>
               <div class="card-title">📋 Estimates in Progress</div>
-              <div class="card-subtitle">5 estimates awaiting action</div>
+              <div class="card-subtitle">7 estimates awaiting action</div>
             </div>
             <a href="/dashboard/estimates" class="view-all">View All</a>
           </div>
@@ -1592,6 +1592,78 @@
                   </td>
                   <td><span class="lead-company">Allstate</span></td>
                   <td><span style="font-size: 10px; color: #999;">Completed 5 days ago</span></td>
+                  <td style="text-align: center;">
+                    <a href="#" class="lead-btn-view">Details</a>
+                  </td>
+                </tr>
+
+                <!-- Estimate 5 -->
+                <tr>
+                  <td style="text-align: center; font-weight: 600; color: #666;">5</td>
+                  <td><span class="lead-ref">EST-2025-1117-003</span></td>
+                  <td><span class="lead-customer">Roberto Santos</span></td>
+                  <td><span class="lead-vehicle">2020 FORD F-150</span></td>
+                  <td><span style="font-size: 12px; font-weight: 700; color: #1a1a1a;">$3,200.00</span></td>
+                  <td>
+                    <div class="status-dropdown">
+                      <button class="status-button status-pending" onclick="toggleStatusMenu(this)" style="width: 100%; font-size: 10px; padding: 4px 8px;">
+                        <span>⏳ Pending</span>
+                        <span style="font-size: 8px;">▼</span>
+                      </button>
+                      <div class="status-menu">
+                        <div class="status-menu-item" onclick="changeStatus(this, 'pending')">
+                          <span class="status-icon">⏳</span>
+                          <span>Pending</span>
+                        </div>
+                        <div class="status-menu-item" onclick="changeStatus(this, 'approved')">
+                          <span class="status-icon">✅</span>
+                          <span>Approved</span>
+                        </div>
+                        <div class="status-menu-item" onclick="changeStatus(this, 'completed')">
+                          <span class="status-icon">🎉</span>
+                          <span>Completed</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="lead-company">State Farm</span></td>
+                  <td><span style="font-size: 10px; color: #999;">Created 4 days ago</span></td>
+                  <td style="text-align: center;">
+                    <a href="#" class="lead-btn-view">Details</a>
+                  </td>
+                </tr>
+
+                <!-- Estimate 6 -->
+                <tr>
+                  <td style="text-align: center; font-weight: 600; color: #666;">6</td>
+                  <td><span class="lead-ref">EST-2025-1115-012</span></td>
+                  <td><span class="lead-customer">Patricia Lima</span></td>
+                  <td><span class="lead-vehicle">2023 TOYOTA Camry</span></td>
+                  <td><span style="font-size: 12px; font-weight: 700; color: #1a1a1a;">$2,750.00</span></td>
+                  <td>
+                    <div class="status-dropdown">
+                      <button class="status-button status-approved" onclick="toggleStatusMenu(this)" style="width: 100%; font-size: 10px; padding: 4px 8px;">
+                        <span>✅ Approved</span>
+                        <span style="font-size: 8px;">▼</span>
+                      </button>
+                      <div class="status-menu">
+                        <div class="status-menu-item" onclick="changeStatus(this, 'pending')">
+                          <span class="status-icon">⏳</span>
+                          <span>Pending</span>
+                        </div>
+                        <div class="status-menu-item" onclick="changeStatus(this, 'approved')">
+                          <span class="status-icon">✅</span>
+                          <span>Approved</span>
+                        </div>
+                        <div class="status-menu-item" onclick="changeStatus(this, 'completed')">
+                          <span class="status-icon">🎉</span>
+                          <span>Completed</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="lead-company">Geico</span></td>
+                  <td><span style="font-size: 10px; color: #999;">Approved 3 days ago</span></td>
                   <td style="text-align: center;">
                     <a href="#" class="lead-btn-view">Details</a>
                   </td>
