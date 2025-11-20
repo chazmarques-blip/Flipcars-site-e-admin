@@ -5,7 +5,15 @@ import styles from '@/components/dashboard/Dashboard-Mockup-Exact.module.css';
 
 export default function DemoFinalPage() {
   return (
-    <div className={styles.container}>
+    <div style={{ 
+      width: '100vw',
+      minHeight: '100vh',
+      background: '#f8f9fa',
+      margin: 0,
+      padding: 0,
+      overflow: 'auto'
+    }}>
+      <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
         <div className={styles['header-title']}>
@@ -721,6 +729,7 @@ export default function DemoFinalPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
