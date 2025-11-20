@@ -208,4 +208,4 @@ export const TEST_APPOINTMENTS: Appointment[] = [
 /**
  * Flag to enable/disable test data in components
  */
-export const USE_TEST_DATA = false;
+export const USE_TEST_DATA = true;
