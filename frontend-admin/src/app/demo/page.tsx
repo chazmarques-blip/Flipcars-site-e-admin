@@ -71,6 +71,14 @@ export default function DemoDashboardPage() {
   const pending = estimates.filter(e => e.status === 'PENDING').reduce((sum, e) => sum + e.amount, 0);
   const jobsInProgress = 5;
 
+  // Conversion Funnel stages
+  const funnelStages = [
+    { label: 'Initial Contact', count: 45, percentage: 100, type: 'leads' as const },
+    { label: 'Site Inspection', count: 32, percentage: 71, type: 'estimates' as const },
+    { label: 'Estimate Sent', count: 24, percentage: 53, type: 'estimates' as const },
+    { label: 'Job Approved', count: 18, percentage: 40, type: 'approved' as const }
+  ];
+
   return (
     <div className={styles.dashboardContainer}>
       {/* Demo Banner */}
@@ -119,7 +127,7 @@ export default function DemoDashboardPage() {
           {/* Actions Row */}
           <div className={styles.actionsRow}>
             <BusinessActionsCard />
-            <ConversionFunnelCard />
+            <ConversionFunnelCard stages={funnelStages} />
           </div>
         </div>
 
