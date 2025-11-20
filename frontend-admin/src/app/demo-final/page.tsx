@@ -86,18 +86,18 @@ export default function DemoFinalPage() {
               <table className={styles['leads-table']}>
                 <thead>
                   <tr>
-                    <th style={{ width: '40px' }}>#</th>
-                    <th>Reference</th>
-                    <th>Customer</th>
-                    <th>Contact</th>
-                    <th style={{ width: '50px', textAlign: 'center' }}>Pref</th>
-                    <th>Vehicle</th>
-                    <th>Service</th>
-                    <th>Who Pay</th>
-                    <th>Company</th>
+                    <th style={{ width: '30px' }}>#</th>
+                    <th style={{ width: '100px' }}>Reference</th>
+                    <th style={{ width: '90px' }}>Customer</th>
+                    <th style={{ width: '90px' }}>Contact</th>
+                    <th style={{ width: '40px', textAlign: 'center' }}>Pref</th>
+                    <th style={{ width: '120px' }}>Vehicle</th>
+                    <th style={{ width: '70px' }}>Service</th>
+                    <th style={{ width: '70px' }}>Who Pay</th>
+                    <th style={{ width: '80px' }}>Company</th>
                     <th style={{ width: '70px' }}>AI Score</th>
-                    <th style={{ width: '50px', textAlign: 'center' }}>Photos</th>
-                    <th style={{ width: '60px' }}>Details</th>
+                    <th style={{ width: '40px', textAlign: 'center' }}>Photos</th>
+                    <th style={{ width: '55px' }}>Details</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,15 +274,15 @@ export default function DemoFinalPage() {
               <table className={styles['leads-table']}>
                 <thead>
                   <tr>
-                    <th style={{ width: '40px', textAlign: 'center' }}>#</th>
-                    <th>Reference</th>
-                    <th>Customer</th>
-                    <th>Vehicle</th>
-                    <th style={{ width: '100px' }}>Amount</th>
-                    <th style={{ width: '130px' }}>Status</th>
-                    <th>Company</th>
-                    <th style={{ width: '120px' }}>Created/Updated</th>
-                    <th style={{ width: '60px' }}>Details</th>
+                    <th style={{ width: '30px', textAlign: 'center' }}>#</th>
+                    <th style={{ width: '110px' }}>Reference</th>
+                    <th style={{ width: '100px' }}>Customer</th>
+                    <th style={{ width: '130px' }}>Vehicle</th>
+                    <th style={{ width: '80px' }}>Amount</th>
+                    <th style={{ width: '100px' }}>Status</th>
+                    <th style={{ width: '80px' }}>Company</th>
+                    <th style={{ width: '100px' }}>Created/Updated</th>
+                    <th style={{ width: '55px' }}>Details</th>
                   </tr>
                 </thead>
                 <tbody>

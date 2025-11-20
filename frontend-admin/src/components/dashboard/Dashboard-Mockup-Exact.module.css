@@ -803,9 +803,9 @@
     /* Leads Table */
     .leads-table {
       width: 100%;
-      min-width: 1200px;
       border-collapse: collapse;
-      font-size: 11px;
+      font-size: 10px;
+      table-layout: fixed;
     }
 
     .leads-table thead {
@@ -814,19 +814,23 @@
     }
 
     .leads-table th {
-      padding: 8px 8px;
+      padding: 8px 4px;
       text-align: left;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 600;
       color: #666;
       text-transform: uppercase;
       letter-spacing: 0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .leads-table td {
-      padding: 6px 8px;
+      padding: 6px 4px;
       border-bottom: 1px solid #f0f0f0;
       vertical-align: middle;
+      font-size: 10px;
     }
 
     .leads-table tbody tr {
