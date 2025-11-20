@@ -344,8 +344,8 @@
     .funnel-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 20px 0;
+      gap: 6px;
+      padding: 12px 0;
     }
 
     .funnel-stage {
@@ -363,7 +363,7 @@
 
     .funnel-bar-container {
       flex: 1;
-      height: 40px;
+      height: 32px;
       background: #f8f9fa;
       border-radius: 6px;
       overflow: hidden;
@@ -526,7 +526,7 @@
     }
 
     .leads-table td {
-      padding: 10px 8px;
+      padding: 6px 8px;
       border-bottom: 1px solid #f0f0f0;
       vertical-align: middle;
     }
@@ -951,8 +951,8 @@
     }
 
     .calendar-appointments-list {
-      margin-top: 16px;
-      padding-top: 16px;
+      margin-top: 8px;
+      padding-top: 8px;
       border-top: 1px solid #e5e7eb;
     }
 
@@ -1079,10 +1079,10 @@
         <div class="card" style="margin-bottom: 24px;">
           <div class="card-header">
             <div>
-              <div class="card-title">🎯 Leads da Semana</div>
-              <div class="card-subtitle">Novos leads recebidos nos últimos 7 dias</div>
+              <div class="card-title">🎯 Week's Leads</div>
+              <div class="card-subtitle">New leads received in the last 7 days</div>
             </div>
-            <a href="#" class="view-all">Ver Todos</a>
+            <a href="#" class="view-all">View All</a>
           </div>
           <div class="card-body" style="padding: 0; overflow-x: auto;">
             <table class="leads-table">
@@ -1267,10 +1267,10 @@
         <div class="card" style="margin-bottom: 24px;">
           <div class="card-header">
             <div>
-              <div class="card-title">📋 Estimates em Andamento</div>
-              <div class="card-subtitle">5 estimates aguardando ação</div>
+              <div class="card-title">📋 Estimates in Progress</div>
+              <div class="card-subtitle">5 estimates awaiting action</div>
             </div>
-            <a href="/dashboard/estimates" class="view-all">Ver Todos</a>
+            <a href="/dashboard/estimates" class="view-all">View All</a>
           </div>
           <div class="card-body" style="padding: 0; overflow-x: auto; max-height: 400px; overflow-y: auto;">
             <table class="leads-table">
@@ -1298,27 +1298,27 @@
                   <td>
                     <div class="status-dropdown">
                       <button class="status-button status-pending" onclick="toggleStatusMenu(this)" style="width: 100%; font-size: 10px; padding: 4px 8px;">
-                        <span>⏳ Pendente</span>
+                        <span>⏳ Pending</span>
                         <span style="font-size: 8px;">▼</span>
                       </button>
                       <div class="status-menu">
                         <div class="status-menu-item" onclick="changeStatus(this, 'pending')">
                           <span class="status-icon">⏳</span>
-                          <span>Pendente</span>
+                          <span>Pending</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'approved')">
                           <span class="status-icon">✅</span>
-                          <span>Aprovado</span>
+                          <span>Approved</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'completed')">
                           <span class="status-icon">🎉</span>
-                          <span>Finalizado</span>
+                          <span>Completed</span>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td><span class="lead-company">Progressive</span></td>
-                  <td><span style="font-size: 10px; color: #999;">Criado há 2 dias</span></td>
+                  <td><span style="font-size: 10px; color: #999;">Created 2 days ago</span></td>
                   <td style="text-align: center;">
                     <a href="#" class="lead-btn-view">Details</a>
                   </td>
@@ -1334,27 +1334,27 @@
                   <td>
                     <div class="status-dropdown">
                       <button class="status-button status-approved" onclick="toggleStatusMenu(this)" style="width: 100%; font-size: 10px; padding: 4px 8px;">
-                        <span>✅ Aprovado</span>
+                        <span>✅ Approved</span>
                         <span style="font-size: 8px;">▼</span>
                       </button>
                       <div class="status-menu">
                         <div class="status-menu-item" onclick="changeStatus(this, 'pending')">
                           <span class="status-icon">⏳</span>
-                          <span>Pendente</span>
+                          <span>Pending</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'approved')">
                           <span class="status-icon">✅</span>
-                          <span>Aprovado</span>
+                          <span>Approved</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'completed')">
                           <span class="status-icon">🎉</span>
-                          <span>Finalizado</span>
+                          <span>Completed</span>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td><span class="lead-company">USAA</span></td>
-                  <td><span style="font-size: 10px; color: #999;">Aprovado há 1 dia</span></td>
+                  <td><span style="font-size: 10px; color: #999;">Approved 1 day ago</span></td>
                   <td style="text-align: center;">
                     <a href="#" class="lead-btn-view">Details</a>
                   </td>
@@ -1370,27 +1370,27 @@
                   <td>
                     <div class="status-dropdown">
                       <button class="status-button status-pending" onclick="toggleStatusMenu(this)" style="width: 100%; font-size: 10px; padding: 4px 8px;">
-                        <span>⏳ Pendente</span>
+                        <span>⏳ Pending</span>
                         <span style="font-size: 8px;">▼</span>
                       </button>
                       <div class="status-menu">
                         <div class="status-menu-item" onclick="changeStatus(this, 'pending')">
                           <span class="status-icon">⏳</span>
-                          <span>Pendente</span>
+                          <span>Pending</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'approved')">
                           <span class="status-icon">✅</span>
-                          <span>Aprovado</span>
+                          <span>Approved</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'completed')">
                           <span class="status-icon">🎉</span>
-                          <span>Finalizado</span>
+                          <span>Completed</span>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td><span class="lead-company">State Farm</span></td>
-                  <td><span style="font-size: 10px; color: #999;">Criado há 3 dias</span></td>
+                  <td><span style="font-size: 10px; color: #999;">Created 3 days ago</span></td>
                   <td style="text-align: center;">
                     <a href="#" class="lead-btn-view">Details</a>
                   </td>
@@ -1406,27 +1406,27 @@
                   <td>
                     <div class="status-dropdown">
                       <button class="status-button status-completed" onclick="toggleStatusMenu(this)" style="width: 100%; font-size: 10px; padding: 4px 8px;">
-                        <span>🎉 Finalizado</span>
+                        <span>🎉 Completed</span>
                         <span style="font-size: 8px;">▼</span>
                       </button>
                       <div class="status-menu">
                         <div class="status-menu-item" onclick="changeStatus(this, 'pending')">
                           <span class="status-icon">⏳</span>
-                          <span>Pendente</span>
+                          <span>Pending</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'approved')">
                           <span class="status-icon">✅</span>
-                          <span>Aprovado</span>
+                          <span>Approved</span>
                         </div>
                         <div class="status-menu-item" onclick="changeStatus(this, 'completed')">
                           <span class="status-icon">🎉</span>
-                          <span>Finalizado</span>
+                          <span>Completed</span>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td><span class="lead-company">Allstate</span></td>
-                  <td><span style="font-size: 10px; color: #999;">Finalizado há 5 dias</span></td>
+                  <td><span style="font-size: 10px; color: #999;">Completed 5 days ago</span></td>
                   <td style="text-align: center;">
                     <a href="#" class="lead-btn-view">Details</a>
                   </td>
@@ -1507,7 +1507,7 @@
               <div class="card-title">📅 Agenda</div>
               <div class="card-subtitle">Appointments & Schedule</div>
             </div>
-            <a href="/dashboard/calendar" class="view-all">Ver Calendário</a>
+            <a href="/dashboard/calendar" class="view-all">View Calendar</a>
           </div>
           <div class="card-body">
             <div class="mini-calendar">
@@ -1708,17 +1708,17 @@
       const statusConfig = {
         pending: {
           class: 'status-pending',
-          text: '⏳ Pendente',
+          text: '⏳ Pending',
           opacity: '1'
         },
         approved: {
           class: 'status-approved',
-          text: '✅ Aprovado',
+          text: '✅ Approved',
           opacity: '1'
         },
         completed: {
           class: 'status-completed',
-          text: '🎉 Finalizado',
+          text: '🎉 Completed',
           opacity: '0.7'
         }
       };
@@ -1734,7 +1734,7 @@
       menu.classList.remove('active');
       
       // Show toast notification (mockup)
-      showToast('Status atualizado para: ' + statusConfig[newStatus].text);
+      showToast('Status updated to: ' + statusConfig[newStatus].text);
       
       event.stopPropagation();
     }
