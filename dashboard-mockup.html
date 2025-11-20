@@ -757,6 +757,20 @@
       margin-top: 4px;
     }
 
+    /* Two Column Grid for Actions */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* View All Link */
     .view-all {
       color: #D4AF37;
@@ -1362,17 +1376,17 @@
       </div>
 
       <div class="kpi-card">
-        <span class="kpi-trend">🔧</span>
-        <div class="kpi-label">Jobs In Progress</div>
-        <div class="kpi-value">5</div>
-        <div class="kpi-subtitle">3 completing this week</div>
-      </div>
-
-      <div class="kpi-card">
         <span class="kpi-trend">⏳</span>
         <div class="kpi-label">Pending</div>
         <div class="kpi-value">$7.75K</div>
         <div class="kpi-subtitle">2 estimates awaiting</div>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-trend">🔧</span>
+        <div class="kpi-label">Jobs In Progress</div>
+        <div class="kpi-value">5</div>
+        <div class="kpi-subtitle">3 completing this week</div>
       </div>
     </div>
 
@@ -1810,6 +1824,146 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Business Actions & Conversion Funnel Grid -->
+        <div class="actions-grid">
+          <!-- Business Actions -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">💼 Business Actions</div>
+                <div class="card-subtitle">Quick access to common tasks</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <a href="#leads" class="action-button">
+                <div class="action-content">
+                  <div class="action-icon">📞</div>
+                  <div class="action-text">
+                    <div class="action-title">Call Pending Leads</div>
+                    <div class="action-subtitle">3 leads awaiting contact</div>
+                  </div>
+                </div>
+                <div class="action-arrow">→</div>
+              </a>
+
+              <a href="#estimates" class="action-button">
+                <div class="action-content">
+                  <div class="action-icon">📋</div>
+                  <div class="action-text">
+                    <div class="action-title">Create New Estimate</div>
+                    <div class="action-subtitle">Start new quote</div>
+                  </div>
+                </div>
+                <div class="action-arrow">→</div>
+              </a>
+
+              <a href="#calendar" class="action-button">
+                <div class="action-content">
+                  <div class="action-icon">📅</div>
+                  <div class="action-text">
+                    <div class="action-title">Schedule Appointment</div>
+                    <div class="action-subtitle">Book customer visit</div>
+                  </div>
+                </div>
+                <div class="action-arrow">→</div>
+              </a>
+
+              <a href="#messages" class="action-button">
+                <div class="action-content">
+                  <div class="action-icon">💬</div>
+                  <div class="action-text">
+                    <div class="action-title">Send Follow-up</div>
+                    <div class="action-subtitle">Message customers</div>
+                  </div>
+                </div>
+                <div class="action-arrow">→</div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Conversion Funnel -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📈 Conversion Funnel</div>
+                <div class="card-subtitle">Pipeline performance</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Stage 1: Leads -->
+              <div class="funnel-stage">
+                <div class="funnel-header">
+                  <div class="funnel-label">
+                    <span>🎯</span>
+                    <span>Leads</span>
+                  </div>
+                  <div class="funnel-value">18</div>
+                </div>
+                <div class="funnel-bar-container">
+                  <div class="funnel-bar leads" style="width: 100%;">
+                    <span>100%</span>
+                    <span>18 leads</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stage 2: Estimates -->
+              <div class="funnel-stage">
+                <div class="funnel-header">
+                  <div class="funnel-label">
+                    <span>📋</span>
+                    <span>Estimates</span>
+                  </div>
+                  <div class="funnel-value">7</div>
+                </div>
+                <div class="funnel-bar-container">
+                  <div class="funnel-bar estimates" style="width: 78%;">
+                    <span>78%</span>
+                    <span>7 estimates</span>
+                  </div>
+                </div>
+                <div class="funnel-percentage">↓ 39% conversion from leads</div>
+              </div>
+
+              <!-- Stage 3: Approved -->
+              <div class="funnel-stage">
+                <div class="funnel-header">
+                  <div class="funnel-label">
+                    <span>✅</span>
+                    <span>Approved</span>
+                  </div>
+                  <div class="funnel-value">3</div>
+                </div>
+                <div class="funnel-bar-container">
+                  <div class="funnel-bar approved" style="width: 43%;">
+                    <span>43%</span>
+                    <span>3 approved</span>
+                  </div>
+                </div>
+                <div class="funnel-percentage">↓ 43% approval rate</div>
+              </div>
+
+              <!-- Stage 4: Jobs -->
+              <div class="funnel-stage">
+                <div class="funnel-header">
+                  <div class="funnel-label">
+                    <span>🔧</span>
+                    <span>Jobs</span>
+                  </div>
+                  <div class="funnel-value">5</div>
+                </div>
+                <div class="funnel-bar-container">
+                  <div class="funnel-bar jobs" style="width: 56%;">
+                    <span>56%</span>
+                    <span>5 jobs</span>
+                  </div>
+                </div>
+                <div class="funnel-percentage">↓ 28% overall conversion</div>
+              </div>
+            </div>
           </div>
         </div>
 
