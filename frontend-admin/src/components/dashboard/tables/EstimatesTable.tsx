@@ -4,7 +4,7 @@ import styles from '../Dashboard.module.css';
 interface Estimate {
   id: string;
   customerName: string;
-  vehicleInfo?: string;
+  vehicleInfo: string;
   amount: number;
   status: string;
   createdAt: Date | string;
@@ -13,86 +13,115 @@ interface Estimate {
 interface EstimatesTableProps {
   estimates: Estimate[];
   maxHeight?: string;
-  limit?: number;
 }
 
 export default function EstimatesTable({ 
   estimates, 
-  maxHeight = '300px',
-  limit = 7
+  maxHeight = '300px' 
 }: EstimatesTableProps) {
-  const displayEstimates = limit ? estimates.slice(0, limit) : estimates;
-
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
+  const formatCurrency = (amount: number): string => {
+    return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const formatDate = (date: Date | string): string => {
     const d = typeof date === 'string' ? new Date(date) : date;
     return d.toLocaleDateString('en-US', { 
       month: 'short', 
-      day: 'numeric'
+      day: 'numeric' 
     });
   };
 
   const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'DRAFT': 'info',
-      'PENDING': 'pending',
-      'APPROVED': 'approved',
-      'REJECTED': 'danger',
-      'EXPIRED': 'danger'
+    const statusConfig: Record<string, { bg: string; text: string; label: string }> = {
+      'APPROVED': { bg: '#10B981', text: 'white', label: '✅ Approved' },
+      'PENDING': { bg: '#F59E0B', text: 'white', label: '⏳ Pending' },
+      'REJECTED': { bg: '#EF4444', text: 'white', label: '❌ Rejected' },
+      'DRAFT': { bg: '#6B7280', text: 'white', label: '📝 Draft' }
     };
-    const badgeClass = statusMap[status] || 'info';
-    return <span className={`${styles.badge} ${styles[badgeClass]}`}>{status}</span>;
+    
+    const config = statusConfig[status] || statusConfig['DRAFT'];
+    
+    return (
+      <span style={{
+        background: config.bg,
+        color: config.text,
+        padding: '4px 10px',
+        borderRadius: '6px',
+        fontSize: '11px',
+        fontWeight: '600',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px'
+      }}>
+        {config.label}
+      </span>
+    );
   };
 
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
         <div>
-          <div className={styles.cardTitle}>Estimates</div>
-          <div className={styles.cardSubtitle}>
-            {displayEstimates.length} of {estimates.length} estimates
-          </div>
+          <div className={styles.cardTitle}>💰 Estimates in Progress</div>
+          <div className={styles.cardSubtitle}>{estimates.length} estimates awaiting action</div>
         </div>
       </div>
       <div className={styles.tableContainer} style={{ maxHeight }}>
-        <table className={styles.table}>
+        <table className={styles.tableEstimates}>
           <thead>
             <tr>
-              <th>Customer</th>
-              <th>Vehicle</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Date</th>
+              <th style={{ width: '40px' }}>#</th>
+              <th>REFERENCE</th>
+              <th>CUSTOMER</th>
+              <th>VEHICLE</th>
+              <th>AMOUNT</th>
+              <th>STATUS</th>
+              <th style={{ width: '120px' }}>CREATED/UPDATED</th>
+              <th style={{ width: '80px' }}>DETAILS</th>
             </tr>
           </thead>
           <tbody>
-            {displayEstimates.length === 0 ? (
+            {estimates.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                <td colSpan={8} style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
                   No estimates found
                 </td>
               </tr>
             ) : (
-              displayEstimates.map((estimate) => (
+              estimates.map((estimate, index) => (
                 <tr key={estimate.id}>
-                  <td style={{ fontWeight: 600 }}>{estimate.customerName}</td>
-                  <td style={{ fontSize: '11px', color: '#666' }}>
-                    {estimate.vehicleInfo || '—'}
+                  <td>
+                    <span className={styles.estimateIndex}>{index + 1}</span>
                   </td>
-                  <td style={{ fontWeight: 600, color: '#D4AF37' }}>
-                    {formatCurrency(estimate.amount)}
+                  <td>
+                    <span className={styles.estimateRef}>EST-{estimate.id.slice(-4)}</span>
                   </td>
-                  <td>{getStatusBadge(estimate.status)}</td>
+                  <td style={{ fontWeight: 600, color: '#1a1a1a' }}>
+                    {estimate.customerName}
+                  </td>
+                  <td style={{ color: '#666', fontSize: '12px' }}>
+                    {estimate.vehicleInfo}
+                  </td>
+                  <td>
+                    <span style={{ 
+                      fontWeight: 700, 
+                      color: '#D4AF37',
+                      fontSize: '14px'
+                    }}>
+                      {formatCurrency(estimate.amount)}
+                    </span>
+                  </td>
+                  <td>
+                    {getStatusBadge(estimate.status)}
+                  </td>
                   <td style={{ fontSize: '11px', color: '#666' }}>
-                    {formatDate(estimate.createdAt)}
+                    <div>Created {formatDate(estimate.createdAt)}</div>
+                    <div style={{ marginTop: '2px', fontSize: '10px', color: '#999' }}>
+                      Approved 1 day ago
+                    </div>
+                  </td>
+                  <td>
+                    <button className={styles.btnDetails}>Details</button>
                   </td>
                 </tr>
               ))
