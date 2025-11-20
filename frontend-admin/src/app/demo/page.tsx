@@ -96,11 +96,21 @@ export default function DemoDashboardPage() {
         🎨 DEMO MODE - Dashboard Preview (No Authentication Required)
       </div>
 
-      {/* Dashboard Header */}
-      <div className={styles.dashboardHeader}>
-        <div>
-          <h1 className={styles.dashboardTitle}>Dashboard</h1>
-          <p className={styles.dashboardSubtitle}>Welcome! Here's your business overview</p>
+      {/* Dashboard Header - EXACT MOCKUP MATCH */}
+      <div className={styles.header}>
+        <div className={styles.headerTitle}>
+          <h1>Welcome back, Admin FlipCars US! 👋</h1>
+          <p className={styles.headerSubtitle}>Here's what's happening with your auto body shop today</p>
+        </div>
+        <div className={styles.headerActions}>
+          <button className={styles.btnSecondary}>
+            <span>📊</span>
+            <span>Export</span>
+          </button>
+          <button className={styles.btnPrimary}>
+            <span>✨</span>
+            <span>New Estimate</span>
+          </button>
         </div>
       </div>
 

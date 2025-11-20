@@ -1,5 +1,66 @@
 /* FlipCars Dashboard - Mockup Implementation Styles */
 
+/* Header - EXACT MOCKUP MATCH */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.headerTitle h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.headerSubtitle {
+  font-size: 13px;
+  color: #666;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.btnPrimary,
+.btnSecondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnPrimary {
+  background: #D4AF37;
+  color: white;
+}
+
+.btnPrimary:hover {
+  background: #B8941F;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btnSecondary {
+  background: white;
+  color: #666;
+  border: 1px solid #e0e0e0;
+}
+
+.btnSecondary:hover {
+  background: #f8f9fa;
+  border-color: #D4AF37;
+}
+
 /* KPI Cards Grid - 6 columns */
 .kpiGrid {
   display: grid;
