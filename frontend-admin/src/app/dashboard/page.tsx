@@ -3,6 +3,7 @@
 import React from 'react';
 import styles from '@/components/dashboard/Dashboard-Mockup-Exact.module.css';
 
+// Dashboard updated: Nov 20, 2025 - Exact mockup replica deployed
 export default function DashboardPage() {
   return (
     <div className={styles.container}>
