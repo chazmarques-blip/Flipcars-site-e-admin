@@ -874,10 +874,9 @@
     .calendar-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 1px;
-      background: #e5e7eb;
+      gap: 0;
+      background: #ffffff;
       border: 1px solid #e5e7eb;
-      padding: 1px;
     }
 
     .calendar-day {
@@ -892,10 +891,15 @@
       position: relative;
       color: #1f2937;
       background: #ffffff;
-      border: none;
+      border-right: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
       padding: 3px 4px;
       min-height: 60px;
       text-align: left;
+    }
+
+    .calendar-day:nth-child(7n) {
+      border-right: none;
     }
 
     .calendar-day:hover {
