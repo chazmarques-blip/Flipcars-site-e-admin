@@ -809,11 +809,12 @@
       font-size: 14px;
     }
 
-    /* Mini Calendar - Pixel-Perfect Match to FullCalendar */
+    /* Mini Calendar - Google Calendar Minimalist Style */
     .mini-calendar {
       background: white;
       border-radius: 8px;
-      padding: 16px;
+      padding: 12px;
+      overflow: visible;
     }
 
     .calendar-header {
@@ -883,7 +884,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: flex-start;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 400;
       cursor: pointer;
       transition: background 0.15s;
@@ -891,7 +892,7 @@
       color: #1f2937;
       background: #ffffff;
       border: none;
-      padding: 4px 6px;
+      padding: 3px 4px;
       min-height: 60px;
       text-align: left;
     }
@@ -911,37 +912,37 @@
       border: 2px solid #D4AF37;
       color: #1f2937;
       font-weight: 500;
-      padding: 3px;
+      padding: 2px 3px;
     }
 
     .calendar-day.today:hover {
       background: #fffef7;
     }
 
-    /* Days with events - Thin black bar at BOTTOM like Google Calendar */
+    /* Days with events - Thin black bar in the MIDDLE of cell */
     .calendar-day.has-event::after {
       content: '';
       position: absolute;
-      bottom: 4px;
+      top: 50%;
       left: 4px;
       right: 4px;
-      height: 2px;
+      transform: translateY(-50%);
+      height: 1px;
       background: #1f2937;
-      border-radius: 1px;
     }
 
-    /* Badge with count - Small golden badge near the number */
+    /* Badge with count - Small SQUARE golden badge on RIGHT side */
     .calendar-day.has-badge::before {
       content: attr(data-count);
       position: absolute;
-      top: 2px;
-      left: 24px;
-      width: 16px;
-      height: 16px;
+      top: 3px;
+      right: 3px;
+      width: 14px;
+      height: 14px;
       background: #D4AF37;
       color: #1f2937;
-      border-radius: 50%;
-      font-size: 9px;
+      border-radius: 2px;
+      font-size: 8px;
       font-weight: 700;
       display: flex;
       align-items: center;
