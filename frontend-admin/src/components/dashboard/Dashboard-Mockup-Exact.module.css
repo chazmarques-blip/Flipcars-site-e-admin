@@ -1,8 +1,12 @@
     .container {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       color: #1a1a1a;
-      max-width: 1600px;
-      margin: 0 auto;
+      max-width: 100%;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      background: #f8f9fa;
+      min-height: 100vh;
     }
 
     /* Header */
@@ -66,9 +70,21 @@
     /* KPI Cards Row */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 12px;
       margin-bottom: 24px;
+    }
+    
+    @media (min-width: 768px) {
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    @media (min-width: 1200px) {
+      .kpi-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
     }
 
     .kpi-card {
@@ -121,9 +137,15 @@
     /* Main Layout */
     .main-layout {
       display: grid;
-      grid-template-columns: 1fr 420px;
+      grid-template-columns: 1fr;
       gap: 24px;
       margin-bottom: 24px;
+    }
+    
+    @media (min-width: 1200px) {
+      .main-layout {
+        grid-template-columns: 1fr 420px;
+      }
     }
 
     .card {
@@ -787,6 +809,7 @@
     /* Leads Table */
     .leads-table {
       width: 100%;
+      min-width: 1200px;
       border-collapse: collapse;
       font-size: 11px;
     }
