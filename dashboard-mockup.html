@@ -617,6 +617,146 @@
       color: #1a1a1a;
     }
 
+    /* Business Actions */
+    .action-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .action-button:hover {
+      background: #fffbf0;
+      border-color: #D4AF37;
+      transform: translateX(4px);
+    }
+
+    .action-button:last-child {
+      margin-bottom: 0;
+    }
+
+    .action-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .action-icon {
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .action-text {
+      flex: 1;
+    }
+
+    .action-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 2px;
+    }
+
+    .action-subtitle {
+      font-size: 10px;
+      color: #999;
+    }
+
+    .action-arrow {
+      font-size: 16px;
+      color: #D4AF37;
+    }
+
+    /* Conversion Funnel */
+    .funnel-stage {
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .funnel-stage:last-child {
+      margin-bottom: 0;
+    }
+
+    .funnel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .funnel-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .funnel-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: #D4AF37;
+    }
+
+    .funnel-bar-container {
+      background: #f0f0f0;
+      height: 32px;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .funnel-bar {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      transition: all 0.3s;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .funnel-bar.leads {
+      background: linear-gradient(90deg, #93c5fd 0%, #60a5fa 100%);
+    }
+
+    .funnel-bar.estimates {
+      background: linear-gradient(90deg, #fde68a 0%, #fbbf24 100%);
+      color: #1a1a1a;
+    }
+
+    .funnel-bar.approved {
+      background: linear-gradient(90deg, #a7f3d0 0%, #34d399 100%);
+    }
+
+    .funnel-bar.jobs {
+      background: linear-gradient(90deg, #D4AF37 0%, #B8941F 100%);
+    }
+
+    .funnel-percentage {
+      font-size: 10px;
+      color: #666;
+      margin-top: 4px;
+    }
+
     /* View All Link */
     .view-all {
       color: #D4AF37;
@@ -1991,55 +2131,139 @@
           </div>
         </div>
 
-        <!-- Revenue Breakdown -->
+        <!-- Business Actions -->
         <div class="card" style="margin-bottom: 24px;">
           <div class="card-header">
             <div>
-              <div class="card-title">💰 Revenue Breakdown</div>
-              <div class="card-subtitle">By payment type</div>
+              <div class="card-title">💼 Business Actions</div>
+              <div class="card-subtitle">Quick access to common tasks</div>
             </div>
           </div>
           <div class="card-body">
-            <div class="revenue-pie"></div>
-            <div class="revenue-legend">
-              <div class="legend-item">
-                <span class="legend-color gold"></span>
-                <span>Insurance Claims</span>
-                <span class="legend-value">70% ($17.2K)</span>
+            <a href="#leads" class="action-button">
+              <div class="action-content">
+                <div class="action-icon">📞</div>
+                <div class="action-text">
+                  <div class="action-title">Call Pending Leads</div>
+                  <div class="action-subtitle">3 leads awaiting contact</div>
+                </div>
               </div>
-              <div class="legend-item">
-                <span class="legend-color green"></span>
-                <span>Private Pay</span>
-                <span class="legend-value">30% ($7.3K)</span>
+              <div class="action-arrow">→</div>
+            </a>
+
+            <a href="#estimates" class="action-button">
+              <div class="action-content">
+                <div class="action-icon">📋</div>
+                <div class="action-text">
+                  <div class="action-title">Create New Estimate</div>
+                  <div class="action-subtitle">Start new quote</div>
+                </div>
               </div>
-            </div>
+              <div class="action-arrow">→</div>
+            </a>
+
+            <a href="#calendar" class="action-button">
+              <div class="action-content">
+                <div class="action-icon">📅</div>
+                <div class="action-text">
+                  <div class="action-title">Schedule Appointment</div>
+                  <div class="action-subtitle">Book customer visit</div>
+                </div>
+              </div>
+              <div class="action-arrow">→</div>
+            </a>
+
+            <a href="#messages" class="action-button">
+              <div class="action-content">
+                <div class="action-icon">💬</div>
+                <div class="action-text">
+                  <div class="action-title">Send Follow-up</div>
+                  <div class="action-subtitle">Message customers</div>
+                </div>
+              </div>
+              <div class="action-arrow">→</div>
+            </a>
           </div>
         </div>
 
-        <!-- Quick Stats -->
+        <!-- Conversion Funnel -->
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">🎯 Quick Stats</div>
-              <div class="card-subtitle">Key metrics</div>
+              <div class="card-title">📈 Conversion Funnel</div>
+              <div class="card-subtitle">Pipeline performance</div>
             </div>
           </div>
           <div class="card-body">
-            <div class="quick-stat">
-              <span class="stat-label">Avg Job Value</span>
-              <span class="stat-value">$4,900</span>
+            <!-- Stage 1: Leads -->
+            <div class="funnel-stage">
+              <div class="funnel-header">
+                <div class="funnel-label">
+                  <span>🎯</span>
+                  <span>Leads</span>
+                </div>
+                <div class="funnel-value">18</div>
+              </div>
+              <div class="funnel-bar-container">
+                <div class="funnel-bar leads" style="width: 100%;">
+                  <span>100%</span>
+                  <span>18 leads</span>
+                </div>
+              </div>
             </div>
-            <div class="quick-stat">
-              <span class="stat-label">Conversion Rate</span>
-              <span class="stat-value">42%</span>
+
+            <!-- Stage 2: Estimates -->
+            <div class="funnel-stage">
+              <div class="funnel-header">
+                <div class="funnel-label">
+                  <span>📋</span>
+                  <span>Estimates</span>
+                </div>
+                <div class="funnel-value">7</div>
+              </div>
+              <div class="funnel-bar-container">
+                <div class="funnel-bar estimates" style="width: 78%;">
+                  <span>78%</span>
+                  <span>7 estimates</span>
+                </div>
+              </div>
+              <div class="funnel-percentage">↓ 39% conversion from leads</div>
             </div>
-            <div class="quick-stat">
-              <span class="stat-label">Avg Completion Time</span>
-              <span class="stat-value">5.2 days</span>
+
+            <!-- Stage 3: Approved -->
+            <div class="funnel-stage">
+              <div class="funnel-header">
+                <div class="funnel-label">
+                  <span>✅</span>
+                  <span>Approved</span>
+                </div>
+                <div class="funnel-value">3</div>
+              </div>
+              <div class="funnel-bar-container">
+                <div class="funnel-bar approved" style="width: 43%;">
+                  <span>43%</span>
+                  <span>3 approved</span>
+                </div>
+              </div>
+              <div class="funnel-percentage">↓ 43% approval rate</div>
             </div>
-            <div class="quick-stat">
-              <span class="stat-label">Customer Satisfaction</span>
-              <span class="stat-value">4.8 ⭐</span>
+
+            <!-- Stage 4: Jobs -->
+            <div class="funnel-stage">
+              <div class="funnel-header">
+                <div class="funnel-label">
+                  <span>🔧</span>
+                  <span>Jobs</span>
+                </div>
+                <div class="funnel-value">5</div>
+              </div>
+              <div class="funnel-bar-container">
+                <div class="funnel-bar jobs" style="width: 56%;">
+                  <span>56%</span>
+                  <span>5 jobs</span>
+                </div>
+              </div>
+              <div class="funnel-percentage">↓ 28% overall conversion</div>
             </div>
           </div>
         </div>
