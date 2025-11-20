@@ -70,12 +70,26 @@ export function AppointmentDetailsModal({ appointment, onClose, onUpdate }: Appo
 
     try {
       setLoading(true);
+      console.log('[AppointmentModal] Updating status to:', newStatus);
+      console.log('[AppointmentModal] Appointment ID:', appointment.id);
+      console.log('[AppointmentModal] Admin notes:', adminNotes);
+      
       await appointmentsService.updateStatus(appointment.id, newStatus, adminNotes);
+      
+      console.log('[AppointmentModal] ✅ Status updated successfully');
       onUpdate(); // Refresh calendar
+      alert(`✅ Status updated to ${newStatus.toUpperCase()} successfully!`);
       onClose();
-    } catch (error) {
-      console.error('Failed to update appointment status:', error);
-      alert('Failed to update appointment status');
+    } catch (error: any) {
+      console.error('[AppointmentModal] ❌ Failed to update appointment status:', error);
+      console.error('[AppointmentModal] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      alert(`❌ Failed to update status: ${errorMsg}\n\nCheck console for details.`);
     } finally {
       setLoading(false);
     }
@@ -87,12 +101,25 @@ export function AppointmentDetailsModal({ appointment, onClose, onUpdate }: Appo
 
     try {
       setLoading(true);
+      console.log('[AppointmentModal] Saving notes...');
+      console.log('[AppointmentModal] Appointment ID:', appointment.id);
+      console.log('[AppointmentModal] Notes:', adminNotes);
+      
       await appointmentsService.updateAppointment(appointment.id, { adminNotes });
+      
+      console.log('[AppointmentModal] ✅ Notes saved successfully');
       onUpdate();
-      alert('Notes saved successfully');
-    } catch (error) {
-      console.error('Failed to save notes:', error);
-      alert('Failed to save notes');
+      alert('✅ Notes saved successfully!');
+    } catch (error: any) {
+      console.error('[AppointmentModal] ❌ Failed to save notes:', error);
+      console.error('[AppointmentModal] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      alert(`❌ Failed to save notes: ${errorMsg}\n\nCheck console for details.`);
     } finally {
       setLoading(false);
     }
