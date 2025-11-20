@@ -1971,8 +1971,163 @@
 
       <!-- Right Sidebar -->
       <div>
-        <!-- Performance Timeline -->
+        <!-- Mini Calendar with Today's Appointments -->
         <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📅 Agenda</div>
+              <div class="card-subtitle">Appointments & Schedule</div>
+            </div>
+            <a href="/dashboard/calendar" class="view-all">View Calendar</a>
+          </div>
+          <div class="card-body" style="padding: 12px;">
+            <div class="mini-calendar">
+              <div class="calendar-header">
+                <div class="calendar-month">November 2025</div>
+                <div class="calendar-nav">
+                  <button class="calendar-nav-btn">◀</button>
+                  <button class="calendar-nav-btn">▶</button>
+                </div>
+              </div>
+              
+              <div class="calendar-weekdays">
+                <div class="calendar-weekday">Sun</div>
+                <div class="calendar-weekday">Mon</div>
+                <div class="calendar-weekday">Tue</div>
+                <div class="calendar-weekday">Wed</div>
+                <div class="calendar-weekday">Thu</div>
+                <div class="calendar-weekday">Fri</div>
+                <div class="calendar-weekday">Sat</div>
+              </div>
+              
+              <div class="calendar-days">
+                <!-- Previous month days -->
+                <div class="calendar-day other-month">27</div>
+                <div class="calendar-day other-month">28</div>
+                <div class="calendar-day other-month">29</div>
+                <div class="calendar-day other-month">30</div>
+                <div class="calendar-day other-month">31</div>
+                
+                <!-- November 2025 -->
+                <div class="calendar-day">1</div>
+                <div class="calendar-day">2</div>
+                <div class="calendar-day">3</div>
+                <div class="calendar-day">4</div>
+                <div class="calendar-day">5</div>
+                <div class="calendar-day">6</div>
+                <div class="calendar-day">7</div>
+                <div class="calendar-day">8</div>
+                <div class="calendar-day">9</div>
+                <div class="calendar-day">10</div>
+                <div class="calendar-day">11</div>
+                <div class="calendar-day">12</div>
+                <div class="calendar-day">13</div>
+                <div class="calendar-day">14</div>
+                <div class="calendar-day today">15</div>
+                <div class="calendar-day">16</div>
+                <div class="calendar-day">17</div>
+                <div class="calendar-day">18</div>
+                <div class="calendar-day">19</div>
+                <div class="calendar-day">20</div>
+                <div class="calendar-day">21</div>
+                <div class="calendar-day">22</div>
+                <div class="calendar-day">23</div>
+                <div class="calendar-day">24</div>
+                <div class="calendar-day has-event has-badge" data-count="1">25</div>
+                <div class="calendar-day">26</div>
+                <div class="calendar-day has-event has-badge" data-count="1">27</div>
+                <div class="calendar-day">28</div>
+                <div class="calendar-day">29</div>
+                <div class="calendar-day">30</div>
+                
+                <!-- Next month -->
+                <div class="calendar-day other-month">1</div>
+                <div class="calendar-day other-month">2</div>
+                <div class="calendar-day other-month">3</div>
+                <div class="calendar-day other-month">4</div>
+                <div class="calendar-day other-month">5</div>
+                <div class="calendar-day other-month">6</div>
+                <div class="calendar-day other-month">7</div>
+              </div>
+              
+              <!-- Today's Appointments -->
+              <div class="calendar-appointments-list">
+                <div style="font-size: 12px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">
+                  Today's Appointments
+                </div>
+                
+                <div class="calendar-appointment-mini">
+                  <div class="calendar-appointment-time-mini">10:00</div>
+                  <div class="calendar-appointment-info-mini">
+                    <div style="font-weight: 600; color: #1a1a1a; margin-bottom: 2px;">Maria Silva</div>
+                    <div style="font-size: 10px; color: #6b7280;">2021 CHEVROLET Silverado</div>
+                  </div>
+                </div>
+                
+                <div class="calendar-appointment-mini">
+                  <div class="calendar-appointment-time-mini">14:00</div>
+                  <div class="calendar-appointment-info-mini">
+                    <div style="font-weight: 600; color: #1a1a1a; margin-bottom: 2px;">Lourenco Gadelha</div>
+                    <div style="font-size: 10px; color: #6b7280;">2022 CHEVROLET Tahoe</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Urgent Actions -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">⚠️ Urgent Actions</div>
+              <div class="card-subtitle">5 items need attention</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- High Priority -->
+            <div class="urgent-item priority-high">
+              <div class="urgent-icon">🔴</div>
+              <div class="urgent-item-content">
+                <div class="urgent-text">
+                  <strong>Estimates pending review</strong>
+                  <div style="font-size: 10px; color: #999; margin-top: 2px;">Waiting > 3 days</div>
+                </div>
+                <span class="urgent-count priority-high">2</span>
+              </div>
+              <button class="urgent-action-btn" onclick="window.location.href='#estimates'">Review Now</button>
+            </div>
+
+            <!-- Medium Priority -->
+            <div class="urgent-item priority-medium">
+              <div class="urgent-icon">🟠</div>
+              <div class="urgent-item-content">
+                <div class="urgent-text">
+                  <strong>Leads awaiting response</strong>
+                  <div style="font-size: 10px; color: #999; margin-top: 2px;">No contact made yet</div>
+                </div>
+                <span class="urgent-count priority-medium">3</span>
+              </div>
+              <button class="urgent-action-btn" onclick="window.location.href='#leads'">Contact</button>
+            </div>
+
+            <!-- Low Priority -->
+            <div class="urgent-item priority-low">
+              <div class="urgent-icon">🟡</div>
+              <div class="urgent-item-content">
+                <div class="urgent-text">
+                  <strong>Appointments to confirm</strong>
+                  <div style="font-size: 10px; color: #999; margin-top: 2px;">Next 24 hours</div>
+                </div>
+                <span class="urgent-count priority-low">1</span>
+              </div>
+              <button class="urgent-action-btn" onclick="window.location.href='#calendar'">Confirm</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Timeline -->
+        <div class="card">
           <div class="card-header">
             <div>
               <div class="card-title">📊 Performance Timeline</div>
@@ -2126,161 +2281,6 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mini Calendar with Today's Appointments -->
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div>
-              <div class="card-title">📅 Agenda</div>
-              <div class="card-subtitle">Appointments & Schedule</div>
-            </div>
-            <a href="/dashboard/calendar" class="view-all">View Calendar</a>
-          </div>
-          <div class="card-body" style="padding: 12px;">
-            <div class="mini-calendar">
-              <div class="calendar-header">
-                <div class="calendar-month">November 2025</div>
-                <div class="calendar-nav">
-                  <button class="calendar-nav-btn">◀</button>
-                  <button class="calendar-nav-btn">▶</button>
-                </div>
-              </div>
-              
-              <div class="calendar-weekdays">
-                <div class="calendar-weekday">Sun</div>
-                <div class="calendar-weekday">Mon</div>
-                <div class="calendar-weekday">Tue</div>
-                <div class="calendar-weekday">Wed</div>
-                <div class="calendar-weekday">Thu</div>
-                <div class="calendar-weekday">Fri</div>
-                <div class="calendar-weekday">Sat</div>
-              </div>
-              
-              <div class="calendar-days">
-                <!-- Previous month days -->
-                <div class="calendar-day other-month">27</div>
-                <div class="calendar-day other-month">28</div>
-                <div class="calendar-day other-month">29</div>
-                <div class="calendar-day other-month">30</div>
-                <div class="calendar-day other-month">31</div>
-                
-                <!-- November 2025 -->
-                <div class="calendar-day">1</div>
-                <div class="calendar-day">2</div>
-                <div class="calendar-day">3</div>
-                <div class="calendar-day">4</div>
-                <div class="calendar-day">5</div>
-                <div class="calendar-day">6</div>
-                <div class="calendar-day">7</div>
-                <div class="calendar-day">8</div>
-                <div class="calendar-day">9</div>
-                <div class="calendar-day">10</div>
-                <div class="calendar-day">11</div>
-                <div class="calendar-day">12</div>
-                <div class="calendar-day">13</div>
-                <div class="calendar-day">14</div>
-                <div class="calendar-day today">15</div>
-                <div class="calendar-day">16</div>
-                <div class="calendar-day">17</div>
-                <div class="calendar-day">18</div>
-                <div class="calendar-day">19</div>
-                <div class="calendar-day">20</div>
-                <div class="calendar-day">21</div>
-                <div class="calendar-day">22</div>
-                <div class="calendar-day">23</div>
-                <div class="calendar-day">24</div>
-                <div class="calendar-day has-event has-badge" data-count="1">25</div>
-                <div class="calendar-day">26</div>
-                <div class="calendar-day has-event has-badge" data-count="1">27</div>
-                <div class="calendar-day">28</div>
-                <div class="calendar-day">29</div>
-                <div class="calendar-day">30</div>
-                
-                <!-- Next month -->
-                <div class="calendar-day other-month">1</div>
-                <div class="calendar-day other-month">2</div>
-                <div class="calendar-day other-month">3</div>
-                <div class="calendar-day other-month">4</div>
-                <div class="calendar-day other-month">5</div>
-                <div class="calendar-day other-month">6</div>
-                <div class="calendar-day other-month">7</div>
-              </div>
-              
-              <!-- Today's Appointments -->
-              <div class="calendar-appointments-list">
-                <div style="font-size: 12px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">
-                  Today's Appointments
-                </div>
-                
-                <div class="calendar-appointment-mini">
-                  <div class="calendar-appointment-time-mini">10:00</div>
-                  <div class="calendar-appointment-info-mini">
-                    <div style="font-weight: 600; color: #1a1a1a; margin-bottom: 2px;">Maria Silva</div>
-                    <div style="font-size: 10px; color: #6b7280;">2021 CHEVROLET Silverado</div>
-                  </div>
-                </div>
-                
-                <div class="calendar-appointment-mini">
-                  <div class="calendar-appointment-time-mini">14:00</div>
-                  <div class="calendar-appointment-info-mini">
-                    <div style="font-weight: 600; color: #1a1a1a; margin-bottom: 2px;">Lourenco Gadelha</div>
-                    <div style="font-size: 10px; color: #6b7280;">2022 CHEVROLET Tahoe</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Urgent Actions -->
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="card-header">
-            <div>
-              <div class="card-title">⚠️ Urgent Actions</div>
-              <div class="card-subtitle">5 items need attention</div>
-            </div>
-          </div>
-          <div class="card-body">
-            <!-- High Priority -->
-            <div class="urgent-item priority-high">
-              <div class="urgent-icon">🔴</div>
-              <div class="urgent-item-content">
-                <div class="urgent-text">
-                  <strong>Estimates pending review</strong>
-                  <div style="font-size: 10px; color: #999; margin-top: 2px;">Waiting > 3 days</div>
-                </div>
-                <span class="urgent-count priority-high">2</span>
-              </div>
-              <button class="urgent-action-btn" onclick="window.location.href='#estimates'">Review Now</button>
-            </div>
-
-            <!-- Medium Priority -->
-            <div class="urgent-item priority-medium">
-              <div class="urgent-icon">🟠</div>
-              <div class="urgent-item-content">
-                <div class="urgent-text">
-                  <strong>Leads awaiting response</strong>
-                  <div style="font-size: 10px; color: #999; margin-top: 2px;">No contact made yet</div>
-                </div>
-                <span class="urgent-count priority-medium">3</span>
-              </div>
-              <button class="urgent-action-btn" onclick="window.location.href='#leads'">Contact</button>
-            </div>
-
-            <!-- Low Priority -->
-            <div class="urgent-item priority-low">
-              <div class="urgent-icon">🟡</div>
-              <div class="urgent-item-content">
-                <div class="urgent-text">
-                  <strong>Appointments to confirm</strong>
-                  <div style="font-size: 10px; color: #999; margin-top: 2px;">Next 24 hours</div>
-                </div>
-                <span class="urgent-count priority-low">1</span>
-              </div>
-              <button class="urgent-action-btn" onclick="window.location.href='#calendar'">Confirm</button>
             </div>
           </div>
         </div>
