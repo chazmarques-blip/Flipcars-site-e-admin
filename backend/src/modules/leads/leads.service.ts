@@ -339,13 +339,13 @@ export class LeadsService {
       }
     }
 
-    // SEND CONFIRMATION EMAIL to customer
+    // SEND CONFIRMATION EMAIL to customer with printable confirmation
     try {
-      console.log('[LeadsService] 📧 Sending confirmation email to:', savedLead.email);
-      const emailSent = await this.emailService.sendEstimateConfirmation(savedLead);
+      console.log('[LeadsService] 📧 Sending printable confirmation email to:', savedLead.email);
+      const emailSent = await this.emailService.sendPrintableConfirmation(savedLead);
       
       if (emailSent) {
-        console.log(`[LeadsService] ✅ Confirmation email sent successfully to ${savedLead.email}`);
+        console.log(`[LeadsService] ✅ Printable confirmation email sent successfully to ${savedLead.email}`);
       } else {
         console.warn(`[LeadsService] ⚠️ Failed to send confirmation email to ${savedLead.email}`);
       }

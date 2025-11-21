@@ -8,6 +8,12 @@ export interface EmailOptions {
   subject: string;
   html: string;
   text?: string;
+  attachments?: Array<{
+    filename: string;
+    content?: Buffer | string;
+    path?: string;
+    contentType?: string;
+  }>;
 }
 
 @Injectable()
@@ -71,6 +77,7 @@ export class EmailService {
         subject: options.subject,
         text: options.text,
         html: options.html,
+        attachments: options.attachments,
       });
 
       const timeoutPromise = new Promise((_, reject) => {
@@ -147,6 +154,156 @@ FlipCars Auto Repair Team
       to: lead.email,
       subject,
       html,
+      text,
+    });
+  }
+
+  /**
+   * Send enhanced confirmation email with printable HTML attachment
+   */
+  async sendPrintableConfirmation(lead: Lead): Promise<boolean> {
+    this.logger.log(
+      `📧 Preparing printable confirmation email for ${lead.name}`,
+    );
+
+    const subject = `Estimate Request Confirmation - ${lead.referenceNumber}`;
+    
+    const vehicleInfo = [lead.vehicleYear, lead.vehicleMake, lead.vehicleModel]
+      .filter(Boolean)
+      .join(' ') || 'N/A';
+    
+    const preferredDateFormatted = lead.preferredDate
+      ? new Date(lead.preferredDate).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : 'To be scheduled';
+
+    const submittedDate = new Date().toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+
+    // Email body (customer-friendly version)
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); color: #D4AF37; padding: 20px; text-align: center; border-radius: 8px; }
+          .content { background: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 8px; }
+          .reference { font-size: 24px; font-weight: bold; color: #D4AF37; letter-spacing: 2px; margin: 10px 0; }
+          .info-row { margin: 10px 0; }
+          .label { font-weight: 600; color: #666; }
+          .value { color: #000; }
+          .footer { text-align: center; color: #666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 2px solid #D4AF37; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🎯 ESTIMATE REQUEST CONFIRMED</h1>
+            <p style="margin: 0; opacity: 0.9;">${lead.serviceType === 'bodyshop' ? 'Body Shop Repair Service' : 'Mechanic Service'}</p>
+          </div>
+          
+          <div class="content">
+            <p>Dear <strong>${lead.name}</strong>,</p>
+            <p>Thank you for choosing FlipCars Auto Repair! We have received your estimate request and will contact you shortly.</p>
+            
+            <h3 style="color: #000; border-bottom: 2px solid #D4AF37; padding-bottom: 10px;">Your Reference Number</h3>
+            <div class="reference">${lead.referenceNumber}</div>
+            <p style="font-size: 12px; color: #666;">Please save this number for your records</p>
+            
+            <h3 style="color: #000; border-bottom: 2px solid #D4AF37; padding-bottom: 10px; margin-top: 20px;">Request Details</h3>
+            <div class="info-row">
+              <span class="label">Submitted:</span>
+              <span class="value">${submittedDate}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Vehicle:</span>
+              <span class="value">${vehicleInfo}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Preferred Date:</span>
+              <span class="value">${preferredDateFormatted}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Phone:</span>
+              <span class="value">${lead.phone}</span>
+            </div>
+            
+            <h3 style="color: #000; border-bottom: 2px solid #D4AF37; padding-bottom: 10px; margin-top: 20px;">What Happens Next?</h3>
+            <ol style="margin: 15px 0; padding-left: 20px;">
+              <li style="margin: 8px 0;"><strong>Review</strong> - We'll review your request within 1 hour</li>
+              <li style="margin: 8px 0;"><strong>Contact</strong> - We'll reach out via your preferred method</li>
+              <li style="margin: 8px 0;"><strong>Service</strong> - We'll confirm your appointment and provide estimate</li>
+            </ol>
+            
+            <div style="background: #fff; padding: 15px; border-left: 4px solid #D4AF37; margin-top: 20px;">
+              <h4 style="margin: 0 0 10px 0; color: #000;">📍 Our Location</h4>
+              <p style="margin: 5px 0;">FlipCars Auto Repair</p>
+              <p style="margin: 5px 0;">5200 Old Winter Garden Rd, Suite 110A<br>Orlando, FL 32811</p>
+              <p style="margin: 5px 0;"><strong>Phone:</strong> (321) 960-8661</p>
+              <p style="margin: 5px 0; font-size: 12px; color: #666;">Mon-Fri 9:00 AM - 6:00 PM | Sat 9:00 AM - 12:00 PM | Sunday Closed</p>
+            </div>
+          </div>
+          
+          <div class="footer">
+            <p><strong>Thank you for choosing FlipCars Auto Repair!</strong></p>
+            <p>We look forward to serving you.</p>
+            <p style="margin-top: 10px;">Please keep this email for your records.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const text = `
+Thank you for your estimate request!
+
+Dear ${lead.name},
+
+We have received your estimate request and will contact you shortly.
+
+REFERENCE NUMBER: ${lead.referenceNumber}
+(Please save this number for your records)
+
+Request Details:
+- Submitted: ${submittedDate}
+- Vehicle: ${vehicleInfo}
+- Preferred Date: ${preferredDateFormatted}
+- Phone: ${lead.phone}
+
+What Happens Next?
+1. Review - We'll review your request within 1 hour
+2. Contact - We'll reach out via your preferred method
+3. Service - We'll confirm your appointment and provide estimate
+
+Our Location:
+FlipCars Auto Repair
+5200 Old Winter Garden Rd, Suite 110A
+Orlando, FL 32811
+Phone: (321) 960-8661
+Hours: Mon-Fri 9:00 AM - 6:00 PM | Sat 9:00 AM - 12:00 PM | Sunday Closed
+
+Thank you for choosing FlipCars Auto Repair!
+We look forward to serving you.
+    `;
+
+    return this.sendEmail({
+      to: lead.email,
+      subject,
+      html: emailHtml,
       text,
     });
   }
