@@ -47,6 +47,14 @@ export class PublicLeadsController {
       // Transform public DTO to internal CreateLeadDto
       this.logger.log('🔄 Transforming lead data...');
       const leadData = await this.transformPublicLead(createPublicLeadDto);
+      
+      this.logger.log('📋 Transformed lead data summary:');
+      this.logger.log(`  Name: ${leadData.name}`);
+      this.logger.log(`  Email: ${leadData.email}`);
+      this.logger.log(`  Phone: ${leadData.phone}`);
+      this.logger.log(`  Preferred Date: ${leadData.preferredDate || 'NOT SET'}`);
+      this.logger.log(`  Preferred Time Slot: ${leadData.preferredTimeSlot || 'NOT SET'}`);
+      this.logger.log(`  Contact Preferences:`, leadData.contactPreferences);
 
       // Create lead using existing service
       this.logger.log('💾 Creating lead in database...');

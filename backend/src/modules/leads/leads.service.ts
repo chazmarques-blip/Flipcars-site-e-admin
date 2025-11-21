@@ -322,21 +322,43 @@ export class LeadsService {
     // AUTO-CREATE APPOINTMENT if preferredDate is provided
     if (createLeadDto.preferredDate && createLeadDto.preferredTimeSlot) {
       try {
-        console.log('[LeadsService] Auto-creating appointment for lead:', savedLead.referenceNumber);
+        console.log('[LeadsService] 📅 AUTO-CREATE APPOINTMENT CHECK:');
+        console.log(`  Lead ID: ${savedLead.id}`);
+        console.log(`  Lead Reference: ${savedLead.referenceNumber}`);
+        console.log(`  Preferred Date: ${createLeadDto.preferredDate}`);
+        console.log(`  Preferred Time Slot: ${createLeadDto.preferredTimeSlot}`);
+        console.log(`  Contact Preferences:`, createLeadDto.contactPreferences);
         
-        await this.appointmentsService.create({
+        const appointmentDto = {
           leadId: savedLead.id,
           appointmentDate: createLeadDto.preferredDate,
           appointmentTimeSlot: createLeadDto.preferredTimeSlot,
           contactPreferences: createLeadDto.contactPreferences,
-        });
+        };
         
-        console.log(`[LeadsService] ✅ Appointment auto-created for lead ${savedLead.referenceNumber}`);
+        console.log('[LeadsService] 📤 Calling appointmentsService.create() with:', appointmentDto);
+        
+        const createdAppointment = await this.appointmentsService.create(appointmentDto);
+        
+        console.log(`[LeadsService] ✅ Appointment auto-created successfully!`);
+        console.log(`  Appointment ID: ${createdAppointment.id}`);
+        console.log(`  Appointment Date: ${createdAppointment.appointmentDate}`);
+        console.log(`  Appointment Time Slot: ${createdAppointment.appointmentTimeSlot}`);
+        console.log(`  Appointment Status: ${createdAppointment.status}`);
       } catch (error) {
         // Log error but don't fail lead creation
-        console.error('[LeadsService] ❌ Failed to auto-create appointment:', error.message);
+        console.error('[LeadsService] ❌ ========================================');
+        console.error('[LeadsService] ❌ FAILED TO AUTO-CREATE APPOINTMENT');
+        console.error('[LeadsService] ❌ Error message:', error.message);
+        console.error('[LeadsService] ❌ Error stack:', error.stack);
+        console.error('[LeadsService] ❌ Error details:', error);
+        console.error('[LeadsService] ❌ ========================================');
         console.error('[LeadsService] Lead was created successfully, but appointment creation failed');
       }
+    } else {
+      console.log('[LeadsService] ⏭️  SKIPPING appointment creation:');
+      console.log(`  preferredDate: ${createLeadDto.preferredDate || 'NOT PROVIDED'}`);
+      console.log(`  preferredTimeSlot: ${createLeadDto.preferredTimeSlot || 'NOT PROVIDED'}`);
     }
 
     // SEND CONFIRMATION EMAIL to customer with printable confirmation
