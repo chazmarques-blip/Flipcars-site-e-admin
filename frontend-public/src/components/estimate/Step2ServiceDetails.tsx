@@ -245,24 +245,32 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         )}
 
         {showDatePicker && (
-          <div className="border border-neutral-300 rounded-lg p-3 bg-white">
-            <h4 className="text-sm font-medium text-black mb-2">Select a date:</h4>
-            <div className="grid grid-cols-3 gap-2 max-h-52 overflow-y-auto">
+          <div className="border border-neutral-300 rounded-lg p-4 bg-white shadow-lg">
+            <h4 className="text-base font-semibold text-black mb-3">Select a date:</h4>
+            <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
               {availableDates.map((date) => (
                 <button
                   key={date.toISOString()}
                   type="button"
                   onClick={() => handleDateSelect(date)}
-                  className="px-3 py-2 text-sm md:text-xs border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors"
+                  className="px-2 py-3 text-sm font-medium text-black border-2 border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/10 transition-all active:scale-95"
                 >
-                  {formatDateDisplay(date)}
+                  <div className="text-xs text-neutral-600 mb-0.5">
+                    {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                  </div>
+                  <div className="text-base font-bold">
+                    {date.getDate()}
+                  </div>
+                  <div className="text-xs text-neutral-600">
+                    {date.toLocaleDateString('en-US', { month: 'short' })}
+                  </div>
                 </button>
               ))}
             </div>
             <button
               type="button"
               onClick={() => setShowDatePicker(false)}
-              className="mt-2 text-[10px] text-neutral-600 hover:text-black"
+              className="mt-3 w-full py-2 text-sm text-neutral-600 hover:text-black border border-neutral-300 rounded-lg hover:bg-neutral-50"
             >
               Cancel
             </button>
@@ -270,8 +278,8 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         )}
 
         {showTimeSlots && selectedDate && (
-          <div className="border border-neutral-300 rounded-lg p-3 bg-white">
-            <h4 className="text-sm font-medium text-black mb-2">
+          <div className="border border-neutral-300 rounded-lg p-4 bg-white shadow-lg">
+            <h4 className="text-base font-semibold text-black mb-3">
               Select time slot for {formatDateDisplay(selectedDate)}:
             </h4>
             <div className="grid grid-cols-1 gap-2">
@@ -280,7 +288,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={slot.value}
                   type="button"
                   onClick={() => handleTimeSlotSelect(slot.value)}
-                  className="px-3 py-2.5 text-base md:text-sm border border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/5 transition-colors text-left"
+                  className="px-4 py-3 text-base font-medium text-black border-2 border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/10 transition-all active:scale-95 text-left"
                 >
                   {slot.label}
                 </button>
@@ -292,7 +300,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                 setShowTimeSlots(false);
                 setShowDatePicker(true);
               }}
-              className="mt-2 text-[10px] text-neutral-600 hover:text-black"
+              className="mt-3 w-full py-2 text-sm text-neutral-600 hover:text-black border border-neutral-300 rounded-lg hover:bg-neutral-50"
             >
               ← Back to dates
             </button>
