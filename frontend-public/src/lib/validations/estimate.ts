@@ -17,23 +17,65 @@ export const step1Schema = z.object({
 
 export type Step1FormData = z.infer<typeof step1Schema>;
 
-// Step 2A: Body Shop Service Details
+// Step 2A: Body Shop Service Details with conditional validation
 export const step2BodyshopSchema = z.object({
   insuranceCompany: z.string().min(1, 'Please select who will pay for the repair'),
   claimNumber: z.string().optional(),
   hasClaimNumber: z.boolean().optional(),
   preferredDate: z.string().optional(),
-});
+  preferredTimeSlot: z.string().optional(),
+}).refine(
+  (data) => {
+    // If "Other" is selected, no claim number or appointment required
+    if (data.insuranceCompany === 'Other') {
+      return true;
+    }
+    
+    // If insurance company selected (not "Other"):
+    // 1. Must have claim number OR check "don't have claim number"
+    const hasValidClaim = data.hasClaimNumber || (data.claimNumber && data.claimNumber.length > 0);
+    
+    // 2. Must select appointment date
+    const hasAppointment = data.preferredDate && data.preferredDate.length > 0;
+    
+    return hasValidClaim && hasAppointment;
+  },
+  {
+    message: 'When using insurance: Please provide claim number (or check "I don\'t have a claim number yet") AND select an appointment date',
+    path: ['insuranceCompany'],
+  }
+);
 
 export type Step2BodyshopFormData = z.infer<typeof step2BodyshopSchema>;
 
-// Step 2B: Mechanic Service Details
+// Step 2B: Mechanic Service Details with conditional validation
 export const step2MechanicSchema = z.object({
   warrantyCompany: z.string().min(1, 'Please select who will pay for the repair'),
   warrantyClaimNumber: z.string().optional(),
   hasWarrantyClaimNumber: z.boolean().optional(),
   preferredDate: z.string().optional(),
-});
+  preferredTimeSlot: z.string().optional(),
+}).refine(
+  (data) => {
+    // If "Other" is selected, no warranty claim or appointment required
+    if (data.warrantyCompany === 'Other') {
+      return true;
+    }
+    
+    // If warranty company selected (not "Other"):
+    // 1. Must have warranty claim number OR check "don't have warranty claim number"
+    const hasValidClaim = data.hasWarrantyClaimNumber || (data.warrantyClaimNumber && data.warrantyClaimNumber.length > 0);
+    
+    // 2. Must select appointment date
+    const hasAppointment = data.preferredDate && data.preferredDate.length > 0;
+    
+    return hasValidClaim && hasAppointment;
+  },
+  {
+    message: 'When using warranty: Please provide warranty claim number (or check "I don\'t have a claim number yet") AND select an appointment date',
+    path: ['warrantyCompany'],
+  }
+);
 
 export type Step2MechanicFormData = z.infer<typeof step2MechanicSchema>;
 

@@ -223,7 +223,29 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         <label className="block text-sm font-medium text-black">
           <Calendar className="w-4 h-4 inline mr-1" />
           When would you like to bring your car?
+          {selectedCompany && selectedCompany !== 'Other' && (
+            <span className="text-gold ml-1">*</span>
+          )}
         </label>
+        
+        {/* Info message based on payment method */}
+        {selectedCompany === 'Other' && (
+          <div className="flex items-start gap-2 p-2 bg-blue-50 rounded-lg mb-2">
+            <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+            <p className="text-[10px] text-blue-700">
+              Since you're paying out of pocket, you can skip scheduling and we'll contact you to arrange an appointment.
+            </p>
+          </div>
+        )}
+        
+        {selectedCompany && selectedCompany !== 'Other' && (
+          <div className="flex items-start gap-2 p-2 bg-amber-50 rounded-lg mb-2">
+            <Info className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+            <p className="text-[10px] text-amber-700">
+              <strong>Required:</strong> When using {isBodyshop ? 'insurance' : 'warranty'}, you must schedule an appointment to continue.
+            </p>
+          </div>
+        )}
         
         {!showDatePicker && !showTimeSlots && !preferredDate && (
           <div className="space-y-0.5">
@@ -235,12 +257,6 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
               <Calendar className="w-5 h-5 md:w-4 md:h-4 inline mr-2 text-neutral-400" />
               <span className="text-neutral-500">Select a date:</span>
             </button>
-            <div className="flex items-start gap-2 p-2 bg-neutral-50 rounded-lg">
-              <Info className="w-4 h-4 text-neutral-500 mt-0.5 flex-shrink-0" />
-              <p className="text-[10px] text-neutral-600">
-                You can also skip this and we'll contact you to schedule
-              </p>
-            </div>
           </div>
         )}
 
@@ -326,6 +342,23 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         )}
       </div>
 
+      {/* Validation Messages */}
+      {selectedCompany && selectedCompany !== 'Other' && !isValid && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-xs text-red-700 font-medium">
+            ⚠️ When using {isBodyshop ? 'insurance' : 'warranty'}, you must:
+          </p>
+          <ul className="mt-1 ml-4 text-xs text-red-600 list-disc space-y-0.5">
+            {!hasClaimNumber && !(watch(claimField) as string)?.length && (
+              <li>Enter {isBodyshop ? 'claim' : 'warranty claim'} number OR check "I don't have a claim number yet"</li>
+            )}
+            {!preferredDate && (
+              <li>Select an appointment date and time</li>
+            )}
+          </ul>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex gap-2 pt-2 fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-neutral-200 md:relative md:border-0 md:p-0">
         <Button
@@ -336,18 +369,21 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         >
           ← Back
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={handleSkipDate}
-          className="flex-1 text-neutral-600 hover:text-black py-1.5 text-xs"
-        >
-          Skip Date
-        </Button>
+        {/* Only show Skip Date button if "Other" is selected (paying out of pocket) */}
+        {selectedCompany === 'Other' && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleSkipDate}
+            className="flex-1 text-neutral-600 hover:text-black py-1.5 text-xs"
+          >
+            Skip Date
+          </Button>
+        )}
         <Button
           type="submit"
           variant="primary"
-          className="flex-1 bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs"
+          className={`${selectedCompany === 'Other' ? 'flex-1' : 'flex-[2]'} bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs`}
           disabled={!isValid}
         >
           Continue →
