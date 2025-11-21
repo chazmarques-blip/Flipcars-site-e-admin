@@ -44,8 +44,16 @@
         }
 
         .title-logo {
-            font-size: 36px;
             flex-shrink: 0;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .title-logo img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
         }
 
         .title-content {
@@ -265,7 +273,9 @@
     <div class="page">
         <!-- Title Section -->
         <div class="title-section">
-            <div class="title-logo">🚗</div>
+            <div class="title-logo">
+                <img src="flipcars-logo.jpg" alt="FlipCars Logo">
+            </div>
             <div class="title-content">
                 <h1>🎯 ESTIMATE REQUEST CONFIRMATION</h1>
                 <div class="service-type">Body Shop Repair Service</div>
