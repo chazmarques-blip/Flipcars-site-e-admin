@@ -149,14 +149,14 @@ export function Step5Confirmation({ data, referenceNumber, onClose }: Step5Confi
 
         {/* Action Buttons - Ultra Compact */}
         <div className="flex flex-col gap-1.5 pt-2">
-          <Button
+          <button
             type="button"
-            variant="primary"
             onClick={onClose}
-            className="w-full py-2.5 bg-black hover:bg-black/90 text-gold border border-gold font-semibold text-sm"
+            className="w-full py-2.5 bg-black hover:bg-black/90 text-gold border border-gold font-semibold text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
           >
-            ← Back to Home
-          </Button>
+            <span>←</span>
+            <span>Back to Home</span>
+          </button>
           <button
             type="button"
             onClick={() => window.print()}
