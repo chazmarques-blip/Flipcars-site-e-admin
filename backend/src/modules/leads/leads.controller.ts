@@ -145,4 +145,27 @@ export class LeadsController {
   async remove(@Param('id') id: string) {
     return this.leadsService.remove(id);
   }
+
+  /**
+   * DEBUG ENDPOINT - Get leads count (public, temporary)
+   */
+  @Get('debug/count')
+  @Public()
+  async debugCount() {
+    try {
+      const result = await this.leadsService.findAll({ page: 1, limit: 1 });
+      return {
+        totalLeads: result.pagination?.total || 0,
+        canConnect: true,
+        message: 'Database connection OK'
+      };
+    } catch (error) {
+      return {
+        totalLeads: 0,
+        canConnect: false,
+        error: error.message,
+        message: 'Database connection FAILED'
+      };
+    }
+  }
 }
