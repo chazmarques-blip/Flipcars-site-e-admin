@@ -32,13 +32,25 @@
 
         /* Title */
         .title-section {
-            text-align: center;
             background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
             color: #D4AF37;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             border: 2px solid #D4AF37;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .title-logo {
+            font-size: 36px;
+            flex-shrink: 0;
+        }
+
+        .title-content {
+            flex: 1;
+            text-align: center;
         }
 
         .title-section h1 {
@@ -253,8 +265,11 @@
     <div class="page">
         <!-- Title Section -->
         <div class="title-section">
-            <h1>🎯 ESTIMATE REQUEST CONFIRMATION</h1>
-            <div class="service-type">Body Shop Repair Service</div>
+            <div class="title-logo">🚗</div>
+            <div class="title-content">
+                <h1>🎯 ESTIMATE REQUEST CONFIRMATION</h1>
+                <div class="service-type">Body Shop Repair Service</div>
+            </div>
         </div>
 
         <!-- Reference Number -->
