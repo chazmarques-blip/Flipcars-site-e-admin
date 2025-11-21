@@ -255,6 +255,13 @@ FlipCars Auto Repair Team
               <p style="margin: 5px 0;">5200 Old Winter Garden Rd, Suite 110A<br>Orlando, FL 32811</p>
               <p style="margin: 5px 0;"><strong>Phone:</strong> (321) 960-8661</p>
               <p style="margin: 5px 0; font-size: 12px; color: #666;">Mon-Fri 9:00 AM - 6:00 PM | Sat 9:00 AM - 12:00 PM | Sunday Closed</p>
+              <div style="margin-top: 15px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+                <img 
+                  src="https://maps.googleapis.com/maps/api/staticmap?center=28.5080,-81.4354&zoom=15&size=600x200&scale=2&markers=color:red%7Clabel:F%7C28.5080,-81.4354&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"
+                  alt="FlipCars Location Map"
+                  style="width: 100%; height: auto; display: block;"
+                />
+              </div>
             </div>
           </div>
           

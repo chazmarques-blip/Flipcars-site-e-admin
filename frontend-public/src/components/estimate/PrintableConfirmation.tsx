@@ -254,8 +254,12 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
                 <strong>Phone:</strong> {FLIPCARS_LOCATION.phone}<br />
                 <strong>Hours:</strong> Mon-Fri 9:00 AM - 6:00 PM | Sat 9:00 AM - 12:00 PM | Sunday Closed
               </div>
-              <div className="map-placeholder">
-                📍 Map will be displayed here (Google Maps Static API)
+              <div className="map-container">
+                <img 
+                  src={`https://maps.googleapis.com/maps/api/staticmap?center=${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&zoom=15&size=600x200&scale=2&markers=color:red%7Clabel:F%7C${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}
+                  alt="FlipCars Location Map"
+                  className="location-map"
+                />
               </div>
             </div>
           </div>
@@ -468,17 +472,20 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
           margin-bottom: 6px;
         }
 
-        .map-placeholder {
+        .map-container {
           width: 100%;
-          height: 75px;
-          background: #f0f0f0;
-          border: 2px dashed #ddd;
+          border: 1px solid #ddd;
           border-radius: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #999;
-          font-size: 9px;
+          overflow: hidden;
+          margin-top: 6px;
+        }
+
+        .location-map {
+          width: 100%;
+          height: auto;
+          display: block;
+          max-height: 75px;
+          object-fit: cover;
         }
 
         /* Notes Box */
