@@ -47,6 +47,15 @@ export class EmailService {
    */
   async sendEmail(options: EmailOptions): Promise<boolean> {
     try {
+      // Check if SMTP is configured
+      const smtpUser = this.configService.get<string>('SMTP_USER');
+      const smtpPass = this.configService.get<string>('SMTP_PASS');
+      
+      if (!smtpUser || !smtpPass || smtpUser === 'your-email@gmail.com') {
+        this.logger.warn('⚠️ SMTP not configured. Skipping email send.');
+        return false;
+      }
+
       const from = this.configService.get<string>(
         'SMTP_FROM',
         '"FlipCars Auto Repair" <noreply@flipcars.us>',
@@ -55,7 +64,8 @@ export class EmailService {
       this.logger.log(`📤 Sending email to ${options.to}`);
       this.logger.log(`Subject: ${options.subject}`);
 
-      const info = await this.transporter.sendMail({
+      // Add timeout to prevent hanging (5 seconds)
+      const emailPromise = this.transporter.sendMail({
         from,
         to: options.to,
         subject: options.subject,
@@ -63,11 +73,16 @@ export class EmailService {
         html: options.html,
       });
 
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Email timeout after 5 seconds')), 5000);
+      });
+
+      const info = await Promise.race([emailPromise, timeoutPromise]) as any;
+
       this.logger.log(`✅ Email sent successfully! MessageId: ${info.messageId}`);
       return true;
     } catch (error) {
       this.logger.error('❌ Failed to send email:', error.message);
-      this.logger.error(error.stack);
       return false;
     }
   }
