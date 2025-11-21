@@ -165,10 +165,39 @@ export class PublicLeadsController {
     let schedulingNote = '';
     if (dto.dateSkipped) {
       schedulingNote = '\n\nScheduling: Customer will call to schedule';
+    } else if (dto.preferredDate && dto.preferredTimeSlot) {
+      // Format the date for display in notes
+      const dateObj = new Date(dto.preferredDate);
+      const formattedDate = dateObj.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      schedulingNote = `\n\nScheduled Appointment: ${formattedDate} at ${dto.preferredTimeSlot}`;
+      
+      this.logger.log(`📅 Appointment scheduling data found:`);
+      this.logger.log(`   Date: ${dto.preferredDate} (${formattedDate})`);
+      this.logger.log(`   Time Slot: ${dto.preferredTimeSlot}`);
     }
 
     // Create final notes combining everything
     const finalNotes = `${damageDescription}${contactPrefsNote}${schedulingNote}`.trim();
+
+    // Parse preferredDate to YYYY-MM-DD format if it's an ISO string
+    let formattedPreferredDate: string | undefined = undefined;
+    if (dto.preferredDate && !dto.dateSkipped) {
+      try {
+        // Convert ISO 8601 string (2024-11-21T00:00:00.000Z) to YYYY-MM-DD
+        const dateObj = new Date(dto.preferredDate);
+        formattedPreferredDate = dateObj.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        this.logger.log(`📅 Converted preferredDate:`);
+        this.logger.log(`   Input: ${dto.preferredDate}`);
+        this.logger.log(`   Output: ${formattedPreferredDate}`);
+      } catch (error) {
+        this.logger.warn(`⚠️ Failed to parse preferredDate: ${dto.preferredDate}`, error);
+      }
+    }
 
     // Return transformed data in CreateLeadDto format
     return {
@@ -176,6 +205,10 @@ export class PublicLeadsController {
       email: dto.email,
       phone: dto.phone,
       preferredLanguage: 'en', // Default to English
+      // CRITICAL FIX: Include appointment scheduling fields
+      preferredDate: formattedPreferredDate,
+      preferredTimeSlot: dto.preferredTimeSlot,
+      contactPreferences: dto.contactPreferences,
       vehicleMake: dto.vehicle?.make,
       vehicleModel: dto.vehicle?.model,
       vehicleYear: dto.vehicle?.year,
