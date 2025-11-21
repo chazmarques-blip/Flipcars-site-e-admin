@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { INSURANCE_COMPANIES, WARRANTY_COMPANIES } from '@/types/estimate';
 
-// Phone number validation (US format)
-const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+// Phone number validation (US format) - accepts (XXX) XXX-XXXX format
+const phoneRegex = /^\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
 
 // Step 1: Basic Information
 export const step1Schema = z.object({
