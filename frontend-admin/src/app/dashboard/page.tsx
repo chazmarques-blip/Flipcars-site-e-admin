@@ -1,10 +1,104 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { leadService } from '@/lib/api/lead.service';
+import { Lead, LeadStatus } from '@/types/lead';
+import toast from 'react-hot-toast';
 import styles from '@/components/dashboard/Dashboard-Mockup-Exact.module.css';
 
-// Dashboard updated: Nov 20, 2025 - Exact mockup replica deployed
+// Dashboard updated: Nov 20, 2025 - Now with real data integration
 export default function DashboardPage() {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    activeLeads: 0,
+    todaysAppointments: 0,
+    overdue: 0,
+    qualified: 0,
+    inProgress: 0,
+    converted: 0,
+  });
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        console.log('[Dashboard] Fetching leads...');
+        
+        // Fetch all leads (limit 100 for stats)
+        const response = await leadService.getLeads(1, 100);
+        const allLeads = response.data || [];
+        console.log('[Dashboard] Loaded leads:', allLeads.length);
+        
+        setLeads(allLeads);
+
+        // Calculate statistics
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        const activeLeads = allLeads.filter(l => l.status !== LeadStatus.ARCHIVED && l.status !== LeadStatus.LOST).length;
+        const todaysAppointments = allLeads.filter(l => l.status === LeadStatus.APPOINTMENT_SCHEDULED).length;
+        const qualified = allLeads.filter(l => l.status === LeadStatus.QUALIFIED).length;
+        const inProgress = allLeads.filter(l => l.status === LeadStatus.IN_PROGRESS).length;
+        const converted = allLeads.filter(l => l.status === LeadStatus.CONVERTED || l.status === LeadStatus.WON).length;
+        
+        // Overdue: leads older than 3 days without follow-up
+        const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+        const overdue = allLeads.filter(l => {
+          const createdDate = new Date(l.createdAt);
+          return l.status === LeadStatus.NEW && createdDate < threeDaysAgo;
+        }).length;
+
+        setStats({
+          activeLeads,
+          todaysAppointments,
+          overdue,
+          qualified,
+          inProgress,
+          converted,
+        });
+
+        console.log('[Dashboard] Stats calculated:', { activeLeads, todaysAppointments, overdue });
+      } catch (error: any) {
+        console.error('[Dashboard] Failed to fetch data:', error);
+        toast.error('Failed to load dashboard data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Get last 7 days leads for table
+  const weekLeads = leads
+    .filter(l => {
+      const createdDate = new Date(l.createdAt);
+      const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      return createdDate >= oneWeekAgo;
+    })
+    .slice(0, 5);
+
+  // Calculate conversion funnel percentages
+  const totalLeads = leads.length;
+  const qualifiedCount = stats.qualified;
+  const appointmentCount = stats.todaysAppointments;
+  const convertedCount = stats.converted;
+  
+  const qualifiedPercent = totalLeads > 0 ? Math.round((qualifiedCount / totalLeads) * 100) : 0;
+  const appointmentPercent = totalLeads > 0 ? Math.round((appointmentCount / totalLeads) * 100) : 0;
+  const convertedPercent = totalLeads > 0 ? Math.round((convertedCount / totalLeads) * 100) : 0;
+
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div style={{ textAlign: 'center', padding: '60px' }}>
+          <h2>Loading dashboard data...</h2>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -25,48 +119,48 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards - Real Data */}
       <div className={styles['kpi-grid']}>
         <div className={styles['kpi-card']}>
           <span className={styles['kpi-trend']}>📈</span>
           <div className={styles['kpi-label']}>Active Leads</div>
-          <div className={styles['kpi-value']}>18</div>
-          <div className={styles['kpi-subtitle']}>6 qualified today</div>
+          <div className={styles['kpi-value']}>{stats.activeLeads}</div>
+          <div className={styles['kpi-subtitle']}>{stats.qualified} qualified</div>
         </div>
 
         <div className={styles['kpi-card']}>
           <span className={styles['kpi-trend']}>📅</span>
-          <div className={styles['kpi-label']}>Today&apos;s Appointments</div>
-          <div className={styles['kpi-value']}>2</div>
-          <div className={styles['kpi-subtitle']}>Nov 15, 2025</div>
+          <div className={styles['kpi-label']}>Appointments</div>
+          <div className={styles['kpi-value']}>{stats.todaysAppointments}</div>
+          <div className={styles['kpi-subtitle']}>Scheduled</div>
         </div>
 
         <div className={styles['kpi-card']}>
           <span className={styles['kpi-trend']}>⚠️</span>
           <div className={styles['kpi-label']}>Overdue</div>
-          <div className={styles['kpi-value']}>0</div>
-          <div className={styles['kpi-subtitle']}>All on track!</div>
+          <div className={styles['kpi-value']}>{stats.overdue}</div>
+          <div className={styles['kpi-subtitle']}>{stats.overdue === 0 ? 'All on track!' : 'Need attention'}</div>
         </div>
 
         <div className={styles['kpi-card']}>
           <span className={styles['kpi-trend']}>✅</span>
-          <div className={styles['kpi-label']}>Approved</div>
-          <div className={styles['kpi-value']}>$6.32K</div>
-          <div className={styles['kpi-subtitle']}>1 estimate approved</div>
+          <div className={styles['kpi-label']}>Qualified</div>
+          <div className={styles['kpi-value']}>{stats.qualified}</div>
+          <div className={styles['kpi-subtitle']}>Ready for appointment</div>
         </div>
 
         <div className={styles['kpi-card']}>
           <span className={styles['kpi-trend']}>⏳</span>
-          <div className={styles['kpi-label']}>Pending</div>
-          <div className={styles['kpi-value']}>$7.75K</div>
-          <div className={styles['kpi-subtitle']}>2 estimates awaiting</div>
+          <div className={styles['kpi-label']}>In Progress</div>
+          <div className={styles['kpi-value']}>{stats.inProgress}</div>
+          <div className={styles['kpi-subtitle']}>Currently working</div>
         </div>
 
         <div className={styles['kpi-card']}>
           <span className={styles['kpi-trend']}>🔧</span>
-          <div className={styles['kpi-label']}>Jobs In Progress</div>
-          <div className={styles['kpi-value']}>5</div>
-          <div className={styles['kpi-subtitle']}>3 completing this week</div>
+          <div className={styles['kpi-label']}>Converted</div>
+          <div className={styles['kpi-value']}>{stats.converted}</div>
+          <div className={styles['kpi-subtitle']}>Success rate: {totalLeads > 0 ? Math.round((stats.converted / totalLeads) * 100) : 0}%</div>
         </div>
       </div>
 
