@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Print Confirmation</title>
+    <style>
+        @page {
+            size: letter portrait;
+            margin: 0.5in;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: white;
+            color: #000;
+            line-height: 1.4;
+        }
+
+        .page {
+            width: 7.5in; /* 8.5in - 1in margins */
+            margin: 0 auto;
+            background: white;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #D4AF37;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 5px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .company-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #000;
+            letter-spacing: 1.5px;
+        }
+
+        .company-info {
+            font-size: 9px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Title */
+        .title-section {
+            text-align: center;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            color: #D4AF37;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border: 2px solid #D4AF37;
+        }
+
+        .title-section h1 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .service-type {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: #f9f9f9;
+            border: 2px solid #D4AF37;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .reference-label {
+            font-size: 8px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .reference-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #D4AF37;
+            letter-spacing: 1.5px;
+            margin-bottom: 3px;
+        }
+
+        .reference-date {
+            font-size: 9px;
+            color: #666;
+        }
+
+        /* Grid Layout */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .info-section {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+
+        .info-section.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .section-header {
+            background: #f5f5f5;
+            padding: 6px 10px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #000;
+            border-bottom: 2px solid #D4AF37;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .section-icon {
+            font-size: 12px;
+        }
+
+        .section-content {
+            padding: 10px;
+            font-size: 9px;
+            line-height: 1.6;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            min-width: 65px;
+            color: #666;
+        }
+
+        .info-value {
+            color: #000;
+            font-weight: 500;
+        }
+
+        /* Contact Preferences */
+        .preferences {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .preference-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+        }
+
+        .checkbox-icon {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #D4AF37;
+            background: #D4AF37;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        /* Photos Grid */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            font-size: 8px;
+        }
+
+        .photo-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            color: #059669;
+        }
+
+        /* Steps Timeline */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: #D4AF37;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 2px;
+            font-size: 10px;
+        }
+
+        .step-description {
+            color: #666;
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        /* Location */
+        .location-name {
+            font-size: 11px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .location-address {
+            font-size: 9px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100px;
+            background: #f0f0f0;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 10px;
+        }
+
+        /* Notes Box */
+        .notes-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 8px;
+            color: #666;
+            line-height: 1.5;
+            margin-top: 6px;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 2px solid #D4AF37;
+            padding-top: 10px;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .footer-message {
+            font-size: 10px;
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .footer-reference {
+            font-size: 8px;
+            color: #666;
+        }
+
+        .footer-reference strong {
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .page {
+                width: 100%;
+                margin: 0;
+            }
+            .info-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-icon">🚗</div>
+                <div class="company-name">FLIPCARS AUTO REPAIR</div>
+            </div>
+            <div class="company-info">
+                5200 Old Winter Garden Rd, Suite 110A | Orlando, FL 32811 | Phone: (321) 960-8661 | www.flipcars.us
+            </div>
+        </div>
+
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1>🎯 ESTIMATE REQUEST CONFIRMATION</h1>
+            <div class="service-type">Body Shop Repair Service</div>
+        </div>
+
+        <!-- Reference Number -->
+        <div class="reference-box">
+            <div class="reference-label">Reference Number</div>
+            <div class="reference-number">FLIP-20251121-0010</div>
+            <div class="reference-date">
+                Submitted: Wednesday, November 21, 2025 - 09:06 AM
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+            <!-- Customer Info -->
+            <div class="info-section">
+                <div class="section-header">
+                    <span class="section-icon">📋</span>
+                    CUSTOMER INFORMATION
+                </div>
+                <div class="section-content">
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">Felipe Reis</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">(321) 960-8661</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">felipe@gmail.com</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Service:</span>
+                        <span class="info-value">Body Shop Repair</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Info -->
+            <div class="info-section">
+                <div class="section-header">
+                    <span class="section-icon">🚗</span>
+                    VEHICLE INFORMATION
+                </div>
+                <div class="section-content">
+                    <div class="info-row">
+                        <span class="info-label">Year:</span>
+                        <span class="info-value">2020</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Make:</span>
+                        <span class="info-value">Honda</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Model:</span>
+                        <span class="info-value">Accord</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">VIN:</span>
+                        <span class="info-value">1HGCV1F30LA123456</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Details -->
+            <div class="info-section">
+                <div class="section-header">
+                    <span class="section-icon">📅</span>
+                    APPOINTMENT DETAILS
+                </div>
+                <div class="section-content">
+                    <div class="info-row">
+                        <span class="info-label">Date:</span>
+                        <span class="info-value">Friday, November 29, 2025</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Time:</span>
+                        <span class="info-value">9:00 AM - 11:00 AM</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Status:</span>
+                        <span class="info-value" style="color: #F59E0B;">⏳ Pending Confirmation</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insurance Info -->
+            <div class="info-section">
+                <div class="section-header">
+                    <span class="section-icon">💰</span>
+                    INSURANCE INFORMATION
+                </div>
+                <div class="section-content">
+                    <div class="info-row">
+                        <span class="info-label">Company:</span>
+                        <span class="info-value">State Farm</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Claim #:</span>
+                        <span class="info-value">SF123456</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Has Claim:</span>
+                        <span class="info-value">✓ Yes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Preferences -->
+            <div class="info-section full-width">
+                <div class="section-header">
+                    <span class="section-icon">📞</span>
+                    CONTACT PREFERENCES
+                </div>
+                <div class="section-content">
+                    <div class="preferences">
+                        <div class="preference-item">
+                            <div class="checkbox-icon">✓</div>
+                            <span>Phone Call</span>
+                        </div>
+                        <div class="preference-item">
+                            <div class="checkbox-icon">✓</div>
+                            <span>WhatsApp</span>
+                        </div>
+                        <div class="preference-item">
+                            <div class="checkbox-icon">✓</div>
+                            <span>Text Message</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <strong style="color: #666; font-size: 9px;">Additional Notes:</strong>
+                        <div class="notes-box">
+                            Front bumper damage from parking lot incident. Need estimate for insurance claim. Vehicle is drivable and ready for inspection.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photos -->
+            <div class="info-section full-width">
+                <div class="section-header">
+                    <span class="section-icon">📸</span>
+                    DAMAGE PHOTOS (6 submitted)
+                </div>
+                <div class="section-content">
+                    <div class="photos-grid">
+                        <div class="photo-item">✓ Driver Front</div>
+                        <div class="photo-item">✓ Passenger Front</div>
+                        <div class="photo-item">✓ Driver Rear</div>
+                        <div class="photo-item">✓ Passenger Rear</div>
+                        <div class="photo-item">✓ VIN Number</div>
+                        <div class="photo-item">✓ Odometer</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What Happens Next -->
+            <div class="info-section full-width">
+                <div class="section-header">
+                    <span class="section-icon">⏭️</span>
+                    WHAT HAPPENS NEXT?
+                </div>
+                <div class="section-content">
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">REVIEW (Within 1 hour)</div>
+                                <div class="step-description">Our team will review your request, photos, and insurance information</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">CONTACT (Same day)</div>
+                                <div class="step-description">We'll reach out via your preferred contact method to discuss details</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">APPOINTMENT CONFIRMATION</div>
+                                <div class="step-description">We'll confirm your appointment for November 29, 2025 at 9:00 AM</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <div class="step-title">ESTIMATE & REPAIR</div>
+                                <div class="step-description">Receive your detailed estimate and schedule your repair service</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="info-section full-width">
+                <div class="section-header">
+                    <span class="section-icon">📍</span>
+                    OUR LOCATION
+                </div>
+                <div class="section-content">
+                    <div class="location-name">FlipCars Auto Repair</div>
+                    <div class="location-address">
+                        5200 Old Winter Garden Rd, Suite 110A<br>
+                        Orlando, FL 32811<br>
+                        <strong>Phone:</strong> (321) 960-8661<br>
+                        <strong>Hours:</strong> Mon-Fri 9:00 AM - 6:00 PM | Sat 9:00 AM - 12:00 PM | Sunday Closed
+                    </div>
+                    <div class="map-placeholder">
+                        📍 Map will be displayed here (Google Maps Static API)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-message">
+                Thank you for choosing FlipCars Auto Repair! We look forward to serving you.
+            </div>
+            <div class="footer-reference">
+                Please keep this confirmation for your records. Reference: <strong>FLIP-20251121-0010</strong> | Page 1 of 1
+            </div>
+        </div>
+    </div>
+</body>
+</html>
