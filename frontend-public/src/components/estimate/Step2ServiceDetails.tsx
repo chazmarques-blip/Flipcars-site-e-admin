@@ -140,10 +140,17 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                 onClick={() => setValue(companyField, company as any, { shouldValidate: true })}
                 className={`relative flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all min-h-[60px] sm:min-h-[70px] ${
                   isSelected
-                    ? 'border-gold bg-gold/5 shadow-md'
+                    ? 'border-gold bg-gold/5 shadow-md ring-2 ring-gold/30'
                     : 'border-neutral-300 hover:border-neutral-400 bg-white'
-                } ${errors[companyField] ? 'border-red-500' : ''}`}
+                }`}
               >
+                {/* Checkmark indicator when selected */}
+                {isSelected && (
+                  <div className="absolute top-1 right-1 w-5 h-5 bg-gold rounded-full flex items-center justify-center">
+                    <span className="text-black text-xs font-bold">✓</span>
+                  </div>
+                )}
+                
                 {logo ? (
                   <>
                     <div className="relative w-full h-7 sm:h-8 mb-0.5 sm:mb-1">
@@ -186,8 +193,10 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           })}
         </div>
         
-        {errors[companyField] && (
-          <p className="text-sm text-red-600">{errors[companyField]?.message}</p>
+        {errors[companyField] && !selectedCompany && (
+          <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-xs text-red-600 font-medium">⚠️ {errors[companyField]?.message}</p>
+          </div>
         )}
       </div>
 
