@@ -493,8 +493,14 @@ export class LeadsService {
    * Soft delete a lead (marks as deleted, keeps in database)
    * NEW METHOD - Does not modify existing remove() method
    * Associated appointments are automatically deleted via CASCADE
+   * 
+   * TEMPORARILY DISABLED: deletedAt field doesn't exist in production DB yet
+   * Will be enabled after migration runs successfully
    */
   async softDelete(id: string): Promise<{ message: string; lead: { id: string; referenceNumber: string } }> {
+    throw new BadRequestException('Soft delete temporarily disabled. Feature will be available after database migration completes.');
+    
+    /* COMMENTED UNTIL MIGRATION RUNS:
     console.log(`[LeadsService] Soft deleting lead: ${id}`);
     
     const lead = await this.findOne(id);
@@ -527,6 +533,7 @@ export class LeadsService {
         referenceNumber: lead.referenceNumber,
       },
     };
+    */
   }
 
   /**
