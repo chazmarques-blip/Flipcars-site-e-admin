@@ -164,8 +164,19 @@ export class LeadsController {
         totalLeads: 0,
         canConnect: false,
         error: error.message,
+        stack: error.stack,
+        name: error.name,
         message: 'Database connection FAILED'
       };
     }
+  }
+
+  /**
+   * DEBUG ENDPOINT - Get raw SQL query (public, temporary)
+   */
+  @Get('debug/sql')
+  @Public()
+  async debugSql() {
+    return this.leadsService.getDebugSql();
   }
 }

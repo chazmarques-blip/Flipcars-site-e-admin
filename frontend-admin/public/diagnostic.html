@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <title>FlipCars - Diagnostic</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        .section { margin: 20px 0; padding: 15px; background: #2a2a2a; border-left: 4px solid #0f0; }
+        h2 { color: #0ff; }
+        button { 
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0ff; }
+        pre { background: #000; padding: 10px; overflow-x: auto; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 FlipCars Diagnostic Tool</h1>
+    
+    <div class="section">
+        <h2>1. Test API Connection</h2>
+        <button onclick="testAPI()">Test API Health</button>
+        <pre id="api-result">Click button to test...</pre>
+    </div>
+
+    <div class="section">
+        <h2>2. Test Authentication</h2>
+        <button onclick="testAuth()">Test Login</button>
+        <pre id="auth-result">Click button to test...</pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Test Leads Endpoint (with auth)</h2>
+        <button onclick="testLeads()">Test Leads</button>
+        <pre id="leads-result">First do authentication test above...</pre>
+    </div>
+
+    <div class="section">
+        <h2>4. Current localStorage</h2>
+        <button onclick="showStorage()">Show Storage</button>
+        <pre id="storage-result">Click to see...</pre>
+    </div>
+
+    <div class="section">
+        <h2>5. Clear Everything</h2>
+        <button onclick="clearAll()">Clear All Cache & Storage</button>
+        <pre id="clear-result">Click to clear...</pre>
+    </div>
+
+    <script>
+        const API_URL = 'https://upbeat-dedication-production.up.railway.app/api';
+        let accessToken = null;
+
+        async function testAPI() {
+            const result = document.getElementById('api-result');
+            result.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                result.className = 'success';
+                result.textContent = '✅ API is UP!\n\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.className = 'error';
+                result.textContent = '❌ API is DOWN!\n\n' + error.message;
+            }
+        }
+
+        async function testAuth() {
+            const result = document.getElementById('auth-result');
+            result.textContent = 'Testing login...';
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'admin@flipcars.us',
+                        password: 'Admin123!'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    accessToken = data.tokens.accessToken;
+                    result.className = 'success';
+                    result.textContent = '✅ LOGIN SUCCESS!\n\n' +
+                        'User: ' + data.user.email + '\n' +
+                        'Token: ' + accessToken.substring(0, 20) + '...';
+                } else {
+                    result.className = 'error';
+                    result.textContent = '❌ LOGIN FAILED!\n\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                result.className = 'error';
+                result.textContent = '❌ LOGIN ERROR!\n\n' + error.message;
+            }
+        }
+
+        async function testLeads() {
+            const result = document.getElementById('leads-result');
+            
+            if (!accessToken) {
+                result.className = 'error';
+                result.textContent = '❌ Please do authentication test first!';
+                return;
+            }
+            
+            result.textContent = 'Fetching leads...';
+            
+            try {
+                const response = await fetch(`${API_URL}/leads?page=1&limit=10`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.className = 'success';
+                    result.textContent = '✅ LEADS FETCHED!\n\n' +
+                        'Total: ' + (data.pagination?.total || data.meta?.total || 0) + '\n' +
+                        'Data length: ' + (data.data?.length || 0) + '\n\n' +
+                        JSON.stringify(data, null, 2);
+                } else {
+                    result.className = 'error';
+                    result.textContent = '❌ LEADS FETCH FAILED!\n\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                result.className = 'error';
+                result.textContent = '❌ LEADS ERROR!\n\n' + error.message;
+            }
+        }
+
+        function showStorage() {
+            const result = document.getElementById('storage-result');
+            const storage = {
+                localStorage: {},
+                sessionStorage: {},
+                cookies: document.cookie
+            };
+            
+            for (let key in localStorage) {
+                storage.localStorage[key] = localStorage[key];
+            }
+            
+            for (let key in sessionStorage) {
+                storage.sessionStorage[key] = sessionStorage[key];
+            }
+            
+            result.textContent = JSON.stringify(storage, null, 2);
+        }
+
+        async function clearAll() {
+            const result = document.getElementById('clear-result');
+            result.textContent = 'Clearing...';
+            
+            try {
+                // Clear caches
+                if ('caches' in window) {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                }
+                
+                // Clear storage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Clear cookies
+                document.cookie.split(";").forEach(c => {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                
+                result.className = 'success';
+                result.textContent = '✅ ALL CLEARED!\n\nPlease close this tab and go to:\nhttps://admin.flipcars.us/auth/login';
+            } catch (error) {
+                result.className = 'error';
+                result.textContent = '❌ ERROR!\n\n' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

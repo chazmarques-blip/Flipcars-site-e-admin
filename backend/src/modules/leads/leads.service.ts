@@ -69,6 +69,36 @@ export class LeadsService {
   }
 
   /**
+   * DEBUG METHOD - Get SQL query for debugging
+   */
+  async getDebugSql() {
+    try {
+      const queryBuilder = this.leadRepository
+        .createQueryBuilder('lead')
+        .orderBy('lead.createdAt', 'DESC')
+        .take(1);
+      
+      const sql = queryBuilder.getSql();
+      const count = await this.leadRepository.count();
+      
+      return {
+        success: true,
+        sql,
+        totalLeads: count,
+        message: 'Query generated successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+        name: error.name,
+        message: 'Failed to generate query'
+      };
+    }
+  }
+
+  /**
    * Find all leads with pagination, filtering, and search
    */
   async findAll(query: QueryLeadsDto) {
