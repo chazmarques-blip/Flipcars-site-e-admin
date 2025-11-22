@@ -274,10 +274,11 @@ export const leadService = {
   },
 
   /**
-   * Delete lead
+   * Soft delete lead (marks as deleted, keeps in database)
+   * Uses new soft delete endpoint to avoid breaking existing functionality
    */
   async deleteLead(id: string): Promise<void> {
-    await apiClient.delete(`/leads/${id}`);
+    await apiClient.delete(`/leads/soft/${id}`);
   },
 
   /**

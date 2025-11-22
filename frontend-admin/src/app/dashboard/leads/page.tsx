@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Eye, X, Phone, MessageCircle, MessageSquare } from 'lucide-react';
+import { Plus, Eye, X, Phone, MessageCircle, MessageSquare, Trash2 } from 'lucide-react';
 import {
   Button,
   Badge,
@@ -35,6 +35,9 @@ export default function LeadsPage() {
   const [viewedLeads, setViewedLeads] = useState<Set<string>>(new Set());
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Load viewed leads from localStorage on mount
   useEffect(() => {
@@ -149,6 +152,38 @@ export default function LeadsPage() {
   const openPhotoModal = (photos: string[]) => {
     setSelectedPhotos(photos);
     setPhotoModalOpen(true);
+  };
+
+  // Handle delete lead
+  const handleDeleteClick = (lead: Lead, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLeadToDelete(lead);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!leadToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await leadService.deleteLead(leadToDelete.id);
+      toast.success('Lead deleted successfully');
+      setDeleteModalOpen(false);
+      setLeadToDelete(null);
+      // Refresh the leads list
+      fetchLeads();
+    } catch (error: any) {
+      console.error('Error deleting lead:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to delete lead';
+      toast.error(errorMessage);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setLeadToDelete(null);
   };
 
   const columns: Column<Lead>[] = [
@@ -374,6 +409,19 @@ export default function LeadsPage() {
         </button>
       ),
     },
+    {
+      key: 'delete',
+      label: 'Delete',
+      render: (lead) => (
+        <button
+          onClick={(e) => handleDeleteClick(lead, e)}
+          className="inline-flex items-center justify-center w-7 h-7 rounded-full text-red-600 hover:bg-red-50 transition-colors"
+          title="Delete lead"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      ),
+    },
   ];
 
   const activeFiltersCount = Object.values(filters).filter(
@@ -544,6 +592,71 @@ export default function LeadsPage() {
                     />
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && leadToDelete && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" 
+          onClick={handleDeleteCancel}
+        >
+          <div 
+            className="relative max-w-md w-full mx-4 bg-white rounded-lg shadow-xl" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal content */}
+            <div className="p-6">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              
+              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">
+                Delete Lead
+              </h3>
+              
+              <p className="text-sm text-gray-600 text-center mb-1">
+                Are you sure you want to delete this lead?
+              </p>
+              
+              <div className="bg-gray-50 rounded-lg p-3 mb-4 mt-3">
+                <p className="text-sm font-medium text-gray-900">
+                  {leadToDelete.name}
+                </p>
+                <p className="text-xs text-gray-600 mt-1">
+                  {leadToDelete.referenceNumber}
+                </p>
+                {leadToDelete.phone && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    {leadToDelete.phone}
+                  </p>
+                )}
+              </div>
+              
+              <p className="text-xs text-gray-500 text-center mb-4">
+                This action will mark the lead as deleted. Associated appointments will also be removed.
+              </p>
+              
+              {/* Action buttons */}
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleDeleteCancel}
+                  variant="secondary"
+                  className="flex-1"
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteConfirm}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </Button>
               </div>
             </div>
           </div>

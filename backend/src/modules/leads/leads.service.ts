@@ -126,6 +126,9 @@ export class LeadsService {
         // .leftJoinAndSelect('lead.vehicle', 'vehicle')
         // .leftJoinAndSelect('lead.assignedHumanAgent', 'agent');
 
+      // Filter out soft-deleted leads (NEW: soft delete support)
+      queryBuilder.andWhere('lead.deletedAt IS NULL');
+
       // Search by reference number, name, email, or phone
       if (search) {
         queryBuilder.andWhere(
@@ -483,6 +486,46 @@ export class LeadsService {
     await this.leadRepository.save(lead);
 
     return { message: 'Lead marked as lost successfully' };
+  }
+
+  /**
+   * Soft delete a lead (marks as deleted, keeps in database)
+   * NEW METHOD - Does not modify existing remove() method
+   * Associated appointments are automatically deleted via CASCADE
+   */
+  async softDelete(id: string): Promise<{ message: string; lead: { id: string; referenceNumber: string } }> {
+    console.log(`[LeadsService] Soft deleting lead: ${id}`);
+    
+    const lead = await this.findOne(id);
+
+    // Validation: Don't delete if already deleted
+    if (lead.deletedAt) {
+      console.warn(`[LeadsService] Lead ${id} is already deleted`);
+      throw new BadRequestException('Lead is already deleted');
+    }
+
+    // Validation: Don't delete converted leads (optional - you can remove this)
+    if (lead.status === LeadStatus.CONVERTED) {
+      console.warn(`[LeadsService] Attempt to delete converted lead ${id}`);
+      throw new BadRequestException('Cannot delete converted leads. Please archive them instead.');
+    }
+
+    // Mark as deleted (soft delete)
+    lead.deletedAt = new Date();
+    lead.status = LeadStatus.LOST; // Also update status for clarity
+    
+    await this.leadRepository.save(lead);
+
+    console.log(`[LeadsService] ✅ Lead ${id} (${lead.referenceNumber}) soft deleted successfully`);
+    console.log(`[LeadsService] Associated appointments will be deleted automatically via CASCADE`);
+
+    return {
+      message: 'Lead deleted successfully',
+      lead: {
+        id: lead.id,
+        referenceNumber: lead.referenceNumber,
+      },
+    };
   }
 
   /**

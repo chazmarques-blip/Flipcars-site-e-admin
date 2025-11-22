@@ -136,6 +136,18 @@ export class LeadsController {
   }
 
   /**
+   * Soft delete a lead (mark as deleted, keep in database)
+   * NEW ENDPOINT - Does not modify existing DELETE :id endpoint
+   * Accessible by: admin, super_admin
+   */
+  @Delete('soft/:id')
+  @Roles('admin', 'super_admin')
+  @HttpCode(HttpStatus.OK)
+  async softDelete(@Param('id') id: string) {
+    return this.leadsService.softDelete(id);
+  }
+
+  /**
    * Delete a lead (mark as lost)
    * Accessible by: admin, super_admin
    */

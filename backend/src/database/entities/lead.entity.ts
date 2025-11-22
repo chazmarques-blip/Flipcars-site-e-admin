@@ -190,4 +190,9 @@ export class Lead {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  // Soft delete support (for marking leads as deleted without removing from database)
+  @Column({ type: 'timestamp', name: 'deleted_at', nullable: true })
+  @Index('idx_lead_deleted_at')
+  deletedAt: Date | null;
 }
