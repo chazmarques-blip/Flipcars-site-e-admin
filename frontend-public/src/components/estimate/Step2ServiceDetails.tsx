@@ -387,7 +387,8 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
       )}
 
       {/* Action Buttons - HIDDEN when date/time picker is open on mobile */}
-      <div className={`flex gap-2 pt-2 fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-neutral-200 md:relative md:border-0 md:p-0 ${(showDatePicker || showTimeSlots) ? 'hidden md:flex' : ''}`}>
+      {!(showDatePicker || showTimeSlots) && (
+      <div className="flex gap-2 pt-2 fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-neutral-200 md:relative md:border-0 md:p-0">
         <Button
           type="button"
           variant="outline"
@@ -416,6 +417,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           Continue →
         </Button>
       </div>
+      )}
     </form>
   );
 }
