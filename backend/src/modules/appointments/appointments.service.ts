@@ -41,7 +41,7 @@ export class AppointmentsService {
       const appointments = await this.appointmentRepository
         .createQueryBuilder('appointment')
         .leftJoinAndSelect('appointment.lead', 'lead')
-        .where('(lead.deletedAt IS NULL OR lead.deletedAt > NOW())')
+        .where('lead.deletedAt IS NULL')
         .orderBy('appointment.appointmentDate', 'ASC')
         .addOrderBy('appointment.appointmentStartTime', 'ASC')
         .getMany();
@@ -86,7 +86,7 @@ export class AppointmentsService {
         .createQueryBuilder('appointment')
         .leftJoinAndSelect('appointment.lead', 'lead')
         .where('appointment.appointmentDate BETWEEN :startDate AND :endDate', { startDate, endDate })
-        .andWhere('(lead.deletedAt IS NULL OR lead.deletedAt > NOW())')
+        .andWhere('lead.deletedAt IS NULL')
         .orderBy('appointment.appointmentDate', 'ASC')
         .addOrderBy('appointment.appointmentStartTime', 'ASC')
         .getMany();
