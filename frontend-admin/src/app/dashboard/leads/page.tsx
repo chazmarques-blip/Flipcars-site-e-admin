@@ -35,9 +35,10 @@ export default function LeadsPage() {
   const [viewedLeads, setViewedLeads] = useState<Set<string>>(new Set());
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deletePopoverOpen, setDeletePopoverOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState<{ top: number; left: number } | null>(null);
 
   // Load viewed leads from localStorage on mount
   useEffect(() => {
@@ -154,11 +155,22 @@ export default function LeadsPage() {
     setPhotoModalOpen(true);
   };
 
-  // Handle delete lead
-  const handleDeleteClick = (lead: Lead, e: React.MouseEvent) => {
+  // Handle delete lead - open popover next to trash icon
+  const handleDeleteClick = (lead: Lead, e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    
+    // Get button position
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    
+    // Position popover to the left of the button
+    setPopoverPosition({
+      top: rect.top + window.scrollY,
+      left: rect.left - 320, // 300px popover width + 20px gap
+    });
+    
     setLeadToDelete(lead);
-    setDeleteModalOpen(true);
+    setDeletePopoverOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -168,8 +180,9 @@ export default function LeadsPage() {
     try {
       await leadService.deleteLead(leadToDelete.id);
       toast.success('Lead deleted successfully');
-      setDeleteModalOpen(false);
+      setDeletePopoverOpen(false);
       setLeadToDelete(null);
+      setPopoverPosition(null);
       // Refresh the leads list
       fetchLeads();
     } catch (error: any) {
@@ -182,8 +195,9 @@ export default function LeadsPage() {
   };
 
   const handleDeleteCancel = () => {
-    setDeleteModalOpen(false);
+    setDeletePopoverOpen(false);
     setLeadToDelete(null);
+    setPopoverPosition(null);
   };
 
   const columns: Column<Lead>[] = [
@@ -598,61 +612,62 @@ export default function LeadsPage() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      {deleteModalOpen && leadToDelete && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" 
-          onClick={handleDeleteCancel}
-        >
+      {/* Delete Confirmation Popover - Small and positioned next to trash icon */}
+      {deletePopoverOpen && leadToDelete && popoverPosition && (
+        <>
+          {/* Backdrop - click to close */}
           <div 
-            className="relative max-w-md w-full mx-4 bg-white rounded-lg shadow-xl" 
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-40" 
+            onClick={handleDeleteCancel}
+          />
+          
+          {/* Popover */}
+          <div 
+            className="fixed z-50 w-[300px] bg-white rounded-lg shadow-2xl border border-gray-200"
+            style={{
+              top: `${popoverPosition.top}px`,
+              left: `${popoverPosition.left}px`,
+            }}
           >
-            {/* Modal content */}
-            <div className="p-6">
-              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
-                <Trash2 className="w-6 h-6 text-red-600" />
+            {/* Compact content */}
+            <div className="p-4">
+              {/* Header with icon */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center justify-center w-8 h-8 bg-red-100 rounded-full">
+                  <Trash2 className="w-4 h-4 text-red-600" />
+                </div>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Delete Lead?
+                </h3>
               </div>
               
-              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">
-                Delete Lead
-              </h3>
-              
-              <p className="text-sm text-gray-600 text-center mb-1">
-                Are you sure you want to delete this lead?
-              </p>
-              
-              <div className="bg-gray-50 rounded-lg p-3 mb-4 mt-3">
-                <p className="text-sm font-medium text-gray-900">
+              {/* Lead info - compact */}
+              <div className="bg-gray-50 rounded p-2 mb-3">
+                <p className="text-xs font-medium text-gray-900 truncate">
                   {leadToDelete.name}
                 </p>
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-[10px] text-gray-600">
                   {leadToDelete.referenceNumber}
                 </p>
-                {leadToDelete.phone && (
-                  <p className="text-xs text-gray-600 mt-1">
-                    {leadToDelete.phone}
-                  </p>
-                )}
               </div>
               
-              <p className="text-xs text-gray-500 text-center mb-4">
-                This action will mark the lead as deleted. Associated appointments will also be removed.
+              <p className="text-[10px] text-gray-500 mb-3">
+                Associated appointments will also be removed.
               </p>
               
-              {/* Action buttons */}
-              <div className="flex gap-3">
+              {/* Compact buttons */}
+              <div className="flex gap-2">
                 <Button
                   onClick={handleDeleteCancel}
                   variant="secondary"
-                  className="flex-1"
+                  className="flex-1 text-xs py-1.5 h-auto"
                   disabled={isDeleting}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleDeleteConfirm}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  className="flex-1 text-xs py-1.5 h-auto bg-red-600 hover:bg-red-700 text-white"
                   disabled={isDeleting}
                 >
                   {isDeleting ? 'Deleting...' : 'Delete'}
@@ -660,7 +675,7 @@ export default function LeadsPage() {
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
