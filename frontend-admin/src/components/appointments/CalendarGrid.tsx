@@ -53,8 +53,9 @@ function formatDate(date: Date): string {
 
 // TEMPORARY FIX: Hardcode today as 2025-11-22 due to cache/deployment issues
 function getTodayInOrlando(): string {
-  console.log('🔴🔴🔴 HARDCODED VERSION - TODAY IS 2025-11-22 🔴🔴🔴');
-  return '2025-11-22';
+  const today = '2025-11-22';
+  console.log(`🔴🔴🔴 HARDCODED VERSION - TODAY IS ${today} 🔴🔴🔴`);
+  return today;
 }
 
 // Check if date is today - compares YYYY-MM-DD strings to avoid timezone issues
@@ -68,8 +69,11 @@ function isToday(date: Date): boolean {
   // Compare strings directly
   const result = dateStr === todayStr;
   
+  // ALWAYS log for debugging
+  console.log(`[CalendarGrid] isToday check: date="${dateStr}" vs today="${todayStr}" → result=${result}`);
+  
   if (result) {
-    console.log(`[CalendarGrid] isToday TRUE: date="${dateStr}" matches Orlando today="${todayStr}"`);
+    console.log(`✅✅✅ DAY 22 DETECTED AS TODAY! Should have golden border! ✅✅✅`);
   }
   
   return result;
@@ -216,8 +220,9 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
               const dayAppointments = appointmentsByDate[dateKey] || [];
               
               // DEBUG: Log every day being rendered
-              if (date.getDate() === 22 || today) {
-                console.log(`[CalendarGrid] Rendering day ${date.getDate()}: dateKey="${dateKey}", isToday=${today}, isCurrentMonth=${isCurrentMonth}`);
+              if (date.getDate() === 22) {
+                console.log(`[CalendarGrid] 🟡 Rendering DAY 22: dateKey="${dateKey}", isToday=${today}, isCurrentMonth=${isCurrentMonth}`);
+                console.log(`[CalendarGrid] 🟡 DAY 22 CSS will have: ${today ? '✅ GOLDEN BORDER (border-[#D4AF37] border-2)' : '❌ NO GOLDEN BORDER'}`);
               }
 
               return (
