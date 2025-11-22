@@ -48,22 +48,39 @@ function formatDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+// Get current date in Orlando, Florida timezone (America/New_York)
+function getTodayInOrlando(): string {
+  // Get current time in Orlando timezone
+  const orlandoTime = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  
+  // Parse MM/DD/YYYY format to YYYY-MM-DD
+  const [month, day, year] = orlandoTime.split(',')[0].split('/');
+  const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  
+  console.log('[CalendarGrid] Orlando today:', todayStr);
+  return todayStr;
+}
+
 // Check if date is today - compares YYYY-MM-DD strings to avoid timezone issues
 function isToday(date: Date): boolean {
-  // Get today in YYYY-MM-DD format (local timezone)
-  const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  // Get today in Orlando timezone
+  const todayStr = getTodayInOrlando();
   
   // Get date in YYYY-MM-DD format
   const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   
-  // DEBUG: Log comparison
+  // Compare strings directly
   const result = dateStr === todayStr;
+  
   if (result) {
-    console.log(`[CalendarGrid] isToday TRUE: date="${dateStr}" vs today="${todayStr}" (now object:`, now, ')');
+    console.log(`[CalendarGrid] isToday TRUE: date="${dateStr}" matches Orlando today="${todayStr}"`);
   }
   
-  // Compare strings directly
   return result;
 }
 

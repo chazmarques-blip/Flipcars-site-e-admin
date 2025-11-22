@@ -49,12 +49,27 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
     }
   };
 
-  // Get today's date in local timezone (YYYY-MM-DD format)
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  // Get today's date in Orlando, Florida timezone (America/New_York)
+  const getTodayInOrlando = (): string => {
+    // Get current time in Orlando timezone
+    const orlandoTime = new Date().toLocaleString('en-US', { 
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    
+    // Parse MM/DD/YYYY format to YYYY-MM-DD
+    const [month, day, year] = orlandoTime.split(',')[0].split('/');
+    const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    
+    console.log('[CalendarSidebar] Orlando today:', todayStr, '(raw:', orlandoTime, ')');
+    return todayStr;
+  };
+
+  const todayStr = getTodayInOrlando();
 
   // DEBUG: Log appointments and today's date
-  console.log('[CalendarSidebar] Today:', todayStr);
   console.log('[CalendarSidebar] All appointments:', appointments.map(a => ({
     name: a.lead?.firstName + ' ' + a.lead?.lastName,
     date: a.appointmentDate,
@@ -63,12 +78,12 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
 
   // Filter overdue (past dates ONLY - compare strings directly)
   const overdue = appointments.filter((apt) => {
-    // Compare date strings: "2025-11-22" < "2025-11-21" = false (NOT overdue)
+    // Compare date strings: "2025-11-22" < "2025-11-22" = false (NOT overdue)
     const isOverdue = apt.appointmentDate < todayStr &&
       apt.status !== 'completed' &&
       apt.status !== 'cancelled';
     
-    console.log(`[CalendarSidebar] ${apt.lead?.firstName}: date="${apt.appointmentDate}" vs today="${todayStr}" → overdue=${isOverdue}`);
+    console.log(`[CalendarSidebar] ${apt.lead?.firstName}: date="${apt.appointmentDate}" vs Orlando today="${todayStr}" → overdue=${isOverdue}`);
     
     return isOverdue;
   });
