@@ -1,5 +1,8 @@
 'use client';
 
+// IMMEDIATE EXECUTION - This will run as soon as file is loaded
+console.log('%c🚨🚨🚨 CALENDAR FILE LOADED - VERSION: 2025-11-22-HARDCODED 🚨🚨🚨', 'background: red; color: white; font-size: 20px; padding: 10px;');
+
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Appointment, appointmentsService } from '@/lib/api/appointments.service';
@@ -172,18 +175,19 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
         </div>
       </div>
 
-      {/* VERSION BANNER - V4 */}
+      {/* VERSION BANNER - V5 HARDCODED */}
       <div style={{
         background: '#ff0000',
         color: '#fff',
-        padding: '10px',
+        padding: '20px',
         textAlign: 'center',
         fontWeight: 'bold',
-        fontSize: '16px',
+        fontSize: '24px',
         borderRadius: '5px',
-        margin: '10px'
+        margin: '10px',
+        border: '5px solid yellow'
       }}>
-        🚨 CALENDAR VERSION V4 - 2025-11-22 🚨
+        🚨 CALENDAR V5 - HARDCODED 22/11/2025 - IF YOU SEE THIS, CACHE CLEARED! 🚨
       </div>
 
       {/* Calendar Grid */}
