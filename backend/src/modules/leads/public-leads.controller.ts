@@ -34,13 +34,16 @@ export class PublicLeadsController {
   @HttpCode(HttpStatus.CREATED)
   async createPublicLead(@Body() createPublicLeadDto: CreatePublicLeadDto) {
     try {
-      this.logger.log('🚀 =========================');
+      this.logger.log('🚀 ========================= V2.0 =========================');
       this.logger.log('📝 Received public lead submission');
-      this.logger.log('Lead data:', {
+      this.logger.log('📋 ALL FIELDS RECEIVED:', JSON.stringify(createPublicLeadDto, null, 2));
+      this.logger.log('🔑 Object keys:', Object.keys(createPublicLeadDto));
+      this.logger.log('Lead data summary:', {
         firstName: createPublicLeadDto.firstName,
         lastName: createPublicLeadDto.lastName,
         email: createPublicLeadDto.email,
         source: createPublicLeadDto.source,
+        hasServiceType: 'serviceType' in createPublicLeadDto,
       });
 
       // Transform public DTO to internal CreateLeadDto
