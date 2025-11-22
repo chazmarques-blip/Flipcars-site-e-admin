@@ -62,7 +62,11 @@ function getTodayInOrlando(): string {
   const [month, day, year] = orlandoTime.split(',')[0].split('/');
   const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   
-  console.log('[CalendarGrid] ✅ VERSION 2025-11-22-FINAL - Orlando today:', todayStr);
+  console.log('='.repeat(80));
+  console.log('🔴 CALENDAR VERSION: 2025-11-22-FINAL-V2 🔴');
+  console.log('🔴 ORLANDO TODAY:', todayStr);
+  console.log('🔴 RAW ORLANDO TIME:', orlandoTime);
+  console.log('='.repeat(80));
   return todayStr;
 }
 
