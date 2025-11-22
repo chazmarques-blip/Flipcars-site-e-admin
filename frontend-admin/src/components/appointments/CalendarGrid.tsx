@@ -214,6 +214,10 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
               const isCurrentMonth = date.getMonth() === month;
               const today = isToday(date);
               const dayAppointments = appointmentsByDate[dateKey] || [];
+              
+              // DEBUG: Log every day being rendered
+              if (date.getDate() === 22 || today) {
+                console.log(`[CalendarGrid] Rendering day ${date.getDate()}: dateKey="${dateKey}", isToday=${today}, isCurrentMonth=${isCurrentMonth}`);
 
               return (
                 <div

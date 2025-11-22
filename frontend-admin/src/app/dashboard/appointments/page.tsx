@@ -73,6 +73,7 @@ export default function AppointmentsPage() {
         {/* Left Sidebar: Overdue (hidden on mobile) */}
         <div className="hidden lg:block overflow-y-auto">
           <CalendarSidebar 
+            type="overdue"
             onEventClick={handleEventClick} 
             refreshKey={refreshKey}
           />
@@ -89,6 +90,7 @@ export default function AppointmentsPage() {
         {/* Right Sidebar: Upcoming (visible on mobile, stacked below calendar) */}
         <div className="overflow-y-auto">
           <CalendarSidebar 
+            type="upcoming"
             onEventClick={handleEventClick} 
             refreshKey={refreshKey}
           />
