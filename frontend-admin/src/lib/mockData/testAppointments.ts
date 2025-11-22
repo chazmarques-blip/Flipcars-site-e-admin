@@ -207,5 +207,6 @@ export const TEST_APPOINTMENTS: Appointment[] = [
 
 /**
  * Flag to enable/disable test data in components
+ * Set to false to use real data from backend API
  */
-export const USE_TEST_DATA = true;
+export const USE_TEST_DATA = false;
