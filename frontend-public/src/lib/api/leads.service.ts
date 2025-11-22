@@ -20,15 +20,17 @@ export const leadsService = {
    * Create a new lead from estimate request using public endpoint
    */
   async createLead(data: Partial<EstimateRequest>): Promise<CreateLeadResponse> {
-    console.log('[LeadsService] Creating lead via public endpoint:', data);
+    console.log('[LeadsService] 🚀 ==========  CREATE LEAD START ========== v2.0');
     console.log('[LeadsService] 📋 Input data keys:', Object.keys(data));
+    console.log('[LeadsService] 🔍 Has serviceType?', 'serviceType' in data, '- Value:', (data as any).serviceType);
     
     // CRITICAL: Remove serviceType from input data to prevent it from being sent
     // The backend DTO explicitly rejects this field (create-public-lead.dto.ts:135-137)
     const { serviceType, ...cleanData } = data;
     
-    console.log('[LeadsService] ⚠️  Removed serviceType from payload');
-    console.log('[LeadsService] 🧹 Clean data keys:', Object.keys(cleanData));
+    console.log('[LeadsService] ⚠️  DESTRUCTURED - serviceType extracted and discarded');
+    console.log('[LeadsService] 🧹 Clean data keys (after destructuring):', Object.keys(cleanData));
+    console.log('[LeadsService] ✅ serviceType removed?', !('serviceType' in cleanData));
     
     // Transform estimate data to public lead DTO format
     const leadData = {
@@ -100,13 +102,17 @@ export const leadsService = {
       status: 'new',
     };
 
-    console.log('[LeadsService] 📤 Final payload to send:', leadData);
+    console.log('[LeadsService] 📤 ========== FINAL PAYLOAD ==========');
     console.log('[LeadsService] 📋 Payload keys:', Object.keys(leadData));
+    console.log('[LeadsService] 📦 Full payload:', JSON.stringify(leadData, null, 2));
     
     // CRITICAL: Final validation - ensure serviceType is NOT in payload
     if ('serviceType' in leadData) {
       console.error('[LeadsService] ❌ CRITICAL: serviceType found in payload! Removing...');
       delete (leadData as any).serviceType;
+      console.log('[LeadsService] ✅ serviceType deleted from payload');
+    } else {
+      console.log('[LeadsService] ✅✅✅ CONFIRMED: serviceType NOT in payload');
     }
     
     console.log('[LeadsService] 🔍 Checking for duplicates...');
@@ -116,6 +122,7 @@ export const leadsService = {
       console.warn('[LeadsService] ⚠️  Found duplicate keys:', duplicates);
     }
 
+    console.log('[LeadsService] 🚀 Sending POST request to /public/leads...');
     try {
       const response = await apiClient.post<CreateLeadResponse>(
         '/public/leads',
