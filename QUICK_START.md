@@ -1,98 +1,148 @@
-# 🚀 Quick Start - Continue Session
+# ⚡ QUICK START - FlipCars Lead Issue Fix
 
-## 📋 CONTEXTO RÁPIDO
-
-**Projeto**: FlipCars Auto Body Shop - Substituir imagens Before/After Gallery  
-**Branch**: `genspark_ai_developer`  
-**Status**: 2/4 projetos completos  
-**Idioma**: Português (Brasil)
+**PROBLEMA**: Admin dashboard não mostra leads (erro 500 em `/api/leads`)  
+**CAUSA**: Schema mismatch entre TypeORM entity e tabela do Supabase  
+**TEMPO ESTIMADO**: 10-15 minutos  
 
 ---
 
-## ✅ COMPLETO
+## 🎯 SOLUÇÃO RÁPIDA (3 Passos)
 
-### Projeto 1 - Bumper Repair ✅
-- Ford Fusion azul
-- Before: `https://page.gensparksite.com/v1/base64_upload/32aa492604b8f02746812feedd1dc5eb`
-- After: `https://page.gensparksite.com/v1/base64_upload/c1d201872c3153ff0177d3d712daa6ce`
+### 1️⃣ Obter Colunas do Banco
 
-### Projeto 2 - Door Dent Removal ✅
-- Sedan prata
-- Before: `https://page.gensparksite.com/v1/base64_upload/ed9c922f313a7f2c9bedb1b55dd24768`
-- After: `https://page.gensparksite.com/v1/base64_upload/cfa9a7bb6ca080a53393fff8a01f45ff`
-
----
-
-## 🔄 PRÓXIMO: Projeto 3 - Quarter Panel Restoration
-
-**Arquivo**: `/home/user/webapp/frontend-public/src/components/features/BeforeAfter.tsx`
-
-**Opção Recomendada** (apresentada ao usuário):
-- **URL**: `https://sspark.genspark.ai/cfimages?u1=Jknz74esli9EXsY0DbOk2oYqzpK%2FsFS0RCUM8Jc%2Bw2sWmJDwCibl7qh%2FeDMbAcBhuP83knKJlJh4VnSJMZOcKa3yW6iJuyEhN%2Fp8AiqGn8gV%2FKBfnFUtL0jCL1DFPTOI1BTCnNQifMr5aM4gleA9zMYeu1b7Z4iTsj%2Bo&u2=1agF5nRss%2Fqb%2BNXh&width=2560`
-- **Descrição**: Silver SUV - before/after lado a lado
-- **Status**: Aguardando decisão do usuário (pediu para buscar mais opções e salvou sessão)
-
-**Outras opções também apresentadas** (ver SESSION_RESUME.md)
-
----
-
-## ⏳ PENDENTE: Projeto 4 - Hood & Fender Repair
-
-Ainda não iniciado. Aguarda conclusão do Projeto 3.
-
----
-
-## 🎯 COMO COMEÇAR NO NOVO CHAT
-
-### 1️⃣ Ler Contexto Completo
-```bash
-cd /home/user/webapp
-cat SESSION_RESUME.md
+Acesse Supabase SQL Editor:
+```
+https://supabase.com/dashboard/project/nsvzqehytuqwfaerzmau
 ```
 
-### 2️⃣ Verificar Estado Atual
-```bash
-cd /home/user/webapp
-git status
-git log --oneline -3
+Execute:
+```sql
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns 
+WHERE table_name = 'leads' 
+ORDER BY ordinal_position;
 ```
 
-### 3️⃣ Iniciar Conversa
-"Olá! Vamos continuar de onde paramos. Você estava decidindo qual imagem usar para o **Projeto 3 (Quarter Panel Restoration)**. 
-
-Você quer:
-1. Usar a **Opção 1** (Silver SUV before/after - recomendada)
-2. Escolher uma das outras opções que apresentei
-3. Ou prefere que eu **busque mais opções**?
-
-Me diga e vamos continuar! 🚗✨"
+**Copie TODOS os resultados** (todas as linhas, não só primeiras 10)
 
 ---
 
-## 📂 ARQUIVOS IMPORTANTES
+### 2️⃣ Identificar Coluna Problemática
 
-- **SESSION_RESUME.md** - Documento completo e detalhado da sessão
-- **QUICK_START.md** - Este arquivo (resumo rápido)
-- **BeforeAfter.tsx** - `/home/user/webapp/frontend-public/src/components/features/BeforeAfter.tsx`
+**OPÇÃO A - Automática (Recomendado):**
+```bash
+cd /home/user/webapp
+python3 compare_schema.py
+```
+- Cole os resultados do Supabase quando solicitado
+- Pressione ENTER duas vezes
+- Script mostrará qual coluna remover
 
----
-
-## 🔗 LINKS
-
-- **PR #1**: https://github.com/chazmarques-blip/Flipcars-site-e-admin/pull/1
-- **Repository**: https://github.com/chazmarques-blip/Flipcars-site-e-admin
-- **Site Local**: https://9000-i0s90jm77mc76ydqc5fpz-b9b802c4.sandbox.novita.ai
-
----
-
-## ⚠️ LEMBRAR
-
-1. Trabalhar **um projeto de cada vez**
-2. **Aguardar aprovação** do usuário antes de aplicar mudanças
-3. Sempre usar **português brasileiro**
-4. Bash commands: sempre `cd /home/user/webapp &&` primeiro
-5. Git workflow: commit → fetch → rebase → push
+**OPÇÃO B - Manual:**
+- Abra `DIAGNOSTIC_GUIDE.md`
+- Siga passos 1 a 3
 
 ---
 
-**Ver SESSION_RESUME.md para detalhes completos!**
+### 3️⃣ Aplicar Fix
+
+No Supabase SQL Editor, execute:
+```sql
+-- Exemplo: se script identificou 'customer_id' como coluna extra
+ALTER TABLE leads DROP COLUMN IF EXISTS customer_id;
+
+-- Repita para cada coluna extra identificada
+```
+
+Reinicie backend no Railway:
+```
+https://railway.app → Backend service → Restart
+```
+
+Teste:
+```
+https://upbeat-dedication-production.up.railway.app/api/leads
+```
+
+Deve retornar `200 OK` com array de leads.
+
+---
+
+## 📚 DOCUMENTAÇÃO COMPLETA
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `DIAGNOSTIC_GUIDE.md` | Guia passo a passo completo |
+| `HANDOFF_DOCUMENT.md` | Contexto completo do problema |
+| `SCHEMA_COMPARISON.md` | Lista de colunas esperadas |
+| `SCHEMA_FIXES.sql` | Queries SQL prontas para usar |
+| `SUPABASE_QUERIES.sql` | Queries de diagnóstico |
+| `compare_schema.py` | Script de comparação automática |
+
+---
+
+## 🔗 LINKS IMPORTANTES
+
+- **Admin Dashboard**: https://admin.flipcars.us
+- **Backend API**: https://upbeat-dedication-production.up.railway.app/api
+- **Supabase**: https://supabase.com/dashboard/project/nsvzqehytuqwfaerzmau
+- **Railway**: https://railway.app
+
+**Credenciais Admin**: `admin@flipcars.us` / `Admin123!`
+
+---
+
+## 🆘 AJUDA RÁPIDA
+
+### Erro: "permission denied" no Supabase
+- Use conta com role admin/owner
+
+### Erro: Script Python não executa
+```bash
+chmod +x compare_schema.py
+python3 compare_schema.py
+```
+
+### API ainda retorna 500 após fix
+- Verificar logs do Railway
+- Reiniciar backend novamente
+- Executar query de teste no Supabase (ver `SCHEMA_FIXES.sql`)
+
+### Admin dashboard não atualiza
+- Limpar cache: Ctrl+Shift+R
+- Tentar aba anônima
+- Verificar console (F12)
+
+---
+
+## 🎓 COLUNAS SUSPEITAS
+
+Baseado no histórico, estas colunas podem estar causando o problema:
+
+🔴 **Alta probabilidade**:
+- `customer_id` (comentada na entidade)
+- `contact_preferences` (comentada na entidade)
+- `vehicle_id` (comentada na entidade)
+- `assigned_human_agent_id` (comentada na entidade)
+
+🟢 **Baixa probabilidade**:
+- `service_type` (já confirmada que NÃO existe)
+
+---
+
+## ✅ CHECKLIST DE RESOLUÇÃO
+
+- [ ] Query do Supabase executada
+- [ ] Resultados completos copiados
+- [ ] Script de comparação rodado OU comparação manual feita
+- [ ] Colunas extras identificadas
+- [ ] ALTER TABLE executado no Supabase
+- [ ] Backend reiniciado no Railway
+- [ ] GET /api/leads retorna 200 OK
+- [ ] Admin dashboard mostra 33 leads
+- [ ] HANDOFF_DOCUMENT.md atualizado para status ✅ RESOLVED
+
+---
+
+**Última atualização**: 2025-11-22  
+**Próximo passo**: Execute o passo 1 (obter colunas do Supabase)

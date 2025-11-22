@@ -142,6 +142,10 @@ Option C: Make TypeORM ignore extra columns
 ### Documentation:
 - `SUPABASE_QUERIES.sql` - SQL queries for debugging
 - `INCIDENT_REPORT.md` - Previous incident documentation
+- **`DIAGNOSTIC_GUIDE.md`** - 🆕 Step-by-step guide to diagnose and fix
+- **`SCHEMA_COMPARISON.md`** - 🆕 Schema comparison reference
+- **`SCHEMA_FIXES.sql`** - 🆕 Ready-to-use SQL fixes
+- **`compare_schema.py`** - 🆕 Automated comparison tool
 
 ---
 
@@ -220,6 +224,14 @@ Option C: Make TypeORM ignore extra columns
 
 ### Command to Continue:
 ```bash
+# METHOD 1 (RECOMMENDED): Use automated comparison tool
+cd /home/user/webapp
+python3 compare_schema.py
+# Then paste Supabase query results when prompted
+
+# METHOD 2 (MANUAL): Follow step-by-step guide
+# Open DIAGNOSTIC_GUIDE.md and follow all steps
+
 # In Supabase SQL Editor, execute:
 SELECT column_name, data_type, is_nullable, column_default
 FROM information_schema.columns 
