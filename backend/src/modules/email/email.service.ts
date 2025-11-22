@@ -213,7 +213,7 @@ FlipCars Auto Repair Team
         <div class="container">
           <div class="header">
             <h1>🎯 ESTIMATE REQUEST CONFIRMED</h1>
-            <p style="margin: 0; opacity: 0.9;">${lead.serviceType === 'bodyshop' ? 'Body Shop Repair Service' : 'Mechanic Service'}</p>
+            <p style="margin: 0; opacity: 0.9;">Auto Repair Service</p>
           </div>
           
           <div class="content">

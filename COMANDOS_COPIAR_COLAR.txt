@@ -1,0 +1,65 @@
+═══════════════════════════════════════════════════════════════════
+   COMANDOS PARA COPIAR E COLAR NO SUPABASE SQL EDITOR
+═══════════════════════════════════════════════════════════════════
+
+PASSO 1: Acesse este link (Ctrl+Click):
+https://supabase.com/dashboard/project/nsvzqehytuqwfaerzmau
+
+PASSO 2: No menu lateral esquerdo, clique em "SQL Editor"
+
+PASSO 3: Copie TUDO abaixo desta linha (Ctrl+A neste arquivo, Ctrl+C)
+───────────────────────────────────────────────────────────────────
+
+-- Fix FlipCars Leads Error 500
+-- Remove colunas extras que causam erro no TypeORM
+
+ALTER TABLE leads DROP COLUMN IF EXISTS assigned_human_agent_id;
+ALTER TABLE leads DROP COLUMN IF EXISTS service_type;
+
+-- Verificar que ficou correto
+SELECT COUNT(*) as total_colunas 
+FROM information_schema.columns 
+WHERE table_name = 'leads';
+
+-- Deve retornar: total_colunas = 33
+
+───────────────────────────────────────────────────────────────────
+
+PASSO 4: Cole no SQL Editor do Supabase (Ctrl+V)
+
+PASSO 5: Clique no botão "Run" (ou pressione Ctrl+Enter)
+
+PASSO 6: Aguarde mensagens de sucesso:
+   ✅ ALTER TABLE
+   ✅ ALTER TABLE
+   ✅ SELECT (mostrando total_colunas = 33)
+
+═══════════════════════════════════════════════════════════════════
+APÓS EXECUTAR COM SUCESSO:
+═══════════════════════════════════════════════════════════════════
+
+1. Acesse Railway: https://railway.app
+2. Encontre o serviço "backend"
+3. Clique nos 3 pontinhos (⋯)
+4. Clique em "Restart"
+5. Aguarde 30-60 segundos
+
+6. Teste a API neste link (Ctrl+Click):
+   https://upbeat-dedication-production.up.railway.app/api/leads
+   
+   ✅ Deve retornar JSON com 33 leads
+   ❌ Se ainda retornar 500, me avise
+
+7. Teste o Admin (Ctrl+Click):
+   https://admin.flipcars.us
+   
+   Login: admin@flipcars.us
+   Senha: Admin123!
+   
+   ✅ Deve mostrar tabela com 33 leads
+
+═══════════════════════════════════════════════════════════════════
+
+COPIE OS COMANDOS SQL ACIMA E EXECUTE NO SUPABASE AGORA! 🚀
+
+═══════════════════════════════════════════════════════════════════

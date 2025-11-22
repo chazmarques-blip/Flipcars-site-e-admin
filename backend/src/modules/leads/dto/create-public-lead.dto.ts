@@ -132,8 +132,9 @@ export class CreatePublicLeadDto {
   @IsEmail()
   email: string;
 
-  @IsEnum(['bodyshop', 'mechanic'])
-  serviceType: 'bodyshop' | 'mechanic';
+  // TEMPORARY: Disabled until front-end is updated
+  // @IsEnum(['bodyshop', 'mechanic'])
+  // serviceType?: 'bodyshop' | 'mechanic';
 
   // Step 2A: Body Shop Information (OPTIONAL - only for bodyshop)
   @IsString()

@@ -40,7 +40,6 @@ export class PublicLeadsController {
         firstName: createPublicLeadDto.firstName,
         lastName: createPublicLeadDto.lastName,
         email: createPublicLeadDto.email,
-        serviceType: createPublicLeadDto.serviceType,
         source: createPublicLeadDto.source,
       });
 
@@ -72,7 +71,6 @@ export class PublicLeadsController {
           name: lead.name,
           email: lead.email,
           phone: lead.phone,
-          serviceType: createPublicLeadDto.serviceType,
           status: lead.status,
           createdAt: lead.createdAt,
         },
@@ -106,10 +104,11 @@ export class PublicLeadsController {
     // Combine first and last name
     const fullName = `${dto.firstName} ${dto.lastName}`.trim();
 
-    // Build damage description based on service type
+    // Build damage description
     let damageDescription = '';
     
-    if (dto.serviceType === 'bodyshop') {
+    // Check if bodyshop data exists
+    if (dto.insuranceCompany || dto.claimNumber || dto.photos) {
       damageDescription = dto.additionalNotes || 'Body shop repair needed';
       if (dto.insuranceCompany) {
         damageDescription += `\n\nInsurance: ${dto.insuranceCompany}`;
@@ -117,7 +116,7 @@ export class PublicLeadsController {
           damageDescription += ` (Claim #${dto.claimNumber})`;
         }
       }
-    } else if (dto.serviceType === 'mechanic') {
+    } else if (dto.warrantyCompany || dto.warrantyDocs) {
       // Use warranty symptoms description
       damageDescription = dto.warrantyDocs?.symptomsDescription || 'Mechanic service needed';
       
@@ -134,7 +133,7 @@ export class PublicLeadsController {
     }
 
     // Add additional notes
-    if (dto.additionalNotes && dto.serviceType === 'mechanic') {
+    if (dto.additionalNotes) {
       damageDescription += `\n\nAdditional Notes: ${dto.additionalNotes}`;
     }
 
@@ -221,7 +220,7 @@ export class PublicLeadsController {
       vehicleModel: dto.vehicle?.model,
       vehicleYear: dto.vehicle?.year,
       vehicleColor: undefined,
-      hasInsurance: dto.serviceType === 'bodyshop' && !!dto.insuranceCompany,
+      hasInsurance: !!dto.insuranceCompany,
       insuranceProvider: dto.insuranceCompany,
       claimNumber: dto.claimNumber || dto.warrantyClaimNumber,
       accidentDescription: damageDescription,
