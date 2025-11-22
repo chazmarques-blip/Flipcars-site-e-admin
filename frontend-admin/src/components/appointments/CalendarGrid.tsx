@@ -57,8 +57,14 @@ function isToday(date: Date): boolean {
   // Get date in YYYY-MM-DD format
   const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   
+  // DEBUG: Log comparison
+  const result = dateStr === todayStr;
+  if (result) {
+    console.log(`[CalendarGrid] isToday TRUE: date="${dateStr}" vs today="${todayStr}" (now object:`, now, ')');
+  }
+  
   // Compare strings directly
-  return dateStr === todayStr;
+  return result;
 }
 
 export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps) {

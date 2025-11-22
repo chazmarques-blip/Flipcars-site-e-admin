@@ -53,14 +53,24 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
+  // DEBUG: Log appointments and today's date
+  console.log('[CalendarSidebar] Today:', todayStr);
+  console.log('[CalendarSidebar] All appointments:', appointments.map(a => ({
+    name: a.lead?.firstName + ' ' + a.lead?.lastName,
+    date: a.appointmentDate,
+    isOverdue: a.appointmentDate < todayStr
+  })));
+
   // Filter overdue (past dates ONLY - compare strings directly)
   const overdue = appointments.filter((apt) => {
     // Compare date strings: "2025-11-22" < "2025-11-21" = false (NOT overdue)
-    return (
-      apt.appointmentDate < todayStr &&
+    const isOverdue = apt.appointmentDate < todayStr &&
       apt.status !== 'completed' &&
-      apt.status !== 'cancelled'
-    );
+      apt.status !== 'cancelled';
+    
+    console.log(`[CalendarSidebar] ${apt.lead?.firstName}: date="${apt.appointmentDate}" vs today="${todayStr}" → overdue=${isOverdue}`);
+    
+    return isOverdue;
   });
 
   // Filter upcoming (today or future dates - compare strings directly)
