@@ -179,4 +179,85 @@ export class LeadsController {
   async debugSql() {
     return this.leadsService.getDebugSql();
   }
+
+  /**
+   * EMERGENCY ENDPOINT - Create sample leads if database is empty
+   */
+  @Post('emergency/create-samples')
+  @Public()
+  async createSampleLeads() {
+    try {
+      const existing = await this.leadsService.findAll({ page: 1, limit: 1 });
+      
+      if (existing.pagination?.total > 0) {
+        return {
+          success: false,
+          message: 'Leads already exist in database',
+          total: existing.pagination.total
+        };
+      }
+
+      // Create 3 sample leads
+      const samples = [
+        {
+          name: 'John Smith',
+          phone: '+1234567890',
+          email: 'john.smith@example.com',
+          preferredLanguage: 'en',
+          vehicleYear: '2020',
+          vehicleMake: 'Toyota',
+          vehicleModel: 'Camry',
+          vehicleColor: 'Blue',
+          hasInsurance: true,
+          isDrivable: true,
+          source: 'website'
+        },
+        {
+          name: 'Maria Garcia',
+          phone: '+1987654321',
+          email: 'maria.garcia@example.com',
+          preferredLanguage: 'en',
+          vehicleYear: '2019',
+          vehicleMake: 'Honda',
+          vehicleModel: 'Civic',
+          vehicleColor: 'Red',
+          hasInsurance: false,
+          isDrivable: true,
+          source: 'referral'
+        },
+        {
+          name: 'Robert Johnson',
+          phone: '+1555555555',
+          email: 'robert.j@example.com',
+          preferredLanguage: 'en',
+          vehicleYear: '2021',
+          vehicleMake: 'Ford',
+          vehicleModel: 'F-150',
+          vehicleColor: 'Black',
+          hasInsurance: true,
+          isDrivable: false,
+          source: 'website'
+        }
+      ];
+
+      const created = [];
+      for (const sample of samples) {
+        const lead = await this.leadsService.create(sample);
+        created.push(lead.referenceNumber);
+      }
+
+      return {
+        success: true,
+        message: 'Sample leads created successfully',
+        created: created.length,
+        references: created
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        stack: error.stack
+      };
+    }
+  }
 }
