@@ -50,22 +50,35 @@ function formatDate(date: Date): string {
 
 // Get current date in Orlando, Florida timezone (America/New_York)
 function getTodayInOrlando(): string {
+  // CRITICAL: Must run on client-side only
+  if (typeof window === 'undefined') {
+    console.warn('🔴 getTodayInOrlando called on SERVER - this is a BUG');
+    return new Date().toISOString().split('T')[0];
+  }
+  
   // Get current time in Orlando timezone
-  const orlandoTime = new Date().toLocaleString('en-US', { 
+  const now = new Date();
+  const orlandoTime = now.toLocaleString('en-US', { 
     timeZone: 'America/New_York',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
   });
   
+  console.log('='.repeat(80));
+  console.log('🔴 CALENDAR VERSION: 2025-11-22-FINAL-V3 🔴');
+  console.log('🔴 Browser Date object:', now);
+  console.log('🔴 Browser timestamp:', now.getTime());
+  console.log('🔴 Orlando time string:', orlandoTime);
+  
   // Parse MM/DD/YYYY format to YYYY-MM-DD
-  const [month, day, year] = orlandoTime.split(',')[0].split('/');
+  const parts = orlandoTime.split(',')[0].split('/');
+  console.log('🔴 Parsed parts:', parts);
+  
+  const [month, day, year] = parts;
   const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   
-  console.log('='.repeat(80));
-  console.log('🔴 CALENDAR VERSION: 2025-11-22-FINAL-V2 🔴');
-  console.log('🔴 ORLANDO TODAY:', todayStr);
-  console.log('🔴 RAW ORLANDO TIME:', orlandoTime);
+  console.log('🔴 FINAL ORLANDO TODAY:', todayStr);
   console.log('='.repeat(80));
   return todayStr;
 }

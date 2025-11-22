@@ -51,19 +51,22 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
 
   // Get today's date in Orlando, Florida timezone (America/New_York)
   const getTodayInOrlando = (): string => {
-    // Get current time in Orlando timezone
-    const orlandoTime = new Date().toLocaleString('en-US', { 
+    const now = new Date();
+    const orlandoTime = now.toLocaleString('en-US', { 
       timeZone: 'America/New_York',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     });
     
+    console.log('🔵 SIDEBAR VERSION: 2025-11-22-V3 🔵');
+    console.log('🔵 Orlando time string:', orlandoTime);
+    
     // Parse MM/DD/YYYY format to YYYY-MM-DD
     const [month, day, year] = orlandoTime.split(',')[0].split('/');
     const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     
-    console.log('[CalendarSidebar] Orlando today:', todayStr, '(raw:', orlandoTime, ')');
+    console.log('🔵 SIDEBAR ORLANDO TODAY:', todayStr);
     return todayStr;
   };
 
