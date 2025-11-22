@@ -140,7 +140,7 @@ async function bootstrap() {
   
   console.log('✅ CORS enabled for origins:', allowedOrigins);
 
-  // Global validation pipe with detailed error messages
+  // Global validation pipe
   console.log('✅ Configuring global validation pipe...');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -149,38 +149,6 @@ async function bootstrap() {
       transform: true,
       transformOptions: {
         enableImplicitConversion: true,
-      },
-      // CRITICAL: Enable detailed validation error messages
-      disableErrorMessages: false,
-      validationError: {
-        target: false,
-        value: true,
-      },
-      exceptionFactory: (errors) => {
-        console.error('❌ ======== VALIDATION ERRORS ========');
-        console.error('Full errors:', JSON.stringify(errors, null, 2));
-        errors.forEach((error, index) => {
-          console.error(`\nError ${index + 1}:`);
-          console.error('  Property:', error.property);
-          console.error('  Value:', error.value);
-          console.error('  Constraints:', error.constraints);
-          if (error.children && error.children.length > 0) {
-            console.error('  Children errors:', JSON.stringify(error.children, null, 2));
-          }
-        });
-        console.error('❌ ====================================\n');
-        
-        // Return standard BadRequestException
-        const { BadRequestException } = require('@nestjs/common');
-        return new BadRequestException({
-          message: 'Validation failed',
-          errors: errors.map(error => ({
-            property: error.property,
-            value: error.value,
-            constraints: error.constraints,
-            children: error.children,
-          })),
-        });
       },
     }),
   );

@@ -9,7 +9,7 @@ export interface CreateLeadResponse {
     name: string;
     email: string;
     phone: string;
-    // serviceType removed - not supported by backend
+    serviceType: string;
     status: string;
     createdAt: string;
   };
@@ -20,101 +20,81 @@ export const leadsService = {
    * Create a new lead from estimate request using public endpoint
    */
   async createLead(data: Partial<EstimateRequest>): Promise<CreateLeadResponse> {
-    console.log('[LeadsService] 🚀 ==========  CREATE LEAD START ========== v2.0');
+    console.log('[LeadsService] Creating lead via public endpoint:', data);
     console.log('[LeadsService] 📋 Input data keys:', Object.keys(data));
-    console.log('[LeadsService] 🔍 Has serviceType?', 'serviceType' in data, '- Value:', (data as any).serviceType);
-    
-    // CRITICAL: Remove serviceType from input data to prevent it from being sent
-    // The backend DTO explicitly rejects this field (create-public-lead.dto.ts:135-137)
-    const { serviceType, ...cleanData } = data;
-    
-    console.log('[LeadsService] ⚠️  DESTRUCTURED - serviceType extracted and discarded');
-    console.log('[LeadsService] 🧹 Clean data keys (after destructuring):', Object.keys(cleanData));
-    console.log('[LeadsService] ✅ serviceType removed?', !('serviceType' in cleanData));
     
     // Transform estimate data to public lead DTO format
     const leadData = {
       // Step 1: Basic contact information (REQUIRED)
-      firstName: cleanData.firstName!,
-      lastName: cleanData.lastName!,
-      email: cleanData.email!,
-      phone: cleanData.phone!,
-      // serviceType explicitly excluded above
+      firstName: data.firstName!,
+      lastName: data.lastName!,
+      email: data.email!,
+      phone: data.phone!,
+      serviceType: data.serviceType!,
       
       // Step 2A: Body Shop information (OPTIONAL)
-      insuranceCompany: cleanData.insuranceCompany,
-      claimNumber: cleanData.claimNumber,
-      hasClaimNumber: !!cleanData.claimNumber,
+      insuranceCompany: data.insuranceCompany,
+      claimNumber: data.claimNumber,
+      hasClaimNumber: !!data.claimNumber,
       
       // Step 2B: Mechanic/Warranty information (OPTIONAL)
-      warrantyCompany: cleanData.warrantyCompany,
-      warrantyClaimNumber: cleanData.warrantyClaimNumber,
-      hasWarrantyClaimNumber: !!cleanData.warrantyClaimNumber,
+      warrantyCompany: data.warrantyCompany,
+      warrantyClaimNumber: data.warrantyClaimNumber,
+      hasWarrantyClaimNumber: !!data.warrantyClaimNumber,
       
       // Scheduling information (OPTIONAL)
       // Convert preferredDate to ISO 8601 format if present
-      ...(cleanData.preferredDate && cleanData.preferredDate.trim() !== '' ? { 
-        preferredDate: new Date(cleanData.preferredDate).toISOString() 
+      ...(data.preferredDate && data.preferredDate.trim() !== '' ? { 
+        preferredDate: new Date(data.preferredDate).toISOString() 
       } : {}),
-      preferredTimeSlot: cleanData.preferredTimeSlot,
-      dateSkipped: cleanData.dateSkipped,
+      preferredTimeSlot: data.preferredTimeSlot,
+      dateSkipped: data.dateSkipped,
       
       // Vehicle information (OPTIONAL)
-      vehicle: cleanData.vehicle,
+      vehicle: data.vehicle,
       
       // Step 3: Photos (OPTIONAL - bodyshop only)
       // Photos should be URLs (already uploaded), not File objects
       // Accept both relative paths (/uploads/) and full URLs (https://)
-      ...(cleanData.photos && Object.values(cleanData.photos).some(
+      ...(data.photos && Object.values(data.photos).some(
         (photo) => typeof photo === 'string' && (photo.startsWith('/uploads/') || photo.startsWith('http'))
-      ) ? { photos: cleanData.photos } : {}),
+      ) ? { photos: data.photos } : {}),
       
       // Step 2.5: Warranty Documents (OPTIONAL - mechanic only)
       // Only include if there are actual string URLs (not File objects or Base64)
-      ...(cleanData.warrantyDocs && cleanData.warrantyDocs.selectedIssues && cleanData.warrantyDocs.symptomsDescription ? {
+      ...(data.warrantyDocs && data.warrantyDocs.selectedIssues && data.warrantyDocs.symptomsDescription ? {
         warrantyDocs: {
           // Only include document URLs if they are strings (uploaded URLs, not Base64)
-          ...(typeof cleanData.warrantyDocs.policyDocument === 'string' && 
-              cleanData.warrantyDocs.policyDocument.startsWith('http') ? 
-              { policyDocument: cleanData.warrantyDocs.policyDocument } : {}),
-          ...(typeof cleanData.warrantyDocs.vinPhoto === 'string' && 
-              cleanData.warrantyDocs.vinPhoto.startsWith('http') ? 
-              { vinPhoto: cleanData.warrantyDocs.vinPhoto } : {}),
-          ...(typeof cleanData.warrantyDocs.odometerPhoto === 'string' && 
-              cleanData.warrantyDocs.odometerPhoto.startsWith('http') ? 
-              { odometerPhoto: cleanData.warrantyDocs.odometerPhoto } : {}),
-          selectedIssues: cleanData.warrantyDocs.selectedIssues || [],
-          symptomsDescription: cleanData.warrantyDocs.symptomsDescription || '',
+          ...(typeof data.warrantyDocs.policyDocument === 'string' && 
+              data.warrantyDocs.policyDocument.startsWith('http') ? 
+              { policyDocument: data.warrantyDocs.policyDocument } : {}),
+          ...(typeof data.warrantyDocs.vinPhoto === 'string' && 
+              data.warrantyDocs.vinPhoto.startsWith('http') ? 
+              { vinPhoto: data.warrantyDocs.vinPhoto } : {}),
+          ...(typeof data.warrantyDocs.odometerPhoto === 'string' && 
+              data.warrantyDocs.odometerPhoto.startsWith('http') ? 
+              { odometerPhoto: data.warrantyDocs.odometerPhoto } : {}),
+          selectedIssues: data.warrantyDocs.selectedIssues || [],
+          symptomsDescription: data.warrantyDocs.symptomsDescription || '',
         }
       } : {}),
       
       // Step 4: Contact preferences (REQUIRED)
       // Frontend already uses correct field names (phoneCall, whatsapp, textMessage)
       contactPreferences: {
-        phoneCall: cleanData.contactPreferences?.phoneCall || false,
-        whatsapp: cleanData.contactPreferences?.whatsapp || false,
-        textMessage: cleanData.contactPreferences?.textMessage || false,
+        phoneCall: data.contactPreferences?.phoneCall || false,
+        whatsapp: data.contactPreferences?.whatsapp || false,
+        textMessage: data.contactPreferences?.textMessage || false,
       },
-      additionalNotes: cleanData.additionalNotes,
+      additionalNotes: data.additionalNotes,
       
       // System fields
       source: 'website_estimate_form',
       status: 'new',
     };
 
-    console.log('[LeadsService] 📤 ========== FINAL PAYLOAD ==========');
+    console.log('[LeadsService] 📤 Final payload to send:', leadData);
     console.log('[LeadsService] 📋 Payload keys:', Object.keys(leadData));
-    console.log('[LeadsService] 📦 Full payload:', JSON.stringify(leadData, null, 2));
-    
-    // CRITICAL: Final validation - ensure serviceType is NOT in payload
-    if ('serviceType' in leadData) {
-      console.error('[LeadsService] ❌ CRITICAL: serviceType found in payload! Removing...');
-      delete (leadData as any).serviceType;
-      console.log('[LeadsService] ✅ serviceType deleted from payload');
-    } else {
-      console.log('[LeadsService] ✅✅✅ CONFIRMED: serviceType NOT in payload');
-    }
-    
     console.log('[LeadsService] 🔍 Checking for duplicates...');
     const keys = Object.keys(leadData);
     const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
@@ -122,7 +102,6 @@ export const leadsService = {
       console.warn('[LeadsService] ⚠️  Found duplicate keys:', duplicates);
     }
 
-    console.log('[LeadsService] 🚀 Sending POST request to /public/leads...');
     try {
       const response = await apiClient.post<CreateLeadResponse>(
         '/public/leads',
