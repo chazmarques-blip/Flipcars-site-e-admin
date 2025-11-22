@@ -80,11 +80,11 @@ export const leadsService = {
       } : {}),
       
       // Step 4: Contact preferences (REQUIRED)
-      // Map frontend fields to backend DTO structure
+      // Frontend already uses correct field names (phoneCall, whatsapp, textMessage)
       contactPreferences: {
-        phoneCall: data.contactPreferences?.phone || false,
-        whatsapp: false, // Not currently captured in frontend
-        textMessage: data.contactPreferences?.sms || false,
+        phoneCall: data.contactPreferences?.phoneCall || false,
+        whatsapp: data.contactPreferences?.whatsapp || false,
+        textMessage: data.contactPreferences?.textMessage || false,
       },
       additionalNotes: data.additionalNotes,
       
