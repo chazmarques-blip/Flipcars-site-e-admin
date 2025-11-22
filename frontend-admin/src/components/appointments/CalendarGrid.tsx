@@ -51,10 +51,17 @@ function formatDate(date: Date): string {
 // Check if date is today (uses local timezone)
 function isToday(date: Date): boolean {
   const now = new Date();
-  // Create date objects in local timezone for comparison
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  return today.getTime() === compareDate.getTime();
+  // Get current date in user's timezone
+  const todayYear = now.getFullYear();
+  const todayMonth = now.getMonth();
+  const todayDate = now.getDate();
+  
+  // Compare year, month, and day directly
+  return (
+    date.getFullYear() === todayYear &&
+    date.getMonth() === todayMonth &&
+    date.getDate() === todayDate
+  );
 }
 
 export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps) {
@@ -178,6 +185,17 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
               const isCurrentMonth = date.getMonth() === month;
               const today = isToday(date);
               const dayAppointments = appointmentsByDate[dateKey] || [];
+              
+              // Debug: Log when today is true
+              if (today) {
+                console.log('[CalendarGrid] Today detected:', {
+                  date: date.toISOString(),
+                  dateKey,
+                  day: date.getDate(),
+                  month: date.getMonth(),
+                  year: date.getFullYear(),
+                });
+              }
 
               return (
                 <div
