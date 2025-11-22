@@ -55,32 +55,53 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
     return '2025-11-22';
   };
 
+  // HARDCODED: Current time in Orlando (for testing - should be dynamic in production)
+  const getCurrentTimeInOrlando = (): string => {
+    // For testing: hardcode to 11:00 AM
+    // TODO: Replace with real Orlando time: new Date().toLocaleString('en-US', { timeZone: 'America/New_York', hour12: false }).split(', ')[1]
+    return '11:00';
+  };
+
   const todayStr = getTodayInOrlando();
+  const currentTime = getCurrentTimeInOrlando();
 
   // DEBUG: Log appointments and today's date
   console.log('[CalendarSidebar] All appointments:', appointments.map(a => ({
     name: a.lead?.firstName + ' ' + a.lead?.lastName,
     date: a.appointmentDate,
+    time: a.appointmentStartTime,
     isOverdue: a.appointmentDate < todayStr
   })));
 
-  // Filter overdue (past dates ONLY - compare strings directly)
+  // Filter overdue (past date OR today but past time)
   const overdue = appointments.filter((apt) => {
-    // Compare date strings: "2025-11-22" < "2025-11-22" = false (NOT overdue)
-    const isOverdue = apt.appointmentDate < todayStr &&
+    // Appointment is overdue if:
+    // 1. Date is in the past (before today)
+    // 2. OR date is today BUT time has passed
+    const isPastDate = apt.appointmentDate < todayStr;
+    const isToday = apt.appointmentDate === todayStr;
+    const isPastTime = isToday && apt.appointmentStartTime < currentTime;
+    
+    const isOverdue = (isPastDate || isPastTime) &&
       apt.status !== 'completed' &&
       apt.status !== 'cancelled';
     
-    console.log(`[CalendarSidebar] ${apt.lead?.firstName}: date="${apt.appointmentDate}" vs Orlando today="${todayStr}" → overdue=${isOverdue}`);
+    console.log(`[CalendarSidebar] ${apt.lead?.firstName}: date="${apt.appointmentDate}" time="${apt.appointmentStartTime}" vs today="${todayStr}" ${currentTime} → overdue=${isOverdue} (pastDate=${isPastDate}, pastTime=${isPastTime})`);
     
     return isOverdue;
   });
 
-  // Filter upcoming (today or future dates - compare strings directly)
+  // Filter upcoming (future date OR today but future time)
   const upcoming = appointments.filter((apt) => {
-    // Compare date strings: "2025-11-22" >= "2025-11-21" = true (upcoming)
+    // Appointment is upcoming if:
+    // 1. Date is in the future (after today)
+    // 2. OR date is today BUT time hasn't passed yet
+    const isFutureDate = apt.appointmentDate > todayStr;
+    const isToday = apt.appointmentDate === todayStr;
+    const isFutureTime = isToday && apt.appointmentStartTime >= currentTime;
+    
     return (
-      apt.appointmentDate >= todayStr &&
+      (isFutureDate || isFutureTime) &&
       apt.status !== 'completed' &&
       apt.status !== 'cancelled'
     );
@@ -88,7 +109,7 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
     // Sort by date, then by time
     const dateCompare = a.appointmentDate.localeCompare(b.appointmentDate);
     if (dateCompare !== 0) return dateCompare;
-    return (a.appointmentTimeSlot || '').localeCompare(b.appointmentTimeSlot || '');
+    return (a.appointmentStartTime || '').localeCompare(b.appointmentStartTime || '');
   });
 
   if (loading) {

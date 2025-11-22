@@ -214,11 +214,18 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
                 <div
                   key={index}
                   className={`
-                    relative min-h-[60px] p-1 border rounded
-                    ${isCurrentMonth ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100'}
-                    ${today ? 'border-[#D4AF37] border-[3px] bg-amber-50 shadow-lg' : ''}
+                    relative min-h-[60px] p-1 border rounded cursor-pointer
+                    ${isCurrentMonth ? 'bg-white border-gray-200 hover:bg-gray-50' : 'bg-gray-50 border-gray-100 hover:bg-gray-100'}
+                    ${today ? 'border-[#D4AF37] border-[3px] bg-amber-50 shadow-lg hover:bg-amber-100' : ''}
+                    transition-colors
                   `}
                   style={today ? { borderColor: '#D4AF37', borderWidth: '3px', boxShadow: '0 0 10px rgba(212, 175, 55, 0.5)' } : {}}
+                  onClick={() => {
+                    // If there are appointments on this day, show the first one
+                    if (dayAppointments.length > 0) {
+                      onEventClick(dayAppointments[0]);
+                    }
+                  }}
                 >
                   {/* Day number */}
                   <div className={`text-[10px] font-semibold mb-0.5 ${
@@ -236,15 +243,26 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
                         {dayAppointments.slice(0, 3).map((apt) => (
                           <div
                             key={apt.id}
-                            onClick={() => onEventClick(apt)}
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent parent div onClick
+                              onEventClick(apt);
+                            }}
                             className="h-[2px] w-full rounded-[1px] bg-[#D4AF37] cursor-pointer hover:opacity-80 transition-opacity"
-                            title={`${apt.lead?.name} - ${apt.appointmentTimeSlot}`}
+                            title={`${apt.lead?.name} - ${apt.appointmentStartTime}`}
                           />
                         ))}
                       </div>
                       
                       {/* Event count badge (MOCKUP: absolute positioned) */}
-                      <div className="absolute bottom-1 right-1 bg-[#D4AF37] text-white text-[8px] font-bold px-1 py-0.5 rounded-full leading-none">
+                      <div 
+                        className="absolute bottom-1 right-1 bg-[#D4AF37] text-white text-[8px] font-bold px-1 py-0.5 rounded-full leading-none cursor-pointer hover:bg-[#b8962d]"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent parent div onClick
+                          // Show first appointment when clicking badge
+                          onEventClick(dayAppointments[0]);
+                        }}
+                        title={`${dayAppointments.length} appointment${dayAppointments.length > 1 ? 's' : ''}`}
+                      >
                         {dayAppointments.length}
                       </div>
                     </>
