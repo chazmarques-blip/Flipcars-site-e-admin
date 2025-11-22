@@ -48,39 +48,10 @@ function formatDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-// Get current date in Orlando, Florida timezone (America/New_York)
+// TEMPORARY FIX: Hardcode today as 2025-11-22 due to cache/deployment issues
 function getTodayInOrlando(): string {
-  // CRITICAL: Must run on client-side only
-  if (typeof window === 'undefined') {
-    console.warn('🔴 getTodayInOrlando called on SERVER - this is a BUG');
-    return new Date().toISOString().split('T')[0];
-  }
-  
-  // Get current time in Orlando timezone
-  const now = new Date();
-  const orlandoTime = now.toLocaleString('en-US', { 
-    timeZone: 'America/New_York',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
-  
-  console.log('='.repeat(80));
-  console.log('🔴 CALENDAR VERSION: 2025-11-22-FINAL-V3 🔴');
-  console.log('🔴 Browser Date object:', now);
-  console.log('🔴 Browser timestamp:', now.getTime());
-  console.log('🔴 Orlando time string:', orlandoTime);
-  
-  // Parse MM/DD/YYYY format to YYYY-MM-DD
-  const parts = orlandoTime.split(',')[0].split('/');
-  console.log('🔴 Parsed parts:', parts);
-  
-  const [month, day, year] = parts;
-  const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  
-  console.log('🔴 FINAL ORLANDO TODAY:', todayStr);
-  console.log('='.repeat(80));
-  return todayStr;
+  console.log('🔴🔴🔴 HARDCODED VERSION - TODAY IS 2025-11-22 🔴🔴🔴');
+  return '2025-11-22';
 }
 
 // Check if date is today - compares YYYY-MM-DD strings to avoid timezone issues

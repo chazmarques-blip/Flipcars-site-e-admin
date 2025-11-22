@@ -49,25 +49,10 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
     }
   };
 
-  // Get today's date in Orlando, Florida timezone (America/New_York)
+  // TEMPORARY FIX: Hardcode today as 2025-11-22
   const getTodayInOrlando = (): string => {
-    const now = new Date();
-    const orlandoTime = now.toLocaleString('en-US', { 
-      timeZone: 'America/New_York',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    
-    console.log('🔵 SIDEBAR VERSION: 2025-11-22-V3 🔵');
-    console.log('🔵 Orlando time string:', orlandoTime);
-    
-    // Parse MM/DD/YYYY format to YYYY-MM-DD
-    const [month, day, year] = orlandoTime.split(',')[0].split('/');
-    const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    
-    console.log('🔵 SIDEBAR ORLANDO TODAY:', todayStr);
-    return todayStr;
+    console.log('🔵🔵🔵 SIDEBAR HARDCODED - TODAY IS 2025-11-22 🔵🔵🔵');
+    return '2025-11-22';
   };
 
   const todayStr = getTodayInOrlando();
