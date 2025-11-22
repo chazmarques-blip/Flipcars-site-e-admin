@@ -50,19 +50,19 @@ function formatDate(date: Date): string {
 
 // Get current date in Orlando, Florida timezone (America/New_York)
 function getTodayInOrlando(): string {
-  // Create date object with Orlando timezone
-  const now = new Date();
+  // Get current time in Orlando timezone
+  const orlandoTime = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
   
-  // Get Orlando time parts directly
-  const orlandoDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  // Parse MM/DD/YYYY format to YYYY-MM-DD
+  const [month, day, year] = orlandoTime.split(',')[0].split('/');
+  const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   
-  // Format as YYYY-MM-DD
-  const year = orlandoDate.getFullYear();
-  const month = String(orlandoDate.getMonth() + 1).padStart(2, '0');
-  const day = String(orlandoDate.getDate()).padStart(2, '0');
-  const todayStr = `${year}-${month}-${day}`;
-  
-  console.log('[CalendarGrid] Orlando today:', todayStr, '(from Date object:', orlandoDate, ')');
+  console.log('[CalendarGrid] Orlando today:', todayStr);
   return todayStr;
 }
 
@@ -88,6 +88,9 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
   const [currentDate, setCurrentDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // VERSION MARKER - updated 2025-11-22 01:00 UTC
+  console.log('[CalendarGrid] VERSION: 2025-11-22-01:00-UTC');
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
