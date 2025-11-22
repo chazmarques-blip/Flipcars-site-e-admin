@@ -167,7 +167,7 @@ export function Step3aVIN({ initialData, onNext, onBack }: Step3aVINProps) {
             onChange={(e) => handleVINChange(e.target.value)}
             placeholder="Enter 17-character VIN"
             maxLength={17}
-            className={`w-full px-3 py-1.5 pr-24 text-xs font-mono uppercase border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors ${
+            className={`w-full px-3 py-1.5 pr-24 text-xs font-mono uppercase border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors text-black bg-white ${
               error ? 'border-red-500' : 'border-neutral-300'
             }`}
             disabled={isDecoding}
