@@ -2,13 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import { leadService } from '@/lib/api/lead.service';
+import { appointmentsService, Appointment } from '@/lib/api/appointments.service';
 import { Lead, LeadStatus } from '@/types/lead';
 import toast from 'react-hot-toast';
 import styles from '@/components/dashboard/Dashboard-Mockup-Exact.module.css';
 
 // Dashboard updated: Nov 20, 2025 - Now with real data integration
+// Get today in Orlando timezone
+function getTodayInOrlando(): string {
+  const orlandoTime = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  const [month, day, year] = orlandoTime.split(',')[0].split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
 export default function DashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
     activeLeads: 0,
@@ -24,42 +38,59 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        console.log('[Dashboard] Fetching leads...');
+        console.log('[Dashboard] Fetching dashboard data...');
         
         // Fetch all leads (limit 100 for stats)
-        const response = await leadService.getLeads(1, 100);
-        const allLeads = response.data || [];
+        const leadsResponse = await leadService.getLeads(1, 100);
+        const allLeads = leadsResponse.data || [];
         console.log('[Dashboard] Loaded leads:', allLeads.length);
         
-        setLeads(allLeads);
-
-        // Calculate statistics
+        // Fetch appointments for today
         const now = new Date();
-        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const allAppointments = await appointmentsService.getAppointmentsByMonth(
+          now.getFullYear(),
+          now.getMonth() + 1
+        );
+        console.log('[Dashboard] Loaded appointments:', allAppointments.length);
+        
+        setLeads(allLeads);
+        setAppointments(allAppointments);
+
+        // Calculate statistics using Orlando timezone
+        const todayStr = getTodayInOrlando();
+        console.log('[Dashboard] Today in Orlando:', todayStr);
         
         const activeLeads = allLeads.filter(l => l.status !== LeadStatus.ARCHIVED && l.status !== LeadStatus.LOST).length;
-        const todaysAppointments = allLeads.filter(l => l.status === LeadStatus.APPOINTMENT_SCHEDULED).length;
+        
+        // Today's appointments (scheduled for today)
+        const todaysAppointments = allAppointments.filter(apt => apt.appointmentDate === todayStr).length;
+        
         const qualified = allLeads.filter(l => l.status === LeadStatus.QUALIFIED).length;
         const inProgress = allLeads.filter(l => l.status === LeadStatus.IN_PROGRESS).length;
         const converted = allLeads.filter(l => l.status === LeadStatus.CONVERTED || l.status === LeadStatus.WON).length;
         
-        // Overdue: leads older than 3 days without follow-up
-        const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-        const overdue = allLeads.filter(l => {
-          const createdDate = new Date(l.createdAt);
-          return l.status === LeadStatus.NEW && createdDate < threeDaysAgo;
+        // Overdue: appointments in the past that are not completed/cancelled
+        const overdueAppointments = allAppointments.filter(apt => {
+          return apt.appointmentDate < todayStr && 
+                 apt.status !== 'completed' && 
+                 apt.status !== 'cancelled';
         }).length;
 
         setStats({
           activeLeads,
           todaysAppointments,
-          overdue,
+          overdue: overdueAppointments,
           qualified,
           inProgress,
           converted,
         });
 
-        console.log('[Dashboard] Stats calculated:', { activeLeads, todaysAppointments, overdue });
+        console.log('[Dashboard] Stats calculated:', { 
+          activeLeads, 
+          todaysAppointments, 
+          overdue: overdueAppointments,
+          totalAppointments: allAppointments.length 
+        });
       } catch (error: any) {
         console.error('[Dashboard] Failed to fetch data:', error);
         toast.error('Failed to load dashboard data');
