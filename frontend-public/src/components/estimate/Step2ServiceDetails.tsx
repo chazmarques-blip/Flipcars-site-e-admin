@@ -270,9 +270,17 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         )}
 
         {showDatePicker && (
-          <div className="border border-neutral-300 rounded-lg p-4 bg-white shadow-lg fixed bottom-20 left-4 right-4 z-[60] max-h-[70vh] overflow-y-auto md:relative md:bottom-auto md:left-auto md:right-auto md:z-50">
-            <h4 className="text-base font-semibold text-black mb-3">Select a date:</h4>
-            <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+          <>
+            {/* Mobile Overlay - covers entire screen */}
+            <div 
+              className="fixed inset-0 bg-black/50 z-[70] md:hidden"
+              onClick={() => setShowDatePicker(false)}
+            />
+            
+            {/* Date Picker Modal */}
+            <div className="fixed inset-x-4 bottom-4 top-auto border border-neutral-300 rounded-lg p-4 bg-white shadow-2xl z-[80] max-h-[80vh] overflow-y-auto md:relative md:inset-auto md:z-50 md:shadow-lg">
+              <h4 className="text-base font-semibold text-black mb-3">Select a date:</h4>
+              <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
               {availableDates.map((date) => (
                 <button
                   key={date.toISOString()}
@@ -300,11 +308,20 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
               Cancel
             </button>
           </div>
+          </>
         )}
 
         {showTimeSlots && selectedDate && (
-          <div className="border border-neutral-300 rounded-lg p-4 bg-white shadow-lg fixed bottom-20 left-4 right-4 z-[60] max-h-[70vh] overflow-y-auto md:relative md:bottom-auto md:left-auto md:right-auto md:z-50">
-            <h4 className="text-base font-semibold text-black mb-3">
+          <>
+            {/* Mobile Overlay - covers entire screen */}
+            <div 
+              className="fixed inset-0 bg-black/50 z-[70] md:hidden"
+              onClick={() => setShowTimeSlots(false)}
+            />
+            
+            {/* Time Slots Modal */}
+            <div className="fixed inset-x-4 bottom-4 top-auto border border-neutral-300 rounded-lg p-4 bg-white shadow-2xl z-[80] max-h-[80vh] overflow-y-auto md:relative md:inset-auto md:z-50 md:shadow-lg">
+              <h4 className="text-base font-semibold text-black mb-3">
               Select time slot for {formatDateDisplay(selectedDate)}:
             </h4>
             <div className="grid grid-cols-1 gap-2">
@@ -330,6 +347,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
               ← Back to dates
             </button>
           </div>
+          </>
         )}
 
         {preferredDate && !showTimeSlots && (
