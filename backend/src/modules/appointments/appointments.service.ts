@@ -35,14 +35,18 @@ export class AppointmentsService {
     return saved;
   }
 
-  // Buscar todos agendamentos
+  // Buscar todos agendamentos (excluindo leads deletados)
   async findAll(): Promise<Appointment[]> {
     try {
-      const appointments = await this.appointmentRepository.find({
-        relations: ['lead'],
-        order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
-      });
-      this.logger.log(`Found ${appointments.length} appointments`);
+      const appointments = await this.appointmentRepository
+        .createQueryBuilder('appointment')
+        .leftJoinAndSelect('appointment.lead', 'lead')
+        .where('(lead.deletedAt IS NULL OR lead.deletedAt > NOW())')
+        .orderBy('appointment.appointmentDate', 'ASC')
+        .addOrderBy('appointment.appointmentStartTime', 'ASC')
+        .getMany();
+      
+      this.logger.log(`Found ${appointments.length} appointments (excluding deleted leads)`);
       return appointments;
     } catch (error) {
       this.logger.error(`Error fetching appointments: ${error.message}`);
@@ -74,18 +78,20 @@ export class AppointmentsService {
     });
   }
 
-  // Buscar por data
+  // Buscar por data (excluindo leads deletados)
   async findByDateRange(startDate: string, endDate: string): Promise<Appointment[]> {
     try {
       this.logger.log(`findByDateRange: ${startDate} to ${endDate}`);
-      const appointments = await this.appointmentRepository.find({
-        where: {
-          appointmentDate: Between(startDate, endDate),
-        },
-        relations: ['lead'],
-        order: { appointmentDate: 'ASC', appointmentStartTime: 'ASC' },
-      });
-      this.logger.log(`findByDateRange result: ${appointments.length} appointments`);
+      const appointments = await this.appointmentRepository
+        .createQueryBuilder('appointment')
+        .leftJoinAndSelect('appointment.lead', 'lead')
+        .where('appointment.appointmentDate BETWEEN :startDate AND :endDate', { startDate, endDate })
+        .andWhere('(lead.deletedAt IS NULL OR lead.deletedAt > NOW())')
+        .orderBy('appointment.appointmentDate', 'ASC')
+        .addOrderBy('appointment.appointmentStartTime', 'ASC')
+        .getMany();
+      
+      this.logger.log(`findByDateRange result: ${appointments.length} appointments (excluding deleted leads)`);
       return appointments;
     } catch (error) {
       this.logger.error(`Error in findByDateRange (${startDate} to ${endDate}): ${error.message}`);

@@ -49,28 +49,25 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
     }
   };
 
-  // Get today's date (YYYY-MM-DD)
+  // Get today's date in local timezone (YYYY-MM-DD format)
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const todayStr = today.toISOString().split('T')[0];
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-  // Filter overdue (past dates, not completed/cancelled)
+  // Filter overdue (past dates ONLY - compare strings directly)
   const overdue = appointments.filter((apt) => {
-    const aptDate = new Date(apt.appointmentDate);
-    aptDate.setHours(0, 0, 0, 0);
+    // Compare date strings: "2025-11-22" < "2025-11-21" = false (NOT overdue)
     return (
-      aptDate < today &&
+      apt.appointmentDate < todayStr &&
       apt.status !== 'completed' &&
       apt.status !== 'cancelled'
     );
   });
 
-  // Filter upcoming (today or future dates, not completed/cancelled)
+  // Filter upcoming (today or future dates - compare strings directly)
   const upcoming = appointments.filter((apt) => {
-    const aptDate = new Date(apt.appointmentDate);
-    aptDate.setHours(0, 0, 0, 0);
+    // Compare date strings: "2025-11-22" >= "2025-11-21" = true (upcoming)
     return (
-      aptDate >= today &&
+      apt.appointmentDate >= todayStr &&
       apt.status !== 'completed' &&
       apt.status !== 'cancelled'
     );

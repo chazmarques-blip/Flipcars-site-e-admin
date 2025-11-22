@@ -48,14 +48,13 @@ function formatDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-// Check if date is today
+// Check if date is today (uses local timezone)
 function isToday(date: Date): boolean {
-  const today = new Date();
-  return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
-  );
+  const now = new Date();
+  // Create date objects in local timezone for comparison
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return today.getTime() === compareDate.getTime();
 }
 
 export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps) {
