@@ -62,7 +62,7 @@ function getTodayInOrlando(): string {
   const [month, day, year] = orlandoTime.split(',')[0].split('/');
   const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   
-  console.log('[CalendarGrid] Orlando today:', todayStr);
+  console.log('[CalendarGrid] ✅ VERSION 2025-11-22-FINAL - Orlando today:', todayStr);
   return todayStr;
 }
 
