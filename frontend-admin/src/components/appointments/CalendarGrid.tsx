@@ -50,19 +50,19 @@ function formatDate(date: Date): string {
 
 // Get current date in Orlando, Florida timezone (America/New_York)
 function getTodayInOrlando(): string {
-  // Get current time in Orlando timezone
-  const orlandoTime = new Date().toLocaleString('en-US', { 
-    timeZone: 'America/New_York',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
+  // Create date object with Orlando timezone
+  const now = new Date();
   
-  // Parse MM/DD/YYYY format to YYYY-MM-DD
-  const [month, day, year] = orlandoTime.split(',')[0].split('/');
-  const todayStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  // Get Orlando time parts directly
+  const orlandoDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
   
-  console.log('[CalendarGrid] Orlando today:', todayStr);
+  // Format as YYYY-MM-DD
+  const year = orlandoDate.getFullYear();
+  const month = String(orlandoDate.getMonth() + 1).padStart(2, '0');
+  const day = String(orlandoDate.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
+  
+  console.log('[CalendarGrid] Orlando today:', todayStr, '(from Date object:', orlandoDate, ')');
   return todayStr;
 }
 
