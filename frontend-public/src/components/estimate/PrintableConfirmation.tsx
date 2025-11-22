@@ -294,7 +294,8 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
           background: white;
           color: #000;
           line-height: 1.2;
-          width: 7.7in;
+          width: 100%;
+          max-width: 7.7in;
           margin: 0 auto;
           padding: 0;
         }
@@ -525,6 +526,85 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
           font-weight: bold;
         }
 
+        /* Mobile Responsive Styles */
+        @media screen and (max-width: 768px) {
+          .printable-page {
+            width: 100%;
+            padding: 8px;
+          }
+          
+          @page {
+            margin: 0.25in;
+          }
+          
+          .title-section {
+            flex-direction: column;
+            text-align: center;
+            padding: 12px;
+          }
+          
+          .title-logo {
+            height: 40px;
+            margin-bottom: 8px;
+          }
+          
+          .title-section h1 {
+            font-size: 16px;
+          }
+          
+          .service-type {
+            font-size: 12px;
+          }
+          
+          .reference-number {
+            font-size: 20px;
+          }
+          
+          .info-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+          
+          .section-header {
+            font-size: 11px;
+            padding: 8px 10px;
+          }
+          
+          .section-content {
+            padding: 10px 12px;
+            font-size: 10px;
+          }
+          
+          .info-label {
+            min-width: 80px;
+            font-size: 10px;
+          }
+          
+          .info-value {
+            font-size: 10px;
+          }
+          
+          .location-address {
+            font-size: 10px;
+          }
+          
+          .map-container {
+            height: 150px;
+          }
+          
+          .location-map {
+            max-height: 150px;
+          }
+          
+          .footer-message {
+            font-size: 11px;
+          }
+          
+          .footer-reference {
+            font-size: 9px;
+          }
+        }
+
         /* Print Styles */
         @media print {
           body {
@@ -534,6 +614,7 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
           .printable-page {
             width: 100%;
             margin: 0;
+            padding: 0;
           }
           .info-section {
             page-break-inside: avoid;
