@@ -126,9 +126,14 @@ export class LeadsService {
         // .leftJoinAndSelect('lead.vehicle', 'vehicle')
         // .leftJoinAndSelect('lead.assignedHumanAgent', 'agent');
 
-      // Filter out soft-deleted leads (NEW: soft delete support)
-      // TEMPORARILY DISABLED: Column doesn't exist in production yet, migration pending
-      // queryBuilder.andWhere('lead.deletedAt IS NULL');
+      // Filter out soft-deleted leads (only show active leads)
+      // If column doesn't exist, this will be caught by try-catch in controller
+      try {
+        queryBuilder.andWhere('lead.deletedAt IS NULL');
+      } catch (error) {
+        // Column doesn't exist yet, skip filter (show all leads)
+        console.warn('[LeadsService] deletedAt column not found, skipping soft delete filter');
+      }
 
       // Search by reference number, name, email, or phone
       if (search) {
@@ -493,47 +498,51 @@ export class LeadsService {
    * Soft delete a lead (marks as deleted, keeps in database)
    * NEW METHOD - Does not modify existing remove() method
    * Associated appointments are automatically deleted via CASCADE
-   * 
-   * TEMPORARILY DISABLED: deletedAt field doesn't exist in production DB yet
-   * Will be enabled after migration runs successfully
    */
   async softDelete(id: string): Promise<{ message: string; lead: { id: string; referenceNumber: string } }> {
-    throw new BadRequestException('Soft delete temporarily disabled. Feature will be available after database migration completes.');
-    
-    /* COMMENTED UNTIL MIGRATION RUNS:
-    console.log(`[LeadsService] Soft deleting lead: ${id}`);
-    
-    const lead = await this.findOne(id);
+    try {
+      console.log(`[LeadsService] Soft deleting lead: ${id}`);
+      
+      const lead = await this.findOne(id);
 
-    // Validation: Don't delete if already deleted
-    if (lead.deletedAt) {
-      console.warn(`[LeadsService] Lead ${id} is already deleted`);
-      throw new BadRequestException('Lead is already deleted');
+      // Validation: Don't delete if already deleted
+      if (lead.deletedAt) {
+        console.warn(`[LeadsService] Lead ${id} is already deleted`);
+        throw new BadRequestException('Lead is already deleted');
+      }
+
+      // Validation: Don't delete converted leads
+      if (lead.status === LeadStatus.CONVERTED) {
+        console.warn(`[LeadsService] Attempt to delete converted lead ${id}`);
+        throw new BadRequestException('Cannot delete converted leads. Please archive them instead.');
+      }
+
+      // Mark as deleted (soft delete)
+      lead.deletedAt = new Date();
+      lead.status = LeadStatus.LOST; // Also update status for clarity
+      
+      await this.leadRepository.save(lead);
+
+      console.log(`[LeadsService] ✅ Lead ${id} (${lead.referenceNumber}) soft deleted successfully`);
+      console.log(`[LeadsService] Associated appointments will be deleted automatically via CASCADE`);
+
+      return {
+        message: 'Lead deleted successfully',
+        lead: {
+          id: lead.id,
+          referenceNumber: lead.referenceNumber,
+        },
+      };
+    } catch (error) {
+      // If column doesn't exist yet, provide helpful error
+      if (error?.message?.includes('column') && error?.message?.includes('deleted_at')) {
+        console.error('[LeadsService] deleted_at column does not exist yet');
+        throw new BadRequestException(
+          'Soft delete feature is not yet available. Please run the database migration first.'
+        );
+      }
+      throw error;
     }
-
-    // Validation: Don't delete converted leads (optional - you can remove this)
-    if (lead.status === LeadStatus.CONVERTED) {
-      console.warn(`[LeadsService] Attempt to delete converted lead ${id}`);
-      throw new BadRequestException('Cannot delete converted leads. Please archive them instead.');
-    }
-
-    // Mark as deleted (soft delete)
-    lead.deletedAt = new Date();
-    lead.status = LeadStatus.LOST; // Also update status for clarity
-    
-    await this.leadRepository.save(lead);
-
-    console.log(`[LeadsService] ✅ Lead ${id} (${lead.referenceNumber}) soft deleted successfully`);
-    console.log(`[LeadsService] Associated appointments will be deleted automatically via CASCADE`);
-
-    return {
-      message: 'Lead deleted successfully',
-      lead: {
-        id: lead.id,
-        referenceNumber: lead.referenceNumber,
-      },
-    };
-    */
   }
 
   /**

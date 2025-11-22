@@ -415,7 +415,7 @@ export default function LeadsPage() {
       render: (lead) => (
         <button
           onClick={(e) => handleDeleteClick(lead, e)}
-          className="inline-flex items-center justify-center w-7 h-7 rounded-full text-red-600 hover:bg-red-50 transition-colors"
+          className="inline-flex items-center justify-center w-7 h-7 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
           title="Delete lead"
         >
           <Trash2 className="w-4 h-4" />

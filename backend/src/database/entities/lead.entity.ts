@@ -192,9 +192,7 @@ export class Lead {
   updatedAt: Date;
 
   // Soft delete support (for marking leads as deleted without removing from database)
-  // TEMPORARILY COMMENTED: Column doesn't exist in production DB yet, migration pending
-  // Will be enabled after migration runs successfully in production
-  // @Column({ type: 'timestamp', name: 'deleted_at', nullable: true })
-  // @Index('idx_lead_deleted_at')
-  // deletedAt: Date | null;
+  @Column({ type: 'timestamp', name: 'deleted_at', nullable: true, default: null })
+  @Index('idx_lead_deleted_at')
+  deletedAt: Date | null;
 }
