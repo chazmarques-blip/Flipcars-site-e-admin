@@ -179,21 +179,6 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
         </div>
       </div>
 
-      {/* VERSION BANNER - V5 HARDCODED */}
-      <div style={{
-        background: '#ff0000',
-        color: '#fff',
-        padding: '20px',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: '24px',
-        borderRadius: '5px',
-        margin: '10px',
-        border: '5px solid yellow'
-      }}>
-        🚨 CALENDAR V5 - HARDCODED 22/11/2025 - IF YOU SEE THIS, CACHE CLEARED! 🚨
-      </div>
-
       {/* Calendar Grid */}
       <div className="p-2">
         {loading ? (
@@ -231,14 +216,17 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
                   className={`
                     relative min-h-[60px] p-1 border rounded
                     ${isCurrentMonth ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100'}
-                    ${today ? 'border-[#D4AF37] border-2 bg-amber-50/30' : ''}
+                    ${today ? 'border-[#D4AF37] border-[3px] bg-amber-50 shadow-lg' : ''}
                   `}
+                  style={today ? { borderColor: '#D4AF37', borderWidth: '3px', boxShadow: '0 0 10px rgba(212, 175, 55, 0.5)' } : {}}
                 >
                   {/* Day number */}
                   <div className={`text-[10px] font-semibold mb-0.5 ${
                     isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
                   } ${today ? 'text-[#D4AF37]' : ''}`}>
                     {date.getDate()}
+                    {/* DEBUG: Visual indicator when today=true */}
+                    {today && <span className="ml-1 text-[#D4AF37]">⭐</span>}
                   </div>
 
                   {/* Appointments indicators - EXACT MOCKUP FORMAT */}
