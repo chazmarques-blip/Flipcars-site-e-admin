@@ -1,0 +1,57 @@
+╔══════════════════════════════════════════════════════════════╗
+║                   🗑️ TESTE RÁPIDO - 2 MINUTOS                ║
+╚══════════════════════════════════════════════════════════════╝
+
+1️⃣ ACESSE:
+   https://flipcars-site-e-admin-production.up.railway.app/dashboard/leads
+
+2️⃣ FAÇA LOGIN:
+   Use suas credenciais de admin
+
+3️⃣ NA TABELA DE LEADS:
+   Procure a coluna "Delete" (última coluna)
+   Você verá um ícone de lixeira vermelho 🗑️
+
+4️⃣ CLIQUE NA LIXEIRA:
+   Um modal vai abrir com:
+   - Informações do lead
+   - Botões "Cancel" e "Delete"
+
+5️⃣ CLIQUE "DELETE":
+   - Lead desaparece da tabela
+   - Toast verde: "Lead deleted successfully"
+
+✅ PRONTO! Funcionalidade testada!
+
+════════════════════════════════════════════════════════════════
+
+📋 CHECKLIST COMPLETO:
+
+[ ] Acesso ao admin dashboard
+[ ] Login como admin
+[ ] Ver coluna "Delete" na tabela
+[ ] Clicar no ícone 🗑️
+[ ] Ver modal de confirmação
+[ ] Clicar "Cancel" (deve fechar sem deletar)
+[ ] Clicar 🗑️ novamente
+[ ] Clicar "Delete"
+[ ] Ver toast de sucesso
+[ ] Ver lead sumir da tabela
+
+════════════════════════════════════════════════════════════════
+
+🚨 SE NÃO FUNCIONAR:
+
+1. Aguarde 5 minutos (Railway pode estar deployando)
+2. Faça hard refresh: Ctrl+Shift+R (Windows) ou Cmd+Shift+R (Mac)
+3. Verifique se você é admin/super_admin
+4. Abra Console (F12) e veja se há erros
+
+════════════════════════════════════════════════════════════════
+
+📄 DOCUMENTAÇÃO COMPLETA:
+- COMO_TESTAR_DELETE.md (guia detalhado em português)
+- TESTE_VISUAL.md (guia visual com diagramas)
+- SOFT_DELETE_IMPLEMENTATION_COMPLETE.md (documentação técnica)
+
+════════════════════════════════════════════════════════════════

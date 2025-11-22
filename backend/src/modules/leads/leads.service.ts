@@ -127,7 +127,8 @@ export class LeadsService {
         // .leftJoinAndSelect('lead.assignedHumanAgent', 'agent');
 
       // Filter out soft-deleted leads (NEW: soft delete support)
-      queryBuilder.andWhere('lead.deletedAt IS NULL');
+      // TEMPORARILY DISABLED: Column doesn't exist in production yet, migration pending
+      // queryBuilder.andWhere('lead.deletedAt IS NULL');
 
       // Search by reference number, name, email, or phone
       if (search) {
