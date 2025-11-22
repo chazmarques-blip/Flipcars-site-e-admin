@@ -9,7 +9,7 @@ export interface CreateLeadResponse {
     name: string;
     email: string;
     phone: string;
-    serviceType: string;
+    // serviceType removed - not supported by backend
     status: string;
     createdAt: string;
   };
@@ -30,7 +30,7 @@ export const leadsService = {
       lastName: data.lastName!,
       email: data.email!,
       phone: data.phone!,
-      serviceType: data.serviceType!,
+      // REMOVED: serviceType (not supported by backend DTO)
       
       // Step 2A: Body Shop information (OPTIONAL)
       insuranceCompany: data.insuranceCompany,
