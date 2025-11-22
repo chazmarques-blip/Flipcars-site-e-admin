@@ -201,6 +201,20 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
         </div>
       </div>
 
+      {/* VERSION BANNER - V4 */}
+      <div style={{
+        background: '#ff0000',
+        color: '#fff',
+        padding: '10px',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: '16px',
+        borderRadius: '5px',
+        margin: '10px'
+      }}>
+        🚨 CALENDAR VERSION V4 - 2025-11-22 🚨
+      </div>
+
       {/* Calendar Grid */}
       <div className="p-2">
         {loading ? (
