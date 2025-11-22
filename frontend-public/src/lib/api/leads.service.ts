@@ -23,70 +23,77 @@ export const leadsService = {
     console.log('[LeadsService] Creating lead via public endpoint:', data);
     console.log('[LeadsService] 📋 Input data keys:', Object.keys(data));
     
+    // CRITICAL: Remove serviceType from input data to prevent it from being sent
+    // The backend DTO explicitly rejects this field (create-public-lead.dto.ts:135-137)
+    const { serviceType, ...cleanData } = data;
+    
+    console.log('[LeadsService] ⚠️  Removed serviceType from payload');
+    console.log('[LeadsService] 🧹 Clean data keys:', Object.keys(cleanData));
+    
     // Transform estimate data to public lead DTO format
     const leadData = {
       // Step 1: Basic contact information (REQUIRED)
-      firstName: data.firstName!,
-      lastName: data.lastName!,
-      email: data.email!,
-      phone: data.phone!,
-      // REMOVED: serviceType (not supported by backend DTO)
+      firstName: cleanData.firstName!,
+      lastName: cleanData.lastName!,
+      email: cleanData.email!,
+      phone: cleanData.phone!,
+      // serviceType explicitly excluded above
       
       // Step 2A: Body Shop information (OPTIONAL)
-      insuranceCompany: data.insuranceCompany,
-      claimNumber: data.claimNumber,
-      hasClaimNumber: !!data.claimNumber,
+      insuranceCompany: cleanData.insuranceCompany,
+      claimNumber: cleanData.claimNumber,
+      hasClaimNumber: !!cleanData.claimNumber,
       
       // Step 2B: Mechanic/Warranty information (OPTIONAL)
-      warrantyCompany: data.warrantyCompany,
-      warrantyClaimNumber: data.warrantyClaimNumber,
-      hasWarrantyClaimNumber: !!data.warrantyClaimNumber,
+      warrantyCompany: cleanData.warrantyCompany,
+      warrantyClaimNumber: cleanData.warrantyClaimNumber,
+      hasWarrantyClaimNumber: !!cleanData.warrantyClaimNumber,
       
       // Scheduling information (OPTIONAL)
       // Convert preferredDate to ISO 8601 format if present
-      ...(data.preferredDate && data.preferredDate.trim() !== '' ? { 
-        preferredDate: new Date(data.preferredDate).toISOString() 
+      ...(cleanData.preferredDate && cleanData.preferredDate.trim() !== '' ? { 
+        preferredDate: new Date(cleanData.preferredDate).toISOString() 
       } : {}),
-      preferredTimeSlot: data.preferredTimeSlot,
-      dateSkipped: data.dateSkipped,
+      preferredTimeSlot: cleanData.preferredTimeSlot,
+      dateSkipped: cleanData.dateSkipped,
       
       // Vehicle information (OPTIONAL)
-      vehicle: data.vehicle,
+      vehicle: cleanData.vehicle,
       
       // Step 3: Photos (OPTIONAL - bodyshop only)
       // Photos should be URLs (already uploaded), not File objects
       // Accept both relative paths (/uploads/) and full URLs (https://)
-      ...(data.photos && Object.values(data.photos).some(
+      ...(cleanData.photos && Object.values(cleanData.photos).some(
         (photo) => typeof photo === 'string' && (photo.startsWith('/uploads/') || photo.startsWith('http'))
-      ) ? { photos: data.photos } : {}),
+      ) ? { photos: cleanData.photos } : {}),
       
       // Step 2.5: Warranty Documents (OPTIONAL - mechanic only)
       // Only include if there are actual string URLs (not File objects or Base64)
-      ...(data.warrantyDocs && data.warrantyDocs.selectedIssues && data.warrantyDocs.symptomsDescription ? {
+      ...(cleanData.warrantyDocs && cleanData.warrantyDocs.selectedIssues && cleanData.warrantyDocs.symptomsDescription ? {
         warrantyDocs: {
           // Only include document URLs if they are strings (uploaded URLs, not Base64)
-          ...(typeof data.warrantyDocs.policyDocument === 'string' && 
-              data.warrantyDocs.policyDocument.startsWith('http') ? 
-              { policyDocument: data.warrantyDocs.policyDocument } : {}),
-          ...(typeof data.warrantyDocs.vinPhoto === 'string' && 
-              data.warrantyDocs.vinPhoto.startsWith('http') ? 
-              { vinPhoto: data.warrantyDocs.vinPhoto } : {}),
-          ...(typeof data.warrantyDocs.odometerPhoto === 'string' && 
-              data.warrantyDocs.odometerPhoto.startsWith('http') ? 
-              { odometerPhoto: data.warrantyDocs.odometerPhoto } : {}),
-          selectedIssues: data.warrantyDocs.selectedIssues || [],
-          symptomsDescription: data.warrantyDocs.symptomsDescription || '',
+          ...(typeof cleanData.warrantyDocs.policyDocument === 'string' && 
+              cleanData.warrantyDocs.policyDocument.startsWith('http') ? 
+              { policyDocument: cleanData.warrantyDocs.policyDocument } : {}),
+          ...(typeof cleanData.warrantyDocs.vinPhoto === 'string' && 
+              cleanData.warrantyDocs.vinPhoto.startsWith('http') ? 
+              { vinPhoto: cleanData.warrantyDocs.vinPhoto } : {}),
+          ...(typeof cleanData.warrantyDocs.odometerPhoto === 'string' && 
+              cleanData.warrantyDocs.odometerPhoto.startsWith('http') ? 
+              { odometerPhoto: cleanData.warrantyDocs.odometerPhoto } : {}),
+          selectedIssues: cleanData.warrantyDocs.selectedIssues || [],
+          symptomsDescription: cleanData.warrantyDocs.symptomsDescription || '',
         }
       } : {}),
       
       // Step 4: Contact preferences (REQUIRED)
       // Frontend already uses correct field names (phoneCall, whatsapp, textMessage)
       contactPreferences: {
-        phoneCall: data.contactPreferences?.phoneCall || false,
-        whatsapp: data.contactPreferences?.whatsapp || false,
-        textMessage: data.contactPreferences?.textMessage || false,
+        phoneCall: cleanData.contactPreferences?.phoneCall || false,
+        whatsapp: cleanData.contactPreferences?.whatsapp || false,
+        textMessage: cleanData.contactPreferences?.textMessage || false,
       },
-      additionalNotes: data.additionalNotes,
+      additionalNotes: cleanData.additionalNotes,
       
       // System fields
       source: 'website_estimate_form',
@@ -95,6 +102,13 @@ export const leadsService = {
 
     console.log('[LeadsService] 📤 Final payload to send:', leadData);
     console.log('[LeadsService] 📋 Payload keys:', Object.keys(leadData));
+    
+    // CRITICAL: Final validation - ensure serviceType is NOT in payload
+    if ('serviceType' in leadData) {
+      console.error('[LeadsService] ❌ CRITICAL: serviceType found in payload! Removing...');
+      delete (leadData as any).serviceType;
+    }
+    
     console.log('[LeadsService] 🔍 Checking for duplicates...');
     const keys = Object.keys(leadData);
     const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
