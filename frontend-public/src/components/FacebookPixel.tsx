@@ -2,7 +2,7 @@
 
 import Script from 'next/script';
 import { useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 interface FacebookPixelProps {
   pixelId: string;
@@ -19,14 +19,13 @@ declare global {
 // Facebook Pixel Base Code (instala em todas as páginas)
 export function FacebookPixel({ pixelId }: FacebookPixelProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     // Track page views on route change
     if (typeof window !== 'undefined' && window.fbq) {
       window.fbq('track', 'PageView');
     }
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   return (
     <>
