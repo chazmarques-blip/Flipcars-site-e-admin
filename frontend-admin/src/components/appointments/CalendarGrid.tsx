@@ -1,7 +1,7 @@
 'use client';
 
 // IMMEDIATE EXECUTION - This will run as soon as file is loaded
-console.log('%c🚨🚨🚨 CALENDAR FILE LOADED - VERSION: 2025-11-22-HARDCODED 🚨🚨🚨', 'background: red; color: white; font-size: 20px; padding: 10px;');
+console.log('%c✅ CALENDAR FILE LOADED - VERSION: 2025-11-23-REAL-TIME ✅', 'background: green; color: white; font-size: 20px; padding: 10px;');
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -51,10 +51,20 @@ function formatDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-// TEMPORARY FIX: Hardcode today as 2025-11-22 due to cache/deployment issues
+// Get real current date in Orlando timezone (America/New_York)
 function getTodayInOrlando(): string {
-  const today = '2025-11-22';
-  console.log(`🔴🔴🔴 HARDCODED VERSION - TODAY IS ${today} 🔴🔴🔴`);
+  const orlandoTime = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  
+  // Format: "MM/DD/YYYY, HH:MM:SS" → extract date part
+  const [month, day, year] = orlandoTime.split(',')[0].split('/');
+  const today = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  
+  console.log(`✅ REAL ORLANDO DATE - TODAY IS ${today}`);
   return today;
 }
 
@@ -73,7 +83,7 @@ function isToday(date: Date): boolean {
   console.log(`[CalendarGrid] isToday check: date="${dateStr}" vs today="${todayStr}" → result=${result}`);
   
   if (result) {
-    console.log(`✅✅✅ DAY 22 DETECTED AS TODAY! Should have golden border! ✅✅✅`);
+    console.log(`✅✅✅ TODAY DETECTED! Day ${dateStr} should have golden border! ✅✅✅`);
   }
   
   return result;
@@ -84,8 +94,8 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // VERSION MARKER - updated 2025-11-22 01:00 UTC
-  console.log('[CalendarGrid] VERSION: 2025-11-22-01:00-UTC');
+  // VERSION MARKER - updated 2025-11-23 with REAL timezone
+  console.log('[CalendarGrid] VERSION: 2025-11-23-REAL-ORLANDO-TIME');
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -204,10 +214,10 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
               const today = isToday(date);
               const dayAppointments = appointmentsByDate[dateKey] || [];
               
-              // DEBUG: Log every day being rendered
-              if (date.getDate() === 22) {
-                console.log(`[CalendarGrid] 🟡 Rendering DAY 22: dateKey="${dateKey}", isToday=${today}, isCurrentMonth=${isCurrentMonth}`);
-                console.log(`[CalendarGrid] 🟡 DAY 22 CSS will have: ${today ? '✅ GOLDEN BORDER (border-[#D4AF37] border-2)' : '❌ NO GOLDEN BORDER'}`);
+              // DEBUG: Log when rendering today
+              if (today) {
+                console.log(`[CalendarGrid] 🟡 Rendering TODAY (Day ${date.getDate()}): dateKey="${dateKey}", isToday=${today}, isCurrentMonth=${isCurrentMonth}`);
+                console.log(`[CalendarGrid] 🟡 TODAY CSS will have: ✅ GOLDEN BORDER (border-[#D4AF37] border-3)`);
               }
 
               return (

@@ -49,17 +49,37 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
     }
   };
 
-  // TEMPORARY FIX: Hardcode today as 2025-11-22
+  // Get real current date in Orlando timezone (America/New_York)
   const getTodayInOrlando = (): string => {
-    console.log('🔵🔵🔵 SIDEBAR HARDCODED - TODAY IS 2025-11-22 🔵🔵🔵');
-    return '2025-11-22';
+    const orlandoTime = new Date().toLocaleString('en-US', { 
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    
+    // Format: "MM/DD/YYYY, HH:MM:SS" → extract date part
+    const [month, day, year] = orlandoTime.split(',')[0].split('/');
+    const today = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    
+    console.log('✅ SIDEBAR REAL ORLANDO DATE - TODAY IS', today);
+    return today;
   };
 
-  // HARDCODED: Current time in Orlando (for testing - should be dynamic in production)
+  // Get real current time in Orlando timezone
   const getCurrentTimeInOrlando = (): string => {
-    // For testing: hardcode to 11:00 AM
-    // TODO: Replace with real Orlando time: new Date().toLocaleString('en-US', { timeZone: 'America/New_York', hour12: false }).split(', ')[1]
-    return '11:00';
+    const orlandoTime = new Date().toLocaleString('en-US', { 
+      timeZone: 'America/New_York',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    // Format: "MM/DD/YYYY, HH:MM:SS" → extract time part
+    const timePart = orlandoTime.split(', ')[1]?.substring(0, 5) || '00:00';
+    
+    console.log('✅ SIDEBAR REAL ORLANDO TIME - NOW IS', timePart);
+    return timePart;
   };
 
   const todayStr = getTodayInOrlando();

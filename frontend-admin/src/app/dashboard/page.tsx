@@ -9,11 +9,22 @@ import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
 import styles from '@/components/dashboard/Dashboard-Mockup-Exact.module.css';
 
-// Dashboard updated: Nov 22, 2025 - Real data integration
-// Get today in Orlando timezone - HARDCODED for consistency
+// Dashboard updated: Nov 23, 2025 - Real data integration with real Orlando timezone
+// Get real current date in Orlando timezone (America/New_York)
 function getTodayInOrlando(): string {
-  // TEMPORARY HARDCODE: Return 2025-11-22 to match appointments page
-  return '2025-11-22';
+  const orlandoTime = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  
+  // Format: "MM/DD/YYYY, HH:MM:SS" → extract date part
+  const [month, day, year] = orlandoTime.split(',')[0].split('/');
+  const today = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  
+  console.log('✅ DASHBOARD REAL ORLANDO DATE - TODAY IS', today);
+  return today;
 }
 
 // Helper: Format phone number
