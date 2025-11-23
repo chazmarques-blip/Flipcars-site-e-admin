@@ -42,7 +42,22 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
   if (!isOpen) return null;
 
   const handleNext = (stepData: Partial<EstimateRequest>) => {
-    setFormData((prev) => ({ ...prev, ...stepData }));
+    const updatedData = { ...formData, ...stepData };
+    setFormData(updatedData);
+    
+    // 🎯 CAPTURA PARCIAL: Salva dados mesmo se não completar
+    if (typeof window !== 'undefined') {
+      const { capturePartialLead } = require('@/lib/partialLeadCapture');
+      capturePartialLead({
+        formStep: currentStep + 1,
+        name: updatedData.name,
+        email: updatedData.email,
+        phone: updatedData.phone,
+        serviceType: updatedData.serviceType,
+        hasInsurance: updatedData.hasInsurance,
+      });
+    }
+    
     setCurrentStep((prev) => prev + 1);
   };
 
