@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { AppointmentDetailsModal } from '@/components/appointments/AppointmentDetailsModal';
 import { Appointment } from '@/lib/api/appointments.service';
+import { AppointmentsProvider } from '@/contexts/AppointmentsContext';
 
 // 🆕 Import new mockup components
 import { CalendarStats } from '@/components/appointments/CalendarStats';
@@ -12,9 +13,8 @@ import { CalendarLegend } from '@/components/appointments/CalendarLegend';
 import { CalendarGrid } from '@/components/appointments/CalendarGrid';
 import { CalendarSidebar } from '@/components/appointments/CalendarSidebar';
 
-export default function AppointmentsPage() {
+function AppointmentsPageContent() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleEventClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
@@ -25,8 +25,8 @@ export default function AppointmentsPage() {
   };
 
   const handleUpdate = () => {
-    // Trigger calendar refresh
-    setRefreshKey((prev) => prev + 1);
+    // Modal updated - context will auto-refresh via polling
+    console.log('[AppointmentsPage] Appointment updated, context will auto-sync');
   };
 
   const handleFilterChange = (filters: any) => {
@@ -60,7 +60,7 @@ export default function AppointmentsPage() {
       </div>
 
       {/* 🆕 Dashboard Statistics (6 cards: Total | Today | This Week | Overdue | Revenue | Completion) */}
-      <CalendarStats refreshKey={refreshKey} />
+      <CalendarStats />
 
       {/* 🆕 Filters Section */}
       <CalendarFilters onFilterChange={handleFilterChange} />
@@ -74,16 +74,14 @@ export default function AppointmentsPage() {
         <div className="hidden lg:block overflow-y-auto">
           <CalendarSidebar 
             type="overdue"
-            onEventClick={handleEventClick} 
-            refreshKey={refreshKey}
+            onEventClick={handleEventClick}
           />
         </div>
 
         {/* Center: Calendar Grid */}
         <div className="overflow-y-auto">
           <CalendarGrid 
-            onEventClick={handleEventClick} 
-            refreshKey={refreshKey}
+            onEventClick={handleEventClick}
           />
         </div>
 
@@ -91,8 +89,7 @@ export default function AppointmentsPage() {
         <div className="overflow-y-auto">
           <CalendarSidebar 
             type="upcoming"
-            onEventClick={handleEventClick} 
-            refreshKey={refreshKey}
+            onEventClick={handleEventClick}
           />
         </div>
       </div>
@@ -104,5 +101,13 @@ export default function AppointmentsPage() {
         onUpdate={handleUpdate}
       />
     </div>
+  );
+}
+
+export default function AppointmentsPage() {
+  return (
+    <AppointmentsProvider pollingInterval={30000}>
+      <AppointmentsPageContent />
+    </AppointmentsProvider>
   );
 }

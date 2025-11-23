@@ -1,53 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { AlertCircle, ChevronRight } from 'lucide-react';
-import { Appointment, appointmentsService } from '@/lib/api/appointments.service';
+import { Appointment } from '@/lib/api/appointments.service';
 import { EventBadge } from './EventBadge';
-import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointments';
+import { useAppointments } from '@/contexts/AppointmentsContext';
 
 interface CalendarSidebarProps {
   onEventClick: (appointment: Appointment) => void;
-  refreshKey?: number;
-  type?: 'overdue' | 'upcoming'; // 🆕 Define which section to show
+  type?: 'overdue' | 'upcoming';
 }
 
-export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue' }: CalendarSidebarProps) {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAppointments();
-  }, [refreshKey]);
-
-  const fetchAppointments = async () => {
-    try {
-      setLoading(true);
-      
-      // Use test data if enabled
-      if (USE_TEST_DATA) {
-        setAppointments(TEST_APPOINTMENTS);
-      } else {
-        // Fetch current month and next month appointments
-        const now = new Date();
-        const currentMonth = await appointmentsService.getAppointmentsByMonth(
-          now.getFullYear(),
-          now.getMonth() + 1
-        );
-        
-        const nextMonth = await appointmentsService.getAppointmentsByMonth(
-          now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear(),
-          now.getMonth() === 11 ? 1 : now.getMonth() + 2
-        );
-        
-        setAppointments([...currentMonth, ...nextMonth]);
-      }
-    } catch (error) {
-      console.error('[CalendarSidebar] Failed to fetch appointments:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+export function CalendarSidebar({ onEventClick, type = 'overdue' }: CalendarSidebarProps) {
+  const { appointments, loading } = useAppointments();
 
   // Get real current date in Orlando timezone (America/New_York)
   const getTodayInOrlando = (): string => {
@@ -85,16 +50,8 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
   const todayStr = getTodayInOrlando();
   const currentTime = getCurrentTimeInOrlando();
 
-  // DEBUG: Log appointments and today's date
-  console.log('[CalendarSidebar] All appointments:', appointments.map(a => ({
-    name: a.lead?.firstName + ' ' + a.lead?.lastName,
-    date: a.appointmentDate,
-    time: a.appointmentStartTime,
-    isOverdue: a.appointmentDate < todayStr
-  })));
-
-  // Filter overdue (past date OR today but past time)
-  const overdue = appointments.filter((apt) => {
+  // Filter overdue (past date OR today but past time) - memoized
+  const overdue = useMemo(() => appointments.filter((apt) => {
     // Appointment is overdue if:
     // 1. Date is in the past (before today)
     // 2. OR date is today BUT time has passed
@@ -106,13 +63,11 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
       apt.status !== 'completed' &&
       apt.status !== 'cancelled';
     
-    console.log(`[CalendarSidebar] ${apt.lead?.firstName}: date="${apt.appointmentDate}" time="${apt.appointmentStartTime}" vs today="${todayStr}" ${currentTime} → overdue=${isOverdue} (pastDate=${isPastDate}, pastTime=${isPastTime})`);
-    
     return isOverdue;
-  });
+  }), [appointments, todayStr, currentTime]);
 
-  // Filter upcoming (future date OR today but future time)
-  const upcoming = appointments.filter((apt) => {
+  // Filter upcoming (future date OR today but future time) - memoized
+  const upcoming = useMemo(() => appointments.filter((apt) => {
     // Appointment is upcoming if:
     // 1. Date is in the future (after today)
     // 2. OR date is today BUT time hasn't passed yet
@@ -130,7 +85,7 @@ export function CalendarSidebar({ onEventClick, refreshKey = 0, type = 'overdue'
     const dateCompare = a.appointmentDate.localeCompare(b.appointmentDate);
     if (dateCompare !== 0) return dateCompare;
     return (a.appointmentStartTime || '').localeCompare(b.appointmentStartTime || '');
-  });
+  }), [appointments, todayStr, currentTime]);
 
   if (loading) {
     return (
