@@ -5,6 +5,7 @@ import '@/styles/globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { GoogleAdsTag } from '@/components/GoogleAds'
+import { FacebookPixel } from '@/components/FacebookPixel'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const poppins = Poppins({ 
@@ -31,11 +32,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+  const facebookPixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
 
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <head>
         {googleAdsId && <GoogleAdsTag conversionId={googleAdsId} />}
+        {facebookPixelId && facebookPixelId !== 'YOUR_PIXEL_ID_HERE' && (
+          <FacebookPixel pixelId={facebookPixelId} />
+        )}
       </head>
       <body className="font-sans">
         <Header />

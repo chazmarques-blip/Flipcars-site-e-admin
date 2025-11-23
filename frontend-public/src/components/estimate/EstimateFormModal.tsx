@@ -11,6 +11,7 @@ import { Step3aVIN } from './Step3aVIN';
 import { Step4Contact } from './Step4Contact';
 import { Step5Confirmation } from './Step5Confirmation';
 import { trackConversion } from '@/components/GoogleAds';
+import { fbEvent } from '@/components/FacebookPixel';
 
 interface EstimateFormModalProps {
   isOpen: boolean;
@@ -99,6 +100,10 @@ export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
         trackConversion(`${process.env.NEXT_PUBLIC_GOOGLE_ADS_ID}/${conversionLabel}`);
         console.log('[EstimateForm] 🎯 Google Ads conversion tracked');
       }
+      
+      // 🎯 Track Facebook Pixel Lead event
+      fbEvent.lead('Estimate Form Submission');
+      console.log('[EstimateForm] 🎯 Facebook Pixel Lead event tracked');
       
       // Also save to localStorage as backup
       try {

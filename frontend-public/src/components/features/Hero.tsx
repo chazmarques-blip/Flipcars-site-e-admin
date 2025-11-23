@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Star, CheckCircle, ArrowRight, Zap, Shield, Clock, Phone, ChevronLeft, ChevronRight } from 'lucide-react'
 import StarRating from '../ui/StarRating'
 import { EstimateFormModal } from '@/components/estimate/EstimateFormModal'
+import { fbEvent } from '@/components/FacebookPixel'
 
 const heroSlides = [
   {
@@ -176,7 +177,10 @@ export default function Hero() {
             <div className="flex-1 flex flex-col sm:flex-row gap-2">
               {/* PRIMARY: Insurance Claim (60-70% of customers) - 3D Effect */}
               <button
-                onClick={() => setEstimateModalOpen(true)}
+                onClick={() => {
+                  fbEvent.trackCustom('CTAClick', { button: 'Insurance Claim' });
+                  setEstimateModalOpen(true);
+                }}
                 className="group bg-gradient-to-b from-primary to-primary-light hover:from-primary-light hover:to-primary text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
               >
                 <Shield className="w-3.5 h-3.5" />
@@ -188,6 +192,10 @@ export default function Hero() {
               {/* SECONDARY: Call Now (Action Button) - 3D Effect */}
               <a
                 href="tel:+13219608661"
+                onClick={() => {
+                  fbEvent.contact();
+                  fbEvent.trackCustom('PhoneClick', { phone: '321-960-8661' });
+                }}
                 className="group bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
               >
                 <Phone className="w-3.5 h-3.5" />
@@ -197,7 +205,10 @@ export default function Hero() {
               
               {/* TERTIARY: Free Estimate (30-40% without insurance) - 3D Effect */}
               <button
-                onClick={() => setEstimateModalOpen(true)}
+                onClick={() => {
+                  fbEvent.trackCustom('CTAClick', { button: 'Free Estimate' });
+                  setEstimateModalOpen(true);
+                }}
                 className="group bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(255,255,255,0.1)] hover:shadow-[0_6px_0_0_rgba(255,255,255,0.15)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(255,255,255,0.1)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
               >
                 <Zap className="w-3.5 h-3.5" />
