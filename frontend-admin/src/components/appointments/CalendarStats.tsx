@@ -1,15 +1,51 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { appointmentsService, DashboardStats } from '@/lib/api/appointments.service';
+import { appointmentsService, Appointment } from '@/lib/api/appointments.service';
 import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointments';
 
 interface CalendarStatsProps {
   refreshKey?: number;
 }
 
+// Get real current date in Orlando timezone
+function getTodayInOrlando(): string {
+  const orlandoTime = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  
+  const [month, day, year] = orlandoTime.split(',')[0].split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
+// Get real current time in Orlando timezone
+function getCurrentTimeInOrlando(): string {
+  const orlandoTime = new Date().toLocaleString('en-US', { 
+    timeZone: 'America/New_York',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  const timePart = orlandoTime.split(', ')[1]?.substring(0, 5) || '00:00';
+  return timePart;
+}
+
+interface EnhancedStats {
+  total: number;
+  today: number;
+  thisWeek: number;
+  overdue: number;
+  estimatedRevenue: string;
+  formattedRevenue: string;
+  completionRate: number;
+}
+
 export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<EnhancedStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,44 +58,76 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
       setLoading(true);
       setError(null);
       
-      if (USE_TEST_DATA) {
-        // Calculate stats from test data
-        const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay());
-        startOfWeek.setHours(0, 0, 0, 0);
+      // Fetch appointments from backend
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+      
+      const appointments = await appointmentsService.getAppointmentsByMonth(currentYear, currentMonth);
+      
+      const todayStr = getTodayInOrlando();
+      const currentTime = getCurrentTimeInOrlando();
+      
+      console.log('[CalendarStats] Calculating stats for:', { todayStr, currentTime, appointmentsCount: appointments.length });
+      
+      // Calculate stats from real appointments
+      const total = appointments.length;
+      
+      // Today's appointments
+      const today = appointments.filter(apt => apt.appointmentDate === todayStr).length;
+      
+      // This week appointments (current week: Sunday to Saturday)
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      
+      const startWeekStr = startOfWeek.toISOString().split('T')[0];
+      const endWeekStr = endOfWeek.toISOString().split('T')[0];
+      
+      const thisWeek = appointments.filter(apt => 
+        apt.appointmentDate >= startWeekStr && apt.appointmentDate <= endWeekStr
+      ).length;
+      
+      console.log('[CalendarStats] Week range:', { startWeekStr, endWeekStr, thisWeek });
+      
+      // Overdue appointments (past date OR today but past time)
+      const overdue = appointments.filter(apt => {
+        const isPastDate = apt.appointmentDate < todayStr;
+        const isToday = apt.appointmentDate === todayStr;
+        const isPastTime = isToday && apt.appointmentStartTime && apt.appointmentStartTime < currentTime;
         
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
+        return (isPastDate || isPastTime) &&
+               apt.status !== 'completed' &&
+               apt.status !== 'cancelled';
+      }).length;
+      
+      // Estimated revenue from this week's appointments
+      const estimatedRevenue = appointments
+        .filter(apt => apt.appointmentDate >= startWeekStr && apt.appointmentDate <= endWeekStr)
+        .reduce((sum, apt) => sum + Number(apt.lead?.estimatedValue || 0), 0);
 
-        const total = TEST_APPOINTMENTS.length;
-        const thisWeek = TEST_APPOINTMENTS.filter(apt => {
-          const aptDate = new Date(apt.appointmentDate);
-          return aptDate >= startOfWeek && aptDate <= endOfWeek;
-        }).length;
+      const formattedRevenue = estimatedRevenue >= 1000
+        ? `$${(estimatedRevenue / 1000).toFixed(1)}K`
+        : `$${estimatedRevenue.toFixed(0)}`;
+      
+      // Completion rate: (completed + cancelled) / total * 100
+      const completed = appointments.filter(apt => 
+        apt.status === 'completed' || apt.status === 'cancelled'
+      ).length;
+      const completionRate = total > 0 ? Math.round((completed / total) * 100) : 100;
 
-        const estimatedRevenue = TEST_APPOINTMENTS
-          .filter(apt => {
-            const aptDate = new Date(apt.appointmentDate);
-            return aptDate >= startOfWeek && aptDate <= endOfWeek;
-          })
-          .reduce((sum, apt) => sum + Number(apt.lead?.estimatedValue || 0), 0);
-
-        const formattedRevenue = estimatedRevenue >= 1000
-          ? `$${(estimatedRevenue / 1000).toFixed(1)}K`
-          : `$${estimatedRevenue.toFixed(0)}`;
-
-        setStats({
-          total,
-          thisWeek,
-          estimatedRevenue: estimatedRevenue.toFixed(2),
-          formattedRevenue,
-        });
-      } else {
-        const data = await appointmentsService.getDashboardStats();
-        setStats(data);
-      }
+      setStats({
+        total,
+        today,
+        thisWeek,
+        overdue,
+        estimatedRevenue: estimatedRevenue.toFixed(2),
+        formattedRevenue,
+        completionRate,
+      });
+      
+      console.log('[CalendarStats] Calculated:', { total, today, thisWeek, overdue, completionRate });
     } catch (err) {
       console.error('[CalendarStats] Failed to fetch stats:', err);
       setError('Failed to load statistics');
@@ -114,10 +182,10 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
           Today
         </div>
         <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
-          0
+          {stats.today}
         </div>
         <div className="text-[8px] text-[#666]">
-          No appointments
+          {stats.today === 0 ? 'No appointments' : stats.today === 1 ? '1 appointment' : `${stats.today} appointments`}
         </div>
       </div>
 
@@ -132,7 +200,7 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
           {stats.thisWeek}
         </div>
         <div className="text-[8px] text-[#666]">
-          Next 7 days
+          Sun - Sat
         </div>
       </div>
 
@@ -144,10 +212,10 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
           Overdue
         </div>
         <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
-          0
+          {stats.overdue}
         </div>
         <div className="text-[8px] text-[#666]">
-          None
+          {stats.overdue === 0 ? 'None' : 'Need attention'}
         </div>
       </div>
 
@@ -162,7 +230,7 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
           {stats.formattedRevenue}
         </div>
         <div className="text-[8px] text-[#666]">
-          Expected
+          This week
         </div>
       </div>
 
@@ -174,10 +242,10 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
           Completion
         </div>
         <div className="text-[14px] font-bold text-[#1a1a1a] mb-[1px] leading-none">
-          100%
+          {stats.completionRate}%
         </div>
         <div className="text-[8px] text-[#666]">
-          On schedule
+          {stats.completionRate === 100 ? 'All done' : stats.completionRate >= 75 ? 'On track' : 'Behind'}
         </div>
       </div>
     </div>

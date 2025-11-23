@@ -203,41 +203,53 @@ export class AppointmentsService {
 
   /**
    * Get enriched statistics for dashboard mockup
-   * Returns: total appointments, this week count, estimated revenue
+   * Returns: total appointments THIS MONTH, this week count, estimated revenue
    */
   async getEnrichedStats() {
     const now = new Date();
     
-    // Calculate start of week (Sunday)
+    // Calculate start and end of CURRENT MONTH
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    
+    // Calculate start of week (Sunday) for CURRENT WEEK
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() - now.getDay());
     startOfWeek.setHours(0, 0, 0, 0);
     
-    // Calculate end of week (Saturday)
+    // Calculate end of week (Saturday) for CURRENT WEEK
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
 
     // Format dates for query (YYYY-MM-DD)
-    const startDateStr = startOfWeek.toISOString().split('T')[0];
-    const endDateStr = endOfWeek.toISOString().split('T')[0];
+    const startMonthStr = startOfMonth.toISOString().split('T')[0];
+    const endMonthStr = endOfMonth.toISOString().split('T')[0];
+    const startWeekStr = startOfWeek.toISOString().split('T')[0];
+    const endWeekStr = endOfWeek.toISOString().split('T')[0];
 
-    this.logger.log(`Getting enriched stats for week: ${startDateStr} to ${endDateStr}`);
+    this.logger.log(`Getting enriched stats:`);
+    this.logger.log(`  - Month: ${startMonthStr} to ${endMonthStr}`);
+    this.logger.log(`  - Week: ${startWeekStr} to ${endWeekStr}`);
 
-    // Total appointments
-    const total = await this.appointmentRepository.count();
+    // Total appointments THIS MONTH ONLY
+    const total = await this.appointmentRepository.count({
+      where: {
+        appointmentDate: Between(startMonthStr, endMonthStr),
+      },
+    });
 
-    // This week appointments
+    // This week appointments (CURRENT WEEK: Sunday to Saturday)
     const thisWeek = await this.appointmentRepository.count({
       where: {
-        appointmentDate: Between(startDateStr, endDateStr),
+        appointmentDate: Between(startWeekStr, endWeekStr),
       },
     });
 
     // Get this week appointments with lead data for revenue calculation
     const thisWeekAppointments = await this.appointmentRepository.find({
       where: {
-        appointmentDate: Between(startDateStr, endDateStr),
+        appointmentDate: Between(startWeekStr, endWeekStr),
       },
       relations: ['lead'],
     });
@@ -256,7 +268,7 @@ export class AppointmentsService {
       ? `$${(estimatedRevenue / 1000).toFixed(1)}K`
       : `$${estimatedRevenue.toFixed(0)}`;
 
-    this.logger.log(`Stats calculated: total=${total}, thisWeek=${thisWeek}, revenue=${formattedRevenue}`);
+    this.logger.log(`Stats calculated: totalThisMonth=${total}, thisWeek=${thisWeek}, revenue=${formattedRevenue}`);
 
     return {
       total,
