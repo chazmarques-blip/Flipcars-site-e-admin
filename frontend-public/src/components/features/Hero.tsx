@@ -172,22 +172,24 @@ export default function Hero() {
               <ChevronLeft className="w-5 h-5 text-white group-hover:text-black" />
             </button>
 
-            {/* Buttons Container */}
+            {/* Buttons Container - Dual CTA (apenas textos mudaram) */}
             <div className="flex-1 flex flex-col sm:flex-row gap-2">
               <button
                 onClick={() => setEstimateModalOpen(true)}
                 className="group bg-primary hover:bg-primary-light text-black font-bold text-sm px-5 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
               >
-                Get FREE Estimate Now
+                <Shield className="w-4 h-4" />
+                Start My Insurance Claim
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
-              <a
-                href="tel:+13219608661"
+              <button
+                onClick={() => setEstimateModalOpen(true)}
                 className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white font-bold text-sm px-5 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
               >
-                <Phone className="w-4 h-4" />
-                321-960-8661
-              </a>
+                <Zap className="w-4 h-4" />
+                Get Free Estimate
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
             </div>
 
             {/* Mobile Arrow Right */}
