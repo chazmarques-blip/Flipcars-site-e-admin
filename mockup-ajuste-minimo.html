@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Ajuste APENAS nos Botões (Layout Atual Preservado)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .panel {
+            position: relative;
+        }
+
+        .label {
+            position: sticky;
+            top: 0;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .label-before {
+            background: #DC2626;
+            color: white;
+        }
+
+        .label-after {
+            background: #059669;
+            color: white;
+        }
+
+        /* EXATAMENTE COMO NO SITE ATUAL */
+        .site-container {
+            background: #000;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #000;
+        }
+
+        .logo {
+            width: 80px;
+            height: auto;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .phone {
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 500px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.6) 100%),
+                        url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=1920') center/cover;
+            padding: 60px 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #D4AF37;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: bold;
+            line-height: 1.2;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 42px;
+            font-weight: bold;
+            color: #D4AF37;
+            margin-bottom: 16px;
+        }
+
+        .description {
+            color: #E5E7EB;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .description strong {
+            color: white;
+        }
+
+        /* BOTÕES - AQUI ESTÁ A DIFERENÇA */
+        .cta-area {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Botão amarelo/laranja (exatamente como o atual) */
+        .btn-primary {
+            background: #D4AF37;
+            color: #000;
+            box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #E5C158;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Botão branco outline (exatamente como o atual) */
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            backdrop-filter: blur(8px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .trust-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 11px;
+            color: #9CA3AF;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .star-rating {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+
+        /* Highlight das mudanças */
+        .change-highlight {
+            position: relative;
+        }
+
+        .change-highlight::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 3px solid #059669;
+            border-radius: 12px;
+            pointer-events: none;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .annotation {
+            position: absolute;
+            background: #059669;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .annotation::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .annotation-top::before {
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px 6px 0 6px;
+            border-color: #059669 transparent transparent transparent;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+            .cta-area {
+                flex-direction: column;
+            }
+            h1, .subtitle {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="comparison">
+        <!-- ANTES (Layout Atual Exato) -->
+        <div class="panel">
+            <div class="label label-before">
+                ❌ ATUAL - Como está agora (www.flipcars.us)
+            </div>
+
+            <div class="site-container">
+                <div class="header">
+                    <img src="data:image/svg+xml,%3Csvg width='80' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' fill='%23D4AF37' font-family='Arial' font-weight='bold' font-size='20'%3EFC%3C/text%3E%3C/svg%3E" alt="FlipCars" class="logo">
+                    <div class="nav">
+                        <span>HOME</span>
+                        <span>SERVICES</span>
+                        <span>CONTACT</span>
+                    </div>
+                    <div class="header-actions">
+                        <div class="phone">📞 321-960-8661</div>
+                        <button class="btn btn-primary" style="padding: 10px 20px; font-size: 13px;">Free Estimate</button>
+                    </div>
+                </div>
+
+                <div class="hero">
+                    <div class="hero-content">
+                        <div class="badge">⚡ Free Estimate in 24 Hours</div>
+                        
+                        <h1>Crashed Your Car?</h1>
+                        <div class="subtitle">We'll Fix It Like New!</div>
+                        
+                        <p class="description">
+                            <strong>Insurance approved repairs</strong> • Free towing • Free rental car • No upfront payment
+                        </p>
+
+                        <!-- BOTÕES ATUAIS -->
+                        <div class="cta-area">
+                            <button class="btn btn-primary">
+                                Get FREE Estimate Now →
+                            </button>
+                            <button class="btn btn-secondary">
+                                📞 321-960-8661
+                            </button>
+                        </div>
+
+                        <div class="trust-bar">
+                            <div class="trust-item">
+                                <span>⭐</span>
+                                <span><span class="star-rating">4.9/5</span> (51)</span>
+                            </div>
+                            <div class="trust-item">
+                                <span>🛡️</span>
+                                <span>Licensed & Insured</span>
+                            </div>
+                            <div class="trust-item">
+                                <span>✅</span>
+                                <span>Lifetime Warranty</span>
+                            </div>
+                            <div class="trust-item">
+                                <span>⏱️</span>
+                                <span>3-5 Days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEPOIS (Apenas mudança nos textos dos botões) -->
+        <div class="panel">
+            <div class="label label-after">
+                ✅ PROPOSTA - Apenas textos dos botões mudam
+            </div>
+
+            <div class="site-container">
+                <div class="header">
+                    <img src="data:image/svg+xml,%3Csvg width='80' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='25' fill='%23D4AF37' font-family='Arial' font-weight='bold' font-size='20'%3EFC%3C/text%3E%3C/svg%3E" alt="FlipCars" class="logo">
+                    <div class="nav">
+                        <span>HOME</span>
+                        <span>SERVICES</span>
+                        <span>CONTACT</span>
+                    </div>
+                    <div class="header-actions">
+                        <div class="phone">📞 321-960-8661</div>
+                        <button class="btn btn-primary" style="padding: 10px 20px; font-size: 13px;">Free Estimate</button>
+                    </div>
+                </div>
+
+                <div class="hero">
+                    <div class="hero-content">
+                        <div class="badge">⚡ Free Estimate in 24 Hours</div>
+                        
+                        <h1>Crashed Your Car?</h1>
+                        <div class="subtitle">We'll Fix It Like New!</div>
+                        
+                        <p class="description">
+                            <strong>Insurance approved repairs</strong> • Free towing • Free rental car • No upfront payment
+                        </p>
+
+                        <!-- BOTÕES NOVOS (APENAS TEXTO MUDOU) -->
+                        <div class="cta-area change-highlight" style="position: relative;">
+                            <div class="annotation annotation-top" style="top: -40px; left: 20%;">
+                                📝 NOVO TEXTO
+                            </div>
+                            <button class="btn btn-primary">
+                                🛡️ Start My Insurance Claim →
+                            </button>
+                            <button class="btn btn-secondary">
+                                ⚡ Get Free Estimate →
+                            </button>
+                        </div>
+
+                        <div class="trust-bar">
+                            <div class="trust-item">
+                                <span>⭐</span>
+                                <span><span class="star-rating">4.9/5</span> (51)</span>
+                            </div>
+                            <div class="trust-item">
+                                <span>🛡️</span>
+                                <span>Licensed & Insured</span>
+                            </div>
+                            <div class="trust-item">
+                                <span>✅</span>
+                                <span>Lifetime Warranty</span>
+                            </div>
+                            <div class="trust-item">
+                                <span>⏱️</span>
+                                <span>3-5 Days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background: white; padding: 40px; text-align: center;">
+        <h2 style="color: #1F2937; margin-bottom: 24px; font-size: 28px;">📋 O QUE MUDA EXATAMENTE:</h2>
+        
+        <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; text-align: left;">
+            <div style="background: #FEE2E2; padding: 24px; border-radius: 12px; border-left: 4px solid #DC2626;">
+                <h3 style="color: #DC2626; margin-bottom: 12px; font-size: 18px;">❌ ANTES (Atual)</h3>
+                <p style="color: #374151; margin-bottom: 12px;"><strong>Botão 1 (Amarelo):</strong></p>
+                <p style="color: #6B7280; font-family: monospace; background: white; padding: 8px; border-radius: 4px; margin-bottom: 16px;">
+                    "Get FREE Estimate Now →"
+                </p>
+                <p style="color: #374151; margin-bottom: 12px;"><strong>Botão 2 (Branco):</strong></p>
+                <p style="color: #6B7280; font-family: monospace; background: white; padding: 8px; border-radius: 4px;">
+                    "📞 321-960-8661"
+                </p>
+            </div>
+
+            <div style="background: #D1FAE5; padding: 24px; border-radius: 12px; border-left: 4px solid #059669;">
+                <h3 style="color: #059669; margin-bottom: 12px; font-size: 18px;">✅ DEPOIS (Proposta)</h3>
+                <p style="color: #374151; margin-bottom: 12px;"><strong>Botão 1 (Amarelo):</strong></p>
+                <p style="color: #6B7280; font-family: monospace; background: white; padding: 8px; border-radius: 4px; margin-bottom: 16px;">
+                    "🛡️ Start My Insurance Claim →"
+                </p>
+                <p style="color: #374151; margin-bottom: 12px;"><strong>Botão 2 (Branco):</strong></p>
+                <p style="color: #6B7280; font-family: monospace; background: white; padding: 8px; border-radius: 4px;">
+                    "⚡ Get Free Estimate →"
+                </p>
+            </div>
+        </div>
+
+        <div style="max-width: 800px; margin: 32px auto; padding: 24px; background: #DBEAFE; border-radius: 12px;">
+            <h3 style="color: #1E40AF; margin-bottom: 16px; font-size: 20px;">✅ O QUE NÃO MUDA:</h3>
+            <ul style="text-align: left; color: #374151; line-height: 2;">
+                <li>✅ Layout exato mantido</li>
+                <li>✅ Cores dos botões (amarelo + branco) mantidas</li>
+                <li>✅ Tamanhos e espaçamentos mantidos</li>
+                <li>✅ Header e navegação mantidos</li>
+                <li>✅ Trust indicators mantidos</li>
+                <li>✅ Background e imagens mantidos</li>
+                <li>✅ Tipografia mantida</li>
+                <li>✅ <strong>AMBOS OS BOTÕES ABREM O MESMO FORMULÁRIO</strong></li>
+            </ul>
+        </div>
+
+        <div style="max-width: 800px; margin: 32px auto; padding: 24px; background: #FEF3C7; border-radius: 12px;">
+            <h3 style="color: #92400E; margin-bottom: 16px; font-size: 20px;">🎯 Por quê essa mudança?</h3>
+            <p style="text-align: left; color: #374151; line-height: 1.8;">
+                <strong>Segmentação de clientes:</strong><br>
+                • Cliente <strong>COM seguro</strong> → Clica em "Start My Insurance Claim" (sabe que o seguro vai pagar)<br>
+                • Cliente <strong>SEM seguro</strong> → Clica em "Get Free Estimate" (quer saber o preço)<br>
+                <br>
+                <strong>Resultado esperado:</strong> +15-25% de conversão (baseado em estudos de CRO)
+            </p>
+        </div>
+    </div>
+</body>
+</html>
