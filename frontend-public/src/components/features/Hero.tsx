@@ -12,7 +12,7 @@ const heroSlides = [
     title: "Crashed Your Car?",
     subtitle: "We'll Fix It Like New!",
     description: "Insurance approved repairs • Free towing • Free rental car • No upfront payment",
-    badge: "Free Estimate in 24 Hours",
+    badge: "Insurance Claims Specialist",
     bgImage: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=1920&auto=format&fit=crop" // Damaged car repair
   },
   {
@@ -172,22 +172,39 @@ export default function Hero() {
               <ChevronLeft className="w-5 h-5 text-white group-hover:text-black" />
             </button>
 
-            {/* Buttons Container */}
+            {/* Buttons Container - Triple CTA Mobile-First (Insurance Focus) */}
             <div className="flex-1 flex flex-col sm:flex-row gap-2">
+              {/* PRIMARY: Insurance Claim (60-70% of customers) - 3D Effect */}
               <button
                 onClick={() => setEstimateModalOpen(true)}
-                className="group bg-primary hover:bg-primary-light text-black font-bold text-sm px-5 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2"
+                className="group bg-gradient-to-b from-primary to-primary-light hover:from-primary-light hover:to-primary text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
               >
-                Get FREE Estimate Now
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <Shield className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Start My Insurance Claim</span>
+                <span className="sm:hidden">Insurance Claim</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </button>
+              
+              {/* SECONDARY: Call Now (Action Button) - 3D Effect */}
               <a
                 href="tel:+13219608661"
-                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white font-bold text-sm px-5 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+                className="group bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
               >
-                <Phone className="w-4 h-4" />
-                321-960-8661
+                <Phone className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Call: 321-960-8661</span>
+                <span className="sm:hidden">321-960-8661</span>
               </a>
+              
+              {/* TERTIARY: Free Estimate (30-40% without insurance) - 3D Effect */}
+              <button
+                onClick={() => setEstimateModalOpen(true)}
+                className="group bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(255,255,255,0.1)] hover:shadow-[0_6px_0_0_rgba(255,255,255,0.15)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(255,255,255,0.1)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Get Free Estimate</span>
+                <span className="sm:hidden">Free Estimate</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </button>
             </div>
 
             {/* Mobile Arrow Right */}
