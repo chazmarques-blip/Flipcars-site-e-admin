@@ -3,15 +3,13 @@
 // IMMEDIATE EXECUTION - This will run as soon as file is loaded
 console.log('%c✅ CALENDAR FILE LOADED - VERSION: 2025-11-23-REAL-TIME ✅', 'background: green; color: white; font-size: 20px; padding: 10px;');
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Appointment, appointmentsService } from '@/lib/api/appointments.service';
-import { EventBadge } from './EventBadge';
-import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointments';
+import { Appointment } from '@/lib/api/appointments.service';
+import { useAppointments } from '@/contexts/AppointmentsContext';
 
 interface CalendarGridProps {
   onEventClick: (appointment: Appointment) => void;
-  refreshKey?: number;
 }
 
 // Get days in month
@@ -89,10 +87,9 @@ function isToday(date: Date): boolean {
   return result;
 }
 
-export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps) {
+export function CalendarGrid({ onEventClick }: CalendarGridProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { appointments, loading } = useAppointments();
 
   // VERSION MARKER - updated 2025-11-23 with REAL timezone
   console.log('[CalendarGrid] VERSION: 2025-11-23-REAL-ORLANDO-TIME');
@@ -100,42 +97,26 @@ export function CalendarGrid({ onEventClick, refreshKey = 0 }: CalendarGridProps
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  useEffect(() => {
-    fetchAppointments();
-  }, [year, month, refreshKey]);
-
-  const fetchAppointments = async () => {
-    try {
-      setLoading(true);
-      
-      // Use test data if enabled
-      if (USE_TEST_DATA) {
-        // Filter test appointments for current month
-        const filteredData = TEST_APPOINTMENTS.filter((apt) => {
-          const aptDate = new Date(apt.appointmentDate);
-          return aptDate.getFullYear() === year && aptDate.getMonth() === month;
-        });
-        setAppointments(filteredData);
-      } else {
-        const data = await appointmentsService.getAppointmentsByMonth(year, month + 1);
-        setAppointments(data);
+  // Group appointments by date (filtered to current month view)
+  const appointmentsByDate = useMemo(() => {
+    const grouped: Record<string, Appointment[]> = {};
+    
+    // Filter appointments for current month view
+    const monthAppointments = appointments.filter((apt) => {
+      const aptDate = new Date(apt.appointmentDate);
+      return aptDate.getFullYear() === year && aptDate.getMonth() === month;
+    });
+    
+    monthAppointments.forEach((apt) => {
+      const dateKey = apt.appointmentDate;
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = [];
       }
-    } catch (error) {
-      console.error('[CalendarGrid] Failed to fetch appointments:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Group appointments by date
-  const appointmentsByDate: Record<string, Appointment[]> = {};
-  appointments.forEach((apt) => {
-    const dateKey = apt.appointmentDate;
-    if (!appointmentsByDate[dateKey]) {
-      appointmentsByDate[dateKey] = [];
-    }
-    appointmentsByDate[dateKey].push(apt);
-  });
+      grouped[dateKey].push(apt);
+    });
+    
+    return grouped;
+  }, [appointments, year, month]);
 
   // Get days to display
   const days = getDaysInMonth(year, month);

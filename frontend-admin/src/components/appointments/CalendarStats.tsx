@@ -1,12 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { appointmentsService, Appointment } from '@/lib/api/appointments.service';
-import { TEST_APPOINTMENTS, USE_TEST_DATA } from '@/lib/mockData/testAppointments';
-
-interface CalendarStatsProps {
-  refreshKey?: number;
-}
+import React, { useMemo } from 'react';
+import { useAppointments } from '@/contexts/AppointmentsContext';
 
 // Get real current date in Orlando timezone
 function getTodayInOrlando(): string {
@@ -44,97 +39,89 @@ interface EnhancedStats {
   completionRate: number;
 }
 
-export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
-  const [stats, setStats] = useState<EnhancedStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function CalendarStats() {
+  const { appointments, loading, error } = useAppointments();
 
-  useEffect(() => {
-    fetchStats();
-  }, [refreshKey]);
-
-  const fetchStats = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Fetch appointments from backend
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
-      
-      const appointments = await appointmentsService.getAppointmentsByMonth(currentYear, currentMonth);
-      
-      const todayStr = getTodayInOrlando();
-      const currentTime = getCurrentTimeInOrlando();
-      
-      console.log('[CalendarStats] Calculating stats for:', { todayStr, currentTime, appointmentsCount: appointments.length });
-      
-      // Calculate stats from real appointments
-      const total = appointments.length;
-      
-      // Today's appointments
-      const today = appointments.filter(apt => apt.appointmentDate === todayStr).length;
-      
-      // This week appointments (current week: Sunday to Saturday)
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      
-      const startWeekStr = startOfWeek.toISOString().split('T')[0];
-      const endWeekStr = endOfWeek.toISOString().split('T')[0];
-      
-      const thisWeek = appointments.filter(apt => 
-        apt.appointmentDate >= startWeekStr && apt.appointmentDate <= endWeekStr
-      ).length;
-      
-      console.log('[CalendarStats] Week range:', { startWeekStr, endWeekStr, thisWeek });
-      
-      // Overdue appointments (past date OR today but past time)
-      const overdue = appointments.filter(apt => {
-        const isPastDate = apt.appointmentDate < todayStr;
-        const isToday = apt.appointmentDate === todayStr;
-        const isPastTime = isToday && apt.appointmentStartTime && apt.appointmentStartTime < currentTime;
-        
-        return (isPastDate || isPastTime) &&
-               apt.status !== 'completed' &&
-               apt.status !== 'cancelled';
-      }).length;
-      
-      // Estimated revenue from this week's appointments
-      const estimatedRevenue = appointments
-        .filter(apt => apt.appointmentDate >= startWeekStr && apt.appointmentDate <= endWeekStr)
-        .reduce((sum, apt) => sum + Number(apt.lead?.estimatedValue || 0), 0);
-
-      const formattedRevenue = estimatedRevenue >= 1000
-        ? `$${(estimatedRevenue / 1000).toFixed(1)}K`
-        : `$${estimatedRevenue.toFixed(0)}`;
-      
-      // Completion rate: (completed + cancelled) / total * 100
-      const completed = appointments.filter(apt => 
-        apt.status === 'completed' || apt.status === 'cancelled'
-      ).length;
-      const completionRate = total > 0 ? Math.round((completed / total) * 100) : 100;
-
-      setStats({
-        total,
-        today,
-        thisWeek,
-        overdue,
-        estimatedRevenue: estimatedRevenue.toFixed(2),
-        formattedRevenue,
-        completionRate,
-      });
-      
-      console.log('[CalendarStats] Calculated:', { total, today, thisWeek, overdue, completionRate });
-    } catch (err) {
-      console.error('[CalendarStats] Failed to fetch stats:', err);
-      setError('Failed to load statistics');
-    } finally {
-      setLoading(false);
+  const stats = useMemo((): EnhancedStats => {
+    if (appointments.length === 0) {
+      return {
+        total: 0,
+        today: 0,
+        thisWeek: 0,
+        overdue: 0,
+        estimatedRevenue: '0.00',
+        formattedRevenue: '$0',
+        completionRate: 100,
+      };
     }
-  };
+
+    const now = new Date();
+    const todayStr = getTodayInOrlando();
+    const currentTime = getCurrentTimeInOrlando();
+    
+    console.log('[CalendarStats] Calculating stats for:', { todayStr, currentTime, appointmentsCount: appointments.length });
+    
+    // Calculate stats from real appointments
+    const total = appointments.length;
+    
+    // Today's appointments
+    const today = appointments.filter(apt => apt.appointmentDate === todayStr).length;
+    
+    // This week appointments (current week: Sunday to Saturday)
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
+    const startWeekStr = startOfWeek.toISOString().split('T')[0];
+    const endWeekStr = endOfWeek.toISOString().split('T')[0];
+    
+    const thisWeek = appointments.filter(apt => 
+      apt.appointmentDate >= startWeekStr && apt.appointmentDate <= endWeekStr
+    ).length;
+    
+    console.log('[CalendarStats] Week range:', { startWeekStr, endWeekStr, thisWeek });
+    
+    // Overdue appointments (past date OR today but past time)
+    const overdue = appointments.filter(apt => {
+      const isPastDate = apt.appointmentDate < todayStr;
+      const isToday = apt.appointmentDate === todayStr;
+      const isPastTime = isToday && apt.appointmentStartTime && apt.appointmentStartTime < currentTime;
+      
+      return (isPastDate || isPastTime) &&
+             apt.status !== 'completed' &&
+             apt.status !== 'cancelled';
+    }).length;
+    
+    // Estimated revenue from this week's appointments
+    const estimatedRevenue = appointments
+      .filter(apt => apt.appointmentDate >= startWeekStr && apt.appointmentDate <= endWeekStr)
+      .reduce((sum, apt) => sum + Number(apt.lead?.estimatedValue || 0), 0);
+
+    const formattedRevenue = estimatedRevenue >= 1000
+      ? `$${(estimatedRevenue / 1000).toFixed(1)}K`
+      : `$${estimatedRevenue.toFixed(0)}`;
+    
+    // Completion rate: (completed + cancelled) / total * 100
+    const completed = appointments.filter(apt => 
+      apt.status === 'completed' || apt.status === 'cancelled'
+    ).length;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 100;
+
+    const result = {
+      total,
+      today,
+      thisWeek,
+      overdue,
+      estimatedRevenue: estimatedRevenue.toFixed(2),
+      formattedRevenue,
+      completionRate,
+    };
+    
+    console.log('[CalendarStats] Calculated:', { total, today, thisWeek, overdue, completionRate });
+    
+    return result;
+  }, [appointments]);
 
   if (loading) {
     return (
@@ -149,10 +136,10 @@ export function CalendarStats({ refreshKey = 0 }: CalendarStatsProps) {
     );
   }
 
-  if (error || !stats) {
+  if (error) {
     return (
       <div className="bg-red-50 border border-red-200 rounded p-2 text-red-700 text-xs mb-[5px]">
-        {error || 'Unable to load statistics'}
+        {error}
       </div>
     );
   }
