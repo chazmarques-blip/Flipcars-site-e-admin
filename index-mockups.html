@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Mockups Visuais</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.3);
+        }
+
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #1F2937;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #6B7280;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .card a {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .card a:hover {
+            transform: scale(1.05);
+        }
+
+        .card-before {
+            border-top: 4px solid #EF4444;
+        }
+
+        .card-after {
+            border-top: 4px solid #10B981;
+        }
+
+        .card-comparison {
+            border-top: 4px solid #F59E0B;
+        }
+
+        .footer {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .footer h3 {
+            font-size: 24px;
+            color: #1F2937;
+            margin-bottom: 16px;
+        }
+
+        .footer p {
+            color: #6B7280;
+            margin-bottom: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .footer-links a:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-github {
+            background: #1F2937;
+            color: white;
+        }
+
+        .btn-docs {
+            background: #3B82F6;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 FlipCars Mockups</h1>
+            <p>Visualização do Dual CTA - ANTES vs DEPOIS</p>
+        </div>
+
+        <div class="cards">
+            <div class="card card-before">
+                <div class="card-icon">❌</div>
+                <h2>ANTES</h2>
+                <p>Layout atual com CTA único. Veja os problemas identificados e porque precisa melhorar.</p>
+                <a href="mockup-antes.html" target="_blank">Ver Mockup ANTES →</a>
+            </div>
+
+            <div class="card card-after">
+                <div class="card-icon">✅</div>
+                <h2>DEPOIS</h2>
+                <p>Novo layout com Dual CTA estratégico. Veja todas as melhorias implementadas.</p>
+                <a href="mockup-depois.html" target="_blank">Ver Mockup DEPOIS →</a>
+            </div>
+
+            <div class="card card-comparison">
+                <div class="card-icon">⚖️</div>
+                <h2>COMPARAÇÃO</h2>
+                <p>Visualização lado a lado dos dois layouts. Compare as diferenças diretamente.</p>
+                <a href="mockup-comparacao.html" target="_blank">Ver Comparação →</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>📚 Recursos Adicionais</h3>
+            <p>Documentação completa da estratégia e implementação técnica</p>
+            <div class="footer-links">
+                <a href="DUAL_CTA_STRATEGY.md" class="btn-docs" target="_blank">
+                    📄 Estratégia Completa
+                </a>
+                <a href="VISUAL_COMPARISON_DUAL_CTA.md" class="btn-docs" target="_blank">
+                    🎨 Comparação Visual
+                </a>
+                <a href="https://github.com/chazmarques-blip/Flipcars-site-e-admin/pull/35" class="btn-github" target="_blank">
+                    🔗 Pull Request
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
