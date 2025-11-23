@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Mobile First (3 Botões)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #F3F4F6;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            position: relative;
+            background: #000;
+        }
+
+        .label {
+            position: sticky;
+            top: 0;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        .label-before {
+            background: #DC2626;
+            color: white;
+        }
+
+        .label-after {
+            background: #059669;
+            color: white;
+        }
+
+        /* MOBILE VIEW */
+        .mobile-frame {
+            width: 100%;
+            max-width: 375px;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 580px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.6) 100%),
+                        url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=800') center/cover;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #D4AF37;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            width: fit-content;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            line-height: 1.1;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            font-weight: bold;
+            color: #D4AF37;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #E5E7EB;
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        /* BOTÕES - AQUI ESTÁ A MUDANÇA */
+        .cta-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #D4AF37;
+            color: #000;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .btn-phone {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+
+        .trust-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 10px;
+            color: #9CA3AF;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .annotation {
+            position: absolute;
+            background: #059669;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .highlight {
+            position: relative;
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.2); }
+        }
+
+        .info-section {
+            background: white;
+            padding: 24px 16px;
+            text-align: center;
+        }
+
+        .info-section h2 {
+            color: #1F2937;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .info-box {
+            background: #F9FAFB;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .info-box.before {
+            border-color: #FCA5A5;
+            background: #FEF2F2;
+        }
+
+        .info-box.after {
+            border-color: #86EFAC;
+            background: #F0FDF4;
+        }
+
+        .info-box h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #374151;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 6px 0;
+            font-size: 13px;
+            color: #6B7280;
+            line-height: 1.5;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            background: #FBBF24;
+            color: #78350F;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="comparison">
+        <!-- ANTES (2 botões) -->
+        <div class="panel">
+            <div class="label label-before">
+                ❌ ANTES (2 botões)
+            </div>
+            
+            <div class="mobile-frame">
+                <div class="hero">
+                    <div class="badge">⚡ Free Estimate in 24 Hours</div>
+                    
+                    <h1>Crashed Your Car?</h1>
+                    <div class="subtitle">We'll Fix It Like New!</div>
+                    
+                    <p class="description">
+                        <strong>Insurance approved repairs</strong> • Free towing • Free rental car
+                    </p>
+
+                    <div class="cta-container">
+                        <button class="btn btn-primary">
+                            Get FREE Estimate Now →
+                        </button>
+                        <a href="tel:+13219608661" class="btn btn-secondary">
+                            📞 321-960-8661
+                        </a>
+                    </div>
+
+                    <div class="trust-bar">
+                        <div class="trust-item">⭐ 4.9/5 (51)</div>
+                        <div class="trust-item">🛡️ Licensed</div>
+                        <div class="trust-item">✅ Warranty</div>
+                        <div class="trust-item">⏱️ 3-5 Days</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEPOIS (3 botões - foco insurance) -->
+        <div class="panel">
+            <div class="label label-after">
+                ✅ DEPOIS (3 botões mobile)
+            </div>
+            
+            <div class="mobile-frame">
+                <div class="hero">
+                    <div class="badge">⚡ Insurance Claims Specialist</div>
+                    
+                    <h1>Crashed Your Car?</h1>
+                    <div class="subtitle">We'll Fix It Like New!</div>
+                    
+                    <p class="description">
+                        <strong>Insurance approved repairs</strong> • Free towing • Free rental car
+                    </p>
+
+                    <div class="cta-container">
+                        <!-- Botão 1: Insurance Claim (PRINCIPAL - Grande) -->
+                        <div style="position: relative;">
+                            <div class="annotation" style="top: -30px; left: 10px;">
+                                🎯 PRINCIPAL
+                            </div>
+                            <button class="btn btn-primary highlight">
+                                🛡️ Start My Insurance Claim →
+                            </button>
+                        </div>
+
+                        <!-- Botão 2: Telefone (AÇÃO RÁPIDA) -->
+                        <div style="position: relative;">
+                            <div class="annotation" style="top: -30px; left: 10px;">
+                                📞 LIGAR
+                            </div>
+                            <a href="tel:+13219608661" class="btn btn-phone highlight">
+                                📞 Call Now: 321-960-8661
+                            </a>
+                        </div>
+
+                        <!-- Botão 3: Free Estimate (Secundário) -->
+                        <div style="position: relative;">
+                            <div class="annotation" style="top: -30px; left: 10px;">
+                                💰 SEM SEGURO
+                            </div>
+                            <button class="btn btn-secondary highlight">
+                                ⚡ Get Free Estimate →
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="trust-bar">
+                        <div class="trust-item">⭐ 4.9/5 (51)</div>
+                        <div class="trust-item">🛡️ Licensed</div>
+                        <div class="trust-item">✅ Warranty</div>
+                        <div class="trust-item">⏱️ 3-5 Days</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="info-section">
+        <h2>📱 Novo Layout Mobile-First (3 Botões)</h2>
+        
+        <div class="info-box after">
+            <h3>✅ NOVO (Proposta Mobile):</h3>
+            <ul>
+                <li><strong>Botão 1 (Amarelo - Grande):</strong> 🛡️ Start My Insurance Claim <span class="priority-badge">PRINCIPAL</span></li>
+                <li><strong>Botão 2 (Branco Phone):</strong> 📞 Call Now: 321-960-8661</li>
+                <li><strong>Botão 3 (Branco Outline):</strong> ⚡ Get Free Estimate</li>
+            </ul>
+        </div>
+
+        <div class="info-box before">
+            <h3>❌ ANTES (Atual):</h3>
+            <ul>
+                <li><strong>Botão 1:</strong> Get FREE Estimate Now</li>
+                <li><strong>Botão 2:</strong> 📞 321-960-8661 (link)</li>
+            </ul>
+        </div>
+
+        <div style="background: #DBEAFE; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left;">
+            <h3 style="color: #1E40AF; font-size: 16px; margin-bottom: 12px;">🎯 Estratégia Mobile-First:</h3>
+            <ul style="color: #374151; font-size: 14px; line-height: 1.8;">
+                <li><strong>Foco em Insurance (60-70% dos clientes):</strong> Botão principal destaca insurance claim</li>
+                <li><strong>Telefone como ação:</strong> Mais fácil clicar para ligar no mobile</li>
+                <li><strong>Free Estimate por último:</strong> Para quem não tem seguro (30-40%)</li>
+                <li><strong>3 opções claras:</strong> Cliente escolhe seu caminho rapidamente</li>
+                <li><strong>Todos abrem formulário:</strong> Exceto telefone que liga direto</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 20px; padding: 16px; background: #FEF3C7; border-radius: 8px;">
+            <p style="color: #92400E; font-size: 14px; line-height: 1.6;">
+                <strong>📊 Por que 3 botões mobile?</strong><br>
+                Mobile users querem ação rápida. Com 3 opções claras, cobrimos:<br>
+                1️⃣ Cliente com seguro → Insurance Claim<br>
+                2️⃣ Cliente com urgência → Ligar agora<br>
+                3️⃣ Cliente sem seguro → Free Estimate
+            </p>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <h3 style="color: #1F2937; font-size: 18px; margin-bottom: 12px;">📐 Desktop (>768px):</h3>
+            <p style="color: #6B7280; font-size: 14px; margin-bottom: 8px;">
+                <strong>Opção 1:</strong> 3 botões lado a lado (menor width cada)<br>
+                <strong>Opção 2:</strong> 2 botões principais + phone menor abaixo<br>
+                <strong>Sua preferência?</strong> Me diga e ajusto!
+            </p>
+        </div>
+    </div>
+</body>
+</html>
