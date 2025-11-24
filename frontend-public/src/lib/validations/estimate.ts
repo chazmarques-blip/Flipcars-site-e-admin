@@ -26,12 +26,12 @@ export const step2BodyshopSchema = z.object({
   preferredTimeSlot: z.string().optional(),
 }).refine(
   (data) => {
-    // If "Other" is selected, no claim number or appointment required
-    if (data.insuranceCompany === 'Other') {
+    // If "Private (Self-Pay)" or "Other" is selected, no claim number or appointment required
+    if (data.insuranceCompany === 'Private (Self-Pay)' || data.insuranceCompany === 'Other') {
       return true;
     }
     
-    // If insurance company selected (not "Other"):
+    // If insurance company selected (not self-pay):
     // 1. Must have claim number OR check "don't have claim number"
     const hasValidClaim = data.hasClaimNumber || (data.claimNumber && data.claimNumber.length > 0);
     
@@ -57,12 +57,12 @@ export const step2MechanicSchema = z.object({
   preferredTimeSlot: z.string().optional(),
 }).refine(
   (data) => {
-    // If "Other" is selected, no warranty claim or appointment required
-    if (data.warrantyCompany === 'Other') {
+    // If "Private (Self-Pay)" or "Other" is selected, no warranty claim or appointment required
+    if (data.warrantyCompany === 'Private (Self-Pay)' || data.warrantyCompany === 'Other') {
       return true;
     }
     
-    // If warranty company selected (not "Other"):
+    // If warranty company selected (not self-pay):
     // 1. Must have warranty claim number OR check "don't have warranty claim number"
     const hasValidClaim = data.hasWarrantyClaimNumber || (data.warrantyClaimNumber && data.warrantyClaimNumber.length > 0);
     

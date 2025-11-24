@@ -201,7 +201,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
       </div>
 
       {/* Claim Number (conditional) */}
-      {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && (
+      {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && selectedCompany !== 'Other' && (
         <div className="space-y-0.5">
           <label htmlFor={claimField} className="block text-sm font-medium text-black">
             Claim Number (Optional)
@@ -232,13 +232,13 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         <label className="block text-sm font-medium text-black">
           <Calendar className="w-4 h-4 inline mr-1" />
           When would you like to bring your car?
-          {selectedCompany && selectedCompany !== 'Other' && (
+          {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && selectedCompany !== 'Other' && (
             <span className="text-gold ml-1">*</span>
           )}
         </label>
         
         {/* Info message based on payment method */}
-        {selectedCompany === 'Other' && (
+        {(selectedCompany === 'Private (Self-Pay)' || selectedCompany === 'Other') && (
           <div className="flex items-start gap-2 p-2 bg-blue-50 rounded-lg mb-2">
             <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
             <p className="text-[10px] text-blue-700">
@@ -247,7 +247,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           </div>
         )}
         
-        {selectedCompany && selectedCompany !== 'Other' && (
+        {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && selectedCompany !== 'Other' && (
           <div className="flex items-start gap-2 p-2 bg-amber-50 rounded-lg mb-2">
             <Info className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
             <p className="text-[10px] text-amber-700">
@@ -370,7 +370,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
       </div>
 
       {/* Validation Messages */}
-      {selectedCompany && selectedCompany !== 'Other' && !isValid && (
+      {selectedCompany && selectedCompany !== 'Private (Self-Pay)' && selectedCompany !== 'Other' && !isValid && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-xs text-red-700 font-medium">
             ⚠️ When using {isBodyshop ? 'insurance' : 'warranty'}, you must:
@@ -397,8 +397,8 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         >
           ← Back
         </Button>
-        {/* Only show Skip Date button if "Other" is selected (paying out of pocket) */}
-        {selectedCompany === 'Other' && (
+        {/* Only show Skip Date button if "Private (Self-Pay)" or "Other" is selected (paying out of pocket) */}
+        {(selectedCompany === 'Private (Self-Pay)' || selectedCompany === 'Other') && (
           <Button
             type="button"
             variant="ghost"
@@ -411,7 +411,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         <Button
           type="submit"
           variant="primary"
-          className={`${selectedCompany === 'Other' ? 'flex-1' : 'flex-[2]'} bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs`}
+          className={`${(selectedCompany === 'Private (Self-Pay)' || selectedCompany === 'Other') ? 'flex-1' : 'flex-[2]'} bg-gold hover:bg-gold-dark text-black font-semibold py-1.5 text-xs`}
           disabled={!isValid}
         >
           Continue →
