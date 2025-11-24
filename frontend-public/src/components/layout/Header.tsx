@@ -62,7 +62,7 @@ export default function Header() {
               onClick={() => setEstimateModalOpen(true)}
               className="bg-primary hover:bg-primary-light text-black font-bold px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
             >
-              Free Estimate
+              Start My Insurance Claim
             </button>
           </div>
 
@@ -108,7 +108,7 @@ export default function Header() {
                 }}
                 className="bg-primary hover:bg-primary-light text-black font-bold px-6 py-3 rounded-lg text-center transition-all duration-200"
               >
-                Free Estimate
+                Start My Insurance Claim
               </button>
             </div>
           </div>
