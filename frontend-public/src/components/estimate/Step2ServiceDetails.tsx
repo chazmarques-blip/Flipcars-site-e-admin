@@ -82,6 +82,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             hasWarrantyClaimNumber: initialData.hasWarrantyClaimNumber || false,
           }),
       preferredDate: initialData.preferredDate || '',
+      preferredTimeSlot: initialData.preferredTimeSlot || '',
     },
   });
 
@@ -92,6 +93,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
   const selectedCompany = watch(companyField);
   const hasClaimNumber = watch(hasClaimField);
   const preferredDate = watch('preferredDate');
+  const preferredTimeSlot = watch('preferredTimeSlot' as any);
 
   const companies = isBodyshop ? INSURANCE_COMPANIES : WARRANTY_COMPANIES;
   const availableDates = getAvailableDates(15); // Limited to 15 days
@@ -278,9 +280,9 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             />
             
             {/* Date Picker Modal */}
-            <div className="fixed inset-x-4 bottom-4 top-auto border border-neutral-300 rounded-lg p-4 bg-white shadow-2xl z-[9999] max-h-[80vh] overflow-y-auto md:relative md:inset-auto md:z-50 md:shadow-lg">
+            <div className="fixed inset-x-4 bottom-20 top-auto border border-neutral-300 rounded-lg p-4 bg-white shadow-2xl z-[9999] max-h-[50vh] overflow-y-auto md:relative md:inset-auto md:z-50 md:shadow-lg md:max-h-96">
               <h4 className="text-base font-semibold text-black mb-3">Select a date:</h4>
-              <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-2 max-h-52 overflow-y-auto">
               {availableDates.map((date) => (
                 <button
                   key={date.toISOString()}
@@ -320,17 +322,17 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
             />
             
             {/* Time Slots Modal */}
-            <div className="fixed inset-x-4 bottom-4 top-auto border border-neutral-300 rounded-lg p-4 bg-white shadow-2xl z-[9999] max-h-[80vh] overflow-y-auto md:relative md:inset-auto md:z-50 md:shadow-lg">
+            <div className="fixed inset-x-4 bottom-20 top-auto border border-neutral-300 rounded-lg p-4 bg-white shadow-2xl z-[9999] max-h-[50vh] overflow-y-auto md:relative md:inset-auto md:z-50 md:shadow-lg md:max-h-96">
               <h4 className="text-base font-semibold text-black mb-3">
               Select time slot for {formatDateDisplay(selectedDate)}:
             </h4>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {availableTimeSlots.map((slot) => (
                 <button
                   key={slot.value}
                   type="button"
                   onClick={() => handleTimeSlotSelect(slot.value)}
-                  className="px-4 py-3 text-base font-medium text-black border-2 border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/10 transition-all active:scale-95 text-left"
+                  className="px-3 py-2.5 text-sm font-medium text-black border-2 border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/10 transition-all active:scale-95 text-center"
                 >
                   {slot.label}
                 </button>
@@ -351,17 +353,25 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
         )}
 
         {preferredDate && !showTimeSlots && (
-          <div className="flex items-center justify-between p-2 border border-gold bg-gold/5 rounded-lg">
-            <span className="text-sm text-black">
-              Selected: {formatDateDisplay(new Date(preferredDate))}
-            </span>
+          <div className="flex items-center justify-between p-3 border-2 border-gold bg-gold/5 rounded-lg">
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-black">
+                📅 {formatDateDisplay(new Date(preferredDate))}
+              </span>
+              {preferredTimeSlot && (
+                <span className="text-xs text-neutral-600 mt-0.5">
+                  🕐 {preferredTimeSlot}
+                </span>
+              )}
+            </div>
             <button
               type="button"
               onClick={() => {
                 setValue('preferredDate', '', { shouldValidate: true });
+                setValue('preferredTimeSlot' as any, '', { shouldValidate: true });
                 setSelectedDate(null);
               }}
-              className="text-[10px] text-neutral-600 hover:text-black"
+              className="text-xs text-neutral-600 hover:text-black font-medium underline"
             >
               Change
             </button>
