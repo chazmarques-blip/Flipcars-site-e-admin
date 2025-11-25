@@ -97,7 +97,8 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
 
   const companies = isBodyshop ? INSURANCE_COMPANIES : WARRANTY_COMPANIES;
   const availableDates = getAvailableDates(15); // Limited to 15 days
-  const availableTimeSlots = getAvailableTimeSlots();
+  // Get time slots based on selected date (Saturday has different hours)
+  const availableTimeSlots = getAvailableTimeSlots(selectedDate || undefined);
 
   const onSubmit = (data: Step2BodyshopFormData | Step2MechanicFormData) => {
     onNext(data);
@@ -288,15 +289,15 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
                   key={date.toISOString()}
                   type="button"
                   onClick={() => handleDateSelect(date)}
-                  className="px-2 py-3 text-sm font-medium text-black border-2 border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/10 transition-all active:scale-95"
+                  className="px-2 py-2 text-sm font-medium text-black border-2 border-neutral-300 rounded-lg hover:border-gold hover:bg-gold/10 transition-all active:scale-95"
                 >
-                  <div className="text-xs text-neutral-600 mb-0.5">
+                  <div className="text-[10px] text-neutral-600 mb-0.5 leading-tight">
                     {date.toLocaleDateString('en-US', { weekday: 'short' })}
                   </div>
-                  <div className="text-base font-bold">
+                  <div className="text-sm font-bold leading-tight">
                     {date.getDate()}
                   </div>
-                  <div className="text-xs text-neutral-600">
+                  <div className="text-[10px] text-neutral-600 leading-tight">
                     {date.toLocaleDateString('en-US', { month: 'short' })}
                   </div>
                 </button>

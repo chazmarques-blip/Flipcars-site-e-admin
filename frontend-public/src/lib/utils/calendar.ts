@@ -63,9 +63,16 @@ export function getAvailableDates(numberOfDays: number = 15): Date[] {
 }
 
 /**
- * Get available time slots (2-hour intervals: 9-11am, 11am-1pm, 1-3pm, 3-5pm)
+ * Get available time slots for a specific date
+ * Saturday has shorter hours (9:00 AM - 12:30 PM)
+ * Other days: 9-11am, 11am-1pm, 1-3pm, 3-5pm
  */
-export function getAvailableTimeSlots(): typeof TIME_SLOTS {
+export function getAvailableTimeSlots(date?: Date): typeof TIME_SLOTS | typeof import('@/types/estimate').SATURDAY_TIME_SLOTS {
+  // If date is provided and it's Saturday (day 6), return Saturday slots
+  if (date && date.getDay() === 6) {
+    const { SATURDAY_TIME_SLOTS } = require('@/types/estimate');
+    return SATURDAY_TIME_SLOTS;
+  }
   return TIME_SLOTS;
 }
 

@@ -151,6 +151,12 @@ export const TIME_SLOTS = [
   { value: '15:00-17:00', label: '3:00 PM - 5:00 PM' },
 ] as const;
 
+// Saturday-only time slots (shorter hours: 9:00 AM - 12:30 PM)
+export const SATURDAY_TIME_SLOTS = [
+  { value: '9:00-11:00', label: '9:00 AM - 11:00 AM' },
+  { value: '11:00-12:30', label: '11:00 AM - 12:30 PM' },
+] as const;
+
 export type TimeSlot = typeof TIME_SLOTS[number]['value'];
 
 // Business hours configuration
@@ -170,8 +176,8 @@ export const BUSINESS_HOURS: BusinessHours = {
   wednesday: { open: '9:00', close: '18:00' },
   thursday: { open: '9:00', close: '18:00' },
   friday: { open: '9:00', close: '18:00' },
-  saturday: { open: '9:00', close: '12:00' },
-  sunday: null,
+  saturday: { open: '9:00', close: '12:30' }, // Saturday closes at 12:30 PM
+  sunday: null, // Closed on Sundays
 };
 
 // Photo upload configuration
