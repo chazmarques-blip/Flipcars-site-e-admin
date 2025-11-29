@@ -9,7 +9,9 @@ import { EstimateRequest } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
 
 // Warranty coverage categories (in English as requested)
+// NEW: Oil Change & FREE Checkup as FIRST option
 const WARRANTY_CATEGORIES = [
+  { id: 'oil', label: 'Oil Change & FREE Checkup*', icon: '🛢️', badge: '⭐ FREE LABOR' },
   { id: 'engine', label: 'Engine', icon: '🔧' },
   { id: 'transmission', label: 'Transmission', icon: '⚙️' },
   { id: 'electrical', label: 'Electrical System', icon: '⚡' },
@@ -27,7 +29,7 @@ const warrantyDocsSchema = z.object({
   vinPhoto: z.any().optional(),
   odometerPhoto: z.any().optional(),
   selectedIssues: z.array(z.string()).min(1, 'Please select at least one issue'),
-  symptomsDescription: z.string().min(10, 'Please describe the symptoms (min 10 characters)'),
+  symptomsDescription: z.string().optional(), // CHANGED: Now optional (no minimum)
 });
 
 type WarrantyDocsFormData = z.infer<typeof warrantyDocsSchema>;
@@ -39,6 +41,9 @@ interface Step2bWarrantyDocsProps {
 }
 
 export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarrantyDocsProps) {
+  // Check if customer is Self-Pay (hide warranty docs for them)
+  const isSelfPay = initialData.insuranceCompany === 'Private (Self-Pay)' || 
+                    initialData.insuranceCompany === 'Other';
   const [policyFile, setPolicyFile] = useState<File | null>(null);
   const [policyUrl, setPolicyUrl] = useState<string | null>(null);
   const [vinFile, setVinFile] = useState<File | null>(null);
@@ -294,14 +299,29 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Title */}
       <div className="space-y-1">
-        <h3 className="text-sm font-semibold text-black">Warranty Documents</h3>
+        <h3 className="text-sm font-semibold text-black">
+          {isSelfPay ? 'Select Services' : 'Warranty Documents'}
+        </h3>
         <p className="text-[10px] text-neutral-600">
-          Upload documents to help us verify your warranty coverage
+          {isSelfPay 
+            ? 'What service do you need?' 
+            : 'Upload documents to help us verify your warranty coverage'}
         </p>
       </div>
 
-      {/* 3 Upload Cards in Grid - Similar to Bodyshop Photos */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* Self-Pay Info Box - Show only for self-pay customers */}
+      {isSelfPay && (
+        <div className="flex items-start gap-2 p-2.5 bg-green-50 border border-green-300 rounded-lg">
+          <Check className="w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0" />
+          <p className="text-[10px] text-green-800 font-semibold">
+            Self-Pay: No warranty documents required
+          </p>
+        </div>
+      )}
+
+      {/* 3 Upload Cards in Grid - HIDDEN for Self-Pay customers */}
+      {!isSelfPay && (
+        <div className="grid grid-cols-3 gap-2">
         <UploadCard
           title="Policy Document"
           diagram={PhotoDiagrams.policy}
@@ -326,12 +346,13 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           fileType="odometer"
           accept="image/jpeg,image/jpg,image/png,image/webp"
         />
-      </div>
+        </div>
+      )}
 
       {/* Issue Selection */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-black">
-          Select Issue Type <span className="text-gold">*</span>
+          {isSelfPay ? 'Select Issue Type' : 'What needs to be fixed?'} <span className="text-gold">*</span>
         </label>
         <p className="text-[10px] text-neutral-600">Check all that apply</p>
         
@@ -357,7 +378,14 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
               >
                 {category.icon}
               </span>
-              <span className="flex-1 text-left leading-tight">{category.label}</span>
+              <span className="flex-1 text-left leading-tight">
+                {category.label}
+                {'badge' in category && (
+                  <span className="block text-[9px] text-green-600 font-bold mt-0.5">
+                    {category.badge}
+                  </span>
+                )}
+              </span>
               {selectedIssues.includes(category.id) && (
                 <Check className="w-3 h-3 text-gold flex-shrink-0" />
               )}
@@ -373,13 +401,32 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
         )}
       </div>
 
-      {/* Symptoms Description */}
+      {/* Oil Change Promotion Info Box - Show when oil service is selected */}
+      {selectedIssues.includes('oil') && (
+        <div className="flex items-start gap-2 p-3 bg-green-50 border-2 border-green-200 rounded-lg">
+          <span className="text-2xl flex-shrink-0">⭐</span>
+          <div className="flex-1">
+            <h4 className="text-xs font-bold text-green-900 mb-1">FREE Oil Change Promotion!</h4>
+            <ul className="text-[10px] text-green-800 space-y-0.5">
+              <li>✅ <strong>Labor is 100% FREE</strong></li>
+              <li>✅ Complete vehicle inspection included</li>
+              <li>✅ You only pay for oil, filter, and parts</li>
+              <li>✅ Service time: 30-45 minutes</li>
+            </ul>
+            <p className="text-[9px] text-green-700 mt-1.5 italic leading-tight">
+              *Terms: Free labor applies to oil change service only. Customer responsible for oil, filter, and any additional parts/services recommended during inspection.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Symptoms Description - NOW OPTIONAL */}
       <div className="space-y-1.5">
         <label htmlFor="symptomsDescription" className="block text-sm font-medium text-black">
-          Describe the Symptoms <span className="text-gold">*</span>
+          Describe the Symptoms <span className="text-gray-400 text-xs">(Optional)</span>
         </label>
         <p className="text-[10px] text-neutral-600">
-          What are you experiencing with your vehicle? (Required - minimum 10 characters)
+          What are you experiencing with your vehicle?
         </p>
         <textarea
           id="symptomsDescription"
@@ -387,38 +434,17 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
           rows={4}
           placeholder="Example: Engine makes knocking sound when accelerating, especially when cold. The sound gets louder as I speed up..."
           className={`w-full px-3 py-2.5 text-base md:text-sm text-gray-900 placeholder:text-gray-600 border-2 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold outline-none transition-colors resize-none ${
-            errors.symptomsDescription 
-              ? 'border-red-500 bg-red-50' 
-              : symptomsDescription && symptomsDescription.length >= 10
+            symptomsDescription && symptomsDescription.length > 0
               ? 'border-green-500 bg-green-50'
               : 'border-neutral-300'
           }`}
         />
-        <div className="flex justify-between items-center">
-          <div>
-            {errors.symptomsDescription && (
-              <p className="text-[10px] text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                {errors.symptomsDescription.message}
-              </p>
-            )}
-            {!errors.symptomsDescription && symptomsDescription && symptomsDescription.length >= 10 && (
-              <p className="text-[10px] text-green-600 flex items-center gap-1">
-                <Check className="w-3 h-3" />
-                Looks good!
-              </p>
-            )}
-          </div>
-          <p className={`text-[9px] font-medium ${
-            symptomsDescription && symptomsDescription.length >= 10 
-              ? 'text-green-600' 
-              : symptomsDescription && symptomsDescription.length > 0
-              ? 'text-amber-600'
-              : 'text-neutral-500'
-          }`}>
-            {symptomsDescription?.length || 0}/10 characters
+        {symptomsDescription && symptomsDescription.length > 0 && (
+          <p className="text-[10px] text-green-600 flex items-center gap-1 mt-1">
+            <Check className="w-3 h-3" />
+            This field is now optional - continue even if empty
           </p>
-        </div>
+        )}
       </div>
 
       {/* Info Box */}
@@ -433,17 +459,11 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
       </div>
 
       {/* Validation Summary - Show when form is not valid */}
-      {!isValid && (selectedIssues.length > 0 || symptomsDescription) && (
+      {!isValid && selectedIssues.length === 0 && (
         <div className="flex items-start gap-2 p-2.5 bg-red-50 border border-red-200 rounded-lg">
           <AlertCircle className="w-3.5 h-3.5 text-red-600 mt-0.5 flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-[10px] text-red-900 font-medium">Please complete all required fields:</p>
-            <ul className="text-[9px] text-red-800 mt-1 space-y-0.5 list-disc list-inside">
-              {selectedIssues.length === 0 && <li>Select at least one issue type</li>}
-              {(!symptomsDescription || symptomsDescription.length < 10) && (
-                <li>Describe symptoms (minimum 10 characters{symptomsDescription ? `, ${symptomsDescription.length}/10 so far` : ''})</li>
-              )}
-            </ul>
+            <p className="text-[10px] text-red-900 font-medium">Please select at least one issue type to continue</p>
           </div>
         </div>
       )}

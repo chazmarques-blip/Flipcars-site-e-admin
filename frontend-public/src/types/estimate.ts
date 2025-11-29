@@ -17,7 +17,7 @@ export interface WarrantyDocuments {
   vinPhoto?: File | string;
   odometerPhoto?: File | string;
   selectedIssues: string[];
-  symptomsDescription: string;
+  symptomsDescription?: string; // CHANGED: Now optional
 }
 
 export interface VehicleInfo {
