@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Complete Mechanic Flow Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4AF37',
+                        'primary-light': '#E5C158',
+                        gold: '#D4AF37',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .progress-bar { transition: width 0.3s ease; }
+        .card-hover { transition: all 0.2s ease; }
+        .card-hover:hover { transform: scale(1.02); }
+        .selected-card { border-color: #D4AF37 !important; background-color: rgba(212, 175, 55, 0.1) !important; }
+        .selected-card-green { border-color: #10b981 !important; background-color: rgba(16, 185, 129, 0.1) !important; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-black border-b border-primary/20 shadow-lg z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 py-3">
+                <div class="h-16 w-32 bg-gradient-to-r from-gold to-yellow-600 rounded flex items-center justify-center">
+                    <span class="text-black font-bold text-xl">FlipCars</span>
+                </div>
+                <div class="text-white text-sm">📞 321-960-8661</div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-8">
+        <div class="max-w-3xl mx-auto px-4">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-700" id="step-text">Step 1 of 6</span>
+                    <span class="text-sm font-medium text-gray-700" id="progress-percent">17%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="progress-bar bg-gold h-2 rounded-full" id="progress-bar" style="width: 17%"></div>
+                </div>
+            </div>
+
+            <!-- Step Container -->
+            <div id="step-container" class="bg-white rounded-lg shadow-lg p-6"></div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex gap-3 mt-6" id="nav-buttons">
+                <button id="back-btn" onclick="goBack()" class="flex-1 py-3 px-6 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all">
+                    ← Back
+                </button>
+                <button id="next-btn" onclick="goNext()" class="flex-1 py-3 px-6 bg-gold text-black font-bold rounded-lg hover:bg-yellow-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Continue →
+                </button>
+            </div>
+
+            <!-- Info Badge -->
+            <div class="mt-4 text-center">
+                <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+                    🎨 Complete Interactive Mockup - All 6 Steps!
+                </span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        let formData = {
+            serviceType: 'mechanic',
+            year: '',
+            make: '',
+            model: '',
+            warrantyCompany: '',
+            selectedIssues: [],
+            photos: [],
+            firstName: '',
+            lastName: '',
+            phone: '',
+            email: ''
+        };
+
+        // STEP 1: Basic Info (Replicating production)
+        function renderStep1() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-2">Let's start with your vehicle</h2>
+                        <p class="text-sm text-gray-600">Tell us about your car</p>
+                    </div>
+
+                    <!-- Service Type (Fixed to Mechanic for this mockup) -->
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🔧</span>
+                            <div>
+                                <div class="font-semibold text-sm">Mechanic Service</div>
+                                <div class="text-xs text-gray-600">Engine, transmission, and mechanical repairs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Year -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            Vehicle Year <span class="text-gold">*</span>
+                        </label>
+                        <input
+                            type="number"
+                            id="year"
+                            oninput="updateStep1()"
+                            placeholder="e.g., 2020"
+                            min="1900"
+                            max="2025"
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Vehicle Make -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            Vehicle Make <span class="text-gold">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="make"
+                            oninput="updateStep1()"
+                            placeholder="e.g., Toyota, Ford, Honda"
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Vehicle Model -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            Vehicle Model <span class="text-gold">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="model"
+                            oninput="updateStep1()"
+                            placeholder="e.g., Camry, F-150, Civic"
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none"
+                        />
+                    </div>
+                </div>
+            `;
+            updateProgress(1, 6);
+            updateNextButton();
+        }
+
+        function updateStep1() {
+            formData.year = document.getElementById('year').value;
+            formData.make = document.getElementById('make').value;
+            formData.model = document.getElementById('model').value;
+            updateNextButton();
+        }
+
+        // STEP 2: Payment Selection
+        function renderStep2() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-2">Who will pay for the repair?</h2>
+                        <p class="text-sm text-gray-600">Select warranty company or self-pay option</p>
+                    </div>
+
+                    <!-- Self-Pay Option -->
+                    <div onclick="selectPayment('self-pay')" id="payment-self-pay" class="card-hover cursor-pointer p-4 border-2 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl">💰</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-black">Private (Self-Pay)</div>
+                                <div class="text-xs text-gray-600">Pay out of pocket</div>
+                            </div>
+                            <div id="check-self-pay"></div>
+                        </div>
+                    </div>
+
+                    <!-- Warranty Companies -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="selectPayment('carchex')" id="payment-carchex" class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center">
+                            <div class="font-semibold">CARCHEX</div>
+                            <div id="check-carchex"></div>
+                        </div>
+                        <div onclick="selectPayment('carshield')" id="payment-carshield" class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center">
+                            <div class="font-semibold">CarShield</div>
+                            <div id="check-carshield"></div>
+                        </div>
+                        <div onclick="selectPayment('endurance')" id="payment-endurance" class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center">
+                            <div class="font-semibold">Endurance</div>
+                            <div id="check-endurance"></div>
+                        </div>
+                        <div onclick="selectPayment('proguard')" id="payment-proguard" class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center">
+                            <div class="font-semibold">ProGuard</div>
+                            <div id="check-proguard"></div>
+                        </div>
+                        <div onclick="selectPayment('other')" id="payment-other" class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center">
+                            <div class="font-semibold">Other</div>
+                            <div id="check-other"></div>
+                        </div>
+                    </div>
+
+                    <!-- Self-Pay Info -->
+                    <div id="self-pay-info" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-start gap-2">
+                            <div class="text-blue-600 text-lg">ℹ️</div>
+                            <p class="text-xs text-blue-800">
+                                Since you're paying out of pocket, you can skip scheduling and we'll contact you to arrange an appointment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            updateProgress(2, 6);
+            updateNextButton();
+        }
+
+        function selectPayment(payment) {
+            formData.warrantyCompany = payment;
+            
+            ['self-pay', 'carchex', 'carshield', 'endurance', 'proguard', 'other'].forEach(p => {
+                const card = document.getElementById(`payment-${p}`);
+                const check = document.getElementById(`check-${p}`);
+                if (p === payment) {
+                    card.classList.add('selected-card');
+                    check.innerHTML = '<span class="text-gold text-xl">✓</span>';
+                } else {
+                    card.classList.remove('selected-card');
+                    check.innerHTML = '';
+                }
+            });
+
+            const info = document.getElementById('self-pay-info');
+            if (payment === 'self-pay' || payment === 'other') {
+                info.classList.remove('hidden');
+            } else {
+                info.classList.add('hidden');
+            }
+
+            updateNextButton();
+        }
+
+        // STEP 3: Service Selection (WITH or WITHOUT warranty docs)
+        function renderStep3() {
+            const isSelfPay = formData.warrantyCompany === 'self-pay' || formData.warrantyCompany === 'other';
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            
+            container.innerHTML = `
+                <div class="space-y-4">
+                    ${!isSelfPay ? `
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-1">Warranty Documents</h2>
+                        <p class="text-sm text-gray-600">Upload documents to help us verify your warranty coverage</p>
+                    </div>
+
+                    <!-- Upload Cards (Only for warranty) -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer">
+                            <div class="text-3xl mb-2">📄</div>
+                            <div class="text-xs font-medium text-gray-700">Policy Document</div>
+                            <div class="text-xs text-gold mt-1">Required</div>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer">
+                            <div class="text-3xl mb-2">🔢</div>
+                            <div class="text-xs font-medium text-gray-700">VIN Number</div>
+                            <div class="text-xs text-gold mt-1">Required</div>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer">
+                            <div class="text-3xl mb-2">📊</div>
+                            <div class="text-xs font-medium text-gray-700">Odometer</div>
+                            <div class="text-xs text-gold mt-1">Required</div>
+                        </div>
+                    </div>
+                    ` : `
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-1">Select Services</h2>
+                        <p class="text-sm text-gray-600">What service do you need? Check all that apply</p>
+                    </div>
+                    `}
+
+                    <!-- Service Selection (For ALL) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-black mb-2">
+                            Select Issue Type <span class="text-gold">*</span>
+                        </label>
+                        <p class="text-xs text-gray-600 mb-3">Check all that apply</p>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <!-- ⭐ NEW: Oil Change FREE -->
+                            <div onclick="toggleIssue('oil-change-free')" id="issue-oil-change-free" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🛢️</span>
+                                    <div class="flex-1">
+                                        <div class="text-xs font-semibold leading-tight">Oil Change & FREE Checkup*</div>
+                                        <div class="text-[10px] text-green-600 font-bold">⭐ FREE LABOR</div>
+                                    </div>
+                                    <div id="check-oil-change-free"></div>
+                                </div>
+                            </div>
+
+                            <div onclick="toggleIssue('engine')" id="issue-engine" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🔧</span>
+                                    <span class="text-xs font-medium flex-1">Engine</span>
+                                    <div id="check-engine"></div>
+                                </div>
+                            </div>
+
+                            <div onclick="toggleIssue('transmission')" id="issue-transmission" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">⚙️</span>
+                                    <span class="text-xs font-medium flex-1">Transmission</span>
+                                    <div id="check-transmission"></div>
+                                </div>
+                            </div>
+
+                            <div onclick="toggleIssue('electrical')" id="issue-electrical" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">⚡</span>
+                                    <span class="text-xs font-medium flex-1">Electrical</span>
+                                    <div id="check-electrical"></div>
+                                </div>
+                            </div>
+
+                            <div onclick="toggleIssue('cooling')" id="issue-cooling" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">❄️</span>
+                                    <span class="text-xs font-medium flex-1">Cooling</span>
+                                    <div id="check-cooling"></div>
+                                </div>
+                            </div>
+
+                            <div onclick="toggleIssue('brakes')" id="issue-brakes" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🛑</span>
+                                    <span class="text-xs font-medium flex-1">Brakes</span>
+                                    <div id="check-brakes"></div>
+                                </div>
+                            </div>
+
+                            <div onclick="toggleIssue('suspension')" id="issue-suspension" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🛞</span>
+                                    <span class="text-xs font-medium flex-1">Suspension</span>
+                                    <div id="check-suspension"></div>
+                                </div>
+                            </div>
+
+                            <div onclick="toggleIssue('steering')" id="issue-steering" class="card-hover cursor-pointer p-3 border-2 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🎯</span>
+                                    <span class="text-xs font-medium flex-1">Steering</span>
+                                    <div id="check-steering"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Oil Change Promo -->
+                    <div id="oil-change-promo" class="hidden p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                        <div class="flex items-start gap-3">
+                            <div class="text-3xl">⭐</div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-green-900 mb-2">FREE Oil Change Promotion!</h4>
+                                <ul class="text-xs text-green-800 space-y-1 mb-3">
+                                    <li>✅ <strong>Labor is 100% FREE</strong></li>
+                                    <li>✅ Complete vehicle inspection included</li>
+                                    <li>✅ You only pay for:</li>
+                                    <li class="ml-4">• Oil (synthetic or conventional)</li>
+                                    <li class="ml-4">• Oil filter</li>
+                                    <li class="ml-4">• Any additional parts needed</li>
+                                </ul>
+                                <div class="pt-2 border-t border-green-300">
+                                    <p class="text-xs font-semibold text-green-900 mb-1">📋 What's Included:</p>
+                                    <ul class="text-xs text-green-800 space-y-0.5">
+                                        <li>• Professional oil change</li>
+                                        <li>• Multi-point inspection</li>
+                                        <li>• Fluid level check</li>
+                                        <li>• Tire pressure check</li>
+                                        <li>• Brake inspection</li>
+                                        <li>• Battery test</li>
+                                    </ul>
+                                    <p class="text-xs text-green-700 mt-2">⏱️ Service Time: 30-45 minutes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Symptoms (OPTIONAL) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-black mb-1">
+                            Describe the Symptoms <span class="text-gray-400">(Optional)</span>
+                        </label>
+                        <p class="text-xs text-gray-600 mb-2">What are you experiencing with your vehicle?</p>
+                        <textarea 
+                            id="symptoms"
+                            oninput="updateSymptoms()"
+                            rows="4"
+                            placeholder="Example: I need an oil change and would like to take advantage of the free inspection service..."
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none resize-none"
+                        ></textarea>
+                        <div class="flex justify-between items-center mt-1">
+                            <div id="symptoms-feedback" class="text-xs"></div>
+                            <div id="symptoms-count" class="text-xs text-gray-500">0 characters</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            updateProgress(3, 6);
+            updateNextButton();
+        }
+
+        function toggleIssue(issue) {
+            const index = formData.selectedIssues.indexOf(issue);
+            const card = document.getElementById(`issue-${issue}`);
+            const check = document.getElementById(`check-${issue}`);
+
+            if (index > -1) {
+                formData.selectedIssues.splice(index, 1);
+                if (issue === 'oil-change-free') {
+                    card.classList.remove('selected-card-green');
+                } else {
+                    card.classList.remove('selected-card');
+                }
+                check.innerHTML = '';
+            } else {
+                formData.selectedIssues.push(issue);
+                if (issue === 'oil-change-free') {
+                    card.classList.add('selected-card-green');
+                    check.innerHTML = '<span class="text-green-600 text-xl">✓</span>';
+                } else {
+                    card.classList.add('selected-card');
+                    check.innerHTML = '<span class="text-gold text-xl">✓</span>';
+                }
+            }
+
+            const promo = document.getElementById('oil-change-promo');
+            if (formData.selectedIssues.includes('oil-change-free')) {
+                promo.classList.remove('hidden');
+            } else {
+                promo.classList.add('hidden');
+            }
+
+            updateNextButton();
+        }
+
+        function updateSymptoms() {
+            const textarea = document.getElementById('symptoms');
+            const feedback = document.getElementById('symptoms-feedback');
+            const count = document.getElementById('symptoms-count');
+            const length = textarea.value.length;
+
+            count.textContent = `${length} characters`;
+
+            if (length > 0) {
+                feedback.innerHTML = '<span class="text-green-600">✓ Optional info added</span>';
+            } else {
+                feedback.textContent = '';
+            }
+        }
+
+        // STEP 4: Photos (Replicating production)
+        function renderStep4() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-2">Upload Photos</h2>
+                        <p class="text-sm text-gray-600">Help us assess the damage or issue (minimum 2 photos)</p>
+                    </div>
+
+                    <!-- Photo Upload Area -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gold cursor-pointer transition-all">
+                        <div class="text-6xl mb-4">📸</div>
+                        <p class="text-sm font-medium text-gray-700 mb-2">Click to upload or drag photos here</p>
+                        <p class="text-xs text-gray-500">JPG, PNG up to 10MB each (max 10 photos)</p>
+                    </div>
+
+                    <!-- Mock Uploaded Photos -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="relative aspect-square border-2 border-gold rounded-lg overflow-hidden bg-gray-100">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-4xl">🚗</span>
+                            </div>
+                            <div class="absolute top-1 right-1 bg-green-500 text-white text-xs px-2 py-0.5 rounded">✓</div>
+                        </div>
+                        <div class="relative aspect-square border-2 border-gold rounded-lg overflow-hidden bg-gray-100">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-4xl">🔧</span>
+                            </div>
+                            <div class="absolute top-1 right-1 bg-green-500 text-white text-xs px-2 py-0.5 rounded">✓</div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p class="text-xs text-green-800">✓ 2 photos uploaded - You can add more or continue</p>
+                    </div>
+                </div>
+            `;
+            updateProgress(4, 6);
+            formData.photos = ['photo1.jpg', 'photo2.jpg']; // Mock
+            updateNextButton();
+        }
+
+        // STEP 5: Contact Info (Replicating production)
+        function renderStep5() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-2">Contact Information</h2>
+                        <p class="text-sm text-gray-600">How can we reach you?</p>
+                    </div>
+
+                    <!-- First Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            First Name <span class="text-gold">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            oninput="updateStep5()"
+                            placeholder="John"
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            Last Name <span class="text-gold">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            oninput="updateStep5()"
+                            placeholder="Doe"
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            Phone Number <span class="text-gold">*</span>
+                        </label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            oninput="updateStep5()"
+                            placeholder="(321) 555-0123"
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            Email Address <span class="text-gold">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            oninput="updateStep5()"
+                            placeholder="john@example.com"
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div>
+                        <label class="block text-sm font-medium text-black mb-1">
+                            Additional Information <span class="text-gray-400">(Optional)</span>
+                        </label>
+                        <textarea
+                            rows="3"
+                            placeholder="Any additional details about your vehicle or repair needs..."
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none resize-none"
+                        ></textarea>
+                    </div>
+                </div>
+            `;
+            updateProgress(5, 6);
+            updateNextButton();
+        }
+
+        function updateStep5() {
+            formData.firstName = document.getElementById('firstName').value;
+            formData.lastName = document.getElementById('lastName').value;
+            formData.phone = document.getElementById('phone').value;
+            formData.email = document.getElementById('email').value;
+            updateNextButton();
+        }
+
+        // STEP 6: Confirmation
+        function renderStep6() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            
+            const isSelfPay = formData.warrantyCompany === 'self-pay' || formData.warrantyCompany === 'other';
+            
+            container.innerHTML = `
+                <div class="space-y-6 text-center">
+                    <div class="text-6xl">✅</div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-black mb-2">Thank You!</h2>
+                        <p class="text-gray-600">Your estimate request has been submitted</p>
+                    </div>
+
+                    <!-- Reference Number -->
+                    <div class="bg-gradient-to-r from-gold/20 to-yellow-100 p-6 rounded-lg">
+                        <p class="text-sm text-gray-700 mb-2">Reference Number</p>
+                        <p class="text-3xl font-bold text-black">FL-2025-${Math.floor(1000 + Math.random() * 9000)}</p>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="bg-gray-50 p-6 rounded-lg text-left space-y-3">
+                        <h3 class="font-bold text-center mb-4">📋 Request Summary</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Vehicle:</span>
+                                <span class="font-semibold">${formData.year} ${formData.make} ${formData.model}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Payment:</span>
+                                <span class="font-semibold">${isSelfPay ? 'Self-Pay' : formData.warrantyCompany}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Services:</span>
+                                <span class="font-semibold">${formData.selectedIssues.length} selected</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Photos:</span>
+                                <span class="font-semibold">${formData.photos.length} uploaded</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Contact:</span>
+                                <span class="font-semibold">${formData.firstName} ${formData.lastName}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg text-left">
+                        <h3 class="font-bold mb-3 text-center">🎯 What Happens Next?</h3>
+                        <ol class="space-y-2 text-sm text-gray-700">
+                            <li class="flex gap-2">
+                                <span class="font-bold">1.</span>
+                                <span>We'll review your information and photos</span>
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="font-bold">2.</span>
+                                <span>You'll receive an initial estimate within 24 hours</span>
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="font-bold">3.</span>
+                                <span>We'll contact you to schedule an inspection if needed</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3">
+                        <button onclick="window.print()" class="flex-1 py-3 px-6 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all">
+                            🖨️ Print Confirmation
+                        </button>
+                        <button onclick="resetFlow()" class="flex-1 py-3 px-6 bg-black text-white font-bold rounded-lg hover:bg-gray-800 transition-all">
+                            🔄 New Estimate
+                        </button>
+                    </div>
+                </div>
+            `;
+            updateProgress(6, 6);
+            document.getElementById('nav-buttons').style.display = 'none';
+        }
+
+        // Navigation
+        function goNext() {
+            if (currentStep === 1 && formData.year && formData.make && formData.model) {
+                currentStep = 2;
+                renderStep2();
+            } else if (currentStep === 2 && formData.warrantyCompany) {
+                currentStep = 3;
+                renderStep3();
+            } else if (currentStep === 3 && formData.selectedIssues.length > 0) {
+                currentStep = 4;
+                renderStep4();
+            } else if (currentStep === 4 && formData.photos.length >= 2) {
+                currentStep = 5;
+                renderStep5();
+            } else if (currentStep === 5 && formData.firstName && formData.lastName && formData.phone && formData.email) {
+                currentStep = 6;
+                renderStep6();
+            }
+        }
+
+        function goBack() {
+            if (currentStep > 1) {
+                currentStep--;
+                switch(currentStep) {
+                    case 1: renderStep1(); break;
+                    case 2: renderStep2(); break;
+                    case 3: renderStep3(); break;
+                    case 4: renderStep4(); break;
+                    case 5: renderStep5(); break;
+                }
+                document.getElementById('nav-buttons').style.display = 'flex';
+            }
+        }
+
+        function updateNextButton() {
+            const btn = document.getElementById('next-btn');
+            let valid = false;
+
+            switch(currentStep) {
+                case 1:
+                    valid = formData.year && formData.make && formData.model;
+                    break;
+                case 2:
+                    valid = !!formData.warrantyCompany;
+                    break;
+                case 3:
+                    valid = formData.selectedIssues.length > 0;
+                    break;
+                case 4:
+                    valid = formData.photos.length >= 2;
+                    break;
+                case 5:
+                    valid = formData.firstName && formData.lastName && formData.phone && formData.email;
+                    break;
+            }
+
+            btn.disabled = !valid;
+        }
+
+        function updateProgress(step, total) {
+            const percent = Math.round((step / total) * 100);
+            document.getElementById('step-text').textContent = `Step ${step} of ${total}`;
+            document.getElementById('progress-percent').textContent = `${percent}%`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function resetFlow() {
+            currentStep = 1;
+            formData = {
+                serviceType: 'mechanic',
+                year: '',
+                make: '',
+                model: '',
+                warrantyCompany: '',
+                selectedIssues: [],
+                photos: [],
+                firstName: '',
+                lastName: '',
+                phone: '',
+                email: ''
+            };
+            document.getElementById('nav-buttons').style.display = 'flex';
+            renderStep1();
+        }
+
+        // Initialize
+        renderStep1();
+    </script>
+</body>
+</html>
