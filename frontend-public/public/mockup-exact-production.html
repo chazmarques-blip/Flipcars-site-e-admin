@@ -40,11 +40,11 @@
         <div class="max-w-3xl mx-auto px-4">
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm font-medium text-gray-700" id="step-text">Step 1 of 5</span>
-                    <span class="text-sm font-medium text-gray-700" id="progress-percent">20%</span>
+                    <span class="text-sm font-medium text-gray-700" id="step-text">Step 1 of 6</span>
+                    <span class="text-sm font-medium text-gray-700" id="progress-percent">17%</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="progress-bar bg-gold h-2 rounded-full" id="progress-bar" style="width: 20%"></div>
+                    <div class="progress-bar bg-gold h-2 rounded-full" id="progress-bar" style="width: 17%"></div>
                 </div>
             </div>
 
@@ -61,19 +61,20 @@
 
             <div class="mt-4 text-center">
                 <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
-                    ⚠️ Steps 1, 2, 4, 5: EXACT Production | Step 3: WITH Changes
+                    ⚠️ Steps 1, 2, 4, 5, 6: EXACT Production | Step 3: WITH Changes
                 </span>
             </div>
         </div>
     </main>
 
     <script>
-        // MECHANIC FLOW: 5 steps total
-        // Step 1: Basic Info
-        // Step 2: Service Details (Insurance/Warranty/Self-Pay + Scheduling)
-        // Step 3: Warranty Docs (THIS IS WHERE CHANGES ARE)
-        // Step 4: Contact Method
-        // Step 5: Confirmation
+        // MECHANIC FLOW: 6 steps total
+        // Step 1: Basic Info (NO CHANGES)
+        // Step 2: Payment Selection (Insurance/Warranty/Self-Pay) (NO CHANGES)
+        // Step 3: Service Details + Documents (THIS IS WHERE CHANGES ARE)
+        // Step 4: VIN Number (NO CHANGES)
+        // Step 5: Contact Method (NO CHANGES)
+        // Step 6: Confirmation (NO CHANGES)
         
         let currentStep = 1;
         let formData = { serviceType: 'mechanic', warrantyCompany: '', selectedIssues: [] };
@@ -94,29 +95,27 @@
                             <li>• Email Address</li>
                         </ul>
                     </div>
-                    <button onclick="currentStep=2;renderStep2();updateProgress(2,5)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
+                    <button onclick="currentStep=2;renderStep2();updateProgress(2,6)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
                         Continue to Step 2 →
                     </button>
                 </div>
             `;
-            updateProgress(1, 5);
+            updateProgress(1, 6);
         }
 
         function renderStep2() {
             document.getElementById('step-container').innerHTML = `
                 <div class="space-y-6 text-center fade-in">
-                    <div class="text-6xl">🔧</div>
-                    <h2 class="text-2xl font-bold">STEP 2: Service Details</h2>
+                    <div class="text-6xl">💰</div>
+                    <h2 class="text-2xl font-bold">STEP 2: Payment Selection</h2>
                     <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
                         <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
                         <p class="text-xs text-blue-800">This step remains unchanged:</p>
                         <ul class="text-xs text-left text-blue-800 mt-3 space-y-1">
-                            <li>• Insurance/Warranty company selection</li>
-                            <li>• Claim number (optional)</li>
+                            <li>• Insurance companies (Allstate, Progressive, State Farm, etc.)</li>
+                            <li>• Warranty companies (CARCHEX, CarShield, Endurance, etc.)</li>
                             <li>• Private (Self-Pay) option</li>
                             <li>• "Other" option</li>
-                            <li>• Preferred date & time selection</li>
-                            <li>• Calendar with availability</li>
                         </ul>
                     </div>
                     <div class="grid grid-cols-2 gap-3 max-w-md mx-auto">
@@ -131,14 +130,14 @@
                     </div>
                 </div>
             `;
-            updateProgress(2, 5);
+            updateProgress(2, 6);
         }
 
         function selectPayment(type) {
             formData.warrantyCompany = type;
             currentStep = 3;
             renderStep3();
-            updateProgress(3, 5);
+            updateProgress(3, 6);
         }
 
         function renderStep3() {
@@ -147,26 +146,26 @@
                 <div class="space-y-4 fade-in">
                     <div class="bg-amber-50 border-2 border-amber-500 p-4 rounded-lg mb-4">
                         <p class="text-sm font-bold text-amber-900 mb-2">⚠️ THIS STEP HAS CHANGES</p>
-                        <p class="text-xs text-amber-800">Step 3: Warranty Documents & Service Selection</p>
+                        <p class="text-xs text-amber-800">Step 3: Service Details + Documents</p>
                     </div>
 
                     ${!isSelfPay ? `
                     <div>
                         <h2 class="text-xl font-bold text-black mb-1">📄 Warranty Documents</h2>
-                        <p class="text-sm text-gray-600">Upload documents to verify your warranty coverage</p>
+                        <p class="text-sm text-gray-600 mb-3">Upload documents to verify your warranty coverage</p>
                     </div>
                     <div class="grid grid-cols-3 gap-3">
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer transition-all">
                             <div class="text-3xl mb-2">📄</div>
                             <div class="text-xs font-medium">Policy</div>
                             <div class="text-xs text-gold mt-1">Required</div>
                         </div>
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer transition-all">
                             <div class="text-3xl mb-2">🔢</div>
                             <div class="text-xs font-medium">VIN</div>
                             <div class="text-xs text-gold mt-1">Required</div>
                         </div>
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gold cursor-pointer transition-all">
                             <div class="text-3xl mb-2">📊</div>
                             <div class="text-xs font-medium">Odometer</div>
                             <div class="text-xs text-gold mt-1">Required</div>
@@ -176,9 +175,9 @@
                     ` : `
                     <div>
                         <h2 class="text-xl font-bold text-black mb-1">🔧 Select Services</h2>
-                        <p class="text-sm text-gray-600">What service do you need?</p>
+                        <p class="text-sm text-gray-600 mb-3">What service do you need?</p>
                     </div>
-                    <div class="p-3 bg-green-50 border border-green-300 rounded-lg">
+                    <div class="p-3 bg-green-50 border border-green-300 rounded-lg mb-3">
                         <p class="text-xs text-green-800 font-semibold">✅ Self-Pay: No warranty documents required</p>
                     </div>
                     `}
@@ -285,7 +284,7 @@
                     </div>
                 </div>
             `;
-            updateProgress(3, 5);
+            updateProgress(3, 6);
             document.getElementById('next-btn').disabled = formData.selectedIssues.length === 0;
         }
 
@@ -317,8 +316,32 @@
         function renderStep4() {
             document.getElementById('step-container').innerHTML = `
                 <div class="space-y-6 text-center fade-in">
+                    <div class="text-6xl">🚗</div>
+                    <h2 class="text-2xl font-bold">STEP 4: VIN Number</h2>
+                    <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
+                        <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
+                        <p class="text-xs text-blue-800">This step remains unchanged:</p>
+                        <ul class="text-xs text-left text-blue-800 mt-3 space-y-1">
+                            <li>• VIN Number input (17 characters)</li>
+                            <li>• 📷 Scanner Ready button</li>
+                            <li>• Vehicle identification display</li>
+                            <li>• Make, Model, Year display</li>
+                            <li>• "Where to find your VIN" helper</li>
+                        </ul>
+                    </div>
+                    <button onclick="currentStep=5;renderStep5();updateProgress(5,6)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
+                        Continue to Step 5 →
+                    </button>
+                </div>
+            `;
+            updateProgress(4, 6);
+        }
+
+        function renderStep5() {
+            document.getElementById('step-container').innerHTML = `
+                <div class="space-y-6 text-center fade-in">
                     <div class="text-6xl">📞</div>
-                    <h2 class="text-2xl font-bold">STEP 4: Contact Method</h2>
+                    <h2 class="text-2xl font-bold">STEP 5: Contact Method</h2>
                     <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
                         <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
                         <p class="text-xs text-blue-800">This step remains unchanged:</p>
@@ -330,19 +353,19 @@
                             <li>• Multiple selection allowed</li>
                         </ul>
                     </div>
-                    <button onclick="currentStep=5;renderStep5();updateProgress(5,5)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
-                        Continue to Step 5 →
+                    <button onclick="currentStep=6;renderStep6();updateProgress(6,6)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
+                        Continue to Step 6 →
                     </button>
                 </div>
             `;
-            updateProgress(4, 5);
+            updateProgress(5, 6);
         }
 
-        function renderStep5() {
+        function renderStep6() {
             document.getElementById('step-container').innerHTML = `
                 <div class="space-y-6 text-center fade-in">
                     <div class="text-6xl">✅</div>
-                    <h2 class="text-2xl font-bold">STEP 5: Confirmation</h2>
+                    <h2 class="text-2xl font-bold">STEP 6: Confirmation</h2>
                     <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
                         <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
                         <p class="text-xs text-blue-800">This step remains unchanged:</p>
@@ -359,7 +382,7 @@
                     </button>
                 </div>
             `;
-            updateProgress(5, 5);
+            updateProgress(6, 6);
         }
 
         function goNext() {
@@ -375,6 +398,9 @@
             } else if (currentStep === 4) {
                 currentStep = 5;
                 renderStep5();
+            } else if (currentStep === 5) {
+                currentStep = 6;
+                renderStep6();
             }
         }
 
@@ -385,6 +411,7 @@
                 else if (currentStep === 2) renderStep2();
                 else if (currentStep === 3) renderStep3();
                 else if (currentStep === 4) renderStep4();
+                else if (currentStep === 5) renderStep5();
             }
         }
 
