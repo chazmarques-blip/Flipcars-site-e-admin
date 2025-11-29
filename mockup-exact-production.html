@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - EXACT Production Mockup (Only Step 3 Changed)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4AF37',
+                        gold: '#D4AF37',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .progress-bar { transition: width 0.3s ease; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="fixed top-0 left-0 right-0 bg-black border-b border-primary/20 shadow-lg z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 py-3">
+                <div class="h-16 w-32 bg-gradient-to-r from-gold to-yellow-600 rounded flex items-center justify-center">
+                    <span class="text-black font-bold text-xl">FlipCars</span>
+                </div>
+                <div class="text-white text-sm">📞 321-960-8661</div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-24 pb-8">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-700" id="step-text">Step 1 of 6</span>
+                    <span class="text-sm font-medium text-gray-700" id="progress-percent">17%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="progress-bar bg-gold h-2 rounded-full" id="progress-bar" style="width: 17%"></div>
+                </div>
+            </div>
+
+            <div id="step-container" class="bg-white rounded-lg shadow-lg p-6"></div>
+
+            <div class="flex gap-3 mt-6" id="nav-buttons">
+                <button id="back-btn" onclick="goBack()" class="flex-1 py-3 px-6 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all">
+                    ← Back
+                </button>
+                <button id="next-btn" onclick="goNext()" class="flex-1 py-3 px-6 bg-gold text-black font-bold rounded-lg hover:bg-yellow-600 transition-all disabled:opacity-50" disabled>
+                    Continue →
+                </button>
+            </div>
+
+            <div class="mt-4 text-center">
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
+                    ⚠️ Steps 1 & 2: EXACT Production | Step 3: WITH Changes | Steps 4-6: EXACT Production
+                </span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // This mockup shows ONLY the changes in Step 3
+        // Steps 1, 2, 4, 5, 6 are placeholders showing "EXACT AS PRODUCTION"
+        
+        let currentStep = 1;
+        let formData = { serviceType: 'mechanic', warrantyCompany: '', selectedIssues: [] };
+
+        function renderStep1() {
+            document.getElementById('step-container').innerHTML = `
+                <div class="space-y-6 text-center fade-in">
+                    <div class="text-6xl">📋</div>
+                    <h2 class="text-2xl font-bold">STEP 1: Basic Info</h2>
+                    <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
+                        <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
+                        <p class="text-xs text-blue-800">This step remains unchanged:</p>
+                        <ul class="text-xs text-left text-blue-800 mt-3 space-y-1">
+                            <li>• Service Type (Body Shop / Mechanic)</li>
+                            <li>• First Name</li>
+                            <li>• Last Name</li>
+                            <li>• Phone Number (with mask)</li>
+                            <li>• Email Address</li>
+                        </ul>
+                    </div>
+                    <button onclick="currentStep=2;renderStep2();updateProgress(2,6)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
+                        Continue to Step 2 →
+                    </button>
+                </div>
+            `;
+            updateProgress(1, 6);
+        }
+
+        function renderStep2() {
+            document.getElementById('step-container').innerHTML = `
+                <div class="space-y-6 text-center fade-in">
+                    <div class="text-6xl">💰</div>
+                    <h2 class="text-2xl font-bold">STEP 2: Payment Selection</h2>
+                    <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
+                        <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
+                        <p class="text-xs text-blue-800">This step remains unchanged:</p>
+                        <ul class="text-xs text-left text-blue-800 mt-3 space-y-1">
+                            <li>• Warranty company grid with logos</li>
+                            <li>• Private (Self-Pay) option</li>
+                            <li>• "Other" option</li>
+                            <li>• Info message for self-pay</li>
+                            <li>• Optional appointment scheduling</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 max-w-md mx-auto">
+                        <button onclick="selectPayment('self-pay')" class="p-4 border-2 rounded-lg hover:border-gold">
+                            <div class="text-2xl mb-1">💰</div>
+                            <div class="text-sm font-semibold">Self-Pay</div>
+                        </button>
+                        <button onclick="selectPayment('warranty')" class="p-4 border-2 rounded-lg hover:border-gold">
+                            <div class="text-2xl mb-1">📋</div>
+                            <div class="text-sm font-semibold">Warranty</div>
+                        </button>
+                    </div>
+                </div>
+            `;
+            updateProgress(2, 6);
+        }
+
+        function selectPayment(type) {
+            formData.warrantyCompany = type;
+            currentStep = 3;
+            renderStep3();
+            updateProgress(3, 6);
+        }
+
+        function renderStep3() {
+            const isSelfPay = formData.warrantyCompany === 'self-pay';
+            document.getElementById('step-container').innerHTML = `
+                <div class="space-y-4 fade-in">
+                    <div class="bg-amber-50 border-2 border-amber-500 p-4 rounded-lg mb-4">
+                        <p class="text-sm font-bold text-amber-900 mb-2">⚠️ THIS STEP HAS CHANGES</p>
+                        <p class="text-xs text-amber-800">Conditional display based on payment type</p>
+                    </div>
+
+                    ${!isSelfPay ? `
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-1">Warranty Documents</h2>
+                        <p class="text-sm text-gray-600">Upload documents to help us verify your warranty coverage</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl mb-2">📄</div>
+                            <div class="text-xs font-medium">Policy</div>
+                            <div class="text-xs text-gold">Required</div>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl mb-2">🔢</div>
+                            <div class="text-xs font-medium">VIN</div>
+                            <div class="text-xs text-gold">Required</div>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl mb-2">📊</div>
+                            <div class="text-xs font-medium">Odometer</div>
+                            <div class="text-xs text-gold">Required</div>
+                        </div>
+                    </div>
+                    ` : `
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-1">Select Services</h2>
+                        <p class="text-sm text-gray-600">What service do you need?</p>
+                    </div>
+                    <div class="p-3 bg-green-50 border border-green-300 rounded-lg">
+                        <p class="text-xs text-green-800">✅ Self-Pay: No warranty documents required</p>
+                    </div>
+                    `}
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">
+                            Select Issue Type <span class="text-gold">*</span>
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div onclick="toggleIssue('oil')" id="oil" class="p-3 border-2 rounded-lg cursor-pointer hover:border-gold">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🛢️</span>
+                                    <div class="flex-1">
+                                        <div class="text-xs font-semibold">Oil Change & FREE Checkup*</div>
+                                        <div class="text-[10px] text-green-600 font-bold">⭐ FREE LABOR</div>
+                                    </div>
+                                    <div id="check-oil"></div>
+                                </div>
+                            </div>
+                            <div onclick="toggleIssue('engine')" id="engine" class="p-3 border-2 rounded-lg cursor-pointer hover:border-gold">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🔧</span>
+                                    <span class="text-xs font-medium flex-1">Engine</span>
+                                    <div id="check-engine"></div>
+                                </div>
+                            </div>
+                            <div onclick="toggleIssue('transmission')" id="transmission" class="p-3 border-2 rounded-lg cursor-pointer hover:border-gold">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">⚙️</span>
+                                    <span class="text-xs font-medium flex-1">Transmission</span>
+                                    <div id="check-transmission"></div>
+                                </div>
+                            </div>
+                            <div onclick="toggleIssue('brakes')" id="brakes" class="p-3 border-2 rounded-lg cursor-pointer hover:border-gold">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🛑</span>
+                                    <span class="text-xs font-medium flex-1">Brakes</span>
+                                    <div id="check-brakes"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="oil-promo" class="hidden p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                        <div class="flex items-start gap-3">
+                            <div class="text-3xl">⭐</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-green-900 mb-2">FREE Oil Change Promotion!</h4>
+                                <ul class="text-xs text-green-800 space-y-1">
+                                    <li>✅ Labor is 100% FREE</li>
+                                    <li>✅ Complete vehicle inspection included</li>
+                                    <li>✅ You only pay for oil, filter, and parts</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">
+                            Describe the Symptoms <span class="text-gray-400">(Optional)</span>
+                        </label>
+                        <p class="text-xs text-gray-600 mb-2">What are you experiencing?</p>
+                        <textarea rows="3" placeholder="Optional: Describe your vehicle issue..." class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold outline-none resize-none"></textarea>
+                        <p class="text-xs text-green-600 mt-1">✅ Now optional - no minimum characters required</p>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-300 p-3 rounded-lg">
+                        <p class="text-xs font-bold text-amber-900 mb-1">CHANGES IN THIS STEP:</p>
+                        <ul class="text-xs text-amber-800 space-y-1">
+                            <li>✅ ${isSelfPay ? 'Warranty docs HIDDEN' : 'Warranty docs SHOWN'}</li>
+                            <li>✅ NEW: Oil Change & FREE Checkup (first option)</li>
+                            <li>✅ Symptoms field is now OPTIONAL</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            updateProgress(3, 6);
+            document.getElementById('next-btn').disabled = formData.selectedIssues.length === 0;
+        }
+
+        function toggleIssue(issue) {
+            const idx = formData.selectedIssues.indexOf(issue);
+            const card = document.getElementById(issue);
+            const check = document.getElementById(`check-${issue}`);
+            
+            if (idx > -1) {
+                formData.selectedIssues.splice(idx, 1);
+                card.classList.remove('border-gold', 'bg-gold/10');
+                check.innerHTML = '';
+            } else {
+                formData.selectedIssues.push(issue);
+                card.classList.add('border-gold', 'bg-gold/10');
+                check.innerHTML = '<span class="text-gold text-xl">✓</span>';
+            }
+
+            const promo = document.getElementById('oil-promo');
+            if (formData.selectedIssues.includes('oil')) {
+                promo.classList.remove('hidden');
+            } else {
+                promo.classList.add('hidden');
+            }
+
+            document.getElementById('next-btn').disabled = formData.selectedIssues.length === 0;
+        }
+
+        function renderStep4() {
+            document.getElementById('step-container').innerHTML = `
+                <div class="space-y-6 text-center fade-in">
+                    <div class="text-6xl">📸</div>
+                    <h2 class="text-2xl font-bold">STEP 4: Photos</h2>
+                    <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
+                        <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
+                        <p class="text-xs text-blue-800">This step remains unchanged:</p>
+                        <ul class="text-xs text-left text-blue-800 mt-3 space-y-1">
+                            <li>• Photo upload (drag & drop or click)</li>
+                            <li>• Minimum 2 photos required</li>
+                            <li>• Maximum 10 photos</li>
+                            <li>• JPG/PNG up to 10MB each</li>
+                            <li>• Photo preview grid</li>
+                        </ul>
+                    </div>
+                    <button onclick="currentStep=5;renderStep5();updateProgress(5,6)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
+                        Continue to Step 5 →
+                    </button>
+                </div>
+            `;
+            updateProgress(4, 6);
+        }
+
+        function renderStep5() {
+            document.getElementById('step-container').innerHTML = `
+                <div class="space-y-6 text-center fade-in">
+                    <div class="text-6xl">📞</div>
+                    <h2 class="text-2xl font-bold">STEP 5: Contact Info</h2>
+                    <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
+                        <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
+                        <p class="text-xs text-blue-800">This step remains unchanged:</p>
+                        <ul class="text-xs text-left text-blue-800 mt-3 space-y-1">
+                            <li>• First Name (required)</li>
+                            <li>• Last Name (required)</li>
+                            <li>• Phone Number (required, with mask)</li>
+                            <li>• Email Address (required)</li>
+                            <li>• Additional Information (optional)</li>
+                        </ul>
+                    </div>
+                    <button onclick="currentStep=6;renderStep6();updateProgress(6,6)" class="px-8 py-3 bg-gold text-black font-bold rounded-lg">
+                        Continue to Step 6 →
+                    </button>
+                </div>
+            `;
+            updateProgress(5, 6);
+        }
+
+        function renderStep6() {
+            document.getElementById('step-container').innerHTML = `
+                <div class="space-y-6 text-center fade-in">
+                    <div class="text-6xl">✅</div>
+                    <h2 class="text-2xl font-bold">STEP 6: Confirmation</h2>
+                    <div class="bg-blue-50 border-2 border-blue-500 p-6 rounded-lg">
+                        <p class="text-sm font-bold text-blue-900 mb-2">✅ EXACT AS PRODUCTION</p>
+                        <p class="text-xs text-blue-800">This step remains unchanged:</p>
+                        <ul class="text-xs text-left text-blue-800 mt-3 space-y-1">
+                            <li>• Reference number display</li>
+                            <li>• Request summary</li>
+                            <li>• "What happens next?" section</li>
+                            <li>• Print confirmation button</li>
+                            <li>• Email confirmation (backend)</li>
+                        </ul>
+                    </div>
+                    <button onclick="location.reload()" class="px-8 py-3 bg-black text-white font-bold rounded-lg">
+                        🔄 Start Over
+                    </button>
+                </div>
+            `;
+            updateProgress(6, 6);
+            document.getElementById('nav-buttons').style.display = 'none';
+        }
+
+        function goNext() {
+            if (currentStep === 3 && formData.selectedIssues.length > 0) {
+                currentStep = 4;
+                renderStep4();
+            }
+        }
+
+        function goBack() {
+            if (currentStep > 1) {
+                currentStep--;
+                switch(currentStep) {
+                    case 1: renderStep1(); break;
+                    case 2: renderStep2(); break;
+                    case 3: renderStep3(); break;
+                    case 4: renderStep4(); break;
+                    case 5: renderStep5(); break;
+                }
+                document.getElementById('nav-buttons').style.display = 'flex';
+            }
+        }
+
+        function updateProgress(step, total) {
+            const percent = Math.round((step / total) * 100);
+            document.getElementById('step-text').textContent = `Step ${step} of ${total}`;
+            document.getElementById('progress-percent').textContent = `${percent}%`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        renderStep1();
+    </script>
+</body>
+</html>
