@@ -95,6 +95,15 @@ export function formatDateInput(date: Date): string {
 }
 
 /**
+ * Parse date string (YYYY-MM-DD) to Date object in local timezone
+ * This prevents timezone issues when converting date strings
+ */
+export function parseDateInput(dateString: string): Date {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/**
  * Format time for display (e.g., "9:00 AM")
  */
 export function formatTimeDisplay(time: string): string {

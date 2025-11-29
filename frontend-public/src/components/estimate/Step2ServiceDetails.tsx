@@ -13,7 +13,7 @@ import {
 } from '@/lib/validations/estimate';
 import { EstimateRequest, INSURANCE_COMPANIES, WARRANTY_COMPANIES, ServiceType } from '@/types/estimate';
 import { Button } from '@/components/ui/Button';
-import { formatDateDisplay, formatDateInput, getAvailableDates, getAvailableTimeSlots } from '@/lib/utils/calendar';
+import { formatDateDisplay, formatDateInput, getAvailableDates, getAvailableTimeSlots, parseDateInput } from '@/lib/utils/calendar';
 
 // Map insurance companies to logo filenames
 const getInsuranceLogo = (company: string): string | null => {
@@ -359,7 +359,7 @@ export function Step2ServiceDetails({ initialData, serviceType, onNext, onBack }
           <div className="flex items-center justify-between p-3 border-2 border-gold bg-gold/5 rounded-lg">
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-black">
-                📅 {formatDateDisplay(new Date(preferredDate))}
+                📅 {formatDateDisplay(parseDateInput(preferredDate))}
               </span>
               {preferredTimeSlot && (
                 <span className="text-xs text-neutral-600 mt-0.5">
