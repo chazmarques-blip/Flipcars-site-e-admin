@@ -353,22 +353,22 @@
                         </div>
                     </div>
 
-                    <!-- Symptoms Description -->
+                    <!-- Symptoms Description (Optional) -->
                     <div>
                         <label class="block text-sm font-semibold text-black mb-1">
-                            Describe the Symptoms <span class="text-gold">*</span>
+                            Describe the Symptoms <span class="text-gray-400">(Optional)</span>
                         </label>
-                        <p class="text-xs text-gray-600 mb-2">What are you experiencing? (min 10 characters)</p>
+                        <p class="text-xs text-gray-600 mb-2">What are you experiencing with your vehicle?</p>
                         <textarea 
                             id="symptoms-textarea"
                             oninput="checkSymptoms()"
                             rows="4"
-                            placeholder="Example: I need an oil change and would like to take advantage of the free inspection service..."
+                            placeholder="Example: I need an oil change and would like to take advantage of the free inspection service. My car has about 5,000 miles since last change..."
                             class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none resize-none"
                         ></textarea>
                         <div class="flex justify-between items-center mt-1">
                             <div id="symptoms-feedback" class="text-xs"></div>
-                            <div id="symptoms-count" class="text-xs text-gray-500">0/10 characters</div>
+                            <div id="symptoms-count" class="text-xs text-gray-500">0 characters</div>
                         </div>
                     </div>
                 </div>
@@ -542,21 +542,15 @@
             const count = document.getElementById('symptoms-count');
             const length = textarea.value.length;
 
-            count.textContent = `${length}/10 characters`;
+            count.textContent = `${length} characters`;
 
-            if (length >= 10) {
-                feedback.innerHTML = '<span class="text-green-600">✓ Looks good!</span>';
-                feedback.classList.remove('text-red-600');
+            if (length > 0) {
+                feedback.innerHTML = '<span class="text-green-600">✓ Optional info added</span>';
                 feedback.classList.add('text-green-600');
-                count.classList.remove('text-amber-600');
                 count.classList.add('text-green-600');
-            } else if (length > 0) {
-                feedback.innerHTML = `<span class="text-amber-600">Need ${10 - length} more characters</span>`;
-                count.classList.remove('text-green-600');
-                count.classList.add('text-amber-600');
             } else {
                 feedback.textContent = '';
-                count.classList.remove('text-amber-600', 'text-green-600');
+                count.classList.remove('text-green-600');
             }
 
             updateNextButton();
@@ -568,10 +562,10 @@
             if (currentStep === 2) {
                 btn.disabled = !selectedPayment;
             } else if (currentStep === 2.5) {
-                const textarea = document.getElementById('symptoms-textarea');
+                // Only require at least one issue selected
+                // Symptoms description is now optional
                 const hasIssues = selectedIssues.length > 0;
-                const hasSymptoms = textarea && textarea.value.length >= 10;
-                btn.disabled = !(hasIssues && hasSymptoms);
+                btn.disabled = !hasIssues;
             } else {
                 btn.disabled = false;
             }
