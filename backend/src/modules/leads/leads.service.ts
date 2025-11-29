@@ -342,6 +342,11 @@ export class LeadsService {
       needsTow: createLeadDto.needsTow || false,
       needsRental: createLeadDto.needsRental || false,
       damagePhotos: createLeadDto.damagePhotos || [],
+      // NEW: Service-specific fields (optional, backward compatible)
+      serviceType: createLeadDto.serviceType,
+      warrantyCompany: createLeadDto.warrantyCompany,
+      selectedServices: createLeadDto.selectedServices,
+      symptomsDescription: createLeadDto.symptomsDescription,
       source: createLeadDto.source || 'website',
       status: createLeadDto.status || LeadStatus.NEW,
       priority,

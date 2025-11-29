@@ -163,7 +163,9 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
         {/* Vehicle details */}
         {vehicleInfo && (
           <div className="text-[10px] text-[#666] mb-[6px] leading-tight">
-            {vehicleInfo} • {isOverdue ? 'Install 2/6' : 'Body Repair'}
+            {vehicleInfo} • {lead?.selectedServices && lead.selectedServices.length > 0 
+              ? lead.selectedServices.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ')
+              : (lead?.serviceType === 'mechanic' ? 'Mechanic Service' : 'Body Repair')}
           </div>
         )}
       </div>

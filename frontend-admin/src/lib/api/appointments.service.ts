@@ -48,6 +48,10 @@ export interface Appointment {
     priority?: 'low' | 'medium' | 'high';
     status?: string;
     estimatedValue?: number;
+    // 🆕 NEW: Service-specific fields (DIA 2)
+    warrantyCompany?: string;
+    selectedServices?: string[]; // ["oil", "engine", "brakes"]
+    symptomsDescription?: string;
     // Legacy vehicle object (for backward compatibility)
     vehicle?: {
       year?: string;
