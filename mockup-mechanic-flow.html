@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars - Mechanic Service Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4AF37',
+                        'primary-light': '#E5C158',
+                        gold: '#D4AF37',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: scale(1.02);
+        }
+        .selected-card {
+            border-color: #D4AF37 !important;
+            background-color: rgba(212, 175, 55, 0.1) !important;
+        }
+        .selected-card-green {
+            border-color: #10b981 !important;
+            background-color: rgba(16, 185, 129, 0.1) !important;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-black border-b border-primary/20 shadow-lg z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 py-3">
+                <div class="flex items-center">
+                    <div class="h-16 w-32 bg-gradient-to-r from-gold to-yellow-600 rounded flex items-center justify-center">
+                        <span class="text-black font-bold text-xl">FlipCars</span>
+                    </div>
+                </div>
+                <div class="text-white">
+                    <span class="text-sm">📞 321-960-8661</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-8">
+        <div class="max-w-3xl mx-auto px-4">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-700" id="step-text">Step 2 of 6</span>
+                    <span class="text-sm font-medium text-gray-700" id="progress-percent">33%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="progress-bar bg-gold h-2 rounded-full" id="progress-bar" style="width: 33%"></div>
+                </div>
+            </div>
+
+            <!-- Step Container -->
+            <div id="step-container" class="bg-white rounded-lg shadow-lg p-6">
+                <!-- Steps will be injected here -->
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex gap-3 mt-6">
+                <button 
+                    id="back-btn" 
+                    onclick="goBack()"
+                    class="flex-1 py-3 px-6 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all"
+                >
+                    ← Back
+                </button>
+                <button 
+                    id="next-btn" 
+                    onclick="goNext()"
+                    class="flex-1 py-3 px-6 bg-gold text-black font-bold rounded-lg hover:bg-yellow-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled
+                >
+                    Continue →
+                </button>
+            </div>
+
+            <!-- Info Badge -->
+            <div class="mt-4 text-center">
+                <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+                    🎨 Interactive Mockup - Try both flows!
+                </span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStep = 2;
+        let selectedPayment = null;
+        let selectedIssues = [];
+        let totalSteps = 6;
+
+        // Step 2: Payment Selection
+        function renderStep2() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-2">Who will pay for the repair?</h2>
+                        <p class="text-sm text-gray-600">Select warranty company or self-pay option</p>
+                    </div>
+
+                    <!-- Self-Pay Option (Highlighted) -->
+                    <div 
+                        onclick="selectPayment('self-pay')" 
+                        id="payment-self-pay"
+                        class="card-hover cursor-pointer p-4 border-2 rounded-lg transition-all"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl">💰</div>
+                            <div>
+                                <div class="font-semibold text-black">Private (Self-Pay)</div>
+                                <div class="text-xs text-gray-600">Pay out of pocket</div>
+                            </div>
+                            <div class="ml-auto" id="check-self-pay"></div>
+                        </div>
+                    </div>
+
+                    <!-- Warranty Companies Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div 
+                            onclick="selectPayment('carchex')" 
+                            id="payment-carchex"
+                            class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center transition-all"
+                        >
+                            <div class="font-semibold">CARCHEX</div>
+                            <div id="check-carchex"></div>
+                        </div>
+                        <div 
+                            onclick="selectPayment('carshield')" 
+                            id="payment-carshield"
+                            class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center transition-all"
+                        >
+                            <div class="font-semibold">CarShield</div>
+                            <div id="check-carshield"></div>
+                        </div>
+                        <div 
+                            onclick="selectPayment('endurance')" 
+                            id="payment-endurance"
+                            class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center transition-all"
+                        >
+                            <div class="font-semibold">Endurance</div>
+                            <div id="check-endurance"></div>
+                        </div>
+                        <div 
+                            onclick="selectPayment('proguard')" 
+                            id="payment-proguard"
+                            class="card-hover cursor-pointer p-4 border-2 rounded-lg text-center transition-all"
+                        >
+                            <div class="font-semibold">ProGuard</div>
+                            <div id="check-proguard"></div>
+                        </div>
+                    </div>
+
+                    <!-- Self-Pay Info -->
+                    <div id="self-pay-info" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-start gap-2">
+                            <div class="text-blue-600 text-lg">ℹ️</div>
+                            <p class="text-xs text-blue-800">
+                                Since you're paying out of pocket, you can skip scheduling and we'll contact you to arrange an appointment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            updateProgress(2, isSelfPay() ? 5 : 6);
+            updateNextButton();
+        }
+
+        // Step 2b: Service Selection (For ALL customers, with/without warranty docs)
+        function renderStep2b() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            
+            const showWarrantyDocs = !isSelfPay();
+            
+            container.innerHTML = `
+                <div class="space-y-4">
+                    ${showWarrantyDocs ? `
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-1">Warranty Documents</h2>
+                        <p class="text-sm text-gray-600">Upload documents to help us verify your warranty coverage</p>
+                    </div>
+
+                    <!-- Upload Cards (Only for warranty customers) -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl mb-2">📄</div>
+                            <div class="text-xs font-medium text-gray-700">Policy Document</div>
+                            <div class="text-xs text-gold mt-1">Required</div>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl mb-2">🔢</div>
+                            <div class="text-xs font-medium text-gray-700">VIN Number</div>
+                            <div class="text-xs text-gold mt-1">Required</div>
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl mb-2">📊</div>
+                            <div class="text-xs font-medium text-gray-700">Odometer</div>
+                            <div class="text-xs text-gold mt-1">Required</div>
+                        </div>
+                    </div>
+                    ` : `
+                    <div>
+                        <h2 class="text-xl font-bold text-black mb-1">Select Services</h2>
+                        <p class="text-sm text-gray-600">What service do you need? Check all that apply</p>
+                    </div>
+                    `}
+
+                    <!-- Issue/Service Selection (For ALL customers) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-black mb-2">
+                            Select Issue Type <span class="text-gold">*</span>
+                        </label>
+                        <p class="text-xs text-gray-600 mb-3">Check all that apply</p>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <!-- NEW: Oil Change FREE -->
+                            <div 
+                                onclick="toggleIssue('oil-change-free')" 
+                                id="issue-oil-change-free"
+                                class="card-hover cursor-pointer p-3 border-2 rounded-lg transition-all"
+                            >
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🛢️</span>
+                                    <div class="flex-1">
+                                        <div class="text-xs font-semibold leading-tight">Oil Change & FREE Checkup*</div>
+                                        <div class="text-[10px] text-green-600 font-bold">⭐ FREE LABOR</div>
+                                    </div>
+                                    <div id="check-oil-change-free"></div>
+                                </div>
+                            </div>
+
+                            <div 
+                                onclick="toggleIssue('engine')" 
+                                id="issue-engine"
+                                class="card-hover cursor-pointer p-3 border-2 rounded-lg transition-all"
+                            >
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🔧</span>
+                                    <span class="text-xs font-medium flex-1">Engine</span>
+                                    <div id="check-engine"></div>
+                                </div>
+                            </div>
+
+                            <div 
+                                onclick="toggleIssue('transmission')" 
+                                id="issue-transmission"
+                                class="card-hover cursor-pointer p-3 border-2 rounded-lg transition-all"
+                            >
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">⚙️</span>
+                                    <span class="text-xs font-medium flex-1">Transmission</span>
+                                    <div id="check-transmission"></div>
+                                </div>
+                            </div>
+
+                            <div 
+                                onclick="toggleIssue('electrical')" 
+                                id="issue-electrical"
+                                class="card-hover cursor-pointer p-3 border-2 rounded-lg transition-all"
+                            >
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">⚡</span>
+                                    <span class="text-xs font-medium flex-1">Electrical</span>
+                                    <div id="check-electrical"></div>
+                                </div>
+                            </div>
+
+                            <div 
+                                onclick="toggleIssue('cooling')" 
+                                id="issue-cooling"
+                                class="card-hover cursor-pointer p-3 border-2 rounded-lg transition-all"
+                            >
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">❄️</span>
+                                    <span class="text-xs font-medium flex-1">Cooling</span>
+                                    <div id="check-cooling"></div>
+                                </div>
+                            </div>
+
+                            <div 
+                                onclick="toggleIssue('brakes')" 
+                                id="issue-brakes"
+                                class="card-hover cursor-pointer p-3 border-2 rounded-lg transition-all"
+                            >
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">🛑</span>
+                                    <span class="text-xs font-medium flex-1">Brakes</span>
+                                    <div id="check-brakes"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Oil Change Promotion Info -->
+                    <div id="oil-change-promo" class="hidden p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                        <div class="flex items-start gap-3">
+                            <div class="text-3xl">⭐</div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-green-900 mb-2">FREE Oil Change Promotion!</h4>
+                                <ul class="text-xs text-green-800 space-y-1 mb-3">
+                                    <li>✅ <strong>Labor is 100% FREE</strong></li>
+                                    <li>✅ Complete vehicle inspection included</li>
+                                    <li>✅ You only pay for:</li>
+                                    <li class="ml-4">• Oil (synthetic or conventional)</li>
+                                    <li class="ml-4">• Oil filter</li>
+                                    <li class="ml-4">• Any additional parts needed</li>
+                                </ul>
+                                <div class="pt-2 border-t border-green-300">
+                                    <p class="text-xs font-semibold text-green-900 mb-1">📋 What's Included:</p>
+                                    <ul class="text-xs text-green-800 space-y-0.5">
+                                        <li>• Professional oil change</li>
+                                        <li>• Multi-point inspection</li>
+                                        <li>• Fluid level check</li>
+                                        <li>• Tire pressure check</li>
+                                        <li>• Brake inspection</li>
+                                        <li>• Battery test</li>
+                                    </ul>
+                                    <p class="text-xs text-green-700 mt-2">⏱️ Service Time: 30-45 minutes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Symptoms Description -->
+                    <div>
+                        <label class="block text-sm font-semibold text-black mb-1">
+                            Describe the Symptoms <span class="text-gold">*</span>
+                        </label>
+                        <p class="text-xs text-gray-600 mb-2">What are you experiencing? (min 10 characters)</p>
+                        <textarea 
+                            id="symptoms-textarea"
+                            oninput="checkSymptoms()"
+                            rows="4"
+                            placeholder="Example: I need an oil change and would like to take advantage of the free inspection service..."
+                            class="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:border-gold focus:outline-none resize-none"
+                        ></textarea>
+                        <div class="flex justify-between items-center mt-1">
+                            <div id="symptoms-feedback" class="text-xs"></div>
+                            <div id="symptoms-count" class="text-xs text-gray-500">0/10 characters</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Always 6 steps for mechanic flow
+            updateProgress(3, 6);
+            updateNextButton();
+        }
+
+        // Step 3: Photos (Final step in mockup)
+        function renderStep3() {
+            const container = document.getElementById('step-container');
+            container.className = 'bg-white rounded-lg shadow-lg p-6 fade-in';
+            
+            const stepNumber = isSelfPay() ? 3 : 4;
+            
+            container.innerHTML = `
+                <div class="space-y-6 text-center">
+                    <div class="text-6xl">✅</div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-black mb-2">Flow Complete!</h2>
+                        <p class="text-gray-600">This is where you would upload photos</p>
+                    </div>
+
+                    <!-- Flow Summary -->
+                    <div class="bg-gradient-to-r from-gold/10 to-yellow-100 p-6 rounded-lg">
+                        <h3 class="font-bold text-lg mb-4">📊 Flow Summary</h3>
+                        
+                        ${selectedPayment === 'self-pay' ? `
+                        <div class="bg-green-50 border-2 border-green-500 p-4 rounded-lg mb-4">
+                            <div class="flex items-center gap-2 justify-center mb-2">
+                                <span class="text-2xl">💰</span>
+                                <h4 class="font-bold text-green-900">Self-Pay Customer</h4>
+                            </div>
+                            <p class="text-sm text-green-800">
+                                You went through all steps but <strong>without warranty document uploads</strong>!<br/>
+                                You selected your services and can schedule normally. ✨
+                            </p>
+                        </div>
+                        ` : `
+                        <div class="bg-blue-50 border-2 border-blue-500 p-4 rounded-lg mb-4">
+                            <div class="flex items-center gap-2 justify-center mb-2">
+                                <span class="text-2xl">📋</span>
+                                <h4 class="font-bold text-blue-900">Full Warranty Flow</h4>
+                            </div>
+                            <p class="text-sm text-blue-800">
+                                You completed all <strong>6 steps</strong> including warranty documentation.<br/>
+                                ${selectedIssues.includes('oil-change-free') ? '<strong class="text-green-600">⭐ Free Oil Change promotion selected!</strong>' : ''}
+                            </p>
+                        </div>
+                        `}
+
+                        <div class="text-left space-y-2 text-sm">
+                            <div class="flex items-center gap-2">
+                                <span>✅</span>
+                                <span>Step 1: Basic Info</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span>✅</span>
+                                <span>Step 2: Payment Selection → <strong>${selectedPayment === 'self-pay' ? 'Self-Pay' : 'Warranty Company'}</strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span>✅</span>
+                                <span>Step 2b: Service Selection → <strong>${selectedIssues.length} service(s) selected</strong>
+                                ${selectedPayment === 'self-pay' ? ' <em>(no warranty docs)</em>' : ' + warranty docs'}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span>📸</span>
+                                <span>Step ${stepNumber}: Photos (current)</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <span>⏳</span>
+                                <span>Step ${stepNumber + 1}: Contact Info</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <span>⏳</span>
+                                <span>Step ${stepNumber + 2}: Confirmation</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Try Again Button -->
+                    <button 
+                        onclick="resetFlow()"
+                        class="mt-6 px-8 py-3 bg-black text-white font-bold rounded-lg hover:bg-gray-800 transition-all"
+                    >
+                        🔄 Try Different Flow
+                    </button>
+                </div>
+            `;
+
+            updateProgress(stepNumber, isSelfPay() ? 5 : 6);
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('back-btn').textContent = '← Back to Step 2b';
+        }
+
+        // Helper Functions
+        function isSelfPay() {
+            return selectedPayment === 'self-pay';
+        }
+
+        function selectPayment(payment) {
+            selectedPayment = payment;
+            
+            // Update UI
+            ['self-pay', 'carchex', 'carshield', 'endurance', 'proguard'].forEach(p => {
+                const card = document.getElementById(`payment-${p}`);
+                const check = document.getElementById(`check-${p}`);
+                if (p === payment) {
+                    card.classList.add('selected-card');
+                    check.innerHTML = '<span class="text-gold text-xl">✓</span>';
+                } else {
+                    card.classList.remove('selected-card');
+                    check.innerHTML = '';
+                }
+            });
+
+            // Show/hide self-pay info
+            const info = document.getElementById('self-pay-info');
+            if (payment === 'self-pay') {
+                info.classList.remove('hidden');
+            } else {
+                info.classList.add('hidden');
+            }
+
+            // Always 6 steps for mechanic flow
+            updateProgress(2, 6);
+            updateNextButton();
+        }
+
+        function toggleIssue(issue) {
+            const index = selectedIssues.indexOf(issue);
+            const card = document.getElementById(`issue-${issue}`);
+            const check = document.getElementById(`check-${issue}`);
+
+            if (index > -1) {
+                selectedIssues.splice(index, 1);
+                if (issue === 'oil-change-free') {
+                    card.classList.remove('selected-card-green');
+                } else {
+                    card.classList.remove('selected-card');
+                }
+                check.innerHTML = '';
+            } else {
+                selectedIssues.push(issue);
+                if (issue === 'oil-change-free') {
+                    card.classList.add('selected-card-green');
+                    check.innerHTML = '<span class="text-green-600 text-xl">✓</span>';
+                } else {
+                    card.classList.add('selected-card');
+                    check.innerHTML = '<span class="text-gold text-xl">✓</span>';
+                }
+            }
+
+            // Show/hide oil change promo
+            const promo = document.getElementById('oil-change-promo');
+            if (selectedIssues.includes('oil-change-free')) {
+                promo.classList.remove('hidden');
+            } else {
+                promo.classList.add('hidden');
+            }
+
+            updateNextButton();
+        }
+
+        function checkSymptoms() {
+            const textarea = document.getElementById('symptoms-textarea');
+            const feedback = document.getElementById('symptoms-feedback');
+            const count = document.getElementById('symptoms-count');
+            const length = textarea.value.length;
+
+            count.textContent = `${length}/10 characters`;
+
+            if (length >= 10) {
+                feedback.innerHTML = '<span class="text-green-600">✓ Looks good!</span>';
+                feedback.classList.remove('text-red-600');
+                feedback.classList.add('text-green-600');
+                count.classList.remove('text-amber-600');
+                count.classList.add('text-green-600');
+            } else if (length > 0) {
+                feedback.innerHTML = `<span class="text-amber-600">Need ${10 - length} more characters</span>`;
+                count.classList.remove('text-green-600');
+                count.classList.add('text-amber-600');
+            } else {
+                feedback.textContent = '';
+                count.classList.remove('text-amber-600', 'text-green-600');
+            }
+
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const btn = document.getElementById('next-btn');
+            
+            if (currentStep === 2) {
+                btn.disabled = !selectedPayment;
+            } else if (currentStep === 2.5) {
+                const textarea = document.getElementById('symptoms-textarea');
+                const hasIssues = selectedIssues.length > 0;
+                const hasSymptoms = textarea && textarea.value.length >= 10;
+                btn.disabled = !(hasIssues && hasSymptoms);
+            } else {
+                btn.disabled = false;
+            }
+        }
+
+        function updateProgress(step, total) {
+            const percent = Math.round((step / total) * 100);
+            document.getElementById('step-text').textContent = `Step ${step} of ${total}`;
+            document.getElementById('progress-percent').textContent = `${percent}%`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function goNext() {
+            if (currentStep === 2) {
+                // ALL customers go to Step 2b (service selection)
+                // But self-pay won't see warranty document upload
+                currentStep = 2.5;
+                renderStep2b();
+            } else if (currentStep === 2.5) {
+                currentStep = 3;
+                renderStep3();
+            }
+        }
+
+        function goBack() {
+            if (currentStep === 3) {
+                if (isSelfPay()) {
+                    // Self-pay: go back to Step 2
+                    currentStep = 2;
+                    renderStep2();
+                } else {
+                    // Warranty: go back to Step 2b
+                    currentStep = 2.5;
+                    renderStep2b();
+                }
+                document.getElementById('next-btn').style.display = 'block';
+                document.getElementById('back-btn').textContent = '← Back';
+            } else if (currentStep === 2.5) {
+                currentStep = 2;
+                renderStep2();
+            }
+        }
+
+        function resetFlow() {
+            currentStep = 2;
+            selectedPayment = null;
+            selectedIssues = [];
+            renderStep2();
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('back-btn').textContent = '← Back';
+        }
+
+        // Initialize
+        renderStep2();
+    </script>
+</body>
+</html>
