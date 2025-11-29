@@ -42,8 +42,9 @@ interface Step2bWarrantyDocsProps {
 
 export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarrantyDocsProps) {
   // Check if customer is Self-Pay (hide warranty docs for them)
-  const isSelfPay = initialData.insuranceCompany === 'Private (Self-Pay)' || 
-                    initialData.insuranceCompany === 'Other';
+  // For mechanic flow, check warrantyCompany field (not insuranceCompany)
+  const isSelfPay = initialData.warrantyCompany === 'Private (Self-Pay)' || 
+                    initialData.warrantyCompany === 'Other';
   const [policyFile, setPolicyFile] = useState<File | null>(null);
   const [policyUrl, setPolicyUrl] = useState<string | null>(null);
   const [vinFile, setVinFile] = useState<File | null>(null);
