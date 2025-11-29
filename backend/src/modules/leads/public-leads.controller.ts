@@ -229,6 +229,11 @@ export class PublicLeadsController {
       needsTow: false,
       needsRental: false,
       damagePhotos: photoUrls,
+      // NEW: Service-specific fields (backward compatible - undefined if not provided)
+      serviceType: dto.serviceType,
+      warrantyCompany: dto.warrantyCompany,
+      selectedServices: dto.warrantyDocs?.selectedIssues,
+      symptomsDescription: dto.warrantyDocs?.symptomsDescription,
       source: dto.source || 'website_estimate_form',
       status: 'new',
       priority: undefined, // Will be calculated by service

@@ -184,6 +184,24 @@ export class Lead {
   // @OneToMany(() => AiConversation, (conversation) => conversation.lead)
   // aiConversations: AiConversation[];
 
+  // ========================================
+  // SERVICE-SPECIFIC FIELDS (NEW - OPTIONAL)
+  // Added to display service information in calendar and admin
+  // All fields are nullable - backward compatible with existing leads
+  // ========================================
+
+  @Column({ type: 'varchar', length: 20, nullable: true, name: 'service_type' })
+  serviceType?: 'bodyshop' | 'mechanic';
+
+  @Column({ type: 'varchar', length: 100, nullable: true, name: 'warranty_company' })
+  warrantyCompany?: string;
+
+  @Column({ type: 'jsonb', nullable: true, name: 'selected_services' })
+  selectedServices?: string[];
+
+  @Column({ type: 'text', nullable: true, name: 'symptoms_description' })
+  symptomsDescription?: string;
+
   @CreateDateColumn({ name: 'created_at' })
   @Index('idx_lead_created_at')
   createdAt: Date;

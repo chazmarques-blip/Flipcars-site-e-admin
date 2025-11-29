@@ -130,6 +130,26 @@ export class CreateLeadDto {
   @IsOptional()
   damagePhotos?: string[];
 
+  // Service-Specific Information (NEW - Optional)
+  @IsEnum(['bodyshop', 'mechanic'])
+  @IsOptional()
+  serviceType?: 'bodyshop' | 'mechanic';
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  warrantyCompany?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  selectedServices?: string[];
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(2000)
+  symptomsDescription?: string;
+
   // Lead Information
   @IsString()
   @IsOptional()
