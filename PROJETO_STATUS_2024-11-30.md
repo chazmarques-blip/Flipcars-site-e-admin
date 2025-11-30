@@ -1,6 +1,6 @@
 # 🚀 FlipCars Project - Status Report
-**Date:** 2024-11-30 17:00 (Orlando Time)
-**Last Update:** All deployments completed, awaiting final test
+**Date:** 2024-11-30 19:30 UTC (14:30 Orlando Time)
+**Last Update:** 🔧 CRITICAL FIX - symptomsDescription validation corrected
 
 ---
 
@@ -59,7 +59,8 @@
 
 ### Git Status:
 - Current Branch: `main`
-- Latest Commit: `050a0b4e` (Vercel redeploy)
+- Latest Commit: `39ab520b` (Railway redeploy trigger)
+- Previous: `b5aec3d7` (symptomsDescription fix)
 - Remote: Synced with origin/main
 
 ### Deployment URLs:
@@ -117,23 +118,33 @@ User needs to complete these tests:
 
 ---
 
-## 🚨 KNOWN ISSUES
+## 🚨 ISSUES RESOLVED
 
-1. **Old Leads Show "N/A"**
+1. **Old Leads Show "N/A"** ✅
    - Reason: Created before SQL migration
    - Solution: Not a bug - expected behavior
    - Action: Use NEW leads for testing
 
-2. **CORS Errors in Console (Resolved)**
+2. **CORS Errors in Console** ✅
    - Was showing 1001 errors
    - Reason: Console filter set to "orlando"
    - Solution: Filter cleared, real logs now visible
 
+3. **symptomsDescription Validation Error** ✅ FIXED!
+   - Issue: Backend required minimum 10 characters
+   - Error: "must be longer than or equal to 10 characters"
+   - Solution: Made field optional with `@IsOptional()` decorator
+   - Commits: `b5aec3d7`, `39ab520b`
+   - Status: **DEPLOYED TO RAILWAY** (awaiting ~3-5 min)
+
 ---
 
-## 📝 RECENT COMMITS (Last 10)
+## 📝 RECENT COMMITS (Last 12)
 
 ```
+39ab520b - chore: force Railway redeploy for symptomsDescription fix
+b5aec3d7 - fix: make symptomsDescription optional in public lead form
+89f8a430 - docs: comprehensive project status report for handoff
 050a0b4e - chore: force Vercel redeploy for admin frontend
 717d25db - chore: force Railway redeploy
 deb1b740 - docs: add manual deploy instructions for Railway
@@ -143,7 +154,6 @@ deb1b740 - docs: add manual deploy instructions for Railway
 30cf9b59 - fix: ensure appointment dates return as YYYY-MM-DD format
 fcaa320f - fix: correct date display timezone issue in confirmation
 fd5cc81d - feat: display service details and symptoms in appointment modal
-f0a0a4e2 - docs: add manual SQL migration for service fields
 ```
 
 ---
