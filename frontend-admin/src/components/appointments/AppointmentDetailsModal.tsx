@@ -182,13 +182,57 @@ export function AppointmentDetailsModal({ appointment, onClose, onUpdate }: Appo
                 <div className="flex items-start gap-1.5">
                   <FileText className="w-3 h-3 text-[#D4AF37] mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[9px] text-gray-500">Service</p>
+                    <p className="text-[9px] text-gray-500">Service Type</p>
                     <p className="font-semibold text-[#1a1a1a] capitalize truncate">
                       {lead?.serviceType || 'N/A'}
                     </p>
                   </div>
                 </div>
               </div>
+
+              {/* Service Details - Show if selectedServices or symptomsDescription exists */}
+              {(lead?.selectedServices && lead.selectedServices.length > 0) || lead?.symptomsDescription ? (
+                <div className="mt-3 pt-3 border-t border-[#D4AF37]/20">
+                  {/* Selected Services */}
+                  {lead?.selectedServices && lead.selectedServices.length > 0 && (
+                    <div className="mb-2">
+                      <p className="text-[9px] text-gray-500 mb-1">Selected Services</p>
+                      <div className="flex flex-wrap gap-1">
+                        {lead.selectedServices.map((service, idx) => (
+                          <span 
+                            key={idx}
+                            className="inline-flex items-center px-2 py-1 rounded bg-[#D4AF37] text-black text-[9px] font-bold"
+                          >
+                            {service.charAt(0).toUpperCase() + service.slice(1)}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Symptoms Description */}
+                  {lead?.symptomsDescription && (
+                    <div>
+                      <p className="text-[9px] text-gray-500 mb-1">Symptoms / Notes</p>
+                      <div className="bg-amber-50 border border-amber-200 rounded p-2">
+                        <p className="text-[10px] text-gray-700 whitespace-pre-wrap">
+                          {lead.symptomsDescription}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              {/* Warranty Company if exists */}
+              {lead?.warrantyCompany && (
+                <div className="mt-2">
+                  <p className="text-[9px] text-gray-500">Warranty/Insurance</p>
+                  <p className="text-[10px] font-semibold text-[#1a1a1a]">
+                    {lead.warrantyCompany}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Vehicle Information - COMPACT */}
