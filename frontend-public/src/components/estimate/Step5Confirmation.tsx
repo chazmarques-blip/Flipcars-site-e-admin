@@ -15,7 +15,8 @@ interface Step5ConfirmationProps {
 export function Step5Confirmation({ data, referenceNumber, onClose }: Step5ConfirmationProps) {
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'To be scheduled';
-    const date = new Date(dateString);
+    // Fix timezone issue: append T00:00:00 to force local date interpretation
+    const date = new Date(dateString + 'T00:00:00');
     return date.toLocaleDateString('en-US', { 
       weekday: 'long', 
       year: 'numeric', 
