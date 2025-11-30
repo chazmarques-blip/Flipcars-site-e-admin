@@ -61,8 +61,8 @@ export const leadsService = {
       ) ? { photos: data.photos } : {}),
       
       // Step 2.5: Warranty Documents (OPTIONAL - mechanic only)
-      // Only include if there are actual string URLs (not File objects or Base64)
-      ...(data.warrantyDocs && data.warrantyDocs.selectedIssues && data.warrantyDocs.symptomsDescription ? {
+      // Only include if there are selectedIssues (symptomsDescription is optional)
+      ...(data.warrantyDocs && data.warrantyDocs.selectedIssues && data.warrantyDocs.selectedIssues.length > 0 ? {
         warrantyDocs: {
           // Only include document URLs if they are strings (uploaded URLs, not Base64)
           ...(typeof data.warrantyDocs.policyDocument === 'string' && 
@@ -75,7 +75,9 @@ export const leadsService = {
               data.warrantyDocs.odometerPhoto.startsWith('http') ? 
               { odometerPhoto: data.warrantyDocs.odometerPhoto } : {}),
           selectedIssues: data.warrantyDocs.selectedIssues || [],
-          symptomsDescription: data.warrantyDocs.symptomsDescription || '',
+          // symptomsDescription is optional - only include if it exists and is not empty
+          ...(data.warrantyDocs.symptomsDescription && data.warrantyDocs.symptomsDescription.trim() !== '' ? 
+              { symptomsDescription: data.warrantyDocs.symptomsDescription } : {}),
         }
       } : {}),
       
