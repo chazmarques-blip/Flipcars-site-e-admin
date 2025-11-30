@@ -65,6 +65,12 @@ export interface Lead {
   adjusterName?: string;
   adjusterPhone?: string;
   
+  // Service-specific fields (NEW - added 2024-11-30)
+  serviceType?: string; // 'mechanic' | 'bodyshop'
+  warrantyCompany?: string; // 'CARCHEX', 'CarShield', 'Private (Self-Pay)', etc.
+  selectedServices?: string[]; // ['Oil', 'Engine', 'Brakes', etc.]
+  symptomsDescription?: string; // Customer's description of issues
+  
   // Lead management
   status: LeadStatus;
   priority: LeadPriority;

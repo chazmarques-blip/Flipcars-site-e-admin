@@ -96,7 +96,11 @@ export default function LeadsPage() {
 
   // Determine service type from lead data
   const getServiceType = (lead: Lead): 'Bodyshop' | 'Mechanic' => {
-    // Check if it's a body shop lead (has insurance)
+    // Use the explicit serviceType field if available
+    if (lead.serviceType) {
+      return lead.serviceType === 'bodyshop' ? 'Bodyshop' : 'Mechanic';
+    }
+    // Fallback: Check if it's a body shop lead (has insurance)
     if (lead.hasInsurance || lead.insuranceProvider) {
       return 'Bodyshop';
     }
@@ -108,7 +112,9 @@ export default function LeadsPage() {
     const serviceType = getServiceType(lead);
     return (
       <span className={`inline-flex items-center px-1.5 py-0 text-[10px] font-semibold rounded ${
-        serviceType === 'Bodyshop' ? 'bg-gray-800 text-white' : 'bg-gray-600 text-white'
+        serviceType === 'Bodyshop' 
+          ? 'bg-[#D4AF37] text-white' // Gold for Bodyshop
+          : 'bg-gray-800 text-white'   // Black for Mechanic
       }`}>
         {serviceType}
       </span>
@@ -116,18 +122,28 @@ export default function LeadsPage() {
   };
 
   // Determine who pays from lead data
-  const getWhoPays = (lead: Lead): 'Personal' | 'Insurance' | 'Warranty' => {
-    // Check insurance first
+  const getWhoPays = (lead: Lead): 'Self-Pay' | 'Insurance' | 'Warranty' => {
+    // Check explicit warrantyCompany field first
+    if (lead.warrantyCompany) {
+      if (lead.warrantyCompany === 'Private (Self-Pay)' || lead.warrantyCompany.toLowerCase().includes('self-pay')) {
+        return 'Self-Pay';
+      }
+      // If warrantyCompany exists and is not Self-Pay, it's a warranty
+      return 'Warranty';
+    }
+    
+    // Check insurance
     if (lead.hasInsurance || lead.insuranceProvider) {
       return 'Insurance';
     }
-    // Check warranty (warranty company in notes or source)
-    // TODO: Add warrantyCompany field to Lead entity
+    
+    // Fallback: Check warranty in notes
     if (lead.notes && (lead.notes.toLowerCase().includes('warranty') || lead.notes.toLowerCase().includes('carchex') || lead.notes.toLowerCase().includes('carshield'))) {
       return 'Warranty';
     }
-    // Default to personal
-    return 'Personal';
+    
+    // Default to Self-Pay
+    return 'Self-Pay';
   };
 
   const getWhoPaysBadge = (lead: Lead) => {
@@ -332,28 +348,41 @@ export default function LeadsPage() {
       key: 'company',
       label: 'Company',
       render: (lead) => {
-        // Show insurance provider if has insurance
-        if (lead.hasInsurance && lead.insuranceProvider) {
-          return (
-            <div className="text-xs">
-              <span className="text-gray-700">{capitalizeFirst(lead.insuranceProvider)}</span>
-            </div>
-          );
+        const whoPays = getWhoPays(lead);
+        
+        // RULE 1: If Insurance → show insurance company or "Other"
+        if (whoPays === 'Insurance') {
+          const company = lead.insuranceProvider || lead.insuranceCompany;
+          if (company && company.toLowerCase() !== 'other') {
+            return (
+              <div className="text-xs">
+                <span className="text-gray-700">{capitalizeFirst(company)}</span>
+              </div>
+            );
+          }
+          return <div className="text-xs"><span className="text-gray-700">Other</span></div>;
         }
         
-        // TODO: Show warranty company when field is added
-        // For now, check notes for warranty company names
-        if (lead.notes) {
-          const notesLower = lead.notes.toLowerCase();
-          if (notesLower.includes('carchex')) {
-            return <div className="text-xs"><span className="text-gray-700">CarChex</span></div>;
+        // RULE 2: If Warranty → show warranty company or "Other"
+        if (whoPays === 'Warranty') {
+          const company = lead.warrantyCompany;
+          if (company && company !== 'Private (Self-Pay)' && company.toLowerCase() !== 'other') {
+            return (
+              <div className="text-xs">
+                <span className="text-gray-700">{company}</span>
+              </div>
+            );
           }
-          if (notesLower.includes('carshield')) {
-            return <div className="text-xs"><span className="text-gray-700">CarShield</span></div>;
-          }
-          if (notesLower.includes('endurance')) {
-            return <div className="text-xs"><span className="text-gray-700">Endurance</span></div>;
-          }
+          return <div className="text-xs"><span className="text-gray-700">Other</span></div>;
+        }
+        
+        // RULE 3: If Self-Pay → show "Self-Pay"
+        if (whoPays === 'Self-Pay') {
+          return (
+            <div className="text-xs">
+              <span className="text-gray-700">Self-Pay</span>
+            </div>
+          );
         }
         
         return (
