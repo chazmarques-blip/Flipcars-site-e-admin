@@ -39,7 +39,23 @@ export class Appointment {
   leadId: string;
 
   // Data e Horário
-  @Column({ type: 'date', name: 'appointment_date' })
+  @Column({ 
+    type: 'date', 
+    name: 'appointment_date',
+    transformer: {
+      to: (value: string) => value, // Save as-is
+      from: (value: any) => {
+        // Ensure we always return YYYY-MM-DD string
+        if (!value) return value;
+        if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          return value; // Already in YYYY-MM-DD format
+        }
+        // If it's a Date object, convert to YYYY-MM-DD
+        const date = new Date(value);
+        return date.toISOString().split('T')[0];
+      }
+    }
+  })
   appointmentDate: string; // YYYY-MM-DD
 
   @Column({ name: 'appointment_time_slot', length: 20 })

@@ -47,6 +47,13 @@ export class AppointmentsService {
         .getMany();
       
       this.logger.log(`Found ${appointments.length} appointments (excluding deleted leads)`);
+      
+      // DEBUG: Log date format from database
+      if (appointments.length > 0) {
+        const sample = appointments[0];
+        this.logger.debug(`[CALENDAR DEBUG] Sample appointment date from DB: "${sample.appointmentDate}" (type: ${typeof sample.appointmentDate})`);
+      }
+      
       return appointments;
     } catch (error) {
       this.logger.error(`Error fetching appointments: ${error.message}`);
@@ -105,10 +112,10 @@ export class AppointmentsService {
     try {
       const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
       
-      // CRITICAL FIX: API uses 1-indexed months (1=Jan, 11=Nov), but JS Date uses 0-indexed (0=Jan, 10=Nov)
-      // For month=11 (November in API), we need new Date(year, 11, 0) which gives last day of October
-      // But we want last day of November, so we use month (not month+1)
-      // new Date(2025, 11, 0) = Last day of November = 30 ✅
+      // CRITICAL FIX: API uses 1-indexed months (1=Jan, 12=Dec)
+      // To get last day of month X (1-indexed), use: new Date(year, X, 0)
+      // Example: Last day of December (month=12) = new Date(2024, 12, 0) = Dec 31, 2024
+      // This works because month=12 (out of bounds) rolls to January of next year, and day=0 goes back one day
       const lastDay = new Date(year, month, 0).getDate();
       const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
 
