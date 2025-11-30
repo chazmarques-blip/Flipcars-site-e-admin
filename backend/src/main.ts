@@ -1,4 +1,5 @@
 // IMPORTANT: Import and initialize force-ipv4 FIRST to patch DNS before any connections
+// Force rebuild: 2025-11-30 19:54 UTC - symptomsDescription validation fix
 import { initializeIPv4Enforcement } from './utils/force-ipv4';
 
 // Initialize IPv4 enforcement immediately
