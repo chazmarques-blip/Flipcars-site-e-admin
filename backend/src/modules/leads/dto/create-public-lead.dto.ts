@@ -107,9 +107,9 @@ export class WarrantyDocumentsDto {
   @IsString({ each: true })
   selectedIssues: string[];
 
+  @IsOptional()
   @IsString()
-  @MinLength(10)
-  symptomsDescription: string;
+  symptomsDescription?: string;
 }
 
 export class CreatePublicLeadDto {
