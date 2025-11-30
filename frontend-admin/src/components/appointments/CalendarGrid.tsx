@@ -97,18 +97,14 @@ export function CalendarGrid({ onEventClick }: CalendarGridProps) {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  // Group appointments by date (filtered to current month view)
+  // Group appointments by date (NO FILTER - show all visible days including padding days)
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
     
-    // Filter appointments for current month view
-    const monthAppointments = appointments.filter((apt) => {
-      const aptDate = new Date(apt.appointmentDate);
-      return aptDate.getFullYear() === year && aptDate.getMonth() === month;
-    });
-    
-    monthAppointments.forEach((apt) => {
-      const dateKey = apt.appointmentDate;
+    // DON'T filter by month - calendar shows padding days from prev/next month
+    // Calendar will show appointments for ANY visible day, not just current month
+    appointments.forEach((apt) => {
+      const dateKey = apt.appointmentDate; // YYYY-MM-DD
       if (!grouped[dateKey]) {
         grouped[dateKey] = [];
       }
@@ -116,7 +112,7 @@ export function CalendarGrid({ onEventClick }: CalendarGridProps) {
     });
     
     return grouped;
-  }, [appointments, year, month]);
+  }, [appointments]);
 
   // Get days to display
   const days = getDaysInMonth(year, month);

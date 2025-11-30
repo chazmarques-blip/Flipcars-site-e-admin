@@ -1,5 +1,6 @@
 'use client';
 
+// VERSION: 2024-11-30-03:00 - Service colors and categories updated
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Eye, X, Phone, MessageCircle, MessageSquare, Trash2 } from 'lucide-react';

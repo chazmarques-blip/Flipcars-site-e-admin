@@ -48,10 +48,18 @@ export class AppointmentsService {
       
       this.logger.log(`Found ${appointments.length} appointments (excluding deleted leads)`);
       
-      // DEBUG: Log date format from database
+      // DEBUG: Log date format and service fields from database
       if (appointments.length > 0) {
         const sample = appointments[0];
         this.logger.debug(`[CALENDAR DEBUG] Sample appointment date from DB: "${sample.appointmentDate}" (type: ${typeof sample.appointmentDate})`);
+        
+        if (sample.lead) {
+          this.logger.debug(`[SERVICE DEBUG] Sample lead data:`);
+          this.logger.debug(`  - serviceType: ${sample.lead.serviceType}`);
+          this.logger.debug(`  - warrantyCompany: ${sample.lead.warrantyCompany}`);
+          this.logger.debug(`  - selectedServices: ${JSON.stringify(sample.lead.selectedServices)}`);
+          this.logger.debug(`  - symptomsDescription: ${sample.lead.symptomsDescription?.substring(0, 50)}...`);
+        }
       }
       
       return appointments;
