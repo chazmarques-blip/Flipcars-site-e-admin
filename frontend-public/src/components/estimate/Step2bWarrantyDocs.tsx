@@ -448,16 +448,18 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
         )}
       </div>
 
-      {/* Info Box */}
-      <div className="flex items-start gap-2 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
-        <AlertCircle className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
-        <div className="flex-1">
-          <p className="text-[10px] text-amber-900 font-medium">Important</p>
-          <p className="text-[9px] text-amber-800 mt-0.5 leading-tight">
-            These documents help us verify warranty coverage and expedite service. All uploads are optional but recommended.
-          </p>
+      {/* Info Box - ONLY show for warranty customers (NOT Self-Pay) */}
+      {!isSelfPay && (
+        <div className="flex items-start gap-2 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+          <AlertCircle className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-[10px] text-amber-900 font-medium">Important</p>
+            <p className="text-[9px] text-amber-800 mt-0.5 leading-tight">
+              These documents help us verify warranty coverage and expedite service. All uploads are optional but recommended.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Validation Summary - Show when form is not valid */}
       {!isValid && selectedIssues.length === 0 && (
