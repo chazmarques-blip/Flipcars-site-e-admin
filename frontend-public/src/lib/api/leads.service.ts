@@ -58,7 +58,17 @@ export const leadsService = {
       // Accept both relative paths (/uploads/) and full URLs (https://)
       ...(data.photos && Object.values(data.photos).some(
         (photo) => typeof photo === 'string' && (photo.startsWith('/uploads/') || photo.startsWith('http'))
-      ) ? { photos: data.photos } : {}),
+      ) ? {
+        photos: {
+          ...data.photos,
+          // Filter details array to only include valid strings (URLs)
+          ...(data.photos.details ? {
+            details: data.photos.details.filter(
+              (detail): detail is string => typeof detail === 'string' && (detail.startsWith('/uploads/') || detail.startsWith('http'))
+            )
+          } : {})
+        }
+      } : {}),
       
       // Step 2.5: Warranty Documents (OPTIONAL - mechanic only)
       // Only include if there are selectedIssues (symptomsDescription is optional)
