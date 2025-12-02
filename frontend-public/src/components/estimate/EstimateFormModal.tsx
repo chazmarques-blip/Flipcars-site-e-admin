@@ -16,11 +16,15 @@ import { fbEvent } from '@/components/FacebookPixel';
 interface EstimateFormModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialServiceType?: 'bodyshop' | 'mechanic';
+  preSelectOilChange?: boolean;
 }
 
-export function EstimateFormModal({ isOpen, onClose }: EstimateFormModalProps) {
+export function EstimateFormModal({ isOpen, onClose, initialServiceType, preSelectOilChange }: EstimateFormModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<EstimateRequest>>({});
+  const [formData, setFormData] = useState<Partial<EstimateRequest>>(
+    initialServiceType ? { serviceType: initialServiceType } : {}
+  );
   const [referenceNumber, setReferenceNumber] = useState<string>('');
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

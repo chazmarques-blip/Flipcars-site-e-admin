@@ -9,6 +9,17 @@ import { fbEvent } from '@/components/FacebookPixel'
 
 const heroSlides = [
   {
+    id: 0,
+    title: "🛢️ OIL CHANGE SPECIAL!",
+    subtitle: "$39.99 + FREE Multi-Point Inspection",
+    description: "Professional oil change • Filter replacement • Fluid top-off • Tire pressure check • FREE checkup",
+    badge: "⚡ LIMITED TIME OFFER - BOOK NOW!",
+    bgImage: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1920&auto=format&fit=crop", // Oil change / mechanic
+    isPromo: true,
+    promoPrice: "$39.99",
+    promoTag: "SAVE $20"
+  },
+  {
     id: 1,
     title: "Crashed Your Car?",
     subtitle: "We'll Fix It Like New!",
@@ -162,6 +173,18 @@ export default function Hero() {
             {slide.description.includes('•') && ' • ' + slide.description.split('•').slice(1).join(' • ')}
           </p>
 
+          {/* Promo Price Tag - Only for Oil Change Slide */}
+          {slide.isPromo && (
+            <div className="flex items-center gap-4 mb-4 animate-fade-in">
+              <div className="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-2xl md:text-4xl shadow-xl rotate-[-2deg] transform hover:rotate-0 transition-transform">
+                {slide.promoPrice}
+              </div>
+              <div className="bg-primary text-black px-3 py-1 rounded-full font-bold text-sm animate-bounce">
+                {slide.promoTag}
+              </div>
+            </div>
+          )}
+
           {/* CTAs with Navigation Arrows - Mobile: Arrows beside buttons */}
           <div className="flex items-center gap-2 mb-3">
             {/* Mobile Arrow Left */}
@@ -173,49 +196,81 @@ export default function Hero() {
               <ChevronLeft className="w-5 h-5 text-white group-hover:text-black" />
             </button>
 
-            {/* Buttons Container - Triple CTA Mobile-First (Insurance Focus) */}
+            {/* Buttons Container - Conditional CTAs based on slide type */}
             <div className="flex-1 flex flex-col sm:flex-row gap-2">
-              {/* PRIMARY: Insurance Claim (60-70% of customers) - 3D Effect */}
-              <button
-                onClick={() => {
-                  fbEvent.trackCustom('CTAClick', { button: 'Insurance Claim' });
-                  setEstimateModalOpen(true);
-                }}
-                className="group bg-gradient-to-b from-primary to-primary-light hover:from-primary-light hover:to-primary text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
-              >
-                <Shield className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Start My Insurance Claim</span>
-                <span className="sm:hidden">Insurance Claim</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              {slide.isPromo ? (
+                // PROMO SLIDE: Oil Change CTA
+                <>
+                  <button
+                    onClick={() => {
+                      fbEvent.trackCustom('CTAClick', { button: 'Oil Change Promo' });
+                      setEstimateModalOpen(true);
+                    }}
+                    className="group bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-sm sm:text-base px-4 sm:px-6 py-3 rounded-lg transition-all duration-200 shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_8px_0_0_rgba(0,0,0,0.4)] active:translate-y-1 active:shadow-[0_3px_0_0_rgba(0,0,0,0.3)] flex items-center justify-center gap-2 w-full sm:flex-1 animate-pulse"
+                  >
+                    <Zap className="w-5 h-5" />
+                    <span>BOOK OIL CHANGE NOW!</span>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  
+                  <a
+                    href="tel:+13219608661"
+                    onClick={() => {
+                      fbEvent.contact();
+                      fbEvent.trackCustom('PhoneClick', { phone: '321-960-8661' });
+                    }}
+                    className="group bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black font-bold text-sm px-4 py-3 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>Call: 321-960-8661</span>
+                  </a>
+                </>
+              ) : (
+                // REGULAR SLIDES: Insurance/Bodyshop CTAs
+                <>
+                  {/* PRIMARY: Insurance Claim (60-70% of customers) - 3D Effect */}
+                  <button
+                    onClick={() => {
+                      fbEvent.trackCustom('CTAClick', { button: 'Insurance Claim' });
+                      setEstimateModalOpen(true);
+                    }}
+                    className="group bg-gradient-to-b from-primary to-primary-light hover:from-primary-light hover:to-primary text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Start My Insurance Claim</span>
+                    <span className="sm:hidden">Insurance Claim</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </button>
               
-              {/* SECONDARY: Call Now (Action Button) - 3D Effect */}
-              <a
-                href="tel:+13219608661"
-                onClick={() => {
-                  fbEvent.contact();
-                  fbEvent.trackCustom('PhoneClick', { phone: '321-960-8661' });
-                }}
-                className="group bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Call: 321-960-8661</span>
-                <span className="sm:hidden">321-960-8661</span>
-              </a>
-              
-              {/* TERTIARY: Free Estimate (30-40% without insurance) - 3D Effect */}
-              <button
-                onClick={() => {
-                  fbEvent.trackCustom('CTAClick', { button: 'Free Estimate' });
-                  setEstimateModalOpen(true);
-                }}
-                className="group bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(255,255,255,0.1)] hover:shadow-[0_6px_0_0_rgba(255,255,255,0.15)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(255,255,255,0.1)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Get Free Estimate</span>
-                <span className="sm:hidden">Free Estimate</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </button>
+                  {/* SECONDARY: Call Now (Action Button) - 3D Effect */}
+                  <a
+                    href="tel:+13219608661"
+                    onClick={() => {
+                      fbEvent.contact();
+                      fbEvent.trackCustom('PhoneClick', { phone: '321-960-8661' });
+                    }}
+                    className="group bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Call: 321-960-8661</span>
+                    <span className="sm:hidden">321-960-8661</span>
+                  </a>
+                  
+                  {/* TERTIARY: Free Estimate (30-40% without insurance) - 3D Effect */}
+                  <button
+                    onClick={() => {
+                      fbEvent.trackCustom('CTAClick', { button: 'Free Estimate' });
+                      setEstimateModalOpen(true);
+                    }}
+                    className="group bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(255,255,255,0.1)] hover:shadow-[0_6px_0_0_rgba(255,255,255,0.15)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(255,255,255,0.1)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Get Free Estimate</span>
+                    <span className="sm:hidden">Free Estimate</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Mobile Arrow Right */}
@@ -276,7 +331,9 @@ export default function Hero() {
       {/* Estimate Form Modal */}
       <EstimateFormModal 
         isOpen={estimateModalOpen} 
-        onClose={() => setEstimateModalOpen(false)} 
+        onClose={() => setEstimateModalOpen(false)}
+        initialServiceType={slide.isPromo ? 'mechanic' : undefined}
+        preSelectOilChange={slide.isPromo}
       />
     </section>
   )
