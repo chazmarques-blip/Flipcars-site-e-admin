@@ -17,7 +17,8 @@ const heroSlides = [
     bgImage: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1920&auto=format&fit=crop", // Oil change / mechanic
     isPromo: true,
     promoPrice: "$39.99",
-    promoTag: "FREE LABOR"
+    promoTag: "FREE LABOR",
+    terms: "*Terms: $39.99 price applies to vehicles using up to 1 gallon of synthetic oil. Additional oil charges apply proportionally for vehicles requiring more than 1 gallon. Filters not included. Free labor applies to oil change service only. Customer responsible for oil, filter, and any additional parts/services recommended during inspection."
   },
   {
     id: 1,
@@ -175,15 +176,24 @@ export default function Hero() {
 
           {/* Promo Price Tag - Only for Oil Change Slide - COMPACTO */}
           {slide.isPromo && (
-            <div className="inline-flex items-center gap-2 mb-2 animate-fade-in bg-gradient-to-r from-yellow-400 to-yellow-500 border-2 border-yellow-600 px-4 py-2 rounded-full shadow-lg">
-              <span className="text-black font-bold text-lg md:text-2xl">
-                Only {slide.promoPrice}
-              </span>
-              <div className="h-6 w-px bg-black/20"></div>
-              <span className="text-black font-bold text-xs md:text-sm px-3 py-1 bg-white rounded-full">
-                {slide.promoTag}
-              </span>
-            </div>
+            <>
+              <div className="inline-flex items-center gap-2 mb-1.5 animate-fade-in bg-gradient-to-r from-yellow-400 to-yellow-500 border-2 border-yellow-600 px-4 py-2 rounded-full shadow-lg">
+                <span className="text-black font-bold text-lg md:text-2xl">
+                  Only {slide.promoPrice}
+                </span>
+                <div className="h-6 w-px bg-black/20"></div>
+                <span className="text-black font-bold text-xs md:text-sm px-3 py-1 bg-white rounded-full">
+                  {slide.promoTag}
+                </span>
+              </div>
+              
+              {/* Terms & Conditions - Compact */}
+              {slide.terms && (
+                <p className="text-[10px] md:text-xs text-gray-400 italic mb-2 max-w-2xl leading-tight">
+                  {slide.terms}
+                </p>
+              )}
+            </>
           )}
 
           {/* CTAs with Navigation Arrows - Mobile: Arrows beside buttons */}
