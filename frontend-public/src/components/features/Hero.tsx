@@ -10,14 +10,14 @@ import { fbEvent } from '@/components/FacebookPixel'
 const heroSlides = [
   {
     id: 0,
-    title: "🛢️ OIL CHANGE SPECIAL!",
-    subtitle: "$39.99 + FREE Multi-Point Inspection",
-    description: "Professional oil change • Filter replacement • Fluid top-off • Tire pressure check • FREE checkup",
-    badge: "⚡ LIMITED TIME OFFER - BOOK NOW!",
+    title: "Oil Change Special",
+    subtitle: "Professional Service at Unbeatable Price",
+    description: "Complete vehicle inspection included • You only pay for oil, filter, and parts • Service time: 30-45 minutes",
+    badge: "⭐ FREE LABOR PROMOTION",
     bgImage: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1920&auto=format&fit=crop", // Oil change / mechanic
     isPromo: true,
     promoPrice: "$39.99",
-    promoTag: "SAVE $20"
+    promoTag: "FREE LABOR"
   },
   {
     id: 1,
@@ -175,13 +175,14 @@ export default function Hero() {
 
           {/* Promo Price Tag - Only for Oil Change Slide */}
           {slide.isPromo && (
-            <div className="flex items-center gap-4 mb-4 animate-fade-in">
-              <div className="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-2xl md:text-4xl shadow-xl rotate-[-2deg] transform hover:rotate-0 transition-transform">
-                {slide.promoPrice}
-              </div>
-              <div className="bg-primary text-black px-3 py-1 rounded-full font-bold text-sm animate-bounce">
+            <div className="inline-flex items-center gap-3 mb-3 animate-fade-in bg-gradient-to-r from-yellow-400 to-yellow-500 border-2 border-yellow-600 px-6 py-3 rounded-full shadow-lg">
+              <span className="text-black font-bold text-xl md:text-3xl">
+                Only {slide.promoPrice}
+              </span>
+              <div className="h-8 w-px bg-black/20"></div>
+              <span className="text-black font-bold text-sm md:text-base px-4 py-1.5 bg-white rounded-full">
                 {slide.promoTag}
-              </div>
+              </span>
             </div>
           )}
 
@@ -199,18 +200,19 @@ export default function Hero() {
             {/* Buttons Container - Conditional CTAs based on slide type */}
             <div className="flex-1 flex flex-col sm:flex-row gap-2">
               {slide.isPromo ? (
-                // PROMO SLIDE: Oil Change CTA
+                // PROMO SLIDE: Oil Change CTA - Amarelo/Dourado
                 <>
                   <button
                     onClick={() => {
                       fbEvent.trackCustom('CTAClick', { button: 'Oil Change Promo' });
                       setEstimateModalOpen(true);
                     }}
-                    className="group bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-sm sm:text-base px-4 sm:px-6 py-3 rounded-lg transition-all duration-200 shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_8px_0_0_rgba(0,0,0,0.4)] active:translate-y-1 active:shadow-[0_3px_0_0_rgba(0,0,0,0.3)] flex items-center justify-center gap-2 w-full sm:flex-1 animate-pulse"
+                    className="group bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600 border-2 border-yellow-700 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-500 text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(180,83,9,0.4)] hover:shadow-[0_6px_0_0_rgba(180,83,9,0.5)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(180,83,9,0.4)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
                   >
-                    <Zap className="w-5 h-5" />
-                    <span>BOOK OIL CHANGE NOW!</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <Zap className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Book Oil Change Now!</span>
+                    <span className="sm:hidden">Book Now!</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </button>
                   
                   <a
@@ -219,10 +221,11 @@ export default function Hero() {
                       fbEvent.contact();
                       fbEvent.trackCustom('PhoneClick', { phone: '321-960-8661' });
                     }}
-                    className="group bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black font-bold text-sm px-4 py-3 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
+                    className="group bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_0_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
                   >
-                    <Phone className="w-4 h-4" />
-                    <span>Call: 321-960-8661</span>
+                    <Phone className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Call: 321-960-8661</span>
+                    <span className="sm:hidden">321-960-8661</span>
                   </a>
                 </>
               ) : (
