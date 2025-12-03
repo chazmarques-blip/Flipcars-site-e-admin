@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button';
 
 interface Step4ContactProps {
   initialData: Partial<EstimateRequest>;
-  onSubmit: (data: Partial<EstimateRequest>) => void;
+  onSubmit: (data: Partial<EstimateRequest>) => Promise<void>;
   onBack: () => void;
   isSubmitting?: boolean;
 }

@@ -14,6 +14,7 @@ export function EstimateForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<EstimateRequest>>({});
   const [referenceNumber, setReferenceNumber] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNext = (stepData: Partial<EstimateRequest>) => {
     setFormData((prev) => ({ ...prev, ...stepData }));
@@ -25,6 +26,7 @@ export function EstimateForm() {
   };
 
   const handleSubmit = async (finalData: Partial<EstimateRequest>) => {
+    setIsSubmitting(true);
     const completeData = { ...formData, ...finalData };
     
     console.log('[EstimateForm] 🚀 Starting submission process');
@@ -125,6 +127,7 @@ export function EstimateForm() {
     const confirmationStep = formData.serviceType === 'bodyshop' ? 6 : 5;
     console.log('[EstimateForm] 📍 Moving to confirmation step:', confirmationStep);
     setCurrentStep(confirmationStep);
+    setIsSubmitting(false);
   };
 
   const handleReset = () => {
@@ -209,8 +212,9 @@ export function EstimateForm() {
           (currentStep === 5 && formData.serviceType === 'bodyshop')) && (
           <Step4Contact
             initialData={formData}
-            onNext={handleNext}
+            onSubmit={handleSubmit}
             onBack={handleBack}
+            isSubmitting={isSubmitting}
           />
         )}
 
