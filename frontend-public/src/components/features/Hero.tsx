@@ -17,8 +17,7 @@ const heroSlides = [
     bgImage: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1920&auto=format&fit=crop", // Oil change / mechanic
     isPromo: true,
     promoPrice: "$39.99",
-    promoTag: "FREE LABOR",
-    terms: "*Terms: $39.99 price applies to vehicles using up to 1 gallon of synthetic oil. For vehicles requiring more than 1 gallon, additional oil will be charged proportionally. Filters not included in price. Free labor applies to oil change service only. Customer is responsible for oil, filter, and any additional parts/services recommended during inspection."
+    promoTag: "FREE LABOR"
   },
   {
     id: 1,
@@ -192,13 +191,6 @@ export default function Hero() {
                   {slide.promoTag}
                 </span>
               </button>
-              
-              {/* Terms & Conditions - Compact */}
-              {slide.terms && (
-                <p className="text-[10px] md:text-xs text-gray-400 italic mb-2 max-w-2xl leading-tight">
-                  {slide.terms}
-                </p>
-              )}
             </>
           )}
 

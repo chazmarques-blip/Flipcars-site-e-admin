@@ -415,7 +415,7 @@ export function Step2bWarrantyDocs({ initialData, onNext, onBack }: Step2bWarran
               <li>✅ Service time: 30-45 minutes</li>
             </ul>
             <p className="text-[9px] text-green-700 mt-1.5 italic leading-tight">
-              *Terms: Free labor applies to oil change service only. Customer responsible for oil, filter, and any additional parts/services recommended during inspection.
+              *Terms: $39.99 price applies to vehicles using up to 1 gallon of synthetic oil. For vehicles requiring more than 1 gallon, additional oil will be charged proportionally. Filters not included in price. Free labor applies to oil change service only. Customer is responsible for oil, filter, and any additional parts/services recommended during inspection.
             </p>
           </div>
         </div>
