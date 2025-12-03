@@ -11,14 +11,14 @@ const heroSlides = [
   {
     id: 0,
     title: "Oil Change Special",
-    subtitle: "Professional Service at Unbeatable Price",
+    subtitle: "Professional Service at Unbeatable Price - Free Labor",
     description: "Complete vehicle inspection included • You only pay for oil, filter, and parts • Service time: 30-45 minutes",
     badge: "⭐ FREE LABOR PROMOTION",
     bgImage: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1920&auto=format&fit=crop", // Oil change / mechanic
     isPromo: true,
     promoPrice: "$39.99",
     promoTag: "FREE LABOR",
-    terms: "*Terms: $39.99 price applies to vehicles using up to 1 gallon of synthetic oil. Additional oil charges apply proportionally for vehicles requiring more than 1 gallon. Filters not included. Free labor applies to oil change service only. Customer responsible for oil, filter, and any additional parts/services recommended during inspection."
+    terms: "*Terms: $39.99 price applies to vehicles using up to 1 gallon of synthetic oil. For vehicles requiring more than 1 gallon, additional oil will be charged proportionally. Filters not included in price. Free labor applies to oil change service only. Customer is responsible for oil, filter, and any additional parts/services recommended during inspection."
   },
   {
     id: 1,
@@ -174,18 +174,24 @@ export default function Hero() {
             {slide.description.includes('•') && ' • ' + slide.description.split('•').slice(1).join(' • ')}
           </p>
 
-          {/* Promo Price Tag - Only for Oil Change Slide - COMPACTO */}
+          {/* Promo Price Tag - Only for Oil Change Slide - CLICKABLE BUTTON */}
           {slide.isPromo && (
             <>
-              <div className="inline-flex items-center gap-2 mb-1.5 animate-fade-in bg-gradient-to-r from-yellow-400 to-yellow-500 border-2 border-yellow-600 px-4 py-2 rounded-full shadow-lg">
-                <span className="text-black font-bold text-lg md:text-2xl">
+              <button
+                onClick={() => {
+                  fbEvent.trackCustom('CTAClick', { button: 'Oil Change Price Splash' });
+                  setEstimateModalOpen(true);
+                }}
+                className="inline-flex items-center gap-2 mb-1.5 animate-fade-in bg-gradient-to-r from-yellow-400 to-yellow-500 border-2 border-yellow-600 px-4 py-2 rounded-full shadow-lg hover:from-yellow-300 hover:to-yellow-400 hover:shadow-xl transition-all duration-200 cursor-pointer group"
+              >
+                <span className="text-black font-bold text-lg md:text-2xl group-hover:scale-105 transition-transform">
                   Only {slide.promoPrice}
                 </span>
                 <div className="h-6 w-px bg-black/20"></div>
-                <span className="text-black font-bold text-xs md:text-sm px-3 py-1 bg-white rounded-full">
+                <span className="text-black font-bold text-xs md:text-sm px-3 py-1 bg-white rounded-full group-hover:bg-gray-50 transition-colors">
                   {slide.promoTag}
                 </span>
-              </div>
+              </button>
               
               {/* Terms & Conditions - Compact */}
               {slide.terms && (
