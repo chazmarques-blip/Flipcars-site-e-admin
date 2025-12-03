@@ -229,7 +229,7 @@ export default function Hero() {
                   </a>
                 </>
               ) : (
-                // REGULAR SLIDES: Insurance/Bodyshop CTAs
+                // REGULAR SLIDES: Insurance/Bodyshop CTAs + Oil Change Promo Button
                 <>
                   {/* PRIMARY: Insurance Claim (60-70% of customers) - 3D Effect */}
                   <button
@@ -270,6 +270,21 @@ export default function Hero() {
                     <Zap className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">Get Free Estimate</span>
                     <span className="sm:hidden">Free Estimate</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+
+                  {/* NEW: Oil Change Promo Button (Yellow/Gold) - 3D Effect */}
+                  <button
+                    onClick={() => {
+                      fbEvent.trackCustom('CTAClick', { button: 'Oil Change Promo (Regular Banner)' });
+                      setEstimateModalOpen(true);
+                    }}
+                    className="group bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600 border-2 border-yellow-700 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-500 text-black font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-lg transition-all duration-200 shadow-[0_4px_0_0_rgba(180,83,9,0.4)] hover:shadow-[0_6px_0_0_rgba(180,83,9,0.5)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(180,83,9,0.4)] flex items-center justify-center gap-1.5 w-full sm:flex-1 whitespace-nowrap"
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span className="hidden lg:inline">Book Oil Change Now! Only $39.99 !!</span>
+                    <span className="hidden sm:inline lg:hidden">Oil Change $39.99 !!</span>
+                    <span className="sm:hidden">$39.99 !!</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </>
@@ -335,8 +350,8 @@ export default function Hero() {
       <EstimateFormModal 
         isOpen={estimateModalOpen} 
         onClose={() => setEstimateModalOpen(false)}
-        initialServiceType={slide.isPromo ? 'mechanic' : undefined}
-        preSelectOilChange={slide.isPromo}
+        initialServiceType='mechanic'
+        preSelectOilChange={true}
       />
     </section>
   )
