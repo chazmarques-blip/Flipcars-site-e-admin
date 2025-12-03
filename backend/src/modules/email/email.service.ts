@@ -70,7 +70,7 @@ export class EmailService {
       this.logger.log(`📤 Sending email to ${options.to}`);
       this.logger.log(`Subject: ${options.subject}`);
 
-      // Add timeout to prevent hanging (5 seconds)
+      // Add timeout to prevent hanging (30 seconds for Railway/Cloud environments)
       const emailPromise = this.transporter.sendMail({
         from,
         to: options.to,
@@ -81,7 +81,7 @@ export class EmailService {
       });
 
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Email timeout after 5 seconds')), 5000);
+        setTimeout(() => reject(new Error('Email timeout after 30 seconds')), 30000);
       });
 
       const info = await Promise.race([emailPromise, timeoutPromise]) as any;

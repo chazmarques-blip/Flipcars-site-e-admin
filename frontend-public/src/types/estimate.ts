@@ -198,7 +198,7 @@ export const PHOTO_CONFIG: PhotoUploadConfig = {
 // FlipCars location information
 export const FLIPCARS_LOCATION = {
   name: 'FlipCars Auto Repair',
-  address: '5200 Old Winter Garden Rd, Suite 110, Orlando, FL 32811',
+  address: '5200 Old Winter Garden Rd, Suite 110A, Orlando, FL 32811',
   phone: '(321) 960-8661',
   email: 'info@flipcars.us',
   coordinates: {
