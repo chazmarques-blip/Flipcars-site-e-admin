@@ -257,9 +257,17 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
               </div>
               <div className="map-container">
                 <img 
-                  src={`https://maps.googleapis.com/maps/api/staticmap?center=${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&zoom=15&size=600x200&scale=2&markers=color:red%7Clabel:F%7C${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}
+                  src={`https://maps.googleapis.com/maps/api/staticmap?center=${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&zoom=15&size=700x180&scale=2&maptype=roadmap&markers=color:red%7Clabel:F%7C${FLIPCARS_LOCATION.coordinates.lat},${FLIPCARS_LOCATION.coordinates.lng}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}
                   alt="FlipCars Location Map"
                   className="location-map"
+                  onError={(e) => {
+                    console.error('Map failed to load');
+                    e.currentTarget.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.className = 'map-fallback';
+                    fallback.textContent = '📍 5200 Old Winter Garden Rd, Suite 110A, Orlando, FL 32811';
+                    e.currentTarget.parentElement?.appendChild(fallback);
+                  }}
                 />
               </div>
             </div>
@@ -281,7 +289,7 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
       <style jsx>{`
         @page {
           size: letter portrait;
-          margin: 0.4in;
+          margin: 0.5in 0.4in;
         }
         
         * {
@@ -480,14 +488,25 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
           border-radius: 4px;
           overflow: hidden;
           margin-top: 6px;
+          background: #f0f0f0;
+          min-height: 100px;
         }
 
         .location-map {
           width: 100%;
           height: auto;
           display: block;
-          max-height: 75px;
+          max-height: 100px;
           object-fit: cover;
+          image-rendering: -webkit-optimize-contrast;
+        }
+
+        .map-fallback {
+          padding: 20px;
+          text-align: center;
+          font-size: 9px;
+          color: #666;
+          background: #f9f9f9;
         }
 
         /* Notes Box */
@@ -590,11 +609,11 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
           }
           
           .map-container {
-            height: 150px;
+            min-height: 150px;
           }
           
           .location-map {
-            max-height: 150px;
+            max-height: 180px;
           }
           
           .footer-message {
@@ -611,13 +630,35 @@ export function PrintableConfirmation({ data, referenceNumber }: PrintableConfir
           body {
             margin: 0;
             padding: 0;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
           }
+          
           .printable-page {
             width: 100%;
             margin: 0;
             padding: 0;
           }
+          
           .info-section {
+            page-break-inside: avoid;
+          }
+          
+          .location-map {
+            max-height: 120px;
+            page-break-inside: avoid;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+          }
+          
+          .map-container {
+            page-break-inside: avoid;
+            min-height: 120px;
+          }
+          
+          /* Ensure map loads for print */
+          img {
+            max-width: 100%;
             page-break-inside: avoid;
           }
         }
