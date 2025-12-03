@@ -107,8 +107,8 @@ export class WarrantyDocumentsDto {
   @IsString({ each: true })
   selectedIssues: string[];
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   symptomsDescription?: string;
 }
 
