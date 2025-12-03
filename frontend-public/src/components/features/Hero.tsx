@@ -143,51 +143,51 @@ export default function Hero() {
         <ChevronRight className="w-6 h-6 text-white group-hover:text-black" />
       </button>
 
-      <div className="container-custom relative z-10 py-4 md:py-6">
+      <div className="container-custom relative z-10 py-3 md:py-4">
         <div className="max-w-3xl">
           {/* Urgency Badge with animation */}
           <div 
             key={`badge-${currentSlide}`}
-            className="inline-flex items-center gap-2 bg-primary/20 border border-primary/30 text-primary px-4 py-2 rounded-full mb-3 animate-pulse"
+            className="inline-flex items-center gap-2 bg-primary/20 border border-primary/30 text-primary px-3 py-1.5 rounded-full mb-2 animate-pulse"
           >
-            <Zap className="w-4 h-4" />
-            <span className="text-sm font-semibold">{slide.badge}</span>
+            <Zap className="w-3.5 h-3.5" />
+            <span className="text-xs font-semibold">{slide.badge}</span>
           </div>
 
           {/* Title with slide transition */}
           <h1 
             key={`title-${currentSlide}`}
-            className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold mb-2 leading-tight animate-fade-in"
+            className="text-xl md:text-2xl lg:text-3xl font-heading font-bold mb-1.5 leading-tight animate-fade-in"
           >
             {slide.title}
-            <span className="block text-primary mt-1">
+            <span className="block text-primary mt-0.5">
               {slide.subtitle}
             </span>
           </h1>
           
           <p 
             key={`desc-${currentSlide}`}
-            className="text-sm md:text-base text-gray-200 mb-3 animate-fade-in max-w-2xl"
+            className="text-xs md:text-sm text-gray-200 mb-2 animate-fade-in max-w-2xl leading-snug"
           >
             <strong className="text-white">{slide.description.split('•')[0]}</strong>
             {slide.description.includes('•') && ' • ' + slide.description.split('•').slice(1).join(' • ')}
           </p>
 
-          {/* Promo Price Tag - Only for Oil Change Slide */}
+          {/* Promo Price Tag - Only for Oil Change Slide - COMPACTO */}
           {slide.isPromo && (
-            <div className="inline-flex items-center gap-3 mb-3 animate-fade-in bg-gradient-to-r from-yellow-400 to-yellow-500 border-2 border-yellow-600 px-6 py-3 rounded-full shadow-lg">
-              <span className="text-black font-bold text-xl md:text-3xl">
+            <div className="inline-flex items-center gap-2 mb-2 animate-fade-in bg-gradient-to-r from-yellow-400 to-yellow-500 border-2 border-yellow-600 px-4 py-2 rounded-full shadow-lg">
+              <span className="text-black font-bold text-lg md:text-2xl">
                 Only {slide.promoPrice}
               </span>
-              <div className="h-8 w-px bg-black/20"></div>
-              <span className="text-black font-bold text-sm md:text-base px-4 py-1.5 bg-white rounded-full">
+              <div className="h-6 w-px bg-black/20"></div>
+              <span className="text-black font-bold text-xs md:text-sm px-3 py-1 bg-white rounded-full">
                 {slide.promoTag}
               </span>
             </div>
           )}
 
           {/* CTAs with Navigation Arrows - Mobile: Arrows beside buttons */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-2">
             {/* Mobile Arrow Left */}
             <button
               onClick={prevSlide}
@@ -301,33 +301,33 @@ export default function Hero() {
             </button>
           </div>
 
-          {/* Trust Indicators - Compact */}
-          <div className="flex flex-wrap items-center gap-3 text-xs border-t border-white/10 pt-2">
-            <div className="flex items-center gap-2">
+          {/* Trust Indicators - Ultra Compact */}
+          <div className="flex flex-wrap items-center gap-2 text-xs border-t border-white/10 pt-1.5">
+            <div className="flex items-center gap-1.5">
               <StarRating rating={4.9} size="md" showValue={false} />
               <span className="font-bold text-primary">4.9/5</span>
               <span className="text-gray-400">(51)</span>
             </div>
             
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-primary" />
               <span className="text-gray-300">Licensed & Insured</span>
             </div>
             
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5">
+              <CheckCircle className="w-3.5 h-3.5 text-primary" />
               <span className="text-gray-300">Lifetime Warranty</span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-primary" />
               <span className="text-gray-300">3-5 Days</span>
             </div>
           </div>
         </div>
 
         {/* Slide Indicators/Dots */}
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-2 mt-3">
           {heroSlides.map((_, index) => (
             <button
               key={index}
