@@ -405,21 +405,23 @@ export class LeadsService {
       console.log(`  preferredTimeSlot: ${createLeadDto.preferredTimeSlot || 'NOT PROVIDED'}`);
     }
 
-    // SEND CONFIRMATION EMAIL to customer with printable confirmation
-    try {
-      console.log('[LeadsService] 📧 Sending printable confirmation email to:', savedLead.email);
-      const emailSent = await this.emailService.sendPrintableConfirmation(savedLead);
-      
-      if (emailSent) {
-        console.log(`[LeadsService] ✅ Printable confirmation email sent successfully to ${savedLead.email}`);
-      } else {
-        console.warn(`[LeadsService] ⚠️ Failed to send confirmation email to ${savedLead.email}`);
-      }
-    } catch (error) {
-      // Log error but don't fail lead creation
-      console.error('[LeadsService] ❌ Error sending confirmation email:', error.message);
-      console.error('[LeadsService] Lead was created successfully, but email sending failed');
-    }
+    // SEND CONFIRMATION EMAIL to customer with printable confirmation (ASYNC - DON'T WAIT)
+    // This runs in background to avoid blocking the response
+    this.emailService.sendPrintableConfirmation(savedLead)
+      .then((emailSent) => {
+        if (emailSent) {
+          console.log(`[LeadsService] ✅ Printable confirmation email sent successfully to ${savedLead.email}`);
+        } else {
+          console.warn(`[LeadsService] ⚠️ Failed to send confirmation email to ${savedLead.email}`);
+        }
+      })
+      .catch((error) => {
+        // Log error but don't fail lead creation
+        console.error('[LeadsService] ❌ Error sending confirmation email:', error.message);
+        console.error('[LeadsService] Lead was created successfully, but email sending failed');
+      });
+    
+    console.log('[LeadsService] 📧 Email sending initiated in background (not blocking response)');
 
     return this.findOne(savedLead.id);
   }
