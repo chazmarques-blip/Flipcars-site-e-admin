@@ -49,6 +49,13 @@ export function CalendarSidebar({ onEventClick, onStatusChange, type = 'overdue'
   const todayStr = getTodayInOrlando();
   const currentTime = getCurrentTimeInOrlando();
 
+  // DEBUG: Log current time and appointments
+  console.log('[CalendarSidebar] TODAY:', todayStr, 'TIME:', currentTime);
+  console.log('[CalendarSidebar] Total appointments:', appointments.length);
+  appointments.slice(0, 3).forEach(apt => {
+    console.log('[CalendarSidebar] Sample:', apt.id.substring(0, 8), apt.appointmentDate, apt.appointmentStartTime);
+  });
+
   // Filter overdue (past date OR today but past time) - memoized
   const overdue = useMemo(() => appointments.filter((apt) => {
     // Appointment is overdue if:
@@ -85,6 +92,13 @@ export function CalendarSidebar({ onEventClick, onStatusChange, type = 'overdue'
     if (dateCompare !== 0) return dateCompare;
     return (a.appointmentStartTime || '').localeCompare(b.appointmentStartTime || '');
   }), [appointments, todayStr, currentTime]);
+
+  // DEBUG: Log filtered results
+  console.log('[CalendarSidebar] Overdue count:', overdue.length);
+  console.log('[CalendarSidebar] Upcoming count:', upcoming.length);
+  upcoming.slice(0, 3).forEach(apt => {
+    console.log('[CalendarSidebar] Upcoming:', apt.appointmentDate, apt.appointmentStartTime, apt.lead?.name);
+  });
 
   if (loading) {
     return (
