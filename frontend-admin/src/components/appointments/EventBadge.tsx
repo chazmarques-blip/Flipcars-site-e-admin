@@ -139,6 +139,12 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
   const isOverdue = aptDate < today && status !== 'completed';
   
   const estimatedValue = lead?.estimatedValue ? `$${Number(lead.estimatedValue).toFixed(2)}` : null;
+  
+  // Format date (e.g., "Dec 4", "Jan 15")
+  const formattedDate = aptDate.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric' 
+  });
 
   return (
     <div
@@ -169,13 +175,21 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
                 <>
                   <strong className="text-[#1a1a1a]">{estimatedValue}</strong>
                   <span>•</span>
-                </>
-              ) : appointmentTimeSlot ? (
-                <>
-                  <strong className="text-[#1a1a1a]">{appointmentTimeSlot}</strong>
+                  <span className="text-[#999]">{formattedDate}</span>
                   <span>•</span>
                 </>
-              ) : null}
+              ) : (
+                <>
+                  <span className="text-[#999]">{formattedDate}</span>
+                  {appointmentTimeSlot && (
+                    <>
+                      <span>•</span>
+                      <strong className="text-[#1a1a1a]">{appointmentTimeSlot}</strong>
+                    </>
+                  )}
+                  <span>•</span>
+                </>
+              )}
               {lead?.phone && (
                 <span className="flex items-center gap-[2px]">
                   📞 {lead.phone}
