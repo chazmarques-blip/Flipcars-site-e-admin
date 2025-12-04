@@ -175,12 +175,12 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
                 <>
                   <strong className="text-[#1a1a1a]">{estimatedValue}</strong>
                   <span>•</span>
-                  <span className="text-[#999]">{formattedDate}</span>
+                  <span className="text-[11px] font-semibold text-[#333]">{formattedDate}</span>
                   <span>•</span>
                 </>
               ) : (
                 <>
-                  <span className="text-[#999]">{formattedDate}</span>
+                  <span className="text-[11px] font-semibold text-[#333]">{formattedDate}</span>
                   {appointmentTimeSlot && (
                     <>
                       <span>•</span>
