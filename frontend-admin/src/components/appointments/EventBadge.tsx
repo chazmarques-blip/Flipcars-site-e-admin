@@ -45,28 +45,31 @@ const getServiceIcon = (appointment: Appointment): React.ReactNode => {
   const services = appointment.lead?.selectedServices || [];
   const firstService = services[0] as keyof typeof SERVICE_MAP;
   
-  // Check if overdue (past date)
-  const aptDate = new Date(appointment.appointmentDate);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const isOverdue = aptDate < today && appointment.status !== 'completed';
-  
-  if (isOverdue) {
-    return '💰'; // Payment overdue icon (keep emoji for payment)
-  }
-  
-  // Check if payment (has estimatedValue)
-  if (appointment.lead?.estimatedValue && appointment.lead.estimatedValue > 0) {
-    return '💰'; // Payment icon (keep emoji for payment)
-  }
-  
-  // Return emoji from SERVICE_MAP
+  // ALWAYS return service icon from SERVICE_MAP
   if (firstService && SERVICE_MAP[firstService]) {
     return SERVICE_MAP[firstService].icon;
   }
   
   // Default: General service wrench
   return '🔧';
+};
+
+// Get payment method for display
+const getPaymentMethod = (appointment: Appointment): string => {
+  const lead = appointment.lead;
+  
+  // Check warranty company
+  if (lead?.warrantyCompany && lead.warrantyCompany.trim() !== '') {
+    return `Warranty - ${lead.warrantyCompany}`;
+  }
+  
+  // Check insurance (if you have this field)
+  if (lead?.insuranceCompany && lead.insuranceCompany.trim() !== '') {
+    return `Insurance - ${lead.insuranceCompany}`;
+  }
+  
+  // Default: Private Self Pay
+  return 'Private Self Pay';
 };
 
 // Get service display name (matching public site)
@@ -159,17 +162,23 @@ export function EventBadge({ appointment, onClick, onStatusChange, className = '
     >
       {/* Event Item Content */}
       <div className="p-[6px]">
-        {/* Header with icon, name, and badge */}
+        {/* Header with icon, name, payment method, and badge */}
         <div className="flex items-start gap-[6px] mb-[4px]">
-          {/* Icon (service or payment) - Emoji */}
+          {/* Icon (service type) - Emoji */}
           <div className="text-[20px] leading-none flex-shrink-0">
             {icon}
           </div>
           
           {/* Main info */}
           <div className="flex-1 min-w-0">
-            <div className="font-semibold text-[11px] text-[#1a1a1a] leading-tight mb-[2px]">
-              {lead?.name || 'Unknown Customer'}
+            <div className="flex items-center gap-[4px] flex-wrap">
+              <span className="font-semibold text-[11px] text-[#1a1a1a] leading-tight">
+                {lead?.name || 'Unknown Customer'}
+              </span>
+              <span className="text-[10px] text-[#666]">•</span>
+              <span className="text-[9px] font-medium text-[#666] bg-gray-100 px-[6px] py-[1px] rounded">
+                {getPaymentMethod(appointment)}
+              </span>
             </div>
             <div className="flex items-center gap-[4px] text-[10px] text-[#666] leading-tight">
               {isOverdue && estimatedValue ? (
