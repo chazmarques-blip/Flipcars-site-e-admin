@@ -61,13 +61,12 @@ export class Lead {
   preferredLanguage: string;
 
   // Contact Preferences
-  // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
-  // @Column({ type: 'jsonb', nullable: true, name: 'contact_preferences' })
-  // contactPreferences?: {
-  //   phoneCall?: boolean;
-  //   whatsapp?: boolean;
-  //   textMessage?: boolean;
-  // };
+  @Column({ type: 'jsonb', nullable: true, name: 'contact_preferences' })
+  contactPreferences?: {
+    phoneCall?: boolean;
+    whatsapp?: boolean;
+    textMessage?: boolean;
+  };
 
   // Vehicle Information
   // TEMPORARY: Disabled until schema is fixed (column doesn't exist in database)
