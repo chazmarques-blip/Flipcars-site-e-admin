@@ -236,11 +236,18 @@ export function EventBadge({ appointment, onClick, onStatusChange, className = '
         )}
         
         {/* Additional Notes / Symptoms */}
-        {lead?.symptomsDescription && (
-          <div className="text-[9px] text-[#666] italic line-clamp-2 mb-[4px] px-[4px] py-[2px] bg-gray-50 rounded">
-            {lead.symptomsDescription}
-          </div>
-        )}
+        {(() => {
+          // DEBUG: Log symptomsDescription to console
+          if (lead) {
+            console.log('[EventBadge] Lead ID:', lead.id?.substring(0, 8), 'symptomsDescription:', lead.symptomsDescription ? `"${lead.symptomsDescription}"` : 'EMPTY/NULL');
+          }
+          
+          return lead?.symptomsDescription ? (
+            <div className="text-[9px] text-[#666] italic line-clamp-2 mb-[4px] px-[4px] py-[2px] bg-gray-50 rounded">
+              {lead.symptomsDescription}
+            </div>
+          ) : null;
+        })()}
       </div>
       
       {/* Action buttons */}
