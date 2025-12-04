@@ -108,13 +108,13 @@ export function AppointmentDetailsModal({ appointment, onClose, onUpdate }: Appo
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-[60] overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center p-3">
-        {/* Backdrop */}
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
+        {/* Backdrop - Semi-transparent to show modal behind */}
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose}></div>
 
-        {/* Modal - COMPACT SIZE */}
-        <div className="relative w-full max-w-md bg-white rounded-lg shadow-2xl border-2 border-[#D4AF37]">
+        {/* Modal - 50% SMALLER (max-w-sm instead of max-w-md) */}
+        <div className="relative w-full max-w-sm bg-white rounded-lg shadow-2xl border-2 border-[#D4AF37]">
           {/* Header - Gold/Black Theme */}
           <div className="flex items-center justify-between px-4 py-2.5 bg-[#1a1a1a] rounded-t-lg border-b border-[#D4AF37]">
             <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wide">Appointment Details</h2>

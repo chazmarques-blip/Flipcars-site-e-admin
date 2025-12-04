@@ -21,7 +21,8 @@ function AppointmentsPageContent() {
 
   const handleEventClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
-    setSelectedDate(null); // Close day modal if open
+    // DON'T close day modal - keep it open in background
+    // setSelectedDate(null);
   };
 
   const handleDayClick = (date: string) => {
@@ -31,6 +32,7 @@ function AppointmentsPageContent() {
 
   const handleModalClose = () => {
     setSelectedAppointment(null);
+    // Day modal stays open if it was open
   };
 
   const handleDayModalClose = () => {
