@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { AppointmentDetailsModal } from '@/components/appointments/AppointmentDetailsModal';
 import { Appointment } from '@/lib/api/appointments.service';
+import { AppointmentsProvider } from '@/contexts/AppointmentsContext';
 import './calendar-mockup.css';
 
 // 🆕 Import new mockup components
@@ -51,7 +52,8 @@ export default function DemoAppointmentsPage() {
   };
 
   return (
-    <div className="p-[8px_12px] max-w-[1600px] mx-auto h-screen flex flex-col overflow-hidden bg-[#f8f8f8]">
+    <AppointmentsProvider>
+      <div className="p-[8px_12px] max-w-[1600px] mx-auto h-screen flex flex-col overflow-hidden bg-[#f8f8f8]">
       {/* Page Header - Compacto */}
       <div className="flex items-center justify-between mb-[5px] flex-shrink-0">
         <div>
@@ -109,6 +111,7 @@ export default function DemoAppointmentsPage() {
         onClose={handleModalClose}
         onUpdate={handleUpdate}
       />
-    </div>
+      </div>
+    </AppointmentsProvider>
   );
 }
