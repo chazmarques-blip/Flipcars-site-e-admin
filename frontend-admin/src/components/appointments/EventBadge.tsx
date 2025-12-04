@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Appointment, AppointmentStatus } from '@/lib/api/appointments.service';
-import { Phone } from 'lucide-react';
+import { Droplet, Disc, Zap, Wind, Settings, Wrench } from 'lucide-react';
 
 interface EventBadgeProps {
   appointment: Appointment;
@@ -23,8 +23,11 @@ const getStatusBg = (status: AppointmentStatus): string => {
   return colorMap[status] || 'bg-white';
 };
 
-// Get emoji icon based on type and status
-const getEventIcon = (appointment: Appointment): string => {
+// Get service icon based on selected services
+const getServiceIcon = (appointment: Appointment): React.ReactNode => {
+  const services = appointment.lead?.selectedServices || [];
+  const firstService = services[0]?.toLowerCase() || '';
+  
   // Check if overdue (past date)
   const aptDate = new Date(appointment.appointmentDate);
   const today = new Date();
@@ -32,15 +35,33 @@ const getEventIcon = (appointment: Appointment): string => {
   const isOverdue = aptDate < today && appointment.status !== 'completed';
   
   if (isOverdue) {
-    return '💰'; // Payment overdue icon
+    return '💰'; // Payment overdue icon (keep emoji for payment)
   }
   
   // Check if payment (has estimatedValue)
   if (appointment.lead?.estimatedValue && appointment.lead.estimatedValue > 0) {
-    return '💰'; // Payment icon
+    return '💰'; // Payment icon (keep emoji for payment)
   }
   
-  return '🔧'; // Appointment icon (wrench for service)
+  // Map services to icons
+  if (firstService.includes('oil')) {
+    return <Droplet className="w-5 h-5 text-amber-600" />;
+  }
+  if (firstService.includes('brake')) {
+    return <Disc className="w-5 h-5 text-red-600" />;
+  }
+  if (firstService.includes('battery')) {
+    return <Zap className="w-5 h-5 text-yellow-600" />;
+  }
+  if (firstService.includes('air') || firstService.includes('ac') || firstService.includes('conditioning')) {
+    return <Wind className="w-5 h-5 text-blue-600" />;
+  }
+  if (firstService.includes('engine') || firstService.includes('diagnostic')) {
+    return <Settings className="w-5 h-5 text-gray-700" />;
+  }
+  
+  // Default: General service wrench
+  return <Wrench className="w-5 h-5 text-gray-600" />;
 };
 
 // Get status button
@@ -99,7 +120,7 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
 
   const actionButton = getActionButton(appointment);
   const badge = getBadgeText(appointment);
-  const icon = getEventIcon(appointment);
+  const icon = getServiceIcon(appointment);
   
   // Check if overdue for value display
   const aptDate = new Date(appointment.appointmentDate);
@@ -114,16 +135,17 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
       className={`
         ${getStatusBg(status)}
         border border-[#e0e0e0] rounded-[4px]
-        hover:border-[#D4AF37] hover:shadow-sm transition-all
+        hover:border-[#D4AF37] hover:shadow-sm transition-all cursor-pointer
         ${className}
       `}
+      onClick={onClick}
     >
       {/* Event Item Content */}
       <div className="p-[6px]">
         {/* Header with icon, name, and badge */}
         <div className="flex items-start gap-[6px] mb-[4px]">
-          {/* Icon (24x24 emoji) */}
-          <div className="text-[20px] leading-none flex-shrink-0">
+          {/* Icon (service or payment) */}
+          <div className="flex-shrink-0">
             {icon}
           </div>
           
@@ -160,12 +182,14 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
           )}
         </div>
         
-        {/* Vehicle details */}
+        {/* Vehicle details + Service Name */}
         {vehicleInfo && (
           <div className="text-[10px] text-[#666] mb-[6px] leading-tight">
-            {vehicleInfo} • {lead?.selectedServices && lead.selectedServices.length > 0 
-              ? lead.selectedServices.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ')
-              : (lead?.serviceType === 'mechanic' ? 'Mechanic Service' : 'Body Repair')}
+            {vehicleInfo} • <span className="font-semibold text-[#1a1a1a]">
+              {lead?.selectedServices && lead.selectedServices.length > 0 
+                ? lead.selectedServices.map(s => s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ')).join(', ')
+                : (lead?.serviceType === 'mechanic' ? 'Mechanic Service' : 'Body Repair')}
+            </span>
           </div>
         )}
       </div>
