@@ -240,6 +240,13 @@ export function EventBadge({ appointment, onClick, onStatusChange, className = '
             </span>
           </div>
         )}
+        
+        {/* Additional Notes / Symptoms */}
+        {lead?.symptomsDescription && (
+          <div className="text-[9px] text-[#666] italic line-clamp-2 mb-[4px] px-[4px] py-[2px] bg-gray-50 rounded">
+            {lead.symptomsDescription}
+          </div>
+        )}
       </div>
       
       {/* Action buttons */}

@@ -233,7 +233,11 @@ export class PublicLeadsController {
       serviceType: dto.serviceType,
       warrantyCompany: dto.warrantyCompany,
       selectedServices: dto.warrantyDocs?.selectedIssues,
-      symptomsDescription: dto.warrantyDocs?.symptomsDescription,
+      // symptomsDescription: combine warranty symptoms + additional notes from Step 4
+      symptomsDescription: [
+        dto.warrantyDocs?.symptomsDescription,
+        dto.additionalNotes
+      ].filter(Boolean).join('\n\n'),
       source: dto.source || 'website_estimate_form',
       status: 'new',
       priority: undefined, // Will be calculated by service
