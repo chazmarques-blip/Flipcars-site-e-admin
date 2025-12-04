@@ -80,7 +80,10 @@ const getServiceDisplayName = (serviceId: string): string => {
 
 // Get status button
 const getActionButton = (appointment: Appointment): { color: string; icon: string; text: string } => {
-  const aptDate = new Date(appointment.appointmentDate);
+  // Parse date as LOCAL timezone (Orlando), NOT UTC
+  const [year, month, day] = appointment.appointmentDate.split('-').map(Number);
+  const aptDate = new Date(year, month - 1, day);
+  
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const isOverdue = aptDate < today && appointment.status !== 'completed';
@@ -102,7 +105,10 @@ const getActionButton = (appointment: Appointment): { color: string; icon: strin
 
 // Get badge text (Today, 7d, 3d, etc)
 const getBadgeText = (appointment: Appointment): { text: string; color: string } | null => {
-  const aptDate = new Date(appointment.appointmentDate);
+  // Parse date as LOCAL timezone (Orlando), NOT UTC
+  const [year, month, day] = appointment.appointmentDate.split('-').map(Number);
+  const aptDate = new Date(year, month - 1, day);
+  
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
@@ -137,7 +143,10 @@ export function EventBadge({ appointment, onClick, onStatusChange, className = '
   const icon = getServiceIcon(appointment);
   
   // Check if overdue for value display
-  const aptDate = new Date(appointment.appointmentDate);
+  // Parse date as LOCAL timezone (Orlando), NOT UTC
+  const [year, month, day] = appointment.appointmentDate.split('-').map(Number);
+  const aptDate = new Date(year, month - 1, day);
+  
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const isOverdue = aptDate < today && status !== 'completed';
@@ -145,7 +154,12 @@ export function EventBadge({ appointment, onClick, onStatusChange, className = '
   const estimatedValue = lead?.estimatedValue ? `$${Number(lead.estimatedValue).toFixed(2)}` : null;
   
   // Format date (e.g., "Dec 4", "Jan 15")
-  const formattedDate = aptDate.toLocaleDateString('en-US', { 
+  // CRITICAL: appointmentDate comes as "YYYY-MM-DD" string from backend
+  // We must parse it as LOCAL timezone (Orlando), NOT UTC
+  const [year, month, day] = appointment.appointmentDate.split('-').map(Number);
+  const localDate = new Date(year, month - 1, day); // month is 0-indexed
+  
+  const formattedDate = localDate.toLocaleDateString('en-US', { 
     month: 'short', 
     day: 'numeric' 
   });
