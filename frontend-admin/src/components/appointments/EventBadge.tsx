@@ -142,10 +142,10 @@ export function EventBadge({ appointment, onClick, onStatusChange, className = '
   const badge = getBadgeText(appointment);
   const icon = getServiceIcon(appointment);
   
-  // Check if overdue for value display
   // Parse date as LOCAL timezone (Orlando), NOT UTC
+  // CRITICAL: appointmentDate is "YYYY-MM-DD" string (e.g., "2025-12-08")
   const [year, month, day] = appointment.appointmentDate.split('-').map(Number);
-  const aptDate = new Date(year, month - 1, day);
+  const aptDate = new Date(year, month - 1, day); // month is 0-indexed (0 = Jan)
   
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -153,16 +153,10 @@ export function EventBadge({ appointment, onClick, onStatusChange, className = '
   
   const estimatedValue = lead?.estimatedValue ? `$${Number(lead.estimatedValue).toFixed(2)}` : null;
   
-  // Format date (e.g., "Dec 4", "Jan 15")
-  // CRITICAL: appointmentDate comes as "YYYY-MM-DD" string from backend
-  // We must parse it as LOCAL timezone (Orlando), NOT UTC
-  const [year, month, day] = appointment.appointmentDate.split('-').map(Number);
-  const localDate = new Date(year, month - 1, day); // month is 0-indexed
-  
-  const formattedDate = localDate.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric' 
-  });
+  // Format date manually to avoid timezone issues with toLocaleDateString
+  // Example: "2025-12-08" → "Dec 8"
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const formattedDate = `${monthNames[month - 1]} ${day}`;
 
   return (
     <div
