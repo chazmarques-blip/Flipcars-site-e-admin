@@ -68,13 +68,27 @@ export function CalendarStats() {
     const today = appointments.filter(apt => apt.appointmentDate === todayStr).length;
     
     // This week appointments (current week: Sunday to Saturday)
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
+    // Get Orlando timezone dates for week calculation
+    const orlandoNow = new Date().toLocaleString('en-US', { 
+      timeZone: 'America/New_York'
+    });
+    const orlandoDate = new Date(orlandoNow);
+    
+    const startOfWeek = new Date(orlandoDate);
+    startOfWeek.setDate(orlandoDate.getDate() - orlandoDate.getDay());
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     
-    const startWeekStr = startOfWeek.toISOString().split('T')[0];
-    const endWeekStr = endOfWeek.toISOString().split('T')[0];
+    // Format as YYYY-MM-DD in local timezone (NOT UTC)
+    const formatLocalDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    
+    const startWeekStr = formatLocalDate(startOfWeek);
+    const endWeekStr = formatLocalDate(endOfWeek);
     
     const thisWeek = appointments.filter(apt => 
       apt.appointmentDate >= startWeekStr && apt.appointmentDate <= endWeekStr

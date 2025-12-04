@@ -65,9 +65,13 @@ export function AppointmentDetailsModal({ appointment, onClose, onUpdate }: Appo
   const vehicle = lead?.vehicle;
   const statusBadge = getStatusBadge(appointment.status);
 
-  // Format date
+  // Format date - Parse as LOCAL timezone (Orlando), NOT UTC
   const appointmentDate = appointment.appointmentDate
-    ? format(new Date(appointment.appointmentDate + 'T00:00:00'), 'MMMM dd, yyyy')
+    ? (() => {
+        const [year, month, day] = appointment.appointmentDate.split('-').map(Number);
+        const localDate = new Date(year, month - 1, day);
+        return format(localDate, 'MMMM dd, yyyy');
+      })()
     : 'N/A';
 
   // Handle status update
