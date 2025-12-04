@@ -10,6 +10,7 @@ import { useAppointments } from '@/contexts/AppointmentsContext';
 
 interface CalendarGridProps {
   onEventClick: (appointment: Appointment) => void;
+  onDayClick?: (date: string) => void; // NEW: Click on day shows all appointments
 }
 
 // Get days in month
@@ -87,7 +88,7 @@ function isToday(date: Date): boolean {
   return result;
 }
 
-export function CalendarGrid({ onEventClick }: CalendarGridProps) {
+export function CalendarGrid({ onEventClick, onDayClick }: CalendarGridProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const { appointments, loading } = useAppointments();
 
@@ -208,9 +209,9 @@ export function CalendarGrid({ onEventClick }: CalendarGridProps) {
                   `}
                   style={today ? { borderColor: '#D4AF37', borderWidth: '3px', boxShadow: '0 0 10px rgba(212, 175, 55, 0.5)' } : {}}
                   onClick={() => {
-                    // If there are appointments on this day, show the first one
-                    if (dayAppointments.length > 0) {
-                      onEventClick(dayAppointments[0]);
+                    // If there are appointments on this day, show all of them
+                    if (dayAppointments.length > 0 && onDayClick) {
+                      onDayClick(dateKey);
                     }
                   }}
                 >
@@ -245,8 +246,10 @@ export function CalendarGrid({ onEventClick }: CalendarGridProps) {
                         className="absolute bottom-1 right-1 bg-[#D4AF37] text-white text-[8px] font-bold px-1 py-0.5 rounded-full leading-none cursor-pointer hover:bg-[#b8962d]"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent parent div onClick
-                          // Show first appointment when clicking badge
-                          onEventClick(dayAppointments[0]);
+                          // Show all appointments for this day when clicking badge
+                          if (onDayClick) {
+                            onDayClick(dateKey);
+                          }
                         }}
                         title={`${dayAppointments.length} appointment${dayAppointments.length > 1 ? 's' : ''}`}
                       >

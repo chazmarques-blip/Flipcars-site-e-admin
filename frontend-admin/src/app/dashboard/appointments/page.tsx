@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { AppointmentDetailsModal } from '@/components/appointments/AppointmentDetailsModal';
+import { DayAppointmentsModal } from '@/components/appointments/DayAppointmentsModal';
 import { Appointment } from '@/lib/api/appointments.service';
-import { AppointmentsProvider } from '@/contexts/AppointmentsContext';
+import { AppointmentsProvider, useAppointments } from '@/contexts/AppointmentsContext';
 
 // 🆕 Import new mockup components
 import { CalendarStats } from '@/components/appointments/CalendarStats';
@@ -15,18 +16,43 @@ import { CalendarSidebar } from '@/components/appointments/CalendarSidebar';
 
 function AppointmentsPageContent() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const { appointments } = useAppointments();
 
   const handleEventClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
+    setSelectedDate(null); // Close day modal if open
+  };
+
+  const handleDayClick = (date: string) => {
+    setSelectedDate(date);
+    setSelectedAppointment(null); // Close appointment modal if open
   };
 
   const handleModalClose = () => {
     setSelectedAppointment(null);
   };
 
+  const handleDayModalClose = () => {
+    setSelectedDate(null);
+  };
+
   const handleUpdate = () => {
     // Modal updated - context will auto-refresh via polling
     console.log('[AppointmentsPage] Appointment updated, context will auto-sync');
+  };
+
+  const handleStatusChange = async (appointmentId: string, newStatus: any) => {
+    try {
+      console.log('[AppointmentsPage] Updating status:', appointmentId, newStatus);
+      const { appointmentsService } = await import('@/lib/api/appointments.service');
+      await appointmentsService.updateStatus(appointmentId, newStatus);
+      console.log('[AppointmentsPage] ✅ Status updated successfully');
+      // Context will auto-refresh via polling
+    } catch (error: any) {
+      console.error('[AppointmentsPage] ❌ Failed to update status:', error);
+      alert(`Failed to update status: ${error.response?.data?.message || error.message}`);
+    }
   };
 
   const handleFilterChange = (filters: any) => {
@@ -75,6 +101,7 @@ function AppointmentsPageContent() {
           <CalendarSidebar 
             type="overdue"
             onEventClick={handleEventClick}
+            onStatusChange={handleStatusChange}
           />
         </div>
 
@@ -82,6 +109,7 @@ function AppointmentsPageContent() {
         <div className="overflow-y-auto">
           <CalendarGrid 
             onEventClick={handleEventClick}
+            onDayClick={handleDayClick}
           />
         </div>
 
@@ -90,11 +118,21 @@ function AppointmentsPageContent() {
           <CalendarSidebar 
             type="upcoming"
             onEventClick={handleEventClick}
+            onStatusChange={handleStatusChange}
           />
         </div>
       </div>
 
-      {/* Details Modal */}
+      {/* Day Appointments Modal - Shows all appointments for selected day */}
+      <DayAppointmentsModal
+        date={selectedDate}
+        appointments={appointments.filter(apt => apt.appointmentDate === selectedDate)}
+        onClose={handleDayModalClose}
+        onAppointmentClick={handleEventClick}
+        onStatusChange={handleStatusChange}
+      />
+
+      {/* Appointment Details Modal - Shows single appointment details */}
       <AppointmentDetailsModal
         appointment={selectedAppointment}
         onClose={handleModalClose}

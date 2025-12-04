@@ -6,6 +6,7 @@ import { Appointment, AppointmentStatus } from '@/lib/api/appointments.service';
 interface EventBadgeProps {
   appointment: Appointment;
   onClick?: () => void;
+  onStatusChange?: (appointmentId: string, newStatus: AppointmentStatus) => Promise<void>;
   className?: string;
 }
 
@@ -116,7 +117,7 @@ const getBadgeText = (appointment: Appointment): { text: string; color: string }
   return null;
 };
 
-export function EventBadge({ appointment, onClick, className = '' }: EventBadgeProps) {
+export function EventBadge({ appointment, onClick, onStatusChange, className = '' }: EventBadgeProps) {
   const { lead, appointmentTimeSlot, status } = appointment;
   
   // Build vehicle info string
@@ -221,9 +222,20 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
       {/* Action buttons */}
       <div className="flex items-center gap-[4px] px-[6px] pb-[6px]">
         <button
-          onClick={(e) => {
+          onClick={async (e) => {
             e.stopPropagation();
-            onClick?.();
+            
+            // If onStatusChange is provided and status can be changed, update status
+            if (onStatusChange && status === 'scheduled') {
+              // Confirm action: SCHEDULED → CONFIRMED
+              await onStatusChange(appointment.id, AppointmentStatus.CONFIRMED);
+            } else if (onStatusChange && status === 'confirmed') {
+              // Check-in action: could open modal or mark as in_progress
+              onClick?.();
+            } else {
+              // For other statuses, just open the modal
+              onClick?.();
+            }
           }}
           className={`flex-1 px-[8px] py-[4px] rounded-[4px] text-[10px] font-semibold ${actionButton.color} transition-all flex items-center justify-center gap-[4px] leading-none`}
         >

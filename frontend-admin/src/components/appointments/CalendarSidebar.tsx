@@ -8,10 +8,11 @@ import { useAppointments } from '@/contexts/AppointmentsContext';
 
 interface CalendarSidebarProps {
   onEventClick: (appointment: Appointment) => void;
+  onStatusChange?: (appointmentId: string, newStatus: any) => Promise<void>;
   type?: 'overdue' | 'upcoming';
 }
 
-export function CalendarSidebar({ onEventClick, type = 'overdue' }: CalendarSidebarProps) {
+export function CalendarSidebar({ onEventClick, onStatusChange, type = 'overdue' }: CalendarSidebarProps) {
   const { appointments, loading } = useAppointments();
 
   // Get real current date in Orlando timezone (America/New_York)
@@ -139,6 +140,7 @@ export function CalendarSidebar({ onEventClick, type = 'overdue' }: CalendarSide
                   key={apt.id}
                   appointment={apt}
                   onClick={() => onEventClick(apt)}
+                  onStatusChange={onStatusChange}
                 />
               ))}
             </div>
@@ -175,6 +177,7 @@ export function CalendarSidebar({ onEventClick, type = 'overdue' }: CalendarSide
                 key={apt.id}
                 appointment={apt}
                 onClick={() => onEventClick(apt)}
+                onStatusChange={onStatusChange}
               />
             ))}
             
