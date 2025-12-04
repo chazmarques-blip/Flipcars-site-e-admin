@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Appointment, AppointmentStatus } from '@/lib/api/appointments.service';
-import { Droplet, Disc, Zap, Wind, Settings, Wrench } from 'lucide-react';
 
 interface EventBadgeProps {
   appointment: Appointment;
@@ -23,10 +22,27 @@ const getStatusBg = (status: AppointmentStatus): string => {
   return colorMap[status] || 'bg-white';
 };
 
-// Get service icon based on selected services
+// Service mapping (EXACTLY matching public site)
+// From: frontend-public/src/components/estimate/Step2bWarrantyDocs.tsx (lines 13-25)
+// These are the EXACT WARRANTY_CATEGORIES from the public site
+const SERVICE_MAP = {
+  oil: { icon: '🛢️', label: 'Oil Change & FREE Checkup*' },
+  engine: { icon: '🔧', label: 'Engine' },
+  transmission: { icon: '⚙️', label: 'Transmission' },
+  electrical: { icon: '⚡', label: 'Electrical System' },
+  cooling: { icon: '❄️', label: 'Cooling System' },
+  fuel: { icon: '⛽', label: 'Fuel System' },
+  steering: { icon: '🎯', label: 'Steering' },
+  suspension: { icon: '🛞', label: 'Suspension' },
+  brakes: { icon: '🛑', label: 'Brakes' },
+  ac: { icon: '🌬️', label: 'A/C System' },
+  other: { icon: '📝', label: 'Other (describe below)' },
+} as const;
+
+// Get service icon based on selected services (matching public site)
 const getServiceIcon = (appointment: Appointment): React.ReactNode => {
   const services = appointment.lead?.selectedServices || [];
-  const firstService = services[0]?.toLowerCase() || '';
+  const firstService = services[0] as keyof typeof SERVICE_MAP;
   
   // Check if overdue (past date)
   const aptDate = new Date(appointment.appointmentDate);
@@ -43,25 +59,19 @@ const getServiceIcon = (appointment: Appointment): React.ReactNode => {
     return '💰'; // Payment icon (keep emoji for payment)
   }
   
-  // Map services to icons
-  if (firstService.includes('oil')) {
-    return <Droplet className="w-5 h-5 text-amber-600" />;
-  }
-  if (firstService.includes('brake')) {
-    return <Disc className="w-5 h-5 text-red-600" />;
-  }
-  if (firstService.includes('battery')) {
-    return <Zap className="w-5 h-5 text-yellow-600" />;
-  }
-  if (firstService.includes('air') || firstService.includes('ac') || firstService.includes('conditioning')) {
-    return <Wind className="w-5 h-5 text-blue-600" />;
-  }
-  if (firstService.includes('engine') || firstService.includes('diagnostic')) {
-    return <Settings className="w-5 h-5 text-gray-700" />;
+  // Return emoji from SERVICE_MAP
+  if (firstService && SERVICE_MAP[firstService]) {
+    return SERVICE_MAP[firstService].icon;
   }
   
   // Default: General service wrench
-  return <Wrench className="w-5 h-5 text-gray-600" />;
+  return '🔧';
+};
+
+// Get service display name (matching public site)
+const getServiceDisplayName = (serviceId: string): string => {
+  const service = SERVICE_MAP[serviceId as keyof typeof SERVICE_MAP];
+  return service?.label || serviceId.charAt(0).toUpperCase() + serviceId.slice(1);
 };
 
 // Get status button
@@ -144,8 +154,8 @@ export function EventBadge({ appointment, onClick, className = '' }: EventBadgeP
       <div className="p-[6px]">
         {/* Header with icon, name, and badge */}
         <div className="flex items-start gap-[6px] mb-[4px]">
-          {/* Icon (service or payment) */}
-          <div className="flex-shrink-0">
+          {/* Icon (service or payment) - Emoji */}
+          <div className="text-[20px] leading-none flex-shrink-0">
             {icon}
           </div>
           
