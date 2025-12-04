@@ -1,0 +1,102 @@
+# 🚀 Variáveis Railway para SendGrid - COPIAR E COLAR
+
+## ⚠️ IMPORTANTE: Você precisa PRIMEIRO configurar SendGrid
+
+### PASSO 1: Criar Single Sender no SendGrid
+1. Abrir: https://app.sendgrid.com/settings/sender_auth/senders
+2. Clicar: "Create New Sender"
+3. Preencher:
+   - From Name: FlipCars Auto Repair
+   - From Email: auto@flipcars.us
+   - Reply To: auto@flipcars.us
+   - Address: 5200 Old Winter Garden Rd, Suite 110A, Orlando, FL 32811
+4. Verificar o email que SendGrid enviar para auto@flipcars.us
+
+### PASSO 2: Criar API Key no SendGrid
+1. Abrir: https://app.sendgrid.com/settings/api_keys
+2. Clicar: "Create API Key"
+3. Nome: FlipCars Backend Railway
+4. Permissions: Full Access
+5. COPIAR A API KEY (começa com SG.)
+
+### PASSO 3: Atualizar Railway Variables
+
+No Railway, SUBSTITUIR estas variáveis:
+
+## 🔄 DELETAR (variáveis antigas do Gmail):
+❌ SMTP_HOST (antiga)
+❌ SMTP_PORT (antiga)
+❌ SMTP_SECURE (antiga)
+❌ SMTP_USER (antiga)
+❌ SMTP_PASS (antiga)
+
+## ✅ ADICIONAR (novas variáveis SendGrid):
+
+SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=apikey
+SMTP_PASS=SG.sua_api_key_aqui_copiada_do_passo_2
+SMTP_FROM="FlipCars Auto Repair" <auto@flipcars.us>
+
+⚠️ IMPORTANTE:
+- SMTP_USER deve ser LITERALMENTE "apikey" (não trocar por outra coisa)
+- SMTP_PASS deve ser sua SendGrid API Key que começa com "SG."
+- SMTP_FROM pode manter como está: "FlipCars Auto Repair" <auto@flipcars.us>
+
+## 📝 PASSO A PASSO NO RAILWAY:
+
+### Opção A: RAW Editor (MAIS RÁPIDO)
+1. Railway Dashboard → FlipCars Backend → backend → Variables
+2. Clicar: "RAW Editor" (canto superior direito)
+3. Procurar por SMTP_HOST, SMTP_PORT, etc
+4. SUBSTITUIR todas as linhas SMTP antigas por:
+
+SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=apikey
+SMTP_PASS=SG.sua_api_key_aqui
+SMTP_FROM="FlipCars Auto Repair" <auto@flipcars.us>
+
+5. Clicar: "Update Variables"
+6. Railway vai fazer redeploy automático (2-3 min)
+
+### Opção B: Editar uma por uma
+1. Clicar no ícone de lápis ao lado de SMTP_HOST
+2. Mudar de "smtp.gmail.com" para "smtp.sendgrid.net"
+3. Clicar "Update"
+4. Repetir para cada variável:
+   - SMTP_PORT: 587
+   - SMTP_SECURE: false
+   - SMTP_USER: apikey
+   - SMTP_PASS: SG.sua_api_key_aqui
+   - SMTP_FROM: "FlipCars Auto Repair" <auto@flipcars.us>
+
+## ⏱️ TEMPO ESTIMADO:
+- Criar Single Sender: 2 min
+- Verificar email: 1 min
+- Criar API Key: 1 min
+- Atualizar Railway: 2 min
+- Aguardar deploy: 2-3 min
+- Testar: 1 min
+
+TOTAL: ~10 minutos
+
+## ✅ RESULTADO ESPERADO:
+Após deploy, emails vão funcionar e chegar em < 10 segundos!
+
+## 🧪 COMO TESTAR:
+1. Aguardar deploy finalizar (Railway → Deployments)
+2. Abrir: https://flipcars.us
+3. Preencher formulário Free Estimate com SEU email
+4. Submeter
+5. Verificar email chegou (checar spam também)
+
+## 🔗 LINKS DIRETOS:
+- SendGrid Sender Auth: https://app.sendgrid.com/settings/sender_auth/senders
+- SendGrid API Keys: https://app.sendgrid.com/settings/api_keys
+- Railway Variables: https://railway.app/dashboard
+
+## 📞 SE TIVER DÚVIDAS:
+Leia: SENDGRID_5_MINUTOS.md (guia completo com screenshots)
