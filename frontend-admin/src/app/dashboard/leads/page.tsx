@@ -281,6 +281,10 @@ export default function LeadsPage() {
       label: 'Preferred Contact',
       render: (lead) => {
         const prefs = lead.contactPreferences;
+        
+        // DEBUG: Log contact preferences
+        console.log('[LeadsPage] Lead ID:', lead.id?.substring(0, 8), 'contactPreferences:', prefs);
+        
         if (!prefs || (!prefs.phoneCall && !prefs.whatsapp && !prefs.textMessage)) {
           return <span className="text-xs text-gray-400">—</span>;
         }
