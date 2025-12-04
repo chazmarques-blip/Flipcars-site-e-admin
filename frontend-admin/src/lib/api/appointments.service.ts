@@ -52,6 +52,7 @@ export interface Appointment {
     warrantyCompany?: string;
     selectedServices?: string[]; // ["oil", "engine", "brakes"]
     symptomsDescription?: string;
+    notes?: string; // Customer notes from form (includes additionalNotes)
     // Legacy vehicle object (for backward compatibility)
     vehicle?: {
       year?: string;

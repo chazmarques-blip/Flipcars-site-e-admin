@@ -235,6 +235,21 @@ export function AppointmentDetailsModal({ appointment, onClose, onUpdate }: Appo
               )}
             </div>
 
+            {/* Customer Notes from Form - NEW SECTION */}
+            {lead?.notes && (
+              <div className="bg-blue-50 border border-blue-200 rounded p-2.5 space-y-2">
+                <h3 className="text-[9px] font-bold text-[#1a1a1a] uppercase tracking-wider flex items-center gap-1">
+                  <FileText className="w-3 h-3 text-blue-600" />
+                  Customer Notes
+                </h3>
+                <div className="bg-white border border-blue-200 rounded p-2">
+                  <p className="text-[10px] text-gray-700 whitespace-pre-wrap">
+                    {lead.notes}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Vehicle Information - COMPACT */}
             {vehicle && (vehicle.year || vehicle.make || vehicle.model || vehicle.vin) && (
               <div className="bg-[#fffbf0] border border-[#D4AF37]/30 rounded p-2.5 space-y-2">
