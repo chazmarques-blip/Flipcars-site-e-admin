@@ -239,44 +239,105 @@ export default function LeadDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Back Button */}
-          <button
-            onClick={() => router.push('/dashboard/leads')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Leads
-          </button>
+      {/* Compact Header - All Info in One Bar */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            {/* Back Button */}
+            <button
+              onClick={() => router.push('/dashboard/leads')}
+              className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="font-medium">Back</span>
+            </button>
 
-          {/* Lead Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {lead.name}
-                </h1>
-                <LeadStatusBadge status={lead.status} />
-                <span
-                  className={`
-                    px-3 py-1 text-sm font-medium rounded-full
-                    ${
-                      lead.priority === LeadPriority.HIGH
-                        ? 'bg-red-100 text-red-800'
-                        : lead.priority === LeadPriority.MEDIUM
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-green-100 text-green-800'
-                    }
-                  `}
-                >
-                  {lead.priority} Priority
-                </span>
-              </div>
-              <p className="text-gray-600">
-                Reference: <span className="font-mono">{lead.referenceNumber}</span>
-              </p>
+            {/* Divider */}
+            <div className="h-6 w-px bg-gray-300"></div>
+
+            {/* Name + Badges */}
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-bold text-gray-900">
+                {lead.name}
+              </h1>
+              <LeadStatusBadge status={lead.status} />
+              <span
+                className={`
+                  px-2 py-0.5 text-xs font-medium rounded-full
+                  ${
+                    lead.priority === LeadPriority.HIGH
+                      ? 'bg-red-100 text-red-800'
+                      : lead.priority === LeadPriority.MEDIUM
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-green-100 text-green-800'
+                  }
+                `}
+              >
+                {lead.priority}
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-gray-300"></div>
+
+            {/* Email */}
+            <div className="flex items-center gap-1.5 text-gray-700">
+              <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <a
+                href={`mailto:${lead.email}`}
+                className="text-blue-600 hover:underline truncate max-w-[180px]"
+                title={lead.email}
+              >
+                {lead.email}
+              </a>
+            </div>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-gray-300"></div>
+
+            {/* Phone */}
+            <div className="flex items-center gap-1.5 text-gray-700">
+              <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <a
+                href={`tel:${lead.phone}`}
+                className="text-blue-600 hover:underline font-medium"
+              >
+                {lead.phone}
+              </a>
+            </div>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-gray-300"></div>
+
+            {/* Vehicle */}
+            <div className="flex items-center gap-1.5 text-gray-700">
+              <Car className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <span className="font-medium">
+                {lead.vehicleMake} {lead.vehicleModel}
+              </span>
+              <span className="text-gray-500">
+                {lead.vehicleYear}
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-gray-300"></div>
+
+            {/* Created Date */}
+            <div className="flex items-center gap-1.5 text-gray-700">
+              <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <span className="text-gray-600">
+                {format(new Date(lead.createdAt), 'MMM d, yyyy')}
+              </span>
+            </div>
+
+            {/* Spacer to push ref to right */}
+            <div className="flex-1"></div>
+
+            {/* Reference Number */}
+            <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-3 py-1 rounded-md border border-gray-200">
+              <span className="text-xs font-medium">Ref:</span>
+              <span className="font-mono text-xs font-semibold">{lead.referenceNumber}</span>
             </div>
           </div>
         </div>
@@ -287,111 +348,60 @@ export default function LeadDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Lead Info & Timeline */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Contact Information */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Contact Information
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <a
-                      href={`mailto:${lead.email}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {lead.email}
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Phone</p>
-                    <a
-                      href={`tel:${lead.phone}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {lead.phone}
-                    </a>
-                  </div>
-                </div>
-                {lead.city && lead.state && (
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-gray-400" />
+            {/* Additional Details Card (if needed) */}
+            {(lead.vehicleMileage || lead.vehicleCondition || lead.estimatedValue || lead.additionalNotes || (lead.city && lead.state)) && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  Additional Details
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {lead.city && lead.state && (
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Location</p>
+                        <p className="text-gray-900 font-medium">
+                          {lead.city}, {lead.state} {lead.zipCode}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {lead.vehicleMileage && (
                     <div>
-                      <p className="text-sm text-gray-500">Location</p>
-                      <p className="text-gray-900">
-                        {lead.city}, {lead.state} {lead.zipCode}
+                      <p className="text-sm text-gray-500">Mileage</p>
+                      <p className="text-gray-900 font-semibold">
+                        {lead.vehicleMileage.toLocaleString()} miles
                       </p>
                     </div>
-                  </div>
-                )}
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Created</p>
-                    <p className="text-gray-900">
-                      {format(new Date(lead.createdAt), 'MMM d, yyyy')}
-                    </p>
-                  </div>
+                  )}
+                  {lead.vehicleCondition && (
+                    <div>
+                      <p className="text-sm text-gray-500">Condition</p>
+                      <p className="text-gray-900 font-semibold capitalize">
+                        {lead.vehicleCondition}
+                      </p>
+                    </div>
+                  )}
+                  {lead.estimatedValue && (
+                    <div>
+                      <p className="text-sm text-gray-500 flex items-center gap-1">
+                        <DollarSign className="w-4 h-4" />
+                        Estimated Value
+                      </p>
+                      <p className="text-gray-900 font-bold text-xl">
+                        ${lead.estimatedValue.toLocaleString()}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
-
-            {/* Vehicle Information */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Car className="w-5 h-5" />
-                Vehicle Information
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Make & Model</p>
-                  <p className="text-gray-900 font-semibold">
-                    {lead.vehicleMake} {lead.vehicleModel}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Year</p>
-                  <p className="text-gray-900 font-semibold">{lead.vehicleYear}</p>
-                </div>
-                {lead.vehicleMileage && (
-                  <div>
-                    <p className="text-sm text-gray-500">Mileage</p>
-                    <p className="text-gray-900 font-semibold">
-                      {lead.vehicleMileage.toLocaleString()} miles
-                    </p>
-                  </div>
-                )}
-                {lead.vehicleCondition && (
-                  <div>
-                    <p className="text-sm text-gray-500">Condition</p>
-                    <p className="text-gray-900 font-semibold capitalize">
-                      {lead.vehicleCondition}
-                    </p>
-                  </div>
-                )}
-                {lead.estimatedValue && (
-                  <div className="md:col-span-2">
-                    <p className="text-sm text-gray-500 flex items-center gap-1">
-                      <DollarSign className="w-4 h-4" />
-                      Estimated Value
-                    </p>
-                    <p className="text-gray-900 font-bold text-xl">
-                      ${lead.estimatedValue.toLocaleString()}
-                    </p>
+                {lead.additionalNotes && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-500 mb-2">Additional Notes</p>
+                    <p className="text-gray-700">{lead.additionalNotes}</p>
                   </div>
                 )}
               </div>
-              {lead.additionalNotes && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <p className="text-sm text-gray-500 mb-2">Additional Notes</p>
-                  <p className="text-gray-700">{lead.additionalNotes}</p>
-                </div>
-              )}
-            </div>
+            )}
 
             {/* Damage Photos Gallery - Always show, even if empty */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
