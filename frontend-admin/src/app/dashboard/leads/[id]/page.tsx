@@ -420,27 +420,30 @@ export default function LeadDetailPage() {
             />
           </div>
 
-          {/* Notes Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-            <LeadNotes
-              leadId={leadId}
-              notes={notes}
-              onAddNote={handleAddNote}
-            />
-          </div>
+          {/* 3 Column Layout: Notes | Activity Timeline | Assignment */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {/* Notes Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+              <LeadNotes
+                leadId={leadId}
+                notes={notes}
+                onAddNote={handleAddNote}
+              />
+            </div>
 
-          {/* Timeline Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-            <LeadTimeline activities={activities} />
-          </div>
+            {/* Timeline Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+              <LeadTimeline activities={activities} />
+            </div>
 
-          {/* Assignment Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-            <LeadAssignment
-              leadId={leadId}
-              currentAssigneeId={lead.assignedToId || undefined}
-              onAssign={handleAssign}
-            />
+            {/* Assignment Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+              <LeadAssignment
+                leadId={leadId}
+                currentAssigneeId={lead.assignedToId || undefined}
+                onAssign={handleAssign}
+              />
+            </div>
           </div>
         </div>
       </div>

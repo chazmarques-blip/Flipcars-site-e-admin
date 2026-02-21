@@ -92,32 +92,32 @@ export const LeadAssignment: React.FC<LeadAssignmentProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Users className="w-5 h-5 text-gray-400" />
-        <h3 className="text-lg font-semibold text-gray-900">
-          Lead Assignment
+        <Users className="w-4 h-4 text-gray-400" />
+        <h3 className="text-sm font-semibold text-gray-900">
+          Assignment
         </h3>
       </div>
 
       {/* Current Assignee */}
       {currentAssignee && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-xs">
               {currentAssignee.name.charAt(0)}
             </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <p className="font-semibold text-gray-900">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="font-semibold text-gray-900 text-xs truncate">
                   {currentAssignee.name}
                 </p>
-                <UserCheck className="w-4 h-4 text-blue-600" />
+                <UserCheck className="w-3 h-3 text-blue-600 flex-shrink-0" />
               </div>
-              <p className="text-sm text-gray-600">{currentAssignee.role}</p>
-              <p className="text-xs text-gray-500 mt-0.5">
-                {currentAssignee.activeLeads} active leads
+              <p className="text-[10px] text-gray-600 truncate">{currentAssignee.role}</p>
+              <p className="text-[10px] text-gray-500">
+                {currentAssignee.activeLeads} active
               </p>
             </div>
           </div>
@@ -126,10 +126,10 @@ export const LeadAssignment: React.FC<LeadAssignmentProps> = ({
 
       {/* Staff List */}
       <div>
-        <h4 className="text-sm font-semibold text-gray-700 mb-3">
+        <h4 className="text-xs font-semibold text-gray-700 mb-1.5">
           {currentAssignee ? 'Reassign to:' : 'Assign to:'}
         </h4>
-        <div className="space-y-2 max-h-96 overflow-y-auto">
+        <div className="space-y-1.5 max-h-64 overflow-y-auto">
           {MOCK_STAFF.map((staff) => {
             const isSelected = staff.id === selectedStaffId;
             const isCurrent = staff.id === currentAssigneeId;
@@ -140,7 +140,7 @@ export const LeadAssignment: React.FC<LeadAssignmentProps> = ({
                 onClick={() => handleAssign(staff.id)}
                 disabled={isAssigning || isCurrent}
                 className={`
-                  w-full flex items-center gap-3 p-3 rounded-lg border transition-all
+                  w-full flex items-center gap-2 p-2 rounded-lg border transition-all
                   ${
                     isSelected
                       ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-offset-1'
@@ -153,7 +153,7 @@ export const LeadAssignment: React.FC<LeadAssignmentProps> = ({
                 {/* Avatar */}
                 <div
                   className={`
-                  w-10 h-10 rounded-full flex items-center justify-center font-semibold text-white
+                  w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white text-xs flex-shrink-0
                   ${
                     isSelected
                       ? 'bg-blue-600'
@@ -165,18 +165,18 @@ export const LeadAssignment: React.FC<LeadAssignmentProps> = ({
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 text-left">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-900">{staff.name}</p>
+                <div className="flex-1 text-left min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-semibold text-gray-900 text-xs truncate">{staff.name}</p>
                     {isCurrent && (
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                      <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-medium rounded flex-shrink-0">
                         Current
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600">{staff.role}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {staff.activeLeads} active leads
+                  <p className="text-[10px] text-gray-600 truncate">{staff.role}</p>
+                  <p className="text-[10px] text-gray-500">
+                    {staff.activeLeads} active
                   </p>
                 </div>
 
