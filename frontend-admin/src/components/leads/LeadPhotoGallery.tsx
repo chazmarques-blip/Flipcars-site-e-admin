@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Image as ImageIcon, Download, Upload, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Image as ImageIcon, Download, Upload, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
 
 interface LeadPhotoGalleryProps {
   photos: string[];
@@ -20,11 +20,10 @@ export function LeadPhotoGallery({
   onUpload,
   readOnly = false 
 }: LeadPhotoGalleryProps) {
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
+  const [startIndex, setStartIndex] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
-  const [zoom, setZoom] = useState<number>(1);
+  const [zoomLevels, setZoomLevels] = useState<{[key: number]: number}>({});
   const [photoOrientations, setPhotoOrientations] = useState<PhotoOrientation>({});
-  const imageRef = useRef<HTMLImageElement>(null);
 
   // Detect photo orientation
   useEffect(() => {
@@ -94,64 +93,72 @@ export function LeadPhotoGallery({
     }
   };
 
+  // Determine how many photos to show based on orientation
+  const getPhotosPerView = () => {
+    const firstOrientation = photoOrientations[startIndex];
+    return firstOrientation === 'portrait' ? 3 : 2;
+  };
+
+  const photosPerView = getPhotosPerView();
+  const visiblePhotos = photos.slice(startIndex, startIndex + photosPerView);
+  const canGoPrevious = startIndex > 0;
+  const canGoNext = startIndex + photosPerView < photos.length;
+
   const goToNext = () => {
-    if (selectedPhotoIndex < photos.length - 1) {
-      setSelectedPhotoIndex(selectedPhotoIndex + 1);
-      setZoom(1);
+    if (canGoNext) {
+      setStartIndex(prev => prev + photosPerView);
+      setZoomLevels({}); // Reset all zooms
     }
   };
 
   const goToPrevious = () => {
-    if (selectedPhotoIndex > 0) {
-      setSelectedPhotoIndex(selectedPhotoIndex - 1);
-      setZoom(1);
+    if (canGoPrevious) {
+      setStartIndex(prev => Math.max(0, prev - photosPerView));
+      setZoomLevels({}); // Reset all zooms
     }
   };
 
-  const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.25, 3));
+  const handleZoomIn = (photoIndex: number) => {
+    setZoomLevels(prev => ({
+      ...prev,
+      [photoIndex]: Math.min((prev[photoIndex] || 1) + 0.25, 3)
+    }));
   };
 
-  const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.25, 0.5));
+  const handleZoomOut = (photoIndex: number) => {
+    setZoomLevels(prev => ({
+      ...prev,
+      [photoIndex]: Math.max((prev[photoIndex] || 1) - 0.25, 0.5)
+    }));
   };
 
-  const resetZoom = () => {
-    setZoom(1);
+  const resetZoom = (photoIndex: number) => {
+    setZoomLevels(prev => ({
+      ...prev,
+      [photoIndex]: 1
+    }));
   };
 
-  // Keyboard navigation + zoom
+  const getZoom = (photoIndex: number) => zoomLevels[photoIndex] || 1;
+
+  // Keyboard navigation
   useEffect(() => {
     if (photos.length === 0) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') goToNext();
-      if (e.key === 'ArrowLeft') goToPrevious();
-      if (e.key === '+' || e.key === '=') handleZoomIn();
-      if (e.key === '-' || e.key === '_') handleZoomOut();
-      if (e.key === '0') resetZoom();
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToNext();
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPrevious();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedPhotoIndex, photos.length]);
-
-  // Determine layout based on first 3 photos
-  const getVisiblePhotos = () => {
-    if (photos.length === 0) return [];
-    
-    const firstOrientation = photoOrientations[0];
-    
-    // If first photo is portrait, show up to 3
-    if (firstOrientation === 'portrait') {
-      return photos.slice(0, Math.min(3, photos.length));
-    }
-    
-    // If landscape, show up to 2
-    return photos.slice(0, Math.min(2, photos.length));
-  };
-
-  const visiblePhotos = getVisiblePhotos();
+  }, [startIndex, photos.length, photosPerView, canGoNext, canGoPrevious]);
 
   return (
     <div className="space-y-4">
@@ -201,122 +208,156 @@ export function LeadPhotoGallery({
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Main Photo Viewer - Multiple Photos Side by Side */}
-          <div className="relative bg-gray-900 rounded-lg overflow-hidden" style={{ height: '500px' }}>
-            {/* Photos Grid */}
-            <div 
-              className="absolute inset-0 p-4 flex gap-2 items-center justify-center overflow-auto"
-              style={{ cursor: zoom > 1 ? 'move' : 'default' }}
-            >
-              {visiblePhotos.map((photoUrl, idx) => (
-                <div 
-                  key={idx}
-                  className="relative flex items-center justify-center"
-                  style={{ 
-                    flex: photoOrientations[idx] === 'portrait' ? '0 0 auto' : '1 1 0',
-                    maxWidth: photoOrientations[idx] === 'portrait' ? '30%' : '48%',
-                    height: '100%'
-                  }}
-                >
-                  <img
-                    ref={idx === 0 ? imageRef : null}
-                    src={photoUrl}
-                    alt={`Photo ${idx + 1}`}
-                    className="max-w-full max-h-full object-contain transition-transform duration-200"
-                    style={{ 
-                      transform: `scale(${zoom})`,
-                      transformOrigin: 'center'
-                    }}
-                  />
-                  {/* Photo Number Badge */}
-                  <div className="absolute top-2 left-2 px-2 py-1 bg-black bg-opacity-70 text-white text-xs font-medium rounded">
-                    #{idx + 1}
+          {/* Main Photo Viewer - Fixed Grid with Individual Zoom */}
+          <div className="relative bg-[#1a1d2e] rounded-lg p-4" style={{ height: '500px' }}>
+            {/* Photos Grid - Each photo in its own fixed container */}
+            <div className="h-full flex gap-3">
+              {visiblePhotos.map((photoUrl, idx) => {
+                const absoluteIndex = startIndex + idx;
+                const currentZoom = getZoom(absoluteIndex);
+                
+                return (
+                  <div 
+                    key={absoluteIndex}
+                    className="relative flex-1 bg-[#0f1117] rounded-lg border border-gray-700 overflow-hidden"
+                    style={{ position: 'relative' }}
+                  >
+                    {/* Scrollable container for zoomed image */}
+                    <div 
+                      className="absolute inset-0 overflow-auto"
+                      style={{
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: '#4a5568 transparent'
+                      }}
+                    >
+                      <div 
+                        className="w-full h-full flex items-center justify-center p-2"
+                        style={{
+                          minWidth: '100%',
+                          minHeight: '100%'
+                        }}
+                      >
+                        <img
+                          src={photoUrl}
+                          alt={`Photo ${absoluteIndex + 1}`}
+                          className="transition-transform duration-200"
+                          style={{ 
+                            transform: `scale(${currentZoom})`,
+                            transformOrigin: 'center center',
+                            maxWidth: currentZoom === 1 ? '100%' : 'none',
+                            maxHeight: currentZoom === 1 ? '100%' : 'none',
+                            width: currentZoom > 1 ? `${currentZoom * 100}%` : 'auto',
+                            height: currentZoom > 1 ? `${currentZoom * 100}%` : 'auto',
+                            objectFit: 'contain',
+                            cursor: currentZoom > 1 ? 'grab' : 'default'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Photo Number Badge */}
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-black bg-opacity-80 text-white text-xs font-semibold rounded z-10 border border-gray-700">
+                      #{absoluteIndex + 1}
+                    </div>
+
+                    {/* Individual Zoom Controls */}
+                    <div className="absolute top-2 right-2 flex items-center gap-1 bg-black bg-opacity-80 rounded-lg p-1.5 z-10 border border-gray-700">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleZoomOut(absoluteIndex);
+                        }}
+                        disabled={currentZoom <= 0.5}
+                        className="p-1.5 hover:bg-gold hover:text-black rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
+                        title="Zoom Out (-)"
+                      >
+                        <ZoomOut className="w-4 h-4" />
+                      </button>
+                      
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          resetZoom(absoluteIndex);
+                        }}
+                        className="px-2 py-1 hover:bg-gold hover:text-black rounded text-white text-xs font-semibold min-w-[45px] text-center transition-all"
+                        title="Reset Zoom (Click)"
+                      >
+                        {Math.round(currentZoom * 100)}%
+                      </button>
+                      
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleZoomIn(absoluteIndex);
+                        }}
+                        disabled={currentZoom >= 3}
+                        className="p-1.5 hover:bg-gold hover:text-black rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
+                        title="Zoom In (+)"
+                      >
+                        <ZoomIn className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Zoom Hint - Only at 100% */}
+                    {currentZoom === 1 && (
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-black bg-opacity-70 text-white text-xs rounded-lg pointer-events-none border border-gray-600">
+                        🔍 Click + to zoom
+                      </div>
+                    )}
+
+                    {/* Scrollable Hint - When zoomed */}
+                    {currentZoom > 1 && (
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gold bg-opacity-90 text-black text-xs font-medium rounded-lg pointer-events-none">
+                        Scroll to move
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Navigation Arrows - Only if more than visible */}
-            {photos.length > visiblePhotos.length && (
-              <>
-                {selectedPhotoIndex > 0 && (
-                  <button
-                    onClick={goToPrevious}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full transition-all z-10"
-                    title="Previous (←)"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white" />
-                  </button>
-                )}
-
-                {selectedPhotoIndex + visiblePhotos.length < photos.length && (
-                  <button
-                    onClick={goToNext}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full transition-all z-10"
-                    title="Next (→)"
-                  >
-                    <ChevronRight className="w-6 h-6 text-white" />
-                  </button>
-                )}
-              </>
+            {/* Navigation Arrows - Outside the photo grid */}
+            {canGoPrevious && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  goToPrevious();
+                }}
+                className="absolute left-1 top-1/2 -translate-y-1/2 p-2.5 bg-black bg-opacity-90 hover:bg-gold hover:text-black rounded-full transition-all z-30 shadow-xl border-2 border-gray-700"
+                title="Previous Photos (← Arrow Key)"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
             )}
 
-            {/* Top Bar - Counter, Zoom, Download */}
-            <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-              <div className="px-3 py-1.5 bg-black bg-opacity-60 text-white text-sm font-medium rounded-lg">
-                {visiblePhotos.length > 1 
-                  ? `Photos ${selectedPhotoIndex + 1}-${selectedPhotoIndex + visiblePhotos.length} of ${photos.length}`
-                  : `Photo ${selectedPhotoIndex + 1} of ${photos.length}`
-                }
-              </div>
-              
-              <div className="flex items-center gap-2">
-                {/* Zoom Controls */}
-                <div className="flex items-center gap-1 bg-black bg-opacity-60 rounded-lg p-1">
-                  <button
-                    onClick={handleZoomOut}
-                    disabled={zoom <= 0.5}
-                    className="p-1.5 hover:bg-white hover:bg-opacity-10 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    title="Zoom Out (-)"
-                  >
-                    <ZoomOut className="w-4 h-4 text-white" />
-                  </button>
-                  
-                  <button
-                    onClick={resetZoom}
-                    className="px-2 py-1 hover:bg-white hover:bg-opacity-10 rounded text-white text-xs font-medium transition-colors"
-                    title="Reset Zoom (0)"
-                  >
-                    {Math.round(zoom * 100)}%
-                  </button>
-                  
-                  <button
-                    onClick={handleZoomIn}
-                    disabled={zoom >= 3}
-                    className="p-1.5 hover:bg-white hover:bg-opacity-10 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    title="Zoom In (+)"
-                  >
-                    <ZoomIn className="w-4 h-4 text-white" />
-                  </button>
-                </div>
+            {canGoNext && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  goToNext();
+                }}
+                className="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 bg-black bg-opacity-90 hover:bg-gold hover:text-black rounded-full transition-all z-30 shadow-xl border-2 border-gray-700"
+                title="Next Photos (→ Arrow Key)"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+            )}
 
-                {/* Download */}
-                <button
-                  onClick={() => handleDownload(photos[selectedPhotoIndex])}
-                  className="p-2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white rounded-lg transition-colors"
-                  title="Download"
-                >
-                  <Download className="w-5 h-5" />
-                </button>
-              </div>
+            {/* Photo Counter */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-2 bg-black bg-opacity-90 text-white text-sm font-semibold rounded-lg z-20 border border-gray-700">
+              Photos {startIndex + 1}–{Math.min(startIndex + photosPerView, photos.length)} of {photos.length}
             </div>
 
-            {/* Zoom Hint */}
-            {zoom === 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-black bg-opacity-40 text-white text-xs rounded-lg pointer-events-none">
-                Use +/- keys or buttons to zoom
-              </div>
-            )}
+            {/* Download Button */}
+            <button
+              onClick={() => handleDownload(photos[startIndex])}
+              className="absolute bottom-3 right-3 p-2.5 bg-black bg-opacity-90 hover:bg-gold text-white hover:text-black rounded-lg transition-all z-20 border border-gray-700 shadow-lg"
+              title="Download First Visible Photo"
+            >
+              <Download className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Thumbnail Grid - Below Main Viewer */}
@@ -325,11 +366,11 @@ export function LeadPhotoGallery({
               <button
                 key={index}
                 onClick={() => {
-                  setSelectedPhotoIndex(index);
-                  setZoom(1);
+                  setStartIndex(index);
+                  setZoomLevels({});
                 }}
                 className={`relative aspect-square rounded-md overflow-hidden border-2 transition-all ${
-                  index >= selectedPhotoIndex && index < selectedPhotoIndex + visiblePhotos.length
+                  index >= startIndex && index < startIndex + photosPerView
                     ? 'border-gold ring-2 ring-gold ring-opacity-50 scale-105'
                     : 'border-gray-200 hover:border-gold hover:scale-105'
                 }`}
