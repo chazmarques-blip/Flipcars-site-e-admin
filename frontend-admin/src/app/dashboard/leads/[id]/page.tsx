@@ -240,24 +240,24 @@ export default function LeadDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Compact Header - All Info in One Bar */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-black border-b border-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-wrap items-center gap-3 text-sm">
             {/* Back Button */}
             <button
               onClick={() => router.push('/dashboard/leads')}
-              className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+              className="flex items-center gap-1.5 text-gray-300 hover:text-gold hover:bg-gray-900 px-2 py-1 rounded transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="font-medium">Back</span>
             </button>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-300"></div>
+            <div className="h-6 w-px bg-gray-800"></div>
 
             {/* Name + Badges */}
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold text-gray-900">
+              <h1 className="text-lg font-bold text-gold font-heading">
                 {lead.name}
               </h1>
               <LeadStatusBadge status={lead.status} />
@@ -278,14 +278,14 @@ export default function LeadDetailPage() {
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-300"></div>
+            <div className="h-6 w-px bg-gray-800"></div>
 
             {/* Email */}
-            <div className="flex items-center gap-1.5 text-gray-700">
-              <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-1.5 text-gray-300">
+              <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
               <a
                 href={`mailto:${lead.email}`}
-                className="text-blue-600 hover:underline truncate max-w-[180px]"
+                className="text-gold hover:text-gold-light truncate max-w-[180px]"
                 title={lead.email}
               >
                 {lead.email}
@@ -293,40 +293,40 @@ export default function LeadDetailPage() {
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-300"></div>
+            <div className="h-6 w-px bg-gray-800"></div>
 
             {/* Phone */}
-            <div className="flex items-center gap-1.5 text-gray-700">
-              <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-1.5 text-gray-300">
+              <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
               <a
                 href={`tel:${lead.phone}`}
-                className="text-blue-600 hover:underline font-medium"
+                className="text-gold hover:text-gold-light font-medium"
               >
                 {lead.phone}
               </a>
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-300"></div>
+            <div className="h-6 w-px bg-gray-800"></div>
 
             {/* Vehicle */}
-            <div className="flex items-center gap-1.5 text-gray-700">
-              <Car className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <span className="font-medium">
+            <div className="flex items-center gap-1.5 text-gray-300">
+              <Car className="w-4 h-4 text-gray-500 flex-shrink-0" />
+              <span className="font-medium text-gray-200">
                 {lead.vehicleMake} {lead.vehicleModel}
               </span>
-              <span className="text-gray-500">
+              <span className="text-gray-400">
                 {lead.vehicleYear}
               </span>
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-300"></div>
+            <div className="h-6 w-px bg-gray-800"></div>
 
             {/* Created Date */}
-            <div className="flex items-center gap-1.5 text-gray-700">
-              <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <span className="text-gray-600">
+            <div className="flex items-center gap-1.5 text-gray-300">
+              <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
+              <span className="text-gray-400">
                 {format(new Date(lead.createdAt), 'MMM d, yyyy')}
               </span>
             </div>
@@ -335,9 +335,9 @@ export default function LeadDetailPage() {
             <div className="flex-1"></div>
 
             {/* Reference Number */}
-            <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-3 py-1 rounded-md border border-gray-200">
-              <span className="text-xs font-medium">Ref:</span>
-              <span className="font-mono text-xs font-semibold">{lead.referenceNumber}</span>
+            <div className="flex items-center gap-1.5 text-gray-300 bg-gray-900 px-3 py-1 rounded-md border border-gray-800">
+              <span className="text-xs font-medium text-gold">Ref:</span>
+              <span className="font-mono text-xs font-semibold text-gray-200">{lead.referenceNumber}</span>
             </div>
           </div>
         </div>
