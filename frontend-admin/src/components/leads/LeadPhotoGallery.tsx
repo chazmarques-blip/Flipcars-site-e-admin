@@ -209,7 +209,7 @@ export function LeadPhotoGallery({
       ) : (
         <div className="space-y-2">
           {/* Main Photo Viewer - Fixed Grid with Individual Zoom */}
-          <div className="relative bg-[#1a1d2e] rounded-lg p-3" style={{ height: '400px' }}>
+          <div className="relative bg-[#1a1d2e] rounded-lg p-3" style={{ height: '480px' }}>
             {/* Photos Grid - Each photo in its own fixed container */}
             <div className="h-full flex gap-3">
               {visiblePhotos.map((photoUrl, idx) => {
@@ -260,18 +260,18 @@ export function LeadPhotoGallery({
                       #{absoluteIndex + 1}
                     </div>
 
-                    {/* Individual Zoom Controls */}
-                    <div className="absolute top-2 right-2 flex items-center gap-1 bg-black bg-opacity-80 rounded-lg p-1.5 z-10 border border-gray-700">
+                    {/* Individual Zoom Controls - 50% smaller */}
+                    <div className="absolute top-2 right-2 flex items-center gap-0.5 bg-black bg-opacity-80 rounded-lg p-1 z-10 border border-gray-700">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleZoomOut(absoluteIndex);
                         }}
                         disabled={currentZoom <= 0.5}
-                        className="p-1.5 hover:bg-gold hover:text-black rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
+                        className="p-0.5 hover:bg-gold hover:text-black rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
                         title="Zoom Out (-)"
                       >
-                        <ZoomOut className="w-4 h-4" />
+                        <ZoomOut className="w-3 h-3" />
                       </button>
                       
                       <button
@@ -279,7 +279,7 @@ export function LeadPhotoGallery({
                           e.stopPropagation();
                           resetZoom(absoluteIndex);
                         }}
-                        className="px-2 py-1 hover:bg-gold hover:text-black rounded text-white text-xs font-semibold min-w-[45px] text-center transition-all"
+                        className="px-1 py-0.5 hover:bg-gold hover:text-black rounded text-white text-[10px] font-semibold min-w-[30px] text-center transition-all"
                         title="Reset Zoom (Click)"
                       >
                         {Math.round(currentZoom * 100)}%
@@ -291,19 +291,14 @@ export function LeadPhotoGallery({
                           handleZoomIn(absoluteIndex);
                         }}
                         disabled={currentZoom >= 3}
-                        className="p-1.5 hover:bg-gold hover:text-black rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
+                        className="p-0.5 hover:bg-gold hover:text-black rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
                         title="Zoom In (+)"
                       >
-                        <ZoomIn className="w-4 h-4" />
+                        <ZoomIn className="w-3 h-3" />
                       </button>
                     </div>
 
-                    {/* Zoom Hint - Only at 100% */}
-                    {currentZoom === 1 && (
-                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-black bg-opacity-70 text-white text-xs rounded-lg pointer-events-none border border-gray-600">
-                        🔍 Click + to zoom
-                      </div>
-                    )}
+
 
                     {/* Scrollable Hint - When zoomed */}
                     {currentZoom > 1 && (
