@@ -241,8 +241,8 @@ export default function LeadDetailPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Compact Header - All Info in One Bar */}
       <div className="bg-black border-b border-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-wrap items-center gap-3 text-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
             {/* Back Button */}
             <button
               onClick={() => router.push('/dashboard/leads')}
@@ -253,11 +253,11 @@ export default function LeadDetailPage() {
             </button>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-800"></div>
+            <div className="h-5 w-px bg-gray-800"></div>
 
             {/* Name + Badges */}
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold text-gold font-heading">
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-base font-bold text-gold font-heading">
                 {lead.name}
               </h1>
               <LeadStatusBadge status={lead.status} />
@@ -278,7 +278,7 @@ export default function LeadDetailPage() {
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-800"></div>
+            <div className="h-5 w-px bg-gray-800"></div>
 
             {/* Email */}
             <div className="flex items-center gap-1.5 text-gray-300">
@@ -293,7 +293,7 @@ export default function LeadDetailPage() {
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-800"></div>
+            <div className="h-5 w-px bg-gray-800"></div>
 
             {/* Phone */}
             <div className="flex items-center gap-1.5 text-gray-300">
@@ -307,7 +307,7 @@ export default function LeadDetailPage() {
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-800"></div>
+            <div className="h-5 w-px bg-gray-800"></div>
 
             {/* Vehicle */}
             <div className="flex items-center gap-1.5 text-gray-300">
@@ -321,7 +321,7 @@ export default function LeadDetailPage() {
             </div>
 
             {/* Divider */}
-            <div className="h-6 w-px bg-gray-800"></div>
+            <div className="h-5 w-px bg-gray-800"></div>
 
             {/* Created Date */}
             <div className="flex items-center gap-1.5 text-gray-300">
@@ -354,11 +354,11 @@ export default function LeadDetailPage() {
       />
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="space-y-3">
           {/* Additional Details Card (if needed) */}
           {(lead.vehicleMileage || lead.vehicleCondition || lead.estimatedValue || lead.additionalNotes || (lead.city && lead.state)) && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Additional Details
               </h2>
@@ -412,7 +412,7 @@ export default function LeadDetailPage() {
           )}
 
           {/* Damage Photos Gallery - Always show, even if empty */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
             <LeadPhotoGallery
               photos={lead.damagePhotos || []}
               leadId={leadId}
@@ -421,7 +421,7 @@ export default function LeadDetailPage() {
           </div>
 
           {/* Notes Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
             <LeadNotes
               leadId={leadId}
               notes={notes}
@@ -430,12 +430,12 @@ export default function LeadDetailPage() {
           </div>
 
           {/* Timeline Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
             <LeadTimeline activities={activities} />
           </div>
 
           {/* Assignment Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
             <LeadAssignment
               leadId={leadId}
               currentAssigneeId={lead.assignedToId || undefined}

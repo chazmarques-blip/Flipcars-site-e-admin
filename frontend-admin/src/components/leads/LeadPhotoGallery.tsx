@@ -161,11 +161,11 @@ export function LeadPhotoGallery({
   }, [startIndex, photos.length, photosPerView, canGoNext, canGoPrevious]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <ImageIcon className="w-5 h-5" />
+        <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+          <ImageIcon className="w-4 h-4" />
           Damage Photos ({photos.length})
         </h3>
         {!readOnly && onUpload && (
@@ -207,9 +207,9 @@ export function LeadPhotoGallery({
           )}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* Main Photo Viewer - Fixed Grid with Individual Zoom */}
-          <div className="relative bg-[#1a1d2e] rounded-lg p-4" style={{ height: '500px' }}>
+          <div className="relative bg-[#1a1d2e] rounded-lg p-3" style={{ height: '400px' }}>
             {/* Photos Grid - Each photo in its own fixed container */}
             <div className="h-full flex gap-3">
               {visiblePhotos.map((photoUrl, idx) => {

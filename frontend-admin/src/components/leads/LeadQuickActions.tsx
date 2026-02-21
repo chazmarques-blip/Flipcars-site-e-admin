@@ -109,24 +109,24 @@ export const LeadQuickActions: React.FC<LeadQuickActionsProps> = ({
 
   return (
     <div className="bg-black border-b border-gray-800 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex flex-wrap items-center gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Quick Contact */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-gold uppercase tracking-wide">
               CONTACT
             </span>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1">
               {COMMUNICATION_ACTIONS.map((action) => {
                 const Icon = action.icon;
                 return (
                   <button
                     key={action.type}
                     onClick={() => handleAction(action.type)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gold hover:bg-gold-dark text-black rounded-md font-medium text-sm transition-all hover:scale-105"
+                    className="flex items-center gap-1 px-2.5 py-1 bg-gold hover:bg-gold-dark text-black rounded-md font-medium text-xs transition-all hover:scale-105"
                     title={action.label}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">{action.label}</span>
                   </button>
                 );
@@ -135,14 +135,14 @@ export const LeadQuickActions: React.FC<LeadQuickActionsProps> = ({
           </div>
 
           {/* Divider */}
-          <div className="h-8 w-px bg-gray-800"></div>
+          <div className="h-6 w-px bg-gray-800"></div>
 
           {/* Update Status */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-gold uppercase tracking-wide">
               STATUS
             </span>
-            <div className="flex gap-1.5 flex-wrap">
+            <div className="flex gap-1 flex-wrap">
               {STATUS_ACTIONS.map((action) => {
                 const Icon = action.icon;
                 const isCurrentStatus = action.status === currentStatus;
@@ -153,7 +153,7 @@ export const LeadQuickActions: React.FC<LeadQuickActionsProps> = ({
                     onClick={() => handleStatusChange(action.status)}
                     disabled={isCurrentStatus || isUpdating}
                     className={`
-                      flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-medium transition-all
+                      flex items-center gap-1 px-2 py-1 rounded-md border text-xs font-medium transition-all
                       ${isCurrentStatus 
                         ? 'bg-gold border-gold text-black ring-2 ring-gold ring-opacity-50' 
                         : 'bg-gray-900 border-gray-800 text-gray-300 hover:bg-gray-800 hover:border-gold hover:text-gold'
@@ -171,14 +171,14 @@ export const LeadQuickActions: React.FC<LeadQuickActionsProps> = ({
           </div>
 
           {/* Divider */}
-          <div className="h-8 w-px bg-gray-800"></div>
+          <div className="h-6 w-px bg-gray-800"></div>
 
           {/* Set Priority */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-gold uppercase tracking-wide">
               PRIORITY
             </span>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1">
               {[
                 { priority: LeadPriority.HIGH, label: 'High', icon: AlertCircle },
                 { priority: LeadPriority.MEDIUM, label: 'Medium', icon: Zap },
@@ -192,7 +192,7 @@ export const LeadQuickActions: React.FC<LeadQuickActionsProps> = ({
                     onClick={() => onPriorityChange && onPriorityChange(priority)}
                     disabled={isCurrentPriority || isUpdating}
                     className={`
-                      flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-medium transition-all
+                      flex items-center gap-1 px-2 py-1 rounded-md border text-xs font-medium transition-all
                       ${isCurrentPriority 
                         ? priority === LeadPriority.HIGH
                           ? 'bg-red-600 border-red-600 text-white ring-2 ring-red-500 ring-opacity-50'
@@ -220,7 +220,7 @@ export const LeadQuickActions: React.FC<LeadQuickActionsProps> = ({
           <button
             onClick={() => handleStatusChange(LeadStatus.ARCHIVED)}
             disabled={currentStatus === LeadStatus.ARCHIVED || isUpdating}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-400 hover:text-gray-300 rounded-md text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1 px-2.5 py-1 bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-400 hover:text-gray-300 rounded-md text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             title="Archive Lead"
           >
             <Archive className="w-3.5 h-3.5" />
