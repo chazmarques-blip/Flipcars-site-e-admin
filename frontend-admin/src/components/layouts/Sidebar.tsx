@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -18,6 +19,8 @@ import {
   Search,
   Activity,
   Calendar,
+  MoreHorizontal,
+  X,
 } from 'lucide-react';
 import { useSidebar } from '@/lib/hooks/useSidebar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -112,6 +115,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, isMobile, toggle, close } = useSidebar();
   const { user } = useAuth();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const filteredNavItems = navItems.filter((item) => {
     if (!item.roles) return true;
@@ -126,10 +130,12 @@ export function Sidebar() {
     if (isMobile) {
       close();
     }
+    setShowMobileMenu(false);
   };
 
-  // Bottom navigation items for mobile (5 main items)
-  const mobileNavItems = filteredNavItems.slice(0, 5);
+  // Bottom navigation items for mobile (4 main items + More button)
+  const mobileNavItems = filteredNavItems.slice(0, 4);
+  const mobileMoreItems = filteredNavItems.slice(4);
 
   return (
     <>
@@ -248,7 +254,7 @@ export function Sidebar() {
       </aside>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-gray-800">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-gray-800 safe-area-pb">
         <div className="grid grid-cols-5 h-16">
           {mobileNavItems.map((item) => {
             const isActive = pathname === item.href;
@@ -258,20 +264,106 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={handleLinkClick}
                 className={clsx(
-                  'flex flex-col items-center justify-center gap-1 transition-colors',
+                  'flex flex-col items-center justify-center gap-0.5 transition-colors',
                   isActive
                     ? 'bg-gray-900 text-gold'
                     : 'text-gray-400 hover:text-gold hover:bg-gray-900/50'
                 )}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-xs font-medium">{item.label}</span>
+                <span className="text-[10px] font-medium">{item.label}</span>
               </Link>
             );
           })}
+          
+          {/* More Button */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className={clsx(
+              'flex flex-col items-center justify-center gap-0.5 transition-colors',
+              showMobileMenu
+                ? 'bg-gray-900 text-gold'
+                : 'text-gray-400 hover:text-gold hover:bg-gray-900/50'
+            )}
+          >
+            <MoreHorizontal className="w-5 h-5" />
+            <span className="text-[10px] font-medium">More</span>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile More Menu Modal */}
+      {showMobileMenu && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowMobileMenu(false)}
+          />
+          
+          {/* Menu Panel */}
+          <div className="lg:hidden fixed bottom-16 left-0 right-0 z-50 bg-black border-t border-gray-800 max-h-[70vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <h3 className="text-lg font-semibold text-white">More Options</h3>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                className="p-1.5 rounded-lg hover:bg-gray-900 transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            
+            {/* Menu Items */}
+            <div className="py-2">
+              {mobileMoreItems.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleLinkClick}
+                    className={clsx(
+                      'flex items-center gap-3 px-4 py-3 transition-colors',
+                      isActive
+                        ? 'bg-gray-900 text-gold border-l-4 border-gold'
+                        : 'text-gray-300 hover:bg-gray-900/50'
+                    )}
+                  >
+                    <Icon className={clsx('w-5 h-5', isActive ? 'text-gold' : 'text-gray-400')} />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+            
+            {/* User Info in More Menu */}
+            {user && (
+              <div className="px-4 py-3 border-t border-gray-800 bg-gray-900">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 bg-gold rounded-full">
+                    <span className="text-black font-semibold">
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-gray-400 truncate">
+                      {user.roles?.[0]?.replace('_', ' ') || 'User'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 }
