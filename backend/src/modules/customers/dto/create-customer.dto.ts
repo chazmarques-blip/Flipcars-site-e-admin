@@ -9,6 +9,11 @@ import {
   IsObject,
 } from 'class-validator';
 
+export enum CustomerType {
+  INDIVIDUAL = 'individual',
+  BUSINESS = 'business',
+}
+
 export class CreateCustomerDto {
   @IsString()
   @MinLength(2)
@@ -22,6 +27,10 @@ export class CreateCustomerDto {
   @MinLength(10)
   @MaxLength(50)
   phone: string;
+
+  @IsEnum(CustomerType)
+  @IsOptional()
+  type?: CustomerType;
 
   @IsString()
   @IsOptional()
@@ -48,6 +57,25 @@ export class CreateCustomerDto {
   @IsOptional()
   @MaxLength(20)
   zipCode?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(255)
+  businessName?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  taxId?: string;
+
+  @IsEnum(['email', 'phone', 'sms'])
+  @IsOptional()
+  preferredContactMethod?: 'email' | 'phone' | 'sms';
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  languagePreference?: string;
 
   @IsEnum(['en', 'es', 'pt'])
   @IsOptional()

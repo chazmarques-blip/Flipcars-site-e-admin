@@ -36,6 +36,9 @@ export class Customer {
   @Column({ type: 'varchar', length: 50 })
   phone: string;
 
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  type: string; // 'individual' or 'business'
+
   @Column({ type: 'varchar', length: 50, nullable: true, name: 'alternate_phone' })
   alternatePhone: string;
 
@@ -50,6 +53,18 @@ export class Customer {
 
   @Column({ type: 'varchar', length: 20, nullable: true, name: 'zip_code' })
   zipCode: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'business_name' })
+  businessName: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true, name: 'tax_id' })
+  taxId: string;
+
+  @Column({ type: 'varchar', length: 20, nullable: true, name: 'preferred_contact_method' })
+  preferredContactMethod: string; // 'email', 'phone', 'sms'
+
+  @Column({ type: 'varchar', length: 100, nullable: true, name: 'language_preference' })
+  languagePreference: string;
 
   @Column({ type: 'varchar', length: 10, default: 'en', name: 'preferred_language' })
   preferredLanguage: string;
