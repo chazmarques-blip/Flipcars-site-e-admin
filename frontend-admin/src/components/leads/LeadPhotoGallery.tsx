@@ -208,8 +208,8 @@ export function LeadPhotoGallery({
         </div>
       ) : (
         <div className="space-y-2">
-          {/* Main Photo Viewer - Fixed Grid with Individual Zoom */}
-          <div className="relative bg-[#1a1d2e] rounded-lg p-3" style={{ height: '480px' }}>
+          {/* Main Photo Viewer - Fixed Grid with Individual Zoom - Mobile optimized */}
+          <div className="relative bg-[#1a1d2e] rounded-lg p-2 sm:p-3 h-[300px] sm:h-[480px]">
             {/* Photos Grid - Each photo in its own fixed container */}
             <div className="h-full flex gap-3">
               {visiblePhotos.map((photoUrl, idx) => {
