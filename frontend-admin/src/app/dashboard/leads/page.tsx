@@ -504,14 +504,14 @@ export default function LeadsPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 lg:space-y-6">
+      {/* Header - Mobile optimized */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-heading font-bold text-gray-900">Leads</h1>
-          <p className="text-gray-600 mt-1">Manage and track your leads</p>
+          <h1 className="text-2xl lg:text-3xl font-heading font-bold text-gray-900">Leads</h1>
+          <p className="text-sm lg:text-base text-gray-600 mt-1">Manage and track your leads</p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-2 lg:space-x-3">
           <ExportButton
             data={leads}
             columns={exportColumns}
@@ -519,23 +519,26 @@ export default function LeadsPage() {
             title="Leads Export"
             description="Export of all leads matching current filters"
             variant="secondary"
+            className="text-xs lg:text-sm"
           />
           <Button
             onClick={() => router.push('/dashboard/leads/new')}
-            leftIcon={<Plus className="w-5 h-5" />}
+            leftIcon={<Plus className="w-4 h-4 lg:w-5 lg:h-5" />}
+            className="text-xs lg:text-sm"
           >
-            New Lead
+            <span className="hidden sm:inline">New Lead</span>
+            <span className="sm:hidden">New</span>
           </Button>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex gap-4">
+      {/* Search and Filters - Mobile optimized */}
+      <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Search by name, email, phone, or reference..."
-          className="flex-1"
+          placeholder="Search by name, email, phone..."
+          className="flex-1 text-sm"
         />
         <FilterPanel
           activeFiltersCount={activeFiltersCount}
@@ -583,26 +586,207 @@ export default function LeadsPage() {
         </FilterPanel>
       </div>
 
-      {/* Data Table */}
-      <DataTable
-        data={leads}
-        columns={columns}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalItems={totalItems}
-        pageSize={pageSize}
-        onPageChange={setCurrentPage}
-        isLoading={isLoading}
-        emptyMessage="No leads found. Create your first lead to get started!"
-        onRowClick={(lead) => {
-          markLeadAsViewed(lead.id);
-          router.push(`/dashboard/leads/${lead.id}`);
-        }}
-        getRowClassName={(lead) => {
-          // Light golden background for unviewed leads
-          return !viewedLeads.has(lead.id) ? 'bg-amber-50/30' : '';
-        }}
-      />
+      {/* Mobile Cards View (< lg) */}
+      <div className="lg:hidden space-y-2">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
+          </div>
+        ) : leads.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+            <p className="text-gray-500 text-sm">No leads found. Create your first lead to get started!</p>
+          </div>
+        ) : (
+          leads.map((lead, index) => {
+            const isViewed = viewedLeads.has(lead.id);
+            const reversedNumber = totalItems - ((currentPage - 1) * pageSize) - index;
+            
+            return (
+              <div
+                key={lead.id}
+                onClick={() => {
+                  markLeadAsViewed(lead.id);
+                  router.push(`/dashboard/leads/${lead.id}`);
+                }}
+                className={`bg-white border border-gray-200 rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${
+                  !isViewed ? 'bg-amber-50/30' : ''
+                }`}
+              >
+                {/* Top Row: # + Reference + Delete */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-medium text-gray-500">#{reversedNumber}</span>
+                    <span className="font-mono text-xs font-medium text-gold">
+                      {(() => {
+                        const ref = lead.referenceNumber;
+                        if (ref && ref.startsWith('FLIP-')) {
+                          const parts = ref.replace('FLIP-', '').split('-');
+                          if (parts.length >= 2) {
+                            const date = parts[0];
+                            const num = parts[1] || '001';
+                            const year = date.substring(0, 4);
+                            const monthDay = date.substring(4);
+                            return `${year}-${monthDay}-${num.padStart(3, '0')}`;
+                          }
+                        }
+                        return ref;
+                      })()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={(e) => handleDeleteClick(lead, e)}
+                    className="p-1.5 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    title="Delete lead"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Customer Name */}
+                <div className="mb-2">
+                  <span className="text-sm font-semibold text-gray-900">{lead.name}</span>
+                </div>
+
+                {/* Contact + Preferences */}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="font-mono text-xs text-gray-700">{lead.phone}</span>
+                  {lead.contactPreferences && (lead.contactPreferences.phoneCall || lead.contactPreferences.whatsapp || lead.contactPreferences.textMessage) && (
+                    <div className="flex items-center gap-1">
+                      {lead.contactPreferences.phoneCall && (
+                        <div className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gold/10 text-gold border border-gold/20" title="Phone Call">
+                          <Phone className="w-3 h-3" />
+                        </div>
+                      )}
+                      {lead.contactPreferences.whatsapp && (
+                        <div className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-800 text-white border border-gray-700" title="WhatsApp">
+                          <MessageCircle className="w-3 h-3" />
+                        </div>
+                      )}
+                      {lead.contactPreferences.textMessage && (
+                        <div className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-700 border border-gray-300" title="Text Message">
+                          <MessageSquare className="w-3 h-3" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Vehicle */}
+                <div className="mb-2">
+                  {lead.vehicleMake || lead.vehicleModel || lead.vehicleYear ? (
+                    <span className="text-xs text-gray-700">
+                      {lead.vehicleMake} {lead.vehicleModel}
+                      {lead.vehicleYear && <span className="text-gray-500 ml-1">({lead.vehicleYear})</span>}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-gray-400">Vehicle not specified</span>
+                  )}
+                </div>
+
+                {/* Badges Row: Service + Who Pays */}
+                <div className="flex items-center gap-2 mb-2">
+                  {getServiceBadge(lead)}
+                  {getWhoPaysBadge(lead)}
+                </div>
+
+                {/* Bottom Row: AI Score + Photos + Details */}
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <div className="flex items-center gap-2">
+                    {/* AI Score */}
+                    {lead.aiQualificationScore ? (
+                      <div className="flex items-center gap-1">
+                        <div className="w-8 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gold"
+                            style={{ width: `${lead.aiQualificationScore}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-semibold text-gray-700 tabular-nums">
+                          {lead.aiQualificationScore}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-gray-400">No score</span>
+                    )}
+
+                    {/* Photos */}
+                    {lead.damagePhotos && lead.damagePhotos.length > 0 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openPhotoModal(lead.damagePhotos || []);
+                        }}
+                        className="inline-flex items-center justify-center w-6 h-6 rounded-full hover:bg-gray-100 transition-colors"
+                        title={`View ${lead.damagePhotos.length} photo(s)`}
+                      >
+                        <Eye className="w-3.5 h-3.5 text-gray-600" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Details Link */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      markLeadAsViewed(lead.id);
+                      router.push(`/dashboard/leads/${lead.id}`);
+                    }}
+                    className="text-[10px] text-gray-700 hover:text-gray-900 font-medium underline"
+                  >
+                    Details
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+
+        {/* Mobile Pagination */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex items-center justify-between py-3 px-2">
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+              Previous
+            </button>
+            <span className="text-xs text-gray-600">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Data Table (≥ lg) */}
+      <div className="hidden lg:block">
+        <DataTable
+          data={leads}
+          columns={columns}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          isLoading={isLoading}
+          emptyMessage="No leads found. Create your first lead to get started!"
+          onRowClick={(lead) => {
+            markLeadAsViewed(lead.id);
+            router.push(`/dashboard/leads/${lead.id}`);
+          }}
+          getRowClassName={(lead) => {
+            // Light golden background for unviewed leads
+            return !viewedLeads.has(lead.id) ? 'bg-amber-50/30' : '';
+          }}
+        />
+      </div>
 
       {/* Photo Modal */}
       {photoModalOpen && (
