@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipCars Admin - Mobile Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Notch */
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #f3f4f6;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: #000;
+            padding: 50px 16px 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-img {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #C9A961 0%, #B8962F 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: #C9A961;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C9A961;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: #2a2a2a;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: #fff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .search-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 10px 14px;
+            border-radius: 12px;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: #10b981;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        /* Recent Section */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .see-all {
+            font-size: 12px;
+            color: #C9A961;
+            font-weight: 500;
+        }
+
+        .recent-card {
+            background: #fff;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .recent-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .recent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .badge-new {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .recent-info {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            background: #000;
+            border-radius: 24px;
+            padding: 8px 12px 20px 12px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            min-width: 60px;
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .nav-item.active {
+            background: #1a1a1a;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #C9A961;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #C9A961;
+        }
+
+        /* Scrollbar */
+        .content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 2px;
+        }
+
+        /* Home Indicator */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: #fff;
+            border-radius: 2px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="notch"></div>
+        <div class="screen">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">
+                    <div class="logo-img">FC</div>
+                    <span class="logo-text">FlipCars</span>
+                </div>
+                <div class="header-icons">
+                    <div class="icon-btn">🔍</div>
+                    <div class="icon-btn">🔔</div>
+                    <div class="icon-btn">👤</div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <div class="search-input-wrapper">
+                    <span style="color: #C9A961;">🔍</span>
+                    <input type="text" class="search-input" placeholder="Search leads, customers...">
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Active Leads</div>
+                        <div class="stat-value">23</div>
+                        <div class="stat-change">↑ 12% vs last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Appointments</div>
+                        <div class="stat-value">8</div>
+                        <div class="stat-change">↑ 5 today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">In Progress</div>
+                        <div class="stat-value">15</div>
+                        <div class="stat-change negative">↓ 2 vs yesterday</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Converted</div>
+                        <div class="stat-value">42</div>
+                        <div class="stat-change">↑ 18% this month</div>
+                    </div>
+                </div>
+
+                <!-- Recent Leads -->
+                <div class="section-title">
+                    <span>Recent Leads</span>
+                    <span class="see-all">See All →</span>
+                </div>
+
+                <div class="recent-card">
+                    <div class="recent-header">
+                        <div class="recent-name">Marvin Salomon</div>
+                        <div class="badge badge-new">NEW</div>
+                    </div>
+                    <div class="recent-info">2016 NISSAN Altima • 321-960-8661</div>
+                </div>
+
+                <div class="recent-card">
+                    <div class="recent-header">
+                        <div class="recent-name">Sarah Johnson</div>
+                        <div class="badge badge-progress">IN PROGRESS</div>
+                    </div>
+                    <div class="recent-info">2018 Honda Civic • 407-555-0123</div>
+                </div>
+
+                <div class="recent-card">
+                    <div class="recent-header">
+                        <div class="recent-name">Michael Chen</div>
+                        <div class="badge badge-new">NEW</div>
+                    </div>
+                    <div class="recent-info">2020 Toyota Camry • 321-555-0199</div>
+                </div>
+
+                <!-- Recent Appointments -->
+                <div class="section-title" style="margin-top: 20px;">
+                    <span>Today's Appointments</span>
+                    <span class="see-all">See All →</span>
+                </div>
+
+                <div class="recent-card">
+                    <div class="recent-header">
+                        <div class="recent-name">10:00 AM - Emily Rodriguez</div>
+                    </div>
+                    <div class="recent-info">Vehicle Inspection • 2019 Ford F-150</div>
+                </div>
+
+                <div class="recent-card">
+                    <div class="recent-header">
+                        <div class="recent-name">2:30 PM - David Kim</div>
+                    </div>
+                    <div class="recent-info">Final Paperwork • 2017 Mazda CX-5</div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item active">
+                    <div class="nav-icon">⊞</div>
+                    <div class="nav-label">Dashboard</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">🚗</div>
+                    <div class="nav-label">Leads</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">📅</div>
+                    <div class="nav-label">Appoint.</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">👥</div>
+                    <div class="nav-label">Customers</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">⚙️</div>
+                    <div class="nav-label">More</div>
+                </div>
+            </div>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <script>
+        // Add click handlers for nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Add smooth scroll
+        document.querySelector('.content').style.scrollBehavior = 'smooth';
+    </script>
+</body>
+</html>

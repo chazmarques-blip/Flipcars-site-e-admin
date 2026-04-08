@@ -69,7 +69,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <Header />
 
         {/* Page Content */}
-        <main id="main-content" className="p-4 lg:p-6" tabIndex={-1}>
+        <main id="main-content" className="p-4 lg:p-6 pb-20 lg:pb-6" tabIndex={-1}>
           {children}
         </main>
       </div>

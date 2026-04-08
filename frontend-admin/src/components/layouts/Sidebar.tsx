@@ -128,23 +128,17 @@ export function Sidebar() {
     }
   };
 
+  // Bottom navigation items for mobile (5 main items)
+  const mobileNavItems = filteredNavItems.slice(0, 5);
+
   return (
     <>
-      {/* Mobile Overlay */}
-      {isMobile && isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={close}
-        />
-      )}
-
-      {/* Sidebar */}
+      {/* Desktop Sidebar */}
       <aside
         className={clsx(
-          'fixed top-0 left-0 z-50 h-screen bg-black border-r border-gray-800 transition-all duration-300',
-          'flex flex-col',
-          isOpen ? 'w-64' : 'w-20',
-          isMobile && !isOpen && '-translate-x-full'
+          'hidden lg:flex fixed top-0 left-0 z-50 h-screen bg-black border-r border-gray-800 transition-all duration-300',
+          'flex-col',
+          isOpen ? 'w-64' : 'w-20'
         )}
       >
         {/* Logo Section */}
@@ -252,6 +246,32 @@ export function Sidebar() {
           </div>
         )}
       </aside>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-gray-800">
+        <div className="grid grid-cols-5 h-16">
+          {mobileNavItems.map((item) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={clsx(
+                  'flex flex-col items-center justify-center gap-1 transition-colors',
+                  isActive
+                    ? 'bg-gray-900 text-gold'
+                    : 'text-gray-400 hover:text-gold hover:bg-gray-900/50'
+                )}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-xs font-medium">{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
     </>
   );
 }
